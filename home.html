@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
+    <title>FuelWatch · Zambia live · real OSM</title>
+    <!-- Leaflet & routing -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- COMPACT FROSTED DESIGN — tuned for phones ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f0f3f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 6px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            height: 98vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 32px 32px 20px 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* ----- smaller header ----- */
+        .header {
+            padding: 10px 14px 6px 14px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,80,0,0.1);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-img {
+            height: 36px;
+            width: auto;
+            border-radius: 12px;
+            background: white;
+            padding: 4px;
+            box-shadow: 0 4px 10px rgba(0,150,0,0.25);
+            object-fit: contain;
+        }
+        .header-text {
+            flex: 1;
+        }
+        .header-text h1 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0a2a1f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .city-badge {
+            background: #dcfce7;
+            border-radius: 40px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #166534;
+            border: 1px solid #86efac;
+            white-space: nowrap;
+        }
+        .header-text p {
+            font-size: 11px;
+            color: #2c3e2c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .live-badge {
+            background: #dc2626;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* radius row thinner */
+        .radius-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            padding: 0 2px;
+        }
+        .radius-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1f3a1f;
+        }
+        .radius-slider {
+            flex: 1;
+            height: 5px;
+            background: rgba(0,150,0,0.2);
+            border-radius: 10px;
+            accent-color: #16a34a;
+        }
+        .radius-value {
+            background: #16a34a;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* search section compact */
+        .search-section {
+            padding: 6px 14px 6px 14px;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 30px;
+            padding: 5px 12px;
+            border: 1px solid rgba(0,150,0,0.25);
+        }
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 6px 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        .sort-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .sort-row select {
+            flex: 1;
+            background: white;
+            border: 1px solid #bbf7d0;
+            border-radius: 30px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #14532d;
+        }
+        .near-me-btn {
+            background: #16a34a;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 14px;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* filter chips smaller */
+        .filter-section {
+            padding: 6px 14px;
+        }
+        .filter-scroll {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 2px 0;
+        }
+        .chip {
+            background: white;
+            color: #1e3a1e;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(22,163,74,0.3);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .chip.active {
+            background: #16a34a;
+            color: white;
+            border-color: #14532d;
+        }
+
+        /* map smaller */
+        .map-wrapper {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            border-bottom: 2px solid white;
+            flex-shrink: 0;
+            border-radius: 0 0 24px 24px;
+            overflow: hidden;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            background: #cbd5e1;
+            z-index: 1;
+        }
+        .map-floating-buttons {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+        .float-btn {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 8px 16px rgba(0,80,0,0.3);
+            border: none;
+            color: #16a34a;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(255,255,255,0.95);
+        }
+        .float-btn.refresh { color: #dc2626; }
+
+        /* station list more compact */
+        .station-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 12px 8px 12px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .station-card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 14px;
+            box-shadow: 0 12px 20px -8px rgba(0,60,0,0.25);
+            border: 1px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+        }
+        .station-name {
+            font-weight: 800;
+            font-size: 16px;
+            color: #0c3b1e;
+        }
+        .address {
+            font-size: 11px;
+            color: #2c4a2c;
+            margin: 4px 0 6px 0;
+            display: flex;
+            gap: 4px;
+        }
+        .distance-rating {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .fuel-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 6px 0 4px 0;
+        }
+        .fuel-badge {
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .fuel-badge.available { background: #16a34a; color: white; }
+        .fuel-badge.unavailable { background: #dc2626; color: white; }
+        .fuel-badge.unknown { background: #3b82f6; color: white; }
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 6px;
+        }
+        .service-tag {
+            background: rgba(22,163,74,0.15);
+            color: #14532d;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #86efac;
+        }
+
+        /* bottom nav smaller */
+        .bottom-nav {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid white;
+            padding: 4px 8px 8px 8px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #4b6b4b;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .nav-item.active { color: #16a34a; }
+        .nav-item i { font-size: 18px; margin-bottom: 2px; }
+
+        /* modal remains similar but maybe smaller */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,30,0,0.3);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            padding: 12px;
+        }
+        .modal-overlay.show { visibility: visible; opacity: 1; }
+        .modal-content {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 36px;
+            padding: 24px 20px;
+            box-shadow: 0 40px 60px rgba(0,100,0,0.5);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 18px;
+            background: #f1f5f9;
+            border: none;
+            width: 38px; height: 38px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .fuel-list {
+            background: #f0fdf4;
+            border-radius: 24px;
+            padding: 14px;
+            margin: 16px 0;
+        }
+        .amenity-tag {
+            display: inline-block;
+            background: #ecfdf3;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            margin: 3px 5px 3px 0;
+            border: 1px solid #86efac;
+            font-weight: 600;
+            color: #14532d;
+        }
+        .action-btn {
+            border-radius: 40px;
+            padding: 12px 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            background: #f8fafc;
+            font-size: 13px;
+        }
+        .navigate-btn { background: #16a34a; color: white; }
+        .action-btn#modalFav { background: #fee2e2; color: #b91c1c; }
+        .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <div class="header-top">
+            <img src="fuel.jpeg" alt="FuelWatch" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            <div class="header-text">
+                <h1>FuelWatch · <span class="city-badge" id="cityDisplay"><i class="fas fa-map-pin"></i> locating..</span></h1>
+                <p><span class="live-badge">LIVE ZAMBIA</span> <span id="stationCount">0</span> stations · <i class="fas fa-location-dot" style="color:#16a34a;"></i> <span id="userLocationStatus">acquiring</span></p>
+            </div>
+        </div>
+        <div class="radius-row">
+            <span class="radius-label"><i class="fas fa-ruler"></i> radius</span>
+            <input type="range" min="1" max="8" step="0.5" value="3" class="radius-slider" id="radiusSlider">
+            <span class="radius-value" id="radiusDisplay">3 km</span>
+        </div>
+    </div>
+
+    <div class="search-section">
+        <div class="search-box">
+            <i class="fas fa-search" style="color:#16a34a;"></i>
+            <input type="text" placeholder="Search station or amenity..." id="searchInput">
+            <i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i>
+        </div>
+        <div class="sort-row">
+            <select id="sortSelect">
+                <option value="distance">Distance (km)</option>
+                <option value="name">Name A-Z</option>
+            </select>
+            <button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-scroll" id="filterTabs">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="available">Fuel available</button>
+            <button class="chip" data-filter="petrol">Petrol</button>
+            <button class="chip" data-filter="diesel">Diesel</button>
+        </div>
+    </div>
+
+    <div class="map-wrapper">
+        <div id="map"></div>
+        <div class="map-floating-buttons">
+            <button class="float-btn locate" id="floatLocateBtn" title="My location"><i class="fas fa-crosshairs"></i></button>
+            <button class="float-btn refresh" id="floatRefreshBtn" title="Refresh stations"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+
+    <div class="station-list" id="stationList">
+        <div style="text-align: center; color: #4b6b4b; padding: 20px;">📍 Turn on location to see real fuel stations</div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-map"></i><span>Map</span></div>
+        <div class="nav-item"><i class="fas fa-search"></i><span>Search</span></div>
+        <div class="nav-item" id="refreshNav"><i class="fas fa-sync-alt"></i><span>Refresh</span></div>
+        <div class="nav-item"><i class="fas fa-heart"></i><span>Fav</span></div>
+        <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="stationModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ----- REAL DATA ONLY -----
+    let stations = [];
+    let userLocation = null;
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let sortBy = 'distance';
+    let radiusKm = 3;
+    let map, markersLayer, routingControl = null;
+    let currentModalId = null;
+    let userMarker = null;
+
+    const haversine = (lat1, lon1, lat2, lon2) => {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    };
+
+    const updateDistances = () => {
+        if (!userLocation) return;
+        stations.forEach(s => { s.distance = haversine(userLocation.lat, userLocation.lng, s.lat, s.lon); });
+    };
+
+    function getFuelStatus(tags) {
+        const fuel = { petrol: null, diesel: null, lpg: null, cng: null };
+        if (tags['fuel:petrol'] === 'yes' || tags['fuel:petrol'] === '24/7') fuel.petrol = 'yes';
+        else if (tags['fuel:petrol'] === 'no') fuel.petrol = 'no';
+        if (tags['fuel:diesel'] === 'yes' || tags['fuel:diesel'] === '24/7') fuel.diesel = 'yes';
+        else if (tags['fuel:diesel'] === 'no') fuel.diesel = 'no';
+        if (tags['fuel:lpg'] === 'yes') fuel.lpg = 'yes';
+        else if (tags['fuel:lpg'] === 'no') fuel.lpg = 'no';
+        if (tags['fuel:cng'] === 'yes') fuel.cng = 'yes';
+        else if (tags['fuel:cng'] === 'no') fuel.cng = 'no';
+        return fuel;
+    }
+
+    function overallStatus(fuel) {
+        const values = [fuel.petrol, fuel.diesel, fuel.lpg, fuel.cng].filter(v => v !== null);
+        if (values.includes('yes')) return 'available';
+        if (values.length > 0 && values.every(v => v === 'no')) return 'empty';
+        return 'unknown';
+    }
+
+    // ----- IMPROVED amenity extraction: looks for actual names (brand, operator, or specific :name tags) -----
+    function extractAmenities(tags) {
+        let amenities = [];
+
+        // Helper to get the best name for a given key prefix (e.g., 'shop', 'restaurant', 'atm')
+        const getName = (type, defaultName) => {
+            // first try specific :name tag (e.g., shop:name)
+            if (tags[type + ':name']) return tags[type + ':name'].trim();
+            // then brand
+            if (tags.brand) return tags.brand.trim();
+            // then operator
+            if (tags.operator) return tags.operator.trim();
+            // finally the value of the type itself (e.g., 'convenience') or default
+            return defaultName;
+        };
+
+        // ---- shop ----
+        if (tags.shop) {
+            let shopType = tags.shop.replace(/_/g, ' ');
+            let shopName = getName('shop', shopType);
+            amenities.push(`🛒 Shop: ${shopName}`);
+        }
+
+        // ---- pharmacy ----
+        if (tags.pharmacy) {
+            let pharmName = getName('pharmacy', 'Pharmacy');
+            amenities.push(`💊 Pharmacy: ${pharmName}`);
+        }
+
+        // ---- atm (check both atm=yes and amenity=atm) ----
+        if (tags.atm === 'yes' || tags.amenity === 'atm') {
+            let atmName = getName('atm', 'ATM');
+            // if we used operator/brand, it's already included; otherwise show ATM
+            amenities.push(`🏧 ${atmName}`);
+        }
+
+        // ---- car wash ----
+        if (tags.car_wash === 'yes' || tags.amenity === 'car_wash') {
+            let washName = getName('car_wash', 'Car wash');
+            amenities.push(`🧼 ${washName}`);
+        }
+
+        // ---- restaurant / fast food ----
+        if (tags.amenity === 'restaurant' || tags.amenity === 'fast_food') {
+            let type = tags.amenity === 'restaurant' ? 'Restaurant' : 'Fast food';
+            let placeName = getName(tags.amenity, type);
+            amenities.push(`🍽️ ${placeName}`);
+        }
+
+        // ---- cafe ----
+        if (tags.amenity === 'cafe') {
+            let cafeName = getName('cafe', 'Cafe');
+            amenities.push(`☕ ${cafeName}`);
+        }
+
+        // ---- toilets ----
+        if (tags.toilets === 'yes' || tags.amenity === 'toilets') {
+            amenities.push(`🚻 Toilets`);
+        }
+
+        // ---- other amenities (not fuel) ----
+        if (tags.amenity && !['fuel','restaurant','fast_food','cafe','atm','car_wash','pharmacy','toilets'].includes(tags.amenity)) {
+            let otherType = tags.amenity.replace(/_/g, ' ');
+            let otherName = getName(tags.amenity, otherType);
+            amenities.push(`📌 ${otherName}`);
+        }
+
+        // remove duplicates (in case same text appears from multiple checks)
+        return [...new Set(amenities)];
+    }
+
+    // ----- Overpass fetch -----
+    async function fetchStations(lat, lon, radius) {
+        const query = `[out:json];(node["amenity"="fuel"](around:${radius*1000},${lat},${lon});way["amenity"="fuel"](around:${radius*1000},${lat},${lon}););out body;`;
+        const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            const elements = data.elements;
+            const stationMap = new Map();
+            elements.forEach(el => {
+                let name = el.tags?.name || el.tags?.brand || "Fuel station";
+                let lat = el.lat || (el.center && el.center.lat);
+                let lon = el.lon || (el.center && el.center.lon);
+                if (!lat || !lon) return;
+                const id = el.id;
+                if (!stationMap.has(id)) {
+                    let addr = [];
+                    if (el.tags?.['addr:housenumber']) addr.push(el.tags['addr:housenumber']);
+                    if (el.tags?.['addr:street']) addr.push(el.tags['addr:street']);
+                    if (el.tags?.['addr:city']) addr.push(el.tags['addr:city']);
+                    let address = addr.join(', ') || 'local road';
+                    let openingHours = el.tags?.opening_hours || (el.tags?.['24/7'] ? '24/7' : 'unknown');
+
+                    stationMap.set(id, {
+                        id: id,
+                        name: name,
+                        address: address,
+                        lat, lon,
+                        tags: el.tags || {},
+                        openingHours: openingHours,
+                        raw: el.tags || {}
+                    });
+                }
+            });
+            let newStations = Array.from(stationMap.values());
+            newStations = newStations.map(s => {
+                s.fuel = getFuelStatus(s.tags);
+                s.status = overallStatus(s.fuel);
+                s.amenities = extractAmenities(s.tags);
+                if (s.amenities.length === 0) s.amenities.push('⛽ Fuel station');
+                s.lastUpdated = new Date().toLocaleTimeString() + ' (OSM)';
+                s.favorite = false;
+                return s;
+            });
+            return newStations;
+        } catch (e) {
+            console.warn("Overpass error", e);
+            return [];
+        }
+    }
+
+    function getIconForStatus(status) {
+        let color = (status === 'available') ? '#16a34a' : (status === 'empty' ? '#dc2626' : '#3b82f6');
+        return L.divIcon({
+            html: `<i class="fas fa-gas-pump" style="color: ${color}; font-size: 24px; filter: drop-shadow(0 2px 6px #00000040);"></i>`,
+            iconSize: [28, 28],
+            className: 'fuel-marker'
+        });
+    }
+
+    async function loadStations(showSpinner = true) {
+        if (!userLocation) return;
+        if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<span class="spinner"></span> loading';
+        stations = await fetchStations(userLocation.lat, userLocation.lng, radiusKm);
+        updateDistances();
+        renderCardsAndMarkers();
+        if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
+    }
+
+    function getFilteredStations() {
+        let filtered = stations.slice();
+        if (currentFilter !== 'all') {
+            if (currentFilter === 'available') {
+                filtered = filtered.filter(s => s.status === 'available');
+            } else {
+                filtered = filtered.filter(s => s.fuel[currentFilter] === 'yes');
+            }
+        }
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) || s.amenities.some(a => a.toLowerCase().includes(q)));
+        }
+        filtered.sort((a,b) => {
+            if (sortBy === 'distance') return (a.distance || 999) - (b.distance || 999);
+            if (sortBy === 'name') return a.name.localeCompare(b.name);
+            return 0;
+        });
+        return filtered;
+    }
+
+    function renderCardsAndMarkers() {
+        const filtered = getFilteredStations();
+        const container = document.getElementById('stationList');
+        if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: #4b6b4b; padding: 20px;">⛽ No real stations found in this radius</div>';
+        } else {
+            container.innerHTML = filtered.map(s => generateCard(s)).join('');
+        }
+        document.querySelectorAll('.favorite-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(parseInt(btn.dataset.id)); });
+        });
+        document.querySelectorAll('.station-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.favorite-icon')) return;
+                openModal(parseInt(card.dataset.id));
+            });
+        });
+
+        if (map) {
+            markersLayer.clearLayers();
+            filtered.forEach(s => {
+                const marker = L.marker([s.lat, s.lon], { icon: getIconForStatus(s.status) })
+                    .bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⛔ no fuel'}`);
+                marker.on('click', () => openModal(s.id));
+                markersLayer.addLayer(marker);
+            });
+        }
+        document.getElementById('stationCount').innerText = filtered.length;
+    }
+
+    function generateCard(s) {
+        const fuels = ['petrol','diesel','lpg','cng'];
+        const fuelBadges = fuels.map(f => {
+            let cls = 'unknown';
+            if (s.fuel[f] === 'yes') cls = 'available';
+            else if (s.fuel[f] === 'no') cls = 'unavailable';
+            else cls = 'unknown';
+            return `<span class="fuel-badge ${cls}">${f.toUpperCase()}</span>`;
+        }).join('');
+        const favClass = s.favorite ? 'fas fa-heart' : 'far fa-heart';
+        const amenityPreview = s.amenities.slice(0,3).map(a => `<span class="service-tag">${a}</span>`).join('');
+        return `
+            <div class="station-card" data-id="${s.id}">
+                <div style="display:flex; justify-content:space-between;">
+                    <span class="station-name">${s.name}</span>
+                    <button class="favorite-icon" data-id="${s.id}"><i class="${favClass}" style="color:#dc2626;"></i></button>
+                </div>
+                <div class="address"><i class="fas fa-location-dot" style="color:#16a34a;"></i> ${s.address}</div>
+                <div class="distance-rating">
+                    <span><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km</span>
+                    <span><i class="far fa-clock"></i> ${s.openingHours === 'unknown' ? '⏳' : s.openingHours.substring(0,12)}</span>
+                </div>
+                <div class="fuel-badges">${fuelBadges}</div>
+                <div class="service-tags">${amenityPreview}</div>
+            </div>
+        `;
+    }
+
+    function toggleFavorite(id) {
+        const s = stations.find(s => s.id === id);
+        if (s) { s.favorite = !s.favorite; renderCardsAndMarkers(); if (currentModalId === id) openModal(id); }
+    }
+
+    // MODAL with real amenity names (shop names now appear)
+    function openModal(id) {
+        const s = stations.find(s => s.id === id);
+        if (!s) return;
+        currentModalId = id;
+        const fuelRows = ['petrol','diesel','lpg','cng'].map(f => {
+            let statusIcon = '';
+            if (s.fuel[f] === 'yes') statusIcon = '✅';
+            else if (s.fuel[f] === 'no') statusIcon = '❌';
+            else statusIcon = '❓';
+            return `<div style="display:flex; justify-content:space-between; margin:4px 0;"><span><i class="fas fa-gas-pump"></i> ${f.toUpperCase()}</span> <strong>${statusIcon} ${s.fuel[f] === 'yes' ? 'K (real price N/A)' : (s.fuel[f] === 'no' ? 'unavailable' : 'unknown')}</strong></div>`;
+        }).join('');
+        const amenitiesHtml = s.amenities.map(a => `<span class="amenity-tag">${a}</span>`).join(' ');
+        const modalHtml = `
+            <h2 style="font-size:22px; margin-bottom:2px;">${s.name}</h2>
+            <p style="color:#2c4a2c; font-size:13px;"><i class="fas fa-map-pin"></i> ${s.address} (${s.distance?.toFixed(1)} km)</p>
+            <div style="display:flex; gap:12px; margin:8px 0; background:#ecfdf5; padding:6px 14px; border-radius:40px; font-size:12px;">
+                <span><i class="far fa-clock"></i> ${s.openingHours}</span>
+            </div>
+            <div class="fuel-list">
+                <h4 style="margin-bottom:6px;">⛽ Fuel availability</h4>
+                ${fuelRows}
+            </div>
+            <div style="margin: 14px 0;">
+                <h4 style="font-size:14px;"><i class="fas fa-store-alt"></i> Amenities (real names)</h4>
+                <div style="margin-top:6px;">${amenitiesHtml || '— none reported —'}</div>
+            </div>
+            <p style="font-size:9px; color:#6b7e6b;">last sync: ${s.lastUpdated} · currency: Zambian Kwacha (K)</p>
+            <div style="display:flex; gap:8px; margin-top:16px;">
+                <button class="action-btn navigate-btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button>
+                <button class="action-btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> Fav</button>
+                <button class="action-btn" id="modalReport">📋 Report</button>
+            </div>
+        `;
+        document.getElementById('modalContent').innerHTML = modalHtml;
+        document.getElementById('modalNav').addEventListener('click', () => startNavigation(s.lat, s.lon, s.name));
+        document.getElementById('modalFav').addEventListener('click', () => toggleFavorite(s.id));
+        document.getElementById('modalReport').addEventListener('click', () => alert('Report demo: Thanks! (real data only)'));
+        document.getElementById('stationModal').classList.add('show');
+    }
+
+    function startNavigation(destLat, destLon, destName) {
+        document.getElementById('stationModal').classList.remove('show');
+        if (!userLocation) { alert('Location not available'); return; }
+        if (routingControl) map.removeControl(routingControl);
+        routingControl = L.Routing.control({
+            waypoints: [L.latLng(userLocation.lat, userLocation.lng), L.latLng(destLat, destLon)],
+            routeWhileDragging: false,
+            fitSelectedRoutes: true,
+            lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
+        }).addTo(map);
+    }
+
+    async function updateCityName(lat, lon) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
+            const data = await res.json();
+            const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Zambia';
+            document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${city}`;
+        } catch { document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> Lusaka?`; }
+    }
+
+    function initMap() {
+        map = L.map('map').setView([-13.133, 27.849], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        markersLayer = L.layerGroup().addTo(map);
+    }
+
+    function locateAndFetch() {
+        if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
+        document.getElementById('userLocationStatus').innerText = 'locating...';
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            if (userMarker) map.removeLayer(userMarker);
+            userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+                radius: 8, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
+            }).addTo(map).bindPopup('You are here').openPopup();
+            map.setView([userLocation.lat, userLocation.lng], 13);
+            document.getElementById('userLocationStatus').innerHTML = `${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`;
+            updateCityName(userLocation.lat, userLocation.lng);
+            await loadStations(true);
+        }, (err) => {
+            alert('Location error: ' + err.message);
+            document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+
+    // event listeners
+    document.getElementById('nearMeBtn').addEventListener('click', locateAndFetch);
+    document.getElementById('floatLocateBtn').addEventListener('click', () => { if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15); else locateAndFetch(); });
+    document.getElementById('floatRefreshBtn').addEventListener('click', () => { if (userLocation) loadStations(true); });
+    document.getElementById('refreshNav').addEventListener('click', () => { if (userLocation) loadStations(true); });
+
+    document.getElementById('radiusSlider').addEventListener('input', (e) => {
+        radiusKm = parseFloat(e.target.value);
+        document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
+        if (userLocation) loadStations(false);
+    });
+    document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderCardsAndMarkers(); });
+    document.getElementById('clearSearchBtn').addEventListener('click', () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderCardsAndMarkers(); });
+    document.getElementById('sortSelect').addEventListener('change', (e) => { sortBy = e.target.value; renderCardsAndMarkers(); });
+    document.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentFilter = chip.dataset.filter;
+            renderCardsAndMarkers();
+        });
+    });
+    document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('stationModal').classList.remove('show'));
+    window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.getElementById('stationModal').classList.remove('show'); });
+
+    initMap();
+    locateAndFetch();
+})();
+</script>
+</body>
+</html>
