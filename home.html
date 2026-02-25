@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelWatch · Zambia · production</title>
+    <title>FuelWatch · Zambia · boosted</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -15,7 +15,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ----- COMPACT FROSTED — but only buttons/options/map float, nav is locked ----- */
+        /* ----- SCALED UP BY 15% (approx) with LOCKED NAV, cleaner CSS ----- */
         * {
             margin: 0;
             padding: 0;
@@ -24,118 +24,127 @@
         }
 
         body {
-            background: #f0f3f7;
+            background: #e8f0e8;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 6px;
+            padding: 8px;
         }
 
         .app-container {
             width: 100%;
-            max-width: 480px;
-            background: rgba(255,255,255,0.9);
+            max-width: 550px;  /* increased from 480px (~15%) */
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(8px);
-            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
-            height: 98vh;
+            box-shadow: 0 24px 48px rgba(0, 30, 0, 0.25);
+            height: 96vh;
             display: flex;
             flex-direction: column;
-            border-radius: 32px 32px 20px 20px;
+            border-radius: 36px 36px 24px 24px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
         }
 
-        /* ----- smaller header with city search integrated ----- */
+        /* header & bottom nav: no floating effect — solid background with blur */
         .header {
-            padding: 10px 14px 6px 14px;
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,80,0,0.1);
+            padding: 12px 16px 8px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(22, 163, 74, 0.2);
         }
+
         .header-top {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
+
         .logo-img {
-            height: 36px;
+            height: 44px;  /* bigger */
             width: auto;
-            border-radius: 12px;
+            border-radius: 14px;
             background: white;
-            padding: 4px;
-            box-shadow: 0 4px 10px rgba(0,150,0,0.25);
+            padding: 5px;
+            box-shadow: 0 6px 12px rgba(0, 150, 0, 0.3);
             object-fit: contain;
         }
+
         .header-text {
             flex: 1;
         }
+
         .header-text h1 {
-            font-size: 18px;
+            font-size: 21px;  /* ~15% bigger */
             font-weight: 800;
             color: #0a2a1f;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
+
         .city-badge {
             background: #dcfce7;
-            border-radius: 40px;
-            padding: 4px 10px;
-            font-size: 11px;
+            border-radius: 50px;
+            padding: 5px 12px;
+            font-size: 13px;
             font-weight: 700;
             color: #166534;
             border: 1px solid #86efac;
             white-space: nowrap;
         }
+
         .header-text p {
-            font-size: 11px;
+            font-size: 13px;
             color: #2c3e2c;
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 2px;
+            gap: 10px;
+            margin-top: 4px;
         }
+
         .live-badge {
             background: #dc2626;
             color: white;
-            padding: 2px 8px;
-            border-radius: 30px;
-            font-size: 9px;
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 10px;
             font-weight: 700;
         }
 
-        /* new city search row */
         .city-search-row {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 8px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 40px;
-            padding: 2px 2px 2px 12px;
+            gap: 8px;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50px;
+            padding: 3px 3px 3px 14px;
             border: 1px solid #bbf7d0;
         }
+
         .city-search-row i {
             color: #16a34a;
-            font-size: 14px;
+            font-size: 16px;
         }
+
         .city-search-row input {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 0;
-            font-size: 13px;
+            padding: 8px 0;
+            font-size: 15px;
             outline: none;
         }
+
         .city-search-row button {
             background: #16a34a;
             border: none;
-            border-radius: 30px;
-            padding: 6px 14px;
+            border-radius: 40px;
+            padding: 8px 18px;
             color: white;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 14px;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -143,270 +152,311 @@
         .radius-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-            padding: 0 2px;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 0 4px;
         }
+
         .radius-label {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 700;
             color: #1f3a1f;
         }
+
         .radius-slider {
             flex: 1;
-            height: 5px;
-            background: rgba(0,150,0,0.2);
+            height: 7px;
+            background: rgba(0, 150, 0, 0.2);
             border-radius: 10px;
             accent-color: #16a34a;
         }
+
         .radius-value {
             background: #16a34a;
             color: white;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 14px;
             font-weight: 700;
         }
 
         .search-section {
-            padding: 6px 14px 6px 14px;
+            padding: 8px 16px 8px 16px;
         }
+
         .search-box {
             display: flex;
             align-items: center;
             background: white;
-            border-radius: 30px;
-            padding: 5px 12px;
-            border: 1px solid rgba(0,150,0,0.25);
+            border-radius: 40px;
+            padding: 6px 16px;
+            border: 1px solid rgba(0, 150, 0, 0.3);
         }
+
         .search-box input {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 4px;
-            font-size: 14px;
+            padding: 8px 6px;
+            font-size: 16px;
             outline: none;
         }
+
         .sort-row {
             display: flex;
-            gap: 6px;
-            margin-top: 8px;
+            gap: 8px;
+            margin-top: 10px;
         }
+
         .sort-row select {
             flex: 1;
             background: white;
             border: 1px solid #bbf7d0;
-            border-radius: 30px;
-            padding: 8px 10px;
-            font-size: 12px;
+            border-radius: 40px;
+            padding: 10px 12px;
+            font-size: 14px;
             font-weight: 600;
             color: #14532d;
         }
+
         .near-me-btn {
             background: #16a34a;
             border: none;
-            border-radius: 30px;
-            padding: 8px 14px;
+            border-radius: 40px;
+            padding: 10px 18px;
             color: white;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             white-space: nowrap;
         }
 
-        /* filter chips with count */
         .filter-section {
-            padding: 6px 14px;
+            padding: 8px 16px;
         }
+
         .filter-scroll {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             overflow-x: auto;
-            padding: 2px 0;
+            padding: 4px 0;
         }
+
         .chip {
             background: white;
             color: #1e3a1e;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 12px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
             font-weight: 700;
-            border: 1px solid rgba(22,163,74,0.3);
+            border: 1px solid rgba(22, 163, 74, 0.3);
             cursor: pointer;
             white-space: nowrap;
         }
+
         .chip.active {
             background: #16a34a;
             color: white;
             border-color: #14532d;
         }
+
         .chip-count {
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 20px;
-            padding: 2px 6px;
-            margin-left: 6px;
-            font-size: 10px;
+            padding: 3px 8px;
+            margin-left: 8px;
+            font-size: 12px;
         }
+
         .chip.active .chip-count {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .map-wrapper {
             position: relative;
-            height: 220px;
+            height: 260px;  /* bigger map */
             width: 100%;
-            border-bottom: 2px solid white;
+            border-bottom: 3px solid white;
             flex-shrink: 0;
-            border-radius: 0 0 24px 24px;
+            border-radius: 0 0 28px 28px;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,40,0,0.2);
+            box-shadow: 0 10px 24px rgba(0, 50, 0, 0.25);
         }
+
         #map {
             height: 100%;
             width: 100%;
             background: #cbd5e1;
             z-index: 1;
         }
+
         .map-floating-buttons {
             position: absolute;
-            bottom: 14px;
-            right: 14px;
+            bottom: 16px;
+            right: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             z-index: 10;
         }
+
+        .map-floating-left {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            z-index: 10;
+        }
+
         .float-btn {
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             background: white;
             border-radius: 50px;
-            box-shadow: 0 8px 16px rgba(0,80,0,0.3);
+            box-shadow: 0 10px 20px rgba(0, 80, 0, 0.4);
             border: none;
             color: #16a34a;
-            font-size: 20px;
+            font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(4px);
         }
+
         .float-btn.clear-route {
             color: #dc2626;
-            display: none; /* shown only when route active */
+            display: none;
         }
 
         .station-list {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 12px 8px 12px;
+            padding: 16px 16px 12px 16px;
             background: transparent;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .station-card {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 14px;
-            box-shadow: 0 12px 20px -8px rgba(0,60,0,0.25);
-            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 28px;
+            padding: 18px;
+            box-shadow: 0 16px 24px -10px rgba(0, 70, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.9);
             cursor: pointer;
+            transition: transform 0.1s ease;
         }
+        .station-card:active { transform: scale(0.99); }
+
         .station-name {
             font-weight: 800;
-            font-size: 16px;
+            font-size: 18px;
             color: #0c3b1e;
         }
+
         .open-now-badge {
             background: #22c55e;
             color: white;
-            padding: 2px 8px;
-            border-radius: 30px;
-            font-size: 9px;
-            font-weight: 700;
-            margin-left: 8px;
-        }
-        .address {
+            padding: 4px 10px;
+            border-radius: 40px;
             font-size: 11px;
-            color: #2c4a2c;
-            margin: 4px 0 6px 0;
-            display: flex;
-            gap: 4px;
+            font-weight: 700;
+            margin-left: 10px;
         }
+
+        .address {
+            font-size: 13px;
+            color: #2c4a2c;
+            margin: 6px 0 8px 0;
+            display: flex;
+            gap: 6px;
+        }
+
         .distance-rating {
             display: flex;
             align-items: center;
-            gap: 14px;
-            font-size: 11px;
+            gap: 18px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
+
         .fuel-badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin: 6px 0 4px 0;
+            gap: 6px;
+            margin: 8px 0 6px 0;
         }
+
         .fuel-badge {
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 10px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
             font-weight: 800;
             text-transform: uppercase;
         }
+
         .fuel-badge.available { background: #16a34a; color: white; }
         .fuel-badge.unavailable { background: #dc2626; color: white; }
         .fuel-badge.unknown { background: #3b82f6; color: white; }
+
         .service-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 6px;
+            gap: 6px;
+            margin-top: 8px;
         }
+
         .service-tag {
-            background: rgba(22,163,74,0.15);
+            background: rgba(22, 163, 74, 0.15);
             color: #14532d;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 10px;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 12px;
             font-weight: 600;
             border: 1px solid #86efac;
         }
 
-        /* bottom nav always visible */
+        /* bottom nav – locked, larger */
         .bottom-nav {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
-            border-top: 1px solid white;
-            padding: 4px 8px 8px 8px;
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
+            padding: 6px 10px 10px 10px;
             display: flex;
             justify-content: space-around;
             flex-shrink: 0;
+            box-shadow: 0 -4px 12px rgba(0, 30, 0, 0.1);
         }
+
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #4b6b4b;
-            font-size: 9px;
-            font-weight: 600;
+            color: #2d4f2d;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.1s;
+            padding: 4px 8px;
+            border-radius: 30px;
         }
-        .nav-item.active { color: #16a34a; }
-        .nav-item i { font-size: 18px; margin-bottom: 2px; }
 
-        /* modal with photo */
+        .nav-item.active { color: #16a34a; background: rgba(22,163,74,0.1); }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; }
+
+        /* modals – unified style (bigger) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,30,0,0.3);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 30, 0, 0.4);
+            backdrop-filter: blur(14px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -414,72 +464,68 @@
             visibility: hidden;
             opacity: 0;
             transition: 0.2s;
-            padding: 12px;
+            padding: 16px;
         }
         .modal-overlay.show { visibility: visible; opacity: 1; }
         .modal-content {
-            background: rgba(255,255,255,0.98);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
             width: 100%;
-            max-width: 440px;
-            border-radius: 36px;
-            padding: 24px 20px;
-            box-shadow: 0 40px 60px rgba(0,100,0,0.5);
-            max-height: 85vh;
+            max-width: 480px;
+            border-radius: 44px;
+            padding: 28px 24px;
+            box-shadow: 0 50px 70px rgba(0, 80, 0, 0.5);
+            max-height: 80vh;
             overflow-y: auto;
         }
         .modal-close {
             position: absolute;
-            top: 16px; right: 18px;
+            top: 18px; right: 20px;
             background: #f1f5f9;
             border: none;
-            width: 38px; height: 38px;
+            width: 44px; height: 44px;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
         }
-        .station-photo {
-            width: 100%;
-            height: 150px;
-            background: #e2f3e2;
-            border-radius: 24px;
-            object-fit: cover;
-            margin: 10px 0;
+
+        .profile-logo-big {
+            width: 120px; height: 120px;
+            background: #16a34a;
+            border-radius: 60px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0,100,0,0.4);
         }
-        .fuel-list {
-            background: #f0fdf4;
-            border-radius: 24px;
-            padding: 14px;
-            margin: 16px 0;
+
+        .form-group {
+            margin-bottom: 18px;
         }
-        .amenity-tag {
-            display: inline-block;
-            background: #ecfdf3;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 12px;
-            margin: 3px 5px 3px 0;
-            border: 1px solid #86efac;
-            font-weight: 600;
-            color: #14532d;
+        .form-group label {
+            font-weight: 600; color: #14532d; display: block; margin-bottom: 6px; font-size: 14px;
         }
-        .action-btn {
-            border-radius: 40px;
-            padding: 12px 16px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            background: #f8fafc;
-            font-size: 13px;
+        .form-group input {
+            width: 100%; padding: 14px; border-radius: 30px; border: 1px solid #bbf7d0; font-size: 16px;
         }
-        .navigate-btn { background: #16a34a; color: white; }
-        .action-btn#modalFav { background: #fee2e2; color: #b91c1c; }
-        .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn {
+            background: #16a34a; color: white; border: none; padding: 14px 20px; border-radius: 40px; font-weight: 700; font-size: 16px; cursor: pointer; width: 100%; margin-bottom: 10px;
+        }
+        .btn-outline {
+            background: transparent; border: 2px solid #16a34a; color: #16a34a;
+        }
+
+        .search-result-item {
+            background: #f0fdf4; border-radius: 30px; padding: 14px; margin-bottom: 8px; cursor: pointer; border: 1px solid #86efac;
+        }
     </style>
 </head>
 <body>
 <div class="app-container">
+    <!-- header unchanged structure but larger -->
     <div class="header">
         <div class="header-top">
             <img src="fuel.jpeg" alt="FuelWatch" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
@@ -488,7 +534,6 @@
                 <p><span class="live-badge">LIVE ZAMBIA</span> <span id="stationCount">0</span> stations · <i class="fas fa-location-dot" style="color:#16a34a;"></i> <span id="userLocationStatus">acquiring</span></p>
             </div>
         </div>
-        <!-- city search row (new) -->
         <div class="city-search-row">
             <i class="fas fa-search"></i>
             <input type="text" id="citySearchInput" placeholder="Search city (e.g. Lusaka)" value="">
@@ -527,6 +572,9 @@
 
     <div class="map-wrapper">
         <div id="map"></div>
+        <div class="map-floating-left">
+            <button class="float-btn" id="fullscreenMapBtn" title="Fullscreen map"><i class="fas fa-expand"></i> overlay</button>
+        </div>
         <div class="map-floating-buttons">
             <button class="float-btn locate" id="floatLocateBtn" title="My location"><i class="fas fa-crosshairs"></i></button>
             <button class="float-btn refresh" id="floatRefreshBtn" title="Refresh stations"><i class="fas fa-sync-alt"></i></button>
@@ -538,16 +586,17 @@
         <div style="text-align: center; color: #4b6b4b; padding: 20px;">📍 Turn on location to see real fuel stations</div>
     </div>
 
+    <!-- bottom nav (locked, bigger) -->
     <div class="bottom-nav">
-        <div class="nav-item active"><i class="fas fa-map"></i><span>Map</span></div>
-        <div class="nav-item"><i class="fas fa-search"></i><span>Search</span></div>
-        <div class="nav-item" id="refreshNav"><i class="fas fa-sync-alt"></i><span>Refresh</span></div>
-        <div class="nav-item"><i class="fas fa-heart"></i><span>Fav</span></div>
-        <div class="nav-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        <div class="nav-item active" id="navMap"><i class="fas fa-map"></i><span>Map</span></div>
+        <div class="nav-item" id="navSearch"><i class="fas fa-search"></i><span>Search</span></div>
+        <div class="nav-item" id="navRefresh"><i class="fas fa-sync-alt"></i><span>Refresh</span></div>
+        <div class="nav-item" id="navFav"><i class="fas fa-heart"></i><span>Fav</span></div>
+        <div class="nav-item" id="navProfile"><i class="fas fa-user"></i><span>Profile</span></div>
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- STATION MODAL (original) -->
 <div class="modal-overlay" id="stationModal">
     <div class="modal-content">
         <button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button>
@@ -555,9 +604,57 @@
     </div>
 </div>
 
+<!-- SEARCH MODAL (popup from nav) -->
+<div class="modal-overlay" id="searchModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeSearchModal"><i class="fas fa-times"></i></button>
+        <h2 style="font-size:24px; margin-bottom:16px;"><i class="fas fa-search"></i> Search stations</h2>
+        <p style="margin-bottom:10px;">Current city: <strong id="searchModalCity">Lusaka</strong></p>
+        <input type="text" id="searchModalInput" placeholder="Type station or amenity..." style="width:100%; padding:14px; border-radius:40px; border:1px solid #86efac; font-size:16px; margin-bottom:16px;">
+        <div id="searchModalResults" style="max-height:300px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- FAVORITES MODAL -->
+<div class="modal-overlay" id="favModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeFavModal"><i class="fas fa-times"></i></button>
+        <h2 style="font-size:24px; margin-bottom:16px;"><i class="fas fa-heart"></i> Favorite stations</h2>
+        <div id="favModalList"></div>
+    </div>
+</div>
+
+<!-- PROFILE MODAL with logo & auth forms -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeProfileModal"><i class="fas fa-times"></i></button>
+        <div class="profile-logo-big"><i class="fas fa-gas-pump"></i></div>
+        <div id="profileContent">
+            <button class="btn" id="showCreateAccount"><i class="fas fa-user-plus"></i> Create account with us</button>
+            <button class="btn btn-outline" id="showLogin"><i class="fas fa-sign-in-alt"></i> Log in</button>
+        </div>
+        <div id="createAccountForm" style="display:none;">
+            <h3>Create account</h3>
+            <div class="form-group"><label>Full name</label><input type="text" id="regName" placeholder="John Doe"></div>
+            <div class="form-group"><label>Phone number</label><input type="tel" id="regPhone" placeholder="+260"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="******"></div>
+            <button class="btn" id="registerDummy">Register (demo)</button>
+            <button class="btn-outline btn" id="backToProfile">Back</button>
+        </div>
+        <div id="loginForm" style="display:none;">
+            <h3>Log in</h3>
+            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="******"></div>
+            <button class="btn" id="loginDummy">Log in (demo)</button>
+            <button class="btn-outline btn" id="backToProfileFromLogin">Back</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function() {
-    // ---------- CONFIG / STATE ----------
+    // ---------- original state ----------
     let stations = [];
     let userLocation = null;
     let currentFilter = 'all';
@@ -567,11 +664,9 @@
     let map, clusterGroup, routingControl = null;
     let currentModalId = null;
     let userMarker = null;
-
-    // cache for city reverse geocode
     const cityCache = new Map();
 
-    // ---------- UTILS ----------
+    // haversine
     const haversine = (lat1, lon1, lat2, lon2) => {
         const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -585,20 +680,16 @@
         stations.forEach(s => { s.distance = haversine(userLocation.lat, userLocation.lng, s.lat, s.lon); });
     };
 
-    // basic open now check (supports 24/7 and simple ranges, production would need a library)
     function isOpenNow(openingHours) {
         if (!openingHours || openingHours === 'unknown') return null;
         const oh = openingHours.toLowerCase();
         if (oh.includes('24/7') || oh.includes('24 7')) return true;
-        // extremely naive: if it includes current day and time range, but we skip for brevity
-        return null; // unknown
+        return null;
     }
 
-    // get photo URL from tags (OSM image, wikimedia_commons)
     function getPhotoUrl(tags) {
         if (tags.image) return tags.image;
         if (tags.wikimedia_commons) {
-            // convert to direct thumbnail
             let file = tags.wikimedia_commons.replace(/^File:/, '');
             return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=300`;
         }
@@ -606,14 +697,11 @@
         return null;
     }
 
-    // Estimate travel time (distance km -> minutes at 50 km/h)
     function estimateTravelTime(distance) {
         if (!distance) return null;
-        let minutes = Math.round(distance / 50 * 60);
-        return minutes;
+        return Math.round(distance / 50 * 60);
     }
 
-    // ---------- FUEL / STATUS ----------
     function getFuelStatus(tags) {
         const fuel = { petrol: null, diesel: null, lpg: null, cng: null };
         if (tags['fuel:petrol'] === 'yes' || tags['fuel:petrol'] === '24/7') fuel.petrol = 'yes';
@@ -634,74 +722,25 @@
         return 'unknown';
     }
 
-    // ---------- IMPROVED AMENITIES EXTRACTION ----------
     function extractAmenities(tags) {
         let amenities = [];
-
         const getName = (type, defaultName) => {
             if (tags[type + ':name']) return tags[type + ':name'].trim();
             if (tags.brand) return tags.brand.trim();
             if (tags.operator) return tags.operator.trim();
-            // fallback: use the shop value itself
             if (tags.shop) return tags.shop.replace(/_/g, ' ');
             return defaultName;
         };
-
-        // ---- shop ----
-        if (tags.shop) {
-            let shopType = tags.shop.replace(/_/g, ' ');
-            let shopName = getName('shop', shopType);
-            amenities.push(`🛒 Shop: ${shopName}`);
-        }
-
-        // ---- pharmacy ----
-        if (tags.pharmacy) {
-            let pharmName = getName('pharmacy', 'Pharmacy');
-            amenities.push(`💊 Pharmacy: ${pharmName}`);
-        }
-
-        // ---- atm ----
-        if (tags.atm === 'yes' || tags.amenity === 'atm') {
-            let atmName = getName('atm', 'ATM');
-            amenities.push(`🏧 ${atmName}`);
-        }
-
-        // ---- car wash ----
-        if (tags.car_wash === 'yes' || tags.amenity === 'car_wash') {
-            let washName = getName('car_wash', 'Car wash');
-            amenities.push(`🧼 ${washName}`);
-        }
-
-        // ---- restaurant / fast food ----
-        if (tags.amenity === 'restaurant' || tags.amenity === 'fast_food') {
-            let type = tags.amenity === 'restaurant' ? 'Restaurant' : 'Fast food';
-            let placeName = getName(tags.amenity, type);
-            amenities.push(`🍽️ ${placeName}`);
-        }
-
-        // ---- cafe ----
-        if (tags.amenity === 'cafe') {
-            let cafeName = getName('cafe', 'Cafe');
-            amenities.push(`☕ ${cafeName}`);
-        }
-
-        // ---- toilets ----
-        if (tags.toilets === 'yes' || tags.amenity === 'toilets') {
-            amenities.push(`🚻 Toilets`);
-        }
-
-        // ---- other amenities ----
-        if (tags.amenity && !['fuel','restaurant','fast_food','cafe','atm','car_wash','pharmacy','toilets'].includes(tags.amenity)) {
-            let otherType = tags.amenity.replace(/_/g, ' ');
-            let otherName = getName(tags.amenity, otherType);
-            amenities.push(`📌 ${otherName}`);
-        }
-
-        // remove duplicates
+        if (tags.shop) { let shopType = tags.shop.replace(/_/g, ' '); amenities.push(`🛒 Shop: ${getName('shop', shopType)}`); }
+        if (tags.pharmacy) amenities.push(`💊 Pharmacy: ${getName('pharmacy', 'Pharmacy')}`);
+        if (tags.atm === 'yes' || tags.amenity === 'atm') amenities.push(`🏧 ${getName('atm', 'ATM')}`);
+        if (tags.car_wash === 'yes' || tags.amenity === 'car_wash') amenities.push(`🧼 ${getName('car_wash', 'Car wash')}`);
+        if (tags.amenity === 'restaurant' || tags.amenity === 'fast_food') amenities.push(`🍽️ ${getName(tags.amenity, tags.amenity)}`);
+        if (tags.amenity === 'cafe') amenities.push(`☕ ${getName('cafe', 'Cafe')}`);
+        if (tags.toilets === 'yes' || tags.amenity === 'toilets') amenities.push(`🚻 Toilets`);
         return [...new Set(amenities)];
     }
 
-    // ---------- OVERPASS FETCH ----------
     async function fetchStations(lat, lon, radius) {
         const query = `[out:json];(node["amenity"="fuel"](around:${radius*1000},${lat},${lon});way["amenity"="fuel"](around:${radius*1000},${lat},${lon}););out body;`;
         const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -723,14 +762,9 @@
                     if (el.tags?.['addr:city']) addr.push(el.tags['addr:city']);
                     let address = addr.join(', ') || 'local road';
                     let openingHours = el.tags?.opening_hours || (el.tags?.['24/7'] ? '24/7' : 'unknown');
-
                     stationMap.set(id, {
-                        id: id,
-                        name: name,
-                        address: address,
-                        lat, lon,
-                        tags: el.tags || {},
-                        openingHours: openingHours,
+                        id: id, name: name, address: address, lat, lon,
+                        tags: el.tags || {}, openingHours: openingHours,
                         fuel: getFuelStatus(el.tags || {}),
                         amenities: extractAmenities(el.tags || {}),
                         photoUrl: getPhotoUrl(el.tags || {}),
@@ -755,8 +789,8 @@
     function getIconForStatus(status) {
         let color = (status === 'available') ? '#16a34a' : (status === 'empty' ? '#dc2626' : '#3b82f6');
         return L.divIcon({
-            html: `<i class="fas fa-gas-pump" style="color: ${color}; font-size: 24px; filter: drop-shadow(0 2px 6px #00000040);"></i>`,
-            iconSize: [28, 28],
+            html: `<i class="fas fa-gas-pump" style="color: ${color}; font-size: 28px; filter: drop-shadow(0 3px 8px #00000050);"></i>`,
+            iconSize: [32, 32],
             className: 'fuel-marker'
         });
     }
@@ -770,15 +804,11 @@
         if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
     }
 
-    // ---------- FILTERING & RENDER ----------
     function getFilteredStations() {
         let filtered = stations.slice();
         if (currentFilter !== 'all') {
-            if (currentFilter === 'available') {
-                filtered = filtered.filter(s => s.status === 'available');
-            } else {
-                filtered = filtered.filter(s => s.fuel[currentFilter] === 'yes');
-            }
+            if (currentFilter === 'available') filtered = filtered.filter(s => s.status === 'available');
+            else filtered = filtered.filter(s => s.fuel[currentFilter] === 'yes');
         }
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
@@ -786,32 +816,16 @@
         }
         filtered.sort((a,b) => {
             if (sortBy === 'distance') return (a.distance || 999) - (b.distance || 999);
-            if (sortBy === 'name') return a.name.localeCompare(b.name);
-            return 0;
+            return a.name.localeCompare(b.name);
         });
         return filtered;
-    }
-
-    function updateFilterCounts() {
-        const total = stations.length;
-        const available = stations.filter(s => s.status === 'available').length;
-        const petrol = stations.filter(s => s.fuel.petrol === 'yes').length;
-        const diesel = stations.filter(s => s.fuel.diesel === 'yes').length;
-        const chips = document.querySelectorAll('.chip');
-        chips[0].innerHTML = `All <span class="chip-count">${total}</span>`;
-        chips[1].innerHTML = `Fuel available <span class="chip-count">${available}</span>`;
-        chips[2].innerHTML = `Petrol <span class="chip-count">${petrol}</span>`;
-        chips[3].innerHTML = `Diesel <span class="chip-count">${diesel}</span>`;
     }
 
     function renderCardsAndMarkers() {
         const filtered = getFilteredStations();
         const container = document.getElementById('stationList');
-        if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align: center; color: #4b6b4b; padding: 20px;">⛽ No real stations found in this radius</div>';
-        } else {
-            container.innerHTML = filtered.map(s => generateCard(s)).join('');
-        }
+        if (filtered.length === 0) container.innerHTML = '<div style="text-align: center; color: #4b6b4b; padding: 20px;">⛽ No stations in radius</div>';
+        else container.innerHTML = filtered.map(s => generateCard(s)).join('');
         document.querySelectorAll('.favorite-icon').forEach(btn => {
             btn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(parseInt(btn.dataset.id)); });
         });
@@ -821,13 +835,11 @@
                 openModal(parseInt(card.dataset.id));
             });
         });
-
-        // markers via cluster
         if (map && clusterGroup) {
             clusterGroup.clearLayers();
             filtered.forEach(s => {
                 const marker = L.marker([s.lat, s.lon], { icon: getIconForStatus(s.status) })
-                    .bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⛔ no fuel'}`);
+                    .bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel':'⛔ no fuel'}`);
                 marker.on('click', () => openModal(s.id));
                 clusterGroup.addLayer(marker);
             });
@@ -842,24 +854,19 @@
             let cls = 'unknown';
             if (s.fuel[f] === 'yes') cls = 'available';
             else if (s.fuel[f] === 'no') cls = 'unavailable';
-            else cls = 'unknown';
             return `<span class="fuel-badge ${cls}">${f.toUpperCase()}</span>`;
         }).join('');
         const favClass = s.favorite ? 'fas fa-heart' : 'far fa-heart';
         const amenityPreview = s.amenities.slice(0,3).map(a => `<span class="service-tag">${a}</span>`).join('');
-        const openNow = isOpenNow(s.openingHours);
-        const openBadge = openNow === true ? '<span class="open-now-badge">OPEN NOW</span>' : (openNow === false ? '<span class="open-now-badge" style="background:#a16207;">CLOSED</span>' : '');
+        const openBadge = isOpenNow(s.openingHours) === true ? '<span class="open-now-badge">OPEN</span>' : '';
         return `
             <div class="station-card" data-id="${s.id}">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between;">
                     <span class="station-name">${s.name} ${openBadge}</span>
                     <button class="favorite-icon" data-id="${s.id}"><i class="${favClass}" style="color:#dc2626;"></i></button>
                 </div>
-                <div class="address"><i class="fas fa-location-dot" style="color:#16a34a;"></i> ${s.address}</div>
-                <div class="distance-rating">
-                    <span><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km</span>
-                    <span><i class="far fa-clock"></i> ${s.openingHours === 'unknown' ? '⏳' : s.openingHours.substring(0,12)}</span>
-                </div>
+                <div class="address"><i class="fas fa-location-dot"></i> ${s.address}</div>
+                <div class="distance-rating"><span><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km</span><span><i class="far fa-clock"></i> ${s.openingHours.substring(0,12)}</span></div>
                 <div class="fuel-badges">${fuelBadges}</div>
                 <div class="service-tags">${amenityPreview}</div>
             </div>
@@ -871,48 +878,31 @@
         if (s) { s.favorite = !s.favorite; renderCardsAndMarkers(); if (currentModalId === id) openModal(id); }
     }
 
-    // ---------- MODAL with photo + travel time ----------
     function openModal(id) {
         const s = stations.find(s => s.id === id);
         if (!s) return;
         currentModalId = id;
         const fuelRows = ['petrol','diesel','lpg','cng'].map(f => {
-            let statusIcon = '';
-            if (s.fuel[f] === 'yes') statusIcon = '✅';
-            else if (s.fuel[f] === 'no') statusIcon = '❌';
-            else statusIcon = '❓';
-            return `<div style="display:flex; justify-content:space-between; margin:4px 0;"><span><i class="fas fa-gas-pump"></i> ${f.toUpperCase()}</span> <strong>${statusIcon} ${s.fuel[f] === 'yes' ? 'K (real price N/A)' : (s.fuel[f] === 'no' ? 'unavailable' : 'unknown')}</strong></div>`;
+            let statusIcon = (s.fuel[f] === 'yes') ? '✅' : (s.fuel[f] === 'no' ? '❌' : '❓');
+            return `<div><span>${f.toUpperCase()}</span> <strong>${statusIcon}</strong></div>`;
         }).join('');
         const amenitiesHtml = s.amenities.map(a => `<span class="amenity-tag">${a}</span>`).join(' ');
-        const photoHtml = s.photoUrl ? `<img src="${s.photoUrl}" class="station-photo" alt="station photo" onerror="this.style.display='none'">` : `<div class="station-photo" style="display:flex; align-items:center; justify-content:center; background:#cbd5e1;"><i class="fas fa-gas-pump" style="font-size:40px; color:#fff;"></i></div>`;
+        const photoHtml = s.photoUrl ? `<img src="${s.photoUrl}" class="station-photo" style="width:100%; height:150px; object-fit:cover; border-radius:24px;">` : `<div class="station-photo" style="background:#cbd5e1; height:150px; border-radius:24px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-gas-pump fa-3x"></i></div>`;
         const travelTime = estimateTravelTime(s.distance);
-        const timeHtml = travelTime ? `<span><i class="fas fa-clock"></i> ~${travelTime} min drive</span>` : '';
         const modalHtml = `
-            <h2 style="font-size:22px; margin-bottom:2px;">${s.name}</h2>
-            <p style="color:#2c4a2c; font-size:13px;"><i class="fas fa-map-pin"></i> ${s.address} (${s.distance?.toFixed(1)} km) ${timeHtml}</p>
+            <h2 style="font-size:26px;">${s.name}</h2>
+            <p>${s.address} (${s.distance?.toFixed(1)} km) ${travelTime ? '~'+travelTime+' min' : ''}</p>
             ${photoHtml}
-            <div style="display:flex; gap:12px; margin:8px 0; background:#ecfdf5; padding:6px 14px; border-radius:40px; font-size:12px;">
-                <span><i class="far fa-clock"></i> ${s.openingHours}</span>
-            </div>
-            <div class="fuel-list">
-                <h4 style="margin-bottom:6px;">⛽ Fuel availability</h4>
-                ${fuelRows}
-            </div>
-            <div style="margin: 14px 0;">
-                <h4 style="font-size:14px;"><i class="fas fa-store-alt"></i> Amenities</h4>
-                <div style="margin-top:6px;">${amenitiesHtml || '— none reported —'}</div>
-            </div>
-            <p style="font-size:9px; color:#6b7e6b;">last sync: ${s.lastUpdated} · currency: Zambian Kwacha (K)</p>
+            <div class="fuel-list">${fuelRows}</div>
+            <div>${amenitiesHtml}</div>
             <div style="display:flex; gap:8px; margin-top:16px;">
-                <button class="action-btn navigate-btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button>
-                <button class="action-btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> Fav</button>
-                <button class="action-btn" id="modalReport">📋 Report</button>
+                <button class="btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button>
+                <button class="btn-outline btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> Fav</button>
             </div>
         `;
         document.getElementById('modalContent').innerHTML = modalHtml;
         document.getElementById('modalNav').addEventListener('click', () => startNavigation(s.lat, s.lon, s.name));
         document.getElementById('modalFav').addEventListener('click', () => toggleFavorite(s.id));
-        document.getElementById('modalReport').addEventListener('click', () => alert('Report demo: Thanks! (real data only)'));
         document.getElementById('stationModal').classList.add('show');
     }
 
@@ -929,41 +919,18 @@
         document.getElementById('clearRouteBtn').style.display = 'flex';
     }
 
-    // ---------- CITY NAME with cache ----------
     async function updateCityName(lat, lon) {
         const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
-        if (cityCache.has(key)) {
-            document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${cityCache.get(key)}`;
-            return;
-        }
+        if (cityCache.has(key)) { document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${cityCache.get(key)}`; return; }
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
             const data = await res.json();
-            const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Zambia';
+            const city = data.address?.city || data.address?.town || data.address?.village || 'Zambia';
             cityCache.set(key, city);
             document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${city}`;
-        } catch { document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> Lusaka?`; }
+        } catch { document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> Lusaka`; }
     }
 
-    // ---------- CITY SEARCH (pan & fetch) ----------
-    async function searchCity(query) {
-        if (!query) return;
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}, Zambia&limit=1`);
-            const data = await res.json();
-            if (data.length > 0) {
-                const lat = parseFloat(data[0].lat);
-                const lon = parseFloat(data[0].lon);
-                map.setView([lat, lon], 12);
-                // optional: update userLocation to searched city? We'll keep original userLocation but allow pan
-                // we can also fetch stations around that point? For now just pan.
-                // but we can set a temporary location for station fetch? We'll add a button "search here" later.
-                // For simplicity, just pan.
-            } else alert('City not found');
-        } catch (e) { alert('Geocoding error'); }
-    }
-
-    // ---------- INIT MAP ----------
     function initMap() {
         map = L.map('map').setView([-13.133, 27.849], 6);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
@@ -977,60 +944,165 @@
         navigator.geolocation.getCurrentPosition(async (pos) => {
             userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
             if (userMarker) map.removeLayer(userMarker);
-            userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-                radius: 8, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
-            }).addTo(map).bindPopup('You are here').openPopup();
+            userMarker = L.circleMarker([userLocation.lat, userLocation.lng], { radius: 10, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9 }).addTo(map).bindPopup('You').openPopup();
             map.setView([userLocation.lat, userLocation.lng], 13);
             document.getElementById('userLocationStatus').innerHTML = `${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`;
             updateCityName(userLocation.lat, userLocation.lng);
             await loadStations(true);
         }, (err) => {
             alert('Location error: ' + err.message);
-            document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
         }, { enableHighAccuracy: true, timeout: 10000 });
     }
 
-    // ---------- EVENT LISTENERS ----------
+    // new fullscreen
+    document.getElementById('fullscreenMapBtn').addEventListener('click', () => {
+        const mapElem = document.getElementById('map');
+        if (mapElem.requestFullscreen) mapElem.requestFullscreen();
+        else alert('Fullscreen not supported');
+    });
+
+    // nav modals
+    const searchModal = document.getElementById('searchModal');
+    const favModal = document.getElementById('favModal');
+    const profileModal = document.getElementById('profileModal');
+    const closeModals = () => {
+        searchModal.classList.remove('show');
+        favModal.classList.remove('show');
+        profileModal.classList.remove('show');
+    };
+    document.getElementById('closeSearchModal').addEventListener('click', closeModals);
+    document.getElementById('closeFavModal').addEventListener('click', closeModals);
+    document.getElementById('closeProfileModal').addEventListener('click', closeModals);
+    document.getElementById('navSearch').addEventListener('click', () => {
+        closeModals();
+        searchModal.classList.add('show');
+        updateSearchModalResults();
+    });
+    document.getElementById('navFav').addEventListener('click', () => {
+        closeModals();
+        favModal.classList.add('show');
+        renderFavList();
+    });
+    document.getElementById('navProfile').addEventListener('click', () => {
+        closeModals();
+        profileModal.classList.add('show');
+    });
+    document.getElementById('navRefresh').addEventListener('click', () => { if (userLocation) loadStations(true); });
+    document.getElementById('navMap').addEventListener('click', closeModals);
+
+    // search modal logic
+    const searchInputModal = document.getElementById('searchModalInput');
+    const searchResultsDiv = document.getElementById('searchModalResults');
+    function updateSearchModalResults() {
+        if (!stations.length) { searchResultsDiv.innerHTML = '<p>No stations loaded</p>'; return; }
+        const query = searchInputModal.value.toLowerCase();
+        let filtered = stations.filter(s => s.name.toLowerCase().includes(query) || s.address.toLowerCase().includes(query));
+        filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
+        if (filtered.length === 0) searchResultsDiv.innerHTML = '<p>No matches</p>';
+        else {
+            searchResultsDiv.innerHTML = filtered.slice(0,10).map(s => `
+                <div class="search-result-item" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}">
+                    <strong>${s.name}</strong><br>
+                    <small>${s.address} · ${s.distance?.toFixed(1)} km</small>
+                </div>
+            `).join('');
+            document.querySelectorAll('.search-result-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const lat = parseFloat(el.dataset.lat);
+                    const lon = parseFloat(el.dataset.lon);
+                    const name = el.dataset.name;
+                    startNavigation(lat, lon, name);
+                    closeModals();
+                });
+            });
+        }
+    }
+    searchInputModal.addEventListener('input', updateSearchModalResults);
+
+    function renderFavList() {
+        const favs = stations.filter(s => s.favorite);
+        const container = document.getElementById('favModalList');
+        if (favs.length === 0) container.innerHTML = '<p>No favorites yet</p>';
+        else {
+            container.innerHTML = favs.map(s => `
+                <div class="search-result-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}">
+                    <strong>${s.name}</strong> <i class="fas fa-heart" style="color:#dc2626;"></i><br>
+                    <small>${s.address} · ${s.distance?.toFixed(1)} km</small><br>
+                    <button class="remove-fav" data-id="${s.id}" style="background:none; border:none; color:#dc2626;"><i class="fas fa-trash"></i> remove</button>
+                </div>
+            `).join('');
+            document.querySelectorAll('.remove-fav').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    toggleFavorite(id);
+                    renderFavList();
+                });
+            });
+            document.querySelectorAll('[data-id]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.remove-fav')) return;
+                    const lat = parseFloat(el.dataset.lat);
+                    const lon = parseFloat(el.dataset.lon);
+                    startNavigation(lat, lon, 'favorite');
+                    closeModals();
+                });
+            });
+        }
+    }
+
+    // profile modal forms
+    const profileContent = document.getElementById('profileContent');
+    const createAccountForm = document.getElementById('createAccountForm');
+    const loginForm = document.getElementById('loginForm');
+    document.getElementById('showCreateAccount').addEventListener('click', () => {
+        profileContent.style.display = 'none';
+        createAccountForm.style.display = 'block';
+    });
+    document.getElementById('showLogin').addEventListener('click', () => {
+        profileContent.style.display = 'none';
+        loginForm.style.display = 'block';
+    });
+    document.getElementById('backToProfile').addEventListener('click', () => {
+        createAccountForm.style.display = 'none';
+        profileContent.style.display = 'block';
+    });
+    document.getElementById('backToProfileFromLogin').addEventListener('click', () => {
+        loginForm.style.display = 'none';
+        profileContent.style.display = 'block';
+    });
+    document.getElementById('registerDummy').addEventListener('click', () => alert('Firebase integration later'));
+    document.getElementById('loginDummy').addEventListener('click', () => alert('Firebase login later'));
+
+    // existing listeners
     document.getElementById('nearMeBtn').addEventListener('click', locateAndFetch);
     document.getElementById('floatLocateBtn').addEventListener('click', () => { if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15); else locateAndFetch(); });
     document.getElementById('floatRefreshBtn').addEventListener('click', () => { if (userLocation) loadStations(true); });
-    document.getElementById('refreshNav').addEventListener('click', () => { if (userLocation) loadStations(true); });
-
-    document.getElementById('radiusSlider').addEventListener('input', (e) => {
-        radiusKm = parseFloat(e.target.value);
-        document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
-        if (userLocation) loadStations(false);
-    });
+    document.getElementById('radiusSlider').addEventListener('input', (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (userLocation) loadStations(false); });
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderCardsAndMarkers(); });
     document.getElementById('clearSearchBtn').addEventListener('click', () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderCardsAndMarkers(); });
     document.getElementById('sortSelect').addEventListener('change', (e) => { sortBy = e.target.value; renderCardsAndMarkers(); });
     document.querySelectorAll('.chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
+        chip.addEventListener('click', function() {
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            currentFilter = chip.dataset.filter;
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
             renderCardsAndMarkers();
         });
     });
     document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('stationModal').classList.remove('show'));
-    window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.getElementById('stationModal').classList.remove('show'); });
-
-    // city search
-    document.getElementById('citySearchBtn').addEventListener('click', () => {
-        searchCity(document.getElementById('citySearchInput').value);
-    });
-    document.getElementById('citySearchInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') searchCity(e.target.value);
-    });
-
-    // clear route
-    document.getElementById('clearRouteBtn').addEventListener('click', () => {
-        if (routingControl) {
-            map.removeControl(routingControl);
-            routingControl = null;
-            document.getElementById('clearRouteBtn').style.display = 'none';
-        }
-    });
+    window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); });
+    document.getElementById('citySearchBtn').addEventListener('click', () => searchCity(document.getElementById('citySearchInput').value));
+    document.getElementById('citySearchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') searchCity(e.target.value); });
+    async function searchCity(query) {
+        if (!query) return;
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}, Zambia&limit=1`);
+            const data = await res.json();
+            if (data.length > 0) map.setView([parseFloat(data[0].lat), parseFloat(data[0].lon)], 12);
+        } catch (e) { alert('Geocoding error'); }
+    }
+    document.getElementById('clearRouteBtn').addEventListener('click', () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } });
 
     // start
     initMap();
