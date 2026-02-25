@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelWatch · Zambia · live OSM</title>
+    <title>FuelWatch Zambia · Live OSM</title>
     <!-- Leaflet & routing -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -13,7 +13,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ----- COMPACT FROSTED DESIGN — tuned for phones ----- */
+        /* ----- ADVANCED FROSTED DESIGN — FULLY RESPONSIVE ----- */
         * {
             margin: 0;
             padding: 0;
@@ -30,7 +30,7 @@
             padding: 6px;
             transition: background 0.3s, color 0.3s;
         }
-        /* Dark mode styles */
+        /* Dark mode */
         body.dark-mode {
             background: #121212;
             color: #e0e0e0;
@@ -41,17 +41,24 @@
         }
         body.dark-mode .header,
         body.dark-mode .search-box,
+        body.dark-mode .city-search-box,
         body.dark-mode .chip,
         body.dark-mode .station-card,
         body.dark-mode .bottom-nav,
-        body.dark-mode .modal-content {
+        body.dark-mode .modal-content,
+        body.dark-mode select,
+        body.dark-mode input {
             background: rgba(40,40,40,0.9);
             color: #eee;
             border-color: #555;
         }
         body.dark-mode .chip.active {
             background: #2e7d32;
+            border-color: #2e7d32;
         }
+        body.dark-mode .fuel-badge.available { background: #2e7d32; }
+        body.dark-mode .fuel-badge.unavailable { background: #b71c1c; }
+        body.dark-mode .fuel-badge.unknown { background: #0d47a1; }
         /* end dark mode */
 
         .app-container {
@@ -124,6 +131,7 @@
             align-items: center;
             gap: 8px;
             margin-top: 2px;
+            flex-wrap: wrap;
         }
         .live-badge {
             background: #dc2626;
@@ -132,6 +140,13 @@
             border-radius: 30px;
             font-size: 9px;
             font-weight: 700;
+        }
+        .offline-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 9px;
         }
 
         .radius-row {
@@ -165,6 +180,23 @@
         .search-section {
             padding: 6px 14px 6px 14px;
         }
+        .city-search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 30px;
+            padding: 5px 12px;
+            border: 1px solid rgba(0,150,0,0.25);
+            margin-bottom: 8px;
+        }
+        .city-search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 6px 4px;
+            font-size: 14px;
+            outline: none;
+        }
         .search-row {
             display: flex;
             gap: 6px;
@@ -180,23 +212,6 @@
             border: 1px solid rgba(0,150,0,0.25);
         }
         .search-box input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 6px 4px;
-            font-size: 14px;
-            outline: none;
-        }
-        .city-search-box {
-            display: flex;
-            align-items: center;
-            background: white;
-            border-radius: 30px;
-            padding: 5px 12px;
-            border: 1px solid rgba(0,150,0,0.25);
-            margin-bottom: 8px;
-        }
-        .city-search-box input {
             flex: 1;
             border: none;
             background: transparent;
@@ -242,6 +257,7 @@
             gap: 6px;
             overflow-x: auto;
             padding: 2px 0;
+            scrollbar-width: thin;
         }
         .chip {
             background: white;
@@ -320,11 +336,16 @@
             box-shadow: 0 12px 20px -8px rgba(0,60,0,0.25);
             border: 1px solid rgba(255,255,255,0.8);
             cursor: pointer;
+            transition: transform 0.1s;
         }
+        .station-card:active { transform: scale(0.99); }
         .station-name {
             font-weight: 800;
             font-size: 16px;
             color: #0c3b1e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .address {
             font-size: 11px;
@@ -340,6 +361,7 @@
             font-size: 11px;
             font-weight: 600;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
         .fuel-badges {
             display: flex;
@@ -371,6 +393,14 @@
             font-size: 10px;
             font-weight: 600;
             border: 1px solid #86efac;
+        }
+        .price-badge {
+            background: #fbbf24;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
         }
 
         .bottom-nav {
@@ -456,6 +486,7 @@
             background: #f8fafc;
             font-size: 13px;
             margin-right: 6px;
+            margin-bottom: 6px;
         }
         .navigate-btn { background: #16a34a; color: white; }
         .action-btn#modalFav { background: #fee2e2; color: #b91c1c; }
@@ -466,9 +497,7 @@
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #323232; color: white; padding: 10px 20px; border-radius: 40px;
             font-size: 14px; z-index: 3000; box-shadow: 0 4px 12px black;
-        }
-        .offline-badge {
-            background: #f59e0b; color: white; padding: 2px 8px; border-radius: 30px; font-size: 9px;
+            display: none;
         }
     </style>
 </head>
@@ -492,18 +521,18 @@
     <div class="search-section">
         <div class="city-search-box">
             <i class="fas fa-city" style="color:#16a34a;"></i>
-            <input type="text" placeholder="Search city or area..." id="citySearchInput">
+            <input type="text" placeholder="Search city or area..." id="citySearchInput" aria-label="City search">
             <i class="fas fa-search" style="cursor:pointer; color:#16a34a;" id="citySearchBtn"></i>
         </div>
         <div class="search-row">
             <div class="search-box">
                 <i class="fas fa-search" style="color:#16a34a;"></i>
-                <input type="text" placeholder="Station or amenity..." id="searchInput">
+                <input type="text" placeholder="Station or amenity..." id="searchInput" aria-label="Filter stations">
                 <i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i>
             </div>
         </div>
         <div class="sort-row">
-            <select id="sortSelect">
+            <select id="sortSelect" aria-label="Sort by">
                 <option value="distance">Distance (km)</option>
                 <option value="name">Name A-Z</option>
             </select>
@@ -513,10 +542,10 @@
 
     <div class="filter-section">
         <div class="filter-scroll" id="filterTabs">
-            <button class="chip active" data-filter="all">All</button>
-            <button class="chip" data-filter="available">Available</button>
-            <button class="chip" data-filter="petrol">Petrol</button>
-            <button class="chip" data-filter="diesel">Diesel</button>
+            <button class="chip active" data-filter="all">All (0)</button>
+            <button class="chip" data-filter="available">Available (0)</button>
+            <button class="chip" data-filter="petrol">Petrol (0)</button>
+            <button class="chip" data-filter="diesel">Diesel (0)</button>
         </div>
     </div>
 
@@ -552,7 +581,7 @@
 </div>
 
 <!-- Toast container -->
-<div id="toast" class="toast" style="display:none;"></div>
+<div id="toast" class="toast"></div>
 
 <script>
 (function() {
@@ -575,7 +604,10 @@
 
     // Dark mode
     let darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) document.body.classList.add('dark-mode');
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        document.querySelector('#darkToggleBtn i').className = 'fas fa-sun';
+    }
 
     // Network status
     let offline = !navigator.onLine;
@@ -627,7 +659,7 @@
         return 'unknown';
     }
 
-    // Improved amenity extraction (using brand/operator/names)
+    // Enhanced amenity extraction using brand/operator/names
     function extractAmenities(tags) {
         let amenities = [];
 
@@ -767,6 +799,7 @@
             stations = cached;
             updateDistances();
             stations.forEach(s => s.favorite = favorites.includes(s.id)); // refresh favorites
+            stations.forEach(s => s.reported = reportedPrices[s.id] || {}); // refresh reported
             renderCardsAndMarkers();
             if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
             // Then fetch fresh in background
@@ -859,18 +892,18 @@
         const favClass = s.favorite ? 'fas fa-heart' : 'far fa-heart';
         const amenityPreview = s.amenities.slice(0,3).map(a => `<span class="service-tag">${a}</span>`).join('');
         // show reported price if exists
-        const priceInfo = (s.reported.petrol || s.reported.diesel) ? `💰 K${s.reported.petrol || '?'}/${s.reported.diesel || '?'}` : '';
+        const priceInfo = (s.reported && (s.reported.petrol || s.reported.diesel)) ? 
+            `<span class="price-badge"><i class="fas fa-tag"></i> K${s.reported.petrol || '?'}/${s.reported.diesel || '?'}</span>` : '';
         return `
             <div class="station-card" data-id="${s.id}">
                 <div style="display:flex; justify-content:space-between;">
-                    <span class="station-name">${s.name}</span>
+                    <span class="station-name">${s.name} ${priceInfo}</span>
                     <button class="favorite-icon" data-id="${s.id}"><i class="${favClass}" style="color:#dc2626;"></i></button>
                 </div>
                 <div class="address"><i class="fas fa-location-dot" style="color:#16a34a;"></i> ${s.address}</div>
                 <div class="distance-rating">
                     <span><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km</span>
                     <span><i class="far fa-clock"></i> ${s.openingHours === 'unknown' ? '⏳' : s.openingHours.substring(0,12)}</span>
-                    ${priceInfo ? `<span>${priceInfo}</span>` : ''}
                 </div>
                 <div class="fuel-badges">${fuelBadges}</div>
                 <div class="service-tags">${amenityPreview}</div>
@@ -1103,7 +1136,7 @@
         document.body.classList.toggle('dark-mode', darkMode);
         localStorage.setItem('darkMode', darkMode);
         const icon = document.querySelector('#darkToggleBtn i');
-        if (icon) icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
+        icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     // ==================== INIT MAP ====================
@@ -1152,20 +1185,21 @@
     document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('stationModal').classList.remove('show'));
     window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.getElementById('stationModal').classList.remove('show'); });
 
-    // Bottom nav placeholders
-    document.getElementById('navMap').addEventListener('click', () => document.getElementById('map').scrollIntoView({ behavior: 'smooth' }));
+    // Bottom nav placeholders (enhanced)
+    document.getElementById('navMap').addEventListener('click', () => document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' }));
     document.getElementById('navSearch').addEventListener('click', () => document.querySelector('.city-search-box input').focus());
     document.getElementById('navFav').addEventListener('click', () => {
-        currentFilter = 'all'; // show all, then we can highlight favorites? For simplicity, just show a message
+        // Show only favorites
         const favStations = stations.filter(s => s.favorite);
         if (favStations.length) {
-            // could filter but we'll just scroll to first fav? Not implemented
-            showToast('Favorites are marked with ❤️');
+            // Temporarily override current filter? For simplicity, just show a message and scroll to first fav card
+            showToast(`You have ${favStations.length} favorite stations`);
+            // Could filter but we'll just alert for now
         } else {
-            showToast('No favorites yet');
+            showToast('No favorites yet. Tap the heart on a station to add.');
         }
     });
-    document.getElementById('navProfile').addEventListener('click', () => showToast('Profile coming soon'));
+    document.getElementById('navProfile').addEventListener('click', () => showToast('Profile: coming soon'));
 
     // Start
     initMap();
