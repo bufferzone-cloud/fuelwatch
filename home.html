@@ -13,7 +13,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ----- ADVANCED FROSTED DESIGN — FULLY RESPONSIVE ----- */
+        /* ----- FULLY ADVANCED & RESPONSIVE DESIGN ----- */
         * {
             margin: 0;
             padding: 0;
@@ -147,6 +147,11 @@
             padding: 2px 8px;
             border-radius: 30px;
             font-size: 9px;
+        }
+        .location-error {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 10px;
         }
 
         .radius-row {
@@ -790,7 +795,10 @@
 
     // ==================== LOAD STATIONS ====================
     async function loadStations(showSpinner = true) {
-        if (!userLocation) return;
+        if (!userLocation) {
+            showToast('Location not available. Please allow location or search for a city.');
+            return;
+        }
         if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<span class="spinner"></span> loading';
 
         // Try cache first
@@ -1102,24 +1110,73 @@
         }
     }
 
-    // ==================== LOCATE USER ====================
+    // ==================== LOCATE USER (FIXED & ROBUST) ====================
     function locateAndFetch() {
-        if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
-        document.getElementById('userLocationStatus').innerText = 'locating...';
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            if (userMarker) map.removeLayer(userMarker);
-            userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-                radius: 8, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
-            }).addTo(map).bindPopup('You are here').openPopup();
-            map.setView([userLocation.lat, userLocation.lng], 13);
-            document.getElementById('userLocationStatus').innerHTML = `${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`;
-            updateCityName(userLocation.lat, userLocation.lng);
-            await loadStations(true);
-        }, (err) => {
-            alert('Location error: ' + err.message);
-            document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
-        }, { enableHighAccuracy: true, timeout: 10000 });
+        if (!navigator.geolocation) {
+            document.getElementById('userLocationStatus').innerHTML = '<span class="location-error">Geolocation not supported</span>';
+            showToast('Geolocation not supported by your browser');
+            return;
+        }
+
+        document.getElementById('userLocationStatus').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> locating...';
+        document.getElementById('nearMeBtn').innerHTML = '<span class="spinner"></span> locating';
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                // Success
+                userLocation = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                };
+
+                // Update map and marker
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
+                    radius: 8,
+                    color: '#16a34a',
+                    fillColor: '#16a34a',
+                    fillOpacity: 0.9,
+                    weight: 2
+                }).addTo(map).bindPopup('You are here').openPopup();
+
+                map.setView([userLocation.lat, userLocation.lng], 13);
+
+                // Update UI
+                document.getElementById('userLocationStatus').innerHTML =
+                    `${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`;
+                document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
+
+                // Get city name and load stations
+                await updateCityName(userLocation.lat, userLocation.lng);
+                await loadStations(false); // false = don't show spinner again (already showing)
+            },
+            (err) => {
+                // Error handler with user-friendly messages
+                console.warn('Geolocation error:', err);
+                let msg = 'Location error';
+                switch(err.code) {
+                    case err.PERMISSION_DENIED:
+                        msg = '📍 Permission denied. Please enable location or search for a city.';
+                        break;
+                    case err.POSITION_UNAVAILABLE:
+                        msg = '📍 Location unavailable. Try again or search for a city.';
+                        break;
+                    case err.TIMEOUT:
+                        msg = '📍 Location timed out. Check GPS or search for a city.';
+                        break;
+                }
+                document.getElementById('userLocationStatus').innerHTML = `<span class="location-error">${msg}</span>`;
+                document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
+                showToast(msg, 5000);
+            },
+            options
+        );
     }
 
     // ==================== TOAST ====================
@@ -1142,7 +1199,9 @@
     // ==================== INIT MAP ====================
     function initMap() {
         map = L.map('map').setView([-13.133, 27.849], 6);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap, © CartoDB'
+        }).addTo(map);
         // Use marker cluster
         markersLayer = L.markerClusterGroup({ disableClusteringAtZoom: 15 });
         map.addLayer(markersLayer);
@@ -1150,7 +1209,10 @@
 
     // ==================== EVENT LISTENERS ====================
     document.getElementById('nearMeBtn').addEventListener('click', locateAndFetch);
-    document.getElementById('floatLocateBtn').addEventListener('click', () => { if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15); else locateAndFetch(); });
+    document.getElementById('floatLocateBtn').addEventListener('click', () => {
+        if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15);
+        else locateAndFetch();
+    });
     document.getElementById('floatRefreshBtn').addEventListener('click', () => { if (userLocation) loadStations(true); });
     document.getElementById('navRefresh').addEventListener('click', () => { if (userLocation) loadStations(true); });
     document.getElementById('clearRouteBtn').addEventListener('click', clearRoute);
@@ -1189,21 +1251,18 @@
     document.getElementById('navMap').addEventListener('click', () => document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' }));
     document.getElementById('navSearch').addEventListener('click', () => document.querySelector('.city-search-box input').focus());
     document.getElementById('navFav').addEventListener('click', () => {
-        // Show only favorites
         const favStations = stations.filter(s => s.favorite);
         if (favStations.length) {
-            // Temporarily override current filter? For simplicity, just show a message and scroll to first fav card
             showToast(`You have ${favStations.length} favorite stations`);
-            // Could filter but we'll just alert for now
         } else {
             showToast('No favorites yet. Tap the heart on a station to add.');
         }
     });
     document.getElementById('navProfile').addEventListener('click', () => showToast('Profile: coming soon'));
 
-    // Start
+    // Start: initialize map and try to locate user
     initMap();
-    locateAndFetch();
+    locateAndFetch(); // This will now show proper errors and handle permissions gracefully
 })();
 </script>
 </body>
