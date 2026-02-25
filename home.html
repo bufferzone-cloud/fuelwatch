@@ -23,28 +23,28 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        body {
-            background: #ffffff;        /* pure white, no tint */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 0;                /* remove outer padding */
-            font-size: 110%;
-        }
+       body {
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;      /* full height */
+    height: 100vh;             /* exact viewport height */
+    overflow: hidden;          /* prevent page scroll */
+    font-size: 110%;
+}
 
-        /* main container: flat, no radius, no shadow, no border */
-        .app-container {
-            width: 100%;
-            max-width: 528px;           /* keep readable width, but no curves */
-            background: #ffffff;
-            box-shadow: none;            /* remove shadow */
-            height: 98vh;
-            display: flex;
-            flex-direction: column;
-            border-radius: 0;            /* no rounded corners */
-            border: none;                /* no border */
-        }
+.app-container {
+    width: 100%;
+    max-width: 528px;
+    background: #ffffff;
+    box-shadow: none;
+    height: 100vh;             /* use full height */
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    border: none;
+    overflow: hidden;          /* internal scrolling only */
+}
 
         /* header remains solid white */
         .header {
@@ -1164,3 +1164,4 @@
     </script>
 </body>
 </html>
+
