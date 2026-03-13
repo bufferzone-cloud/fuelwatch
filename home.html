@@ -137,24 +137,31 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        /* LOCATION DETAIL – larger and centered */
         .location-detail {
-            font-size: 12px;
+            font-size: 16px;          /* increased */
+            font-weight: 600;
             color: #2c4a2c;
-            margin-top: 4px;
+            margin-top: 8px;
             display: flex;
             align-items: center;
+            justify-content: center;   /* center horizontally */
             gap: 8px;
             background: #f0fdf4;
-            padding: 6px 12px;
-            border-radius: 40px;
+            padding: 10px 16px;        /* more padding */
+            border-radius: 60px;
             border: 1px solid #bbf7d0;
+            text-align: center;
+            width: 100%;
         }
         .location-detail i {
             color: #16a34a;
+            font-size: 18px;
         }
         #userLocationRoad {
-            font-weight: 600;
+            font-weight: 700;
             color: #14532d;
+            line-height: 1.4;
         }
 
         /* ----- CUSTOM CAR SLIDER (road style) ----- */
@@ -360,10 +367,12 @@
             padding: 12px 0;
             z-index: 10;
             border-bottom: 1px solid #e0f0e0;
+            flex-wrap: wrap; /* allow search on next line on small screens */
         }
         .modal-header h2 {
             font-size: 24px;
             color: #166534;
+            margin-right: auto;
         }
         .close-modal-btn {
             background: none;
@@ -371,7 +380,21 @@
             font-size: 28px;
             color: #16a34a;
             cursor: pointer;
-            margin-left: auto;
+        }
+        /* NEW: search bar in fuel page */
+        .fuel-search {
+            width: 100%;
+            margin: 8px 0 16px 0;
+            padding: 12px 16px;
+            border-radius: 60px;
+            border: 2px solid #bbf7d0;
+            font-size: 16px;
+            background: #f0fdf4;
+            color: #14532d;
+        }
+        .fuel-search:focus {
+            outline: none;
+            border-color: #16a34a;
         }
         .station-list-full {
             display: flex;
@@ -530,19 +553,20 @@
                 <span class="header-title">FUELRADAR</span>
                 <div style="width: 40px;"></div> <!-- spacer -->
             </div>
+            <!-- LOCATION DETAIL: bigger and centered -->
             <div class="location-detail" id="locationDetail">
                 <i class="fas fa-map-pin"></i>
                 <span id="userLocationRoad">Detecting location...</span>
             </div>
         </div>
 
-        <!-- CUSTOM CAR RADIUS SLIDER (replaces city search) -->
+        <!-- CUSTOM CAR RADIUS SLIDER (default 5 km) -->
         <div class="radius-row">
             <div class="car-slider-container" id="carSliderContainer">
                 <div class="road-line"></div>
                 <div class="car-thumb" id="carThumb"><i class="fas fa-car-side"></i></div>
             </div>
-            <span class="radius-value" id="radiusDisplay">3 km</span>
+            <span class="radius-value" id="radiusDisplay">5 km</span>
         </div>
 
         <!-- FILTER TABS -->
@@ -576,12 +600,14 @@
         </div>
     </div>
 
-    <!-- FULL-PAGE FUEL STATION MODAL (middle nav) -->
+    <!-- FULL-PAGE FUEL STATION MODAL (middle nav) with SEARCH -->
     <div class="full-page-modal" id="fuelStationModal">
         <div class="modal-header">
             <h2><i class="fas fa-gas-pump" style="color:#16a34a;"></i> Fuel Stations</h2>
             <button class="close-modal-btn" id="closeFuelModal"><i class="fas fa-times"></i></button>
         </div>
+        <!-- SEARCH INPUT (new) -->
+        <input type="text" class="fuel-search" id="fuelSearchInput" placeholder="🔍 Search by name or address...">
         <div class="station-list-full" id="fuelStationFullList">
             <!-- populated dynamically -->
         </div>
@@ -632,16 +658,15 @@
                 setTimeout(() => {
                     overlay.classList.add('hide');
                     appContainer.style.display = 'flex'; // show main app
-                }, 800); // after shrink animation
-            }, 5000); // pulse for 5s
+                }, 800);
+            }, 5000);
 
             // ---------- GLOBAL STATE ----------
             let stations = [];
             let userLocation = null;
             let currentFilter = 'all';
-            let searchQuery = ''; // we might not use search now, but keep
-            let sortBy = 'distance';
-            let radiusKm = 3;
+            let searchQuery = '';          // for fuel page search
+            let radiusKm = 5;               // CHANGED: default 5 km
             let map, clusterGroup, routingControl = null;
             let userMarker = null;
             let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
@@ -671,7 +696,6 @@
                 if (!openingHours || openingHours === 'unknown') return null;
                 const oh = openingHours.toLowerCase();
                 if (oh.includes('24/7') || oh.includes('24 7')) return true;
-                // simple check: if it contains today? ignore for demo
                 return null;
             }
 
@@ -719,7 +743,7 @@
                 return amenities.length ? amenities : ['⛽ Fuel station'];
             }
 
-            // Overpass API query with better amenity detection
+            // Overpass API query with real data
             async function fetchStations(lat, lon, radius) {
                 const query = `[out:json];(node["amenity"="fuel"](around:${radius*1000},${lat},${lon});way["amenity"="fuel"](around:${radius*1000},${lat},${lon}););out body;`;
                 const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -795,6 +819,14 @@
                         filtered = filtered.filter(s => s.fuel[currentFilter] === 'yes');
                     }
                 }
+                // apply search query (if any)
+                if (searchQuery.trim() !== '') {
+                    const q = searchQuery.toLowerCase();
+                    filtered = filtered.filter(s => 
+                        s.name.toLowerCase().includes(q) || 
+                        s.address.toLowerCase().includes(q)
+                    );
+                }
                 filtered.sort((a,b) => (a.distance || 999) - (b.distance || 999));
                 return filtered;
             }
@@ -810,7 +842,7 @@
                 document.getElementById('countDiesel').innerText = diesel;
             }
 
-            // Render map markers (no station list below map anymore)
+            // Render map markers
             function renderCardsAndMarkers() {
                 const filtered = getFilteredStations();
                 if (clusterGroup) {
@@ -824,9 +856,14 @@
                 }
             }
 
-            // ---------- CUSTOM SLIDER (car) ----------
+            // ---------- CUSTOM SLIDER (car) with default 5 km ----------
             function initCarSlider() {
                 const min = 1, max = 8;
+                // Set initial thumb to 5 km
+                const initialPercent = ((radiusKm - min) / (max - min)) * 100;
+                carThumb.style.left = initialPercent + '%';
+                radiusDisplay.innerText = radiusKm + ' km';
+
                 const updateRadiusFromPos = (clientX) => {
                     const rect = sliderContainer.getBoundingClientRect();
                     let x = clientX - rect.left;
@@ -850,7 +887,6 @@
                 window.addEventListener('mouseup', () => {
                     isDragging = false;
                 });
-                // touch support
                 carThumb.addEventListener('touchstart', (e) => {
                     isDragging = true;
                     e.preventDefault();
@@ -862,9 +898,6 @@
                 window.addEventListener('touchend', () => {
                     isDragging = false;
                 });
-                // initial position
-                const initialPercent = ((radiusKm - min) / (max - min)) * 100;
-                carThumb.style.left = initialPercent + '%';
             }
 
             // ---------- LOCATION DETECTION (with road, city, area) ----------
@@ -893,7 +926,6 @@
                         reject();
                         return;
                     }
-                    // Check permission status to avoid repeated prompts
                     navigator.permissions.query({ name: 'geolocation' }).then(perm => {
                         if (perm.state === 'denied') {
                             alert('Location access denied. Please enable in settings.');
@@ -942,7 +974,7 @@
                     fitSelectedRoutes: true,
                     lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] },
                     showAlternatives: false,
-                    createMarker: () => null, // hide default markers
+                    createMarker: () => null,
                     addWaypoints: false,
                 }).addTo(map);
                 document.getElementById('clearRouteBtn').style.display = 'flex';
@@ -952,7 +984,6 @@
             function openModal(id) {
                 const s = stations.find(s => s.id === id);
                 if (!s) return;
-                // (modal content generation similar to original, but we'll keep concise)
                 const fuelRows = ['petrol','diesel','lpg','cng'].map(f => {
                     let statusIcon = '';
                     if (s.fuel[f] === 'yes') statusIcon = '✅';
@@ -999,11 +1030,13 @@
                 }
             }
 
-            // ---------- FULL FUEL STATION PAGE (middle nav) ----------
+            // ---------- FULL FUEL STATION PAGE (middle nav) with SEARCH ----------
             function showFuelStationPage() {
                 const modal = document.getElementById('fuelStationModal');
                 const list = document.getElementById('fuelStationFullList');
-                const filtered = getFilteredStations(); // use current filter/sort
+                const searchInput = document.getElementById('fuelSearchInput');
+                // apply current search query (from global)
+                const filtered = getFilteredStations();
                 if (filtered.length === 0) {
                     list.innerHTML = '<p style="text-align:center; color:#4b6b4b;">No stations found.</p>';
                 } else {
@@ -1060,8 +1093,17 @@
                 document.getElementById('navFuelStations').addEventListener('click', () => {
                     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                     document.getElementById('navFuelStations').classList.add('active');
+                    // reset search input when opening
+                    document.getElementById('fuelSearchInput').value = '';
+                    searchQuery = '';
                     showFuelStationPage();
                 });
+                // SEARCH INPUT LISTENER
+                document.getElementById('fuelSearchInput').addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    showFuelStationPage(); // re-render with filter
+                });
+
                 document.getElementById('closeFuelModal').addEventListener('click', () => {
                     document.getElementById('fuelStationModal').classList.remove('show');
                 });
