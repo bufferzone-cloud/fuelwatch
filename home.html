@@ -30,7 +30,7 @@
             height: 100%;
             background: #ffffff;
             overflow: hidden;
-            font-size: 93.5%; /* 15% reduction from 110% (original base) */
+            font-size: 93.5%;
         }
 
         body {
@@ -52,7 +52,7 @@
             box-shadow: none;
         }
 
-        /* ----- LOADING OVERLAY (pulsing logo, then shrink to corner) ----- */
+        /* ----- LOADING OVERLAY (unchanged) ----- */
         #loadingOverlay {
             position: fixed;
             top: 0;
@@ -106,7 +106,7 @@
             100% { transform: scale(1); }
         }
 
-        /* ----- HEADER (logo left, title center, location info) ----- */
+        /* ----- HEADER (prominent location detail) ----- */
         .header {
             padding: 12px 16px 6px 16px;
             background: #ffffff;
@@ -137,31 +137,34 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        /* LOCATION DETAIL – larger and centered */
+        /* larger, centered location detail */
         .location-detail {
-            font-size: 16px;          /* increased */
+            font-size: 18px;          /* increased size */
             font-weight: 600;
-            color: #2c4a2c;
-            margin-top: 8px;
+            color: #14532d;
+            margin: 10px 0 4px 0;
             display: flex;
             align-items: center;
-            justify-content: center;   /* center horizontally */
-            gap: 8px;
+            justify-content: center;   /* centered */
+            gap: 10px;
             background: #f0fdf4;
-            padding: 10px 16px;        /* more padding */
+            padding: 12px 18px;        /* more padding */
             border-radius: 60px;
-            border: 1px solid #bbf7d0;
-            text-align: center;
+            border: 2px solid #bbf7d0;
             width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,80,0,0.1);
         }
         .location-detail i {
             color: #16a34a;
-            font-size: 18px;
+            font-size: 22px;
         }
         #userLocationRoad {
             font-weight: 700;
-            color: #14532d;
-            line-height: 1.4;
+            color: #0f3b1e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* ----- CUSTOM CAR SLIDER (road style) ----- */
@@ -205,7 +208,7 @@
             cursor: grab;
             transition: left 0.02s linear;
             left: 0%;
-            margin-left: -18px; /* half width */
+            margin-left: -18px;
             border: 2px solid white;
         }
         .car-thumb:active {
@@ -221,7 +224,7 @@
             white-space: nowrap;
         }
 
-        /* ----- FILTER TABS (scaled down 15%) ----- */
+        /* ----- FILTER TABS ----- */
         .filter-section {
             padding: 6px 16px;
         }
@@ -255,7 +258,7 @@
             font-size: 10px;
         }
 
-        /* ----- MAP WRAPPER (takes remaining space) ----- */
+        /* ----- MAP WRAPPER ----- */
         .map-wrapper {
             flex: 1;
             width: 100%;
@@ -316,7 +319,7 @@
             gap: 6px;
         }
 
-        /* ----- BOTTOM NAV (unchanged size) ----- */
+        /* ----- BOTTOM NAV ----- */
         .bottom-nav {
             background: #ffffff;
             border-top: 1px solid #c0e0c0;
@@ -338,7 +341,7 @@
         .nav-item.active { color: #16a34a; }
         .nav-item i { font-size: 22px; margin-bottom: 4px; }
 
-        /* ----- FULL-PAGE FUEL STATION MODAL (middle nav) ----- */
+        /* ----- FULL-PAGE FUEL STATION MODAL (with search) ----- */
         .full-page-modal {
             position: fixed;
             top: 0;
@@ -367,12 +370,10 @@
             padding: 12px 0;
             z-index: 10;
             border-bottom: 1px solid #e0f0e0;
-            flex-wrap: wrap; /* allow search on next line on small screens */
         }
         .modal-header h2 {
             font-size: 24px;
             color: #166534;
-            margin-right: auto;
         }
         .close-modal-btn {
             background: none;
@@ -380,21 +381,23 @@
             font-size: 28px;
             color: #16a34a;
             cursor: pointer;
+            margin-left: auto;
         }
-        /* NEW: search bar in fuel page */
+        /* search bar inside fuel modal */
         .fuel-search {
             width: 100%;
-            margin: 8px 0 16px 0;
-            padding: 12px 16px;
+            padding: 14px 18px;
             border-radius: 60px;
             border: 2px solid #bbf7d0;
+            background: #f9fff9;
             font-size: 16px;
-            background: #f0fdf4;
-            color: #14532d;
+            margin: 10px 0 20px 0;
+            outline: none;
+            transition: 0.2s;
         }
         .fuel-search:focus {
-            outline: none;
             border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.2);
         }
         .station-list-full {
             display: flex;
@@ -475,7 +478,7 @@
             cursor: pointer;
         }
 
-        /* ----- OTHER MODALS (scaled) ----- */
+        /* ----- OTHER MODALS (unchanged) ----- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -519,7 +522,7 @@
             display: none;
         }
 
-        /* ----- DIRECTIONS PANEL (improved) ----- */
+        /* ----- DIRECTIONS PANEL ----- */
         .leaflet-routing-container {
             background: white !important;
             border-radius: 24px !important;
@@ -539,7 +542,7 @@
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY (pulsing, then shrink to corner) -->
+    <!-- LOADING OVERLAY -->
     <div id="loadingOverlay">
         <img src="logo.png" alt="FuelRadar" class="loading-logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
     </div>
@@ -551,16 +554,16 @@
             <div class="header-row">
                 <img src="logo.png" alt="FuelRadar" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
                 <span class="header-title">FUELRADAR</span>
-                <div style="width: 40px;"></div> <!-- spacer -->
+                <div style="width: 40px;"></div>
             </div>
-            <!-- LOCATION DETAIL: bigger and centered -->
+            <!-- enlarged centered location detail -->
             <div class="location-detail" id="locationDetail">
                 <i class="fas fa-map-pin"></i>
                 <span id="userLocationRoad">Detecting location...</span>
             </div>
         </div>
 
-        <!-- CUSTOM CAR RADIUS SLIDER (default 5 km) -->
+        <!-- CAR RADIUS SLIDER (default 5km) -->
         <div class="radius-row">
             <div class="car-slider-container" id="carSliderContainer">
                 <div class="road-line"></div>
@@ -579,7 +582,7 @@
             </div>
         </div>
 
-        <!-- MAP WRAPPER (full remaining space) -->
+        <!-- MAP WRAPPER -->
         <div class="map-wrapper" id="mapWrapper">
             <div id="map"></div>
             <div class="map-left-buttons">
@@ -600,20 +603,20 @@
         </div>
     </div>
 
-    <!-- FULL-PAGE FUEL STATION MODAL (middle nav) with SEARCH -->
+    <!-- FULL-PAGE FUEL STATION MODAL (with search) -->
     <div class="full-page-modal" id="fuelStationModal">
         <div class="modal-header">
             <h2><i class="fas fa-gas-pump" style="color:#16a34a;"></i> Fuel Stations</h2>
             <button class="close-modal-btn" id="closeFuelModal"><i class="fas fa-times"></i></button>
         </div>
-        <!-- SEARCH INPUT (new) -->
-        <input type="text" class="fuel-search" id="fuelSearchInput" placeholder="🔍 Search by name or address...">
+        <!-- search input -->
+        <input type="text" class="fuel-search" id="fuelSearchInput" placeholder="🔍 Search fuel station..." autocomplete="off">
         <div class="station-list-full" id="fuelStationFullList">
             <!-- populated dynamically -->
         </div>
     </div>
 
-    <!-- OTHER MODALS (unchanged but with photo upload) -->
+    <!-- OTHER MODALS (unchanged) -->
     <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button><div id="modalContent"></div></div></div>
     <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal"><i class="fas fa-times"></i></button><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><div id="favList" style="margin-top:16px;"></div></div></div>
     <div class="modal-overlay" id="profileModal">
@@ -632,7 +635,6 @@
                 <input placeholder="Phone" class="action-btn" style="width:100%; margin-bottom:10px;">
                 <input placeholder="Email" class="action-btn" style="width:100%; margin-bottom:10px;">
                 <input type="password" placeholder="Password" class="action-btn" style="width:100%; margin-bottom:10px;">
-                <!-- Photo uploads -->
                 <div class="photo-upload">
                     <label><i class="fas fa-camera"></i> Profile photo <input type="file" accept="image/*"></label>
                     <label><i class="fas fa-car"></i> Car photo 1 <input type="file" accept="image/*"></label>
@@ -650,14 +652,14 @@
 
     <script>
         (function() {
-            // ---------- LOADING OVERLAY: pulse then shrink to corner ----------
+            // ---------- LOADING OVERLAY ----------
             const overlay = document.getElementById('loadingOverlay');
             const appContainer = document.getElementById('appContainer');
             setTimeout(() => {
                 overlay.classList.add('shrink');
                 setTimeout(() => {
                     overlay.classList.add('hide');
-                    appContainer.style.display = 'flex'; // show main app
+                    appContainer.style.display = 'flex';
                 }, 800);
             }, 5000);
 
@@ -665,12 +667,12 @@
             let stations = [];
             let userLocation = null;
             let currentFilter = 'all';
-            let searchQuery = '';          // for fuel page search
-            let radiusKm = 5;               // CHANGED: default 5 km
+            let radiusKm = 5;               // default 5km
             let map, clusterGroup, routingControl = null;
             let userMarker = null;
             let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
             let roadAddress = '';
+            let searchTerm = '';             // for fuel page search
 
             // Custom slider elements
             const carThumb = document.getElementById('carThumb');
@@ -743,7 +745,7 @@
                 return amenities.length ? amenities : ['⛽ Fuel station'];
             }
 
-            // Overpass API query with real data
+            // Overpass API query
             async function fetchStations(lat, lon, radius) {
                 const query = `[out:json];(node["amenity"="fuel"](around:${radius*1000},${lat},${lon});way["amenity"="fuel"](around:${radius*1000},${lat},${lon}););out body;`;
                 const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -793,6 +795,15 @@
                 }
             }
 
+            // Car icon for user location
+            function getCarIcon() {
+                return L.divIcon({
+                    html: `<i class="fas fa-car" style="color: #16a34a; font-size: 36px; filter: drop-shadow(0 4px 6px black);"></i>`,
+                    iconSize: [36, 36],
+                    className: 'user-car-marker'
+                });
+            }
+
             function getIconForStatus(status) {
                 let color = (status === 'available') ? '#16a34a' : (status === 'empty' ? '#dc2626' : '#3b82f6');
                 return L.divIcon({
@@ -818,14 +829,6 @@
                     } else {
                         filtered = filtered.filter(s => s.fuel[currentFilter] === 'yes');
                     }
-                }
-                // apply search query (if any)
-                if (searchQuery.trim() !== '') {
-                    const q = searchQuery.toLowerCase();
-                    filtered = filtered.filter(s => 
-                        s.name.toLowerCase().includes(q) || 
-                        s.address.toLowerCase().includes(q)
-                    );
                 }
                 filtered.sort((a,b) => (a.distance || 999) - (b.distance || 999));
                 return filtered;
@@ -856,14 +859,9 @@
                 }
             }
 
-            // ---------- CUSTOM SLIDER (car) with default 5 km ----------
+            // ---------- CUSTOM SLIDER (default 5km) ----------
             function initCarSlider() {
                 const min = 1, max = 8;
-                // Set initial thumb to 5 km
-                const initialPercent = ((radiusKm - min) / (max - min)) * 100;
-                carThumb.style.left = initialPercent + '%';
-                radiusDisplay.innerText = radiusKm + ' km';
-
                 const updateRadiusFromPos = (clientX) => {
                     const rect = sliderContainer.getBoundingClientRect();
                     let x = clientX - rect.left;
@@ -898,9 +896,12 @@
                 window.addEventListener('touchend', () => {
                     isDragging = false;
                 });
+                // initial position at 5km
+                const initialPercent = ((5 - min) / (max - min)) * 100;
+                carThumb.style.left = initialPercent + '%';
             }
 
-            // ---------- LOCATION DETECTION (with road, city, area) ----------
+            // ---------- LOCATION DETECTION (detailed road) ----------
             async function updateDetailedAddress(lat, lon) {
                 try {
                     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
@@ -935,9 +936,11 @@
                                 async (pos) => {
                                     userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                                     if (userMarker) map.removeLayer(userMarker);
-                                    userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-                                        radius: 8, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
-                                    }).addTo(map).bindPopup('You are here').openPopup();
+                                    // replace with car icon
+                                    userMarker = L.marker([userLocation.lat, userLocation.lng], { icon: getCarIcon() })
+                                        .addTo(map)
+                                        .bindPopup('You are here')
+                                        .openPopup();
                                     map.setView([userLocation.lat, userLocation.lng], 13);
                                     await updateDetailedAddress(userLocation.lat, userLocation.lng);
                                     await loadStations(true);
@@ -962,7 +965,7 @@
                 map.addLayer(clusterGroup);
             }
 
-            // ---------- NAVIGATION (route) ----------
+            // ---------- NAVIGATION ----------
             function startNavigation(destLat, destLon, destName) {
                 document.getElementById('stationModal').classList.remove('show');
                 document.getElementById('fuelStationModal').classList.remove('show');
@@ -1030,13 +1033,16 @@
                 }
             }
 
-            // ---------- FULL FUEL STATION PAGE (middle nav) with SEARCH ----------
-            function showFuelStationPage() {
+            // ---------- FUEL STATION PAGE (with search) ----------
+            function renderFuelStationList() {
                 const modal = document.getElementById('fuelStationModal');
                 const list = document.getElementById('fuelStationFullList');
-                const searchInput = document.getElementById('fuelSearchInput');
-                // apply current search query (from global)
-                const filtered = getFilteredStations();
+                let filtered = getFilteredStations();
+                // apply search term
+                if (searchTerm.trim() !== '') {
+                    const term = searchTerm.toLowerCase().trim();
+                    filtered = filtered.filter(s => s.name.toLowerCase().includes(term));
+                }
                 if (filtered.length === 0) {
                     list.innerHTML = '<p style="text-align:center; color:#4b6b4b;">No stations found.</p>';
                 } else {
@@ -1073,7 +1079,11 @@
                         });
                     });
                 }
-                modal.classList.add('show');
+            }
+
+            function showFuelStationPage() {
+                renderFuelStationList();
+                document.getElementById('fuelStationModal').classList.add('show');
             }
 
             // ---------- EVENT LISTENERS ----------
@@ -1081,7 +1091,6 @@
                 initMap();
                 initCarSlider();
 
-                // Location on load (asks permission only once)
                 locateUser().catch(() => {});
 
                 // Nav events
@@ -1093,22 +1102,18 @@
                 document.getElementById('navFuelStations').addEventListener('click', () => {
                     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                     document.getElementById('navFuelStations').classList.add('active');
-                    // reset search input when opening
-                    document.getElementById('fuelSearchInput').value = '';
-                    searchQuery = '';
                     showFuelStationPage();
                 });
-                // SEARCH INPUT LISTENER
-                document.getElementById('fuelSearchInput').addEventListener('input', (e) => {
-                    searchQuery = e.target.value;
-                    showFuelStationPage(); // re-render with filter
-                });
-
                 document.getElementById('closeFuelModal').addEventListener('click', () => {
                     document.getElementById('fuelStationModal').classList.remove('show');
                 });
+                // Search input listener
+                document.getElementById('fuelSearchInput').addEventListener('input', (e) => {
+                    searchTerm = e.target.value;
+                    renderFuelStationList();
+                });
+
                 document.getElementById('navFav').addEventListener('click', () => {
-                    // show favorites modal (similar to original)
                     const favStations = stations.filter(s => favoriteIds.includes(s.id));
                     const container = document.getElementById('favList');
                     if (favStations.length===0) container.innerHTML = '<p>No favorites yet</p>';
@@ -1120,7 +1125,7 @@
                             </div>
                         `).join('');
                         container.querySelectorAll('.favorite-icon').forEach(btn => {
-                            btn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(parseInt(btn.dataset.id)); showFavModal(); });
+                            btn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(parseInt(btn.dataset.id)); document.getElementById('navFav').click(); });
                         });
                         container.querySelectorAll('.station-card').forEach(card => {
                             card.addEventListener('click', (e) => { if(!e.target.closest('button')) openModal(parseInt(card.dataset.id)); });
@@ -1132,7 +1137,6 @@
                     document.getElementById('profileModal').classList.add('show');
                 });
 
-                // Other buttons
                 document.getElementById('floatLocateBtn').addEventListener('click', () => {
                     if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15);
                     else locateUser();
@@ -1163,6 +1167,10 @@
                         chip.classList.add('active');
                         currentFilter = chip.dataset.filter;
                         renderCardsAndMarkers();
+                        // if fuel modal is open, update list
+                        if (document.getElementById('fuelStationModal').classList.contains('show')) {
+                            renderFuelStationList();
+                        }
                     });
                 });
 
