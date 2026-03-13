@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelWatch · Zambia · flat & loading</title>
+    <title>FuelRadar · Zambia</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -23,156 +23,140 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-    html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
-body {
-    background: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    height: 100%;
-    overflow: hidden;
-    font-size: 110%;
-}
+        body {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            height: 100%;
+            overflow: hidden;
+            font-size: 93.5%; /* reduced by ~15% from 110% */
+        }
 
-.app-container {
-    width: 100%;
-    max-width: 528px;
-    background: #ffffff;
-    box-shadow: none;
-    height: 100%;               /* use full parent height */
-    display: flex;
-    flex-direction: column;
-    border-radius: 0;
-    border: none;
-    overflow: hidden;            /* internal scrolling only */
-}
+        .app-container {
+            width: 100%;
+            max-width: 528px;
+            background: #ffffff;
+            box-shadow: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+            border: none;
+            overflow: hidden;
+        }
 
         /* header remains solid white */
         .header {
-            padding: 12px 16px 8px 16px;
+            padding: 10px 14px 6px 14px; /* reduced */
             background: #ffffff;
             border-bottom: 1px solid rgba(0,80,0,0.1);
         }
         .header-top {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .logo-img {
-            height: 40px;
+            height: 34px; /* reduced from 40 */
             width: auto;
-            border-radius: 12px;          /* logo itself can keep tiny rounding */
+            border-radius: 10px;
             background: white;
-            padding: 4px;
-            box-shadow: 0 4px 10px rgba(0,150,0,0.25);
+            padding: 3px;
+            box-shadow: 0 4px 8px rgba(0,150,0,0.25);
             object-fit: contain;
         }
         .header-text {
             flex: 1;
         }
         .header-text h1 {
-            font-size: 20px;
+            font-size: 17px; /* reduced */
             font-weight: 800;
             color: #0a2a1f;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
-        .city-badge {
-            background: #dcfce7;
-            border-radius: 40px;
-            padding: 5px 12px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #166534;
-            border: 1px solid #86efac;
-            white-space: nowrap;
-        }
-        .header-text p {
-            font-size: 12px;
+        .location-details {
+            font-size: 11px; /* reduced */
             color: #2c3e2c;
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 3px;
+            gap: 5px;
+            margin-top: 2px;
         }
-        .live-badge {
-            background: #dc2626;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .city-search-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-            background: #f0fdf4;
-            border-radius: 40px;        /* inner elements keep rounding, that's fine */
-            padding: 4px 4px 4px 14px;
-            border: 1px solid #bbf7d0;
-        }
-        .city-search-row i {
+        .location-details i {
             color: #16a34a;
-            font-size: 15px;
-        }
-        .city-search-row input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 8px 0;
-            font-size: 14px;
-            outline: none;
-        }
-        .city-search-row button {
-            background: #16a34a;
-            border: none;
-            border-radius: 30px;
-            padding: 8px 16px;
-            color: white;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            white-space: nowrap;
+            font-size: 10px;
         }
 
+        /* radius slider as road with car */
         .radius-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             margin-top: 8px;
+            padding: 0 4px;
         }
         .radius-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #1f3a1f;
         }
-        .radius-slider {
+        .custom-slider {
             flex: 1;
-            height: 6px;
-            background: rgba(0,150,0,0.2);
-            border-radius: 10px;
-            accent-color: #16a34a;
+            position: relative;
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }
+        .slider-track {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #16a34a 0px, #16a34a 8px, transparent 8px, transparent 16px);
+            border-radius: 0;
+        }
+        .slider-car {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: #16a34a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            cursor: grab;
+            touch-action: none;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,80,0,0.3);
+            transform: translateX(-50%);
+            left: 0%;
+        }
+        .slider-car i {
+            font-size: 14px;
         }
         .radius-value {
             background: #16a34a;
             color: white;
-            padding: 4px 12px;
+            padding: 3px 10px; /* reduced */
             border-radius: 30px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
+            min-width: 55px;
+            text-align: center;
         }
 
         .search-section {
-            padding: 8px 16px 8px 16px;
+            padding: 6px 14px 6px 14px; /* reduced */
             background: white;
         }
         .search-box {
@@ -180,29 +164,29 @@ body {
             align-items: center;
             background: white;
             border-radius: 30px;
-            padding: 6px 14px;
+            padding: 4px 12px; /* reduced */
             border: 1px solid rgba(0,150,0,0.25);
         }
         .search-box input {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 8px 4px;
-            font-size: 15px;
+            padding: 6px 4px; /* reduced */
+            font-size: 13px; /* reduced */
             outline: none;
         }
         .sort-row {
             display: flex;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 6px;
+            margin-top: 8px;
         }
         .sort-row select {
             flex: 1;
             background: white;
             border: 1px solid #bbf7d0;
             border-radius: 30px;
-            padding: 9px 12px;
-            font-size: 13px;
+            padding: 7px 10px; /* reduced */
+            font-size: 12px; /* reduced */
             font-weight: 600;
             color: #14532d;
         }
@@ -210,33 +194,33 @@ body {
             background: #16a34a;
             border: none;
             border-radius: 30px;
-            padding: 9px 16px;
+            padding: 7px 14px; /* reduced */
             color: white;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px; /* reduced */
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
             white-space: nowrap;
         }
 
         .filter-section {
-            padding: 8px 16px;
+            padding: 6px 14px; /* reduced */
             background: white;
         }
         .filter-scroll {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow-x: auto;
             padding: 2px 0;
         }
         .chip {
             background: white;
             color: #1e3a1e;
-            padding: 8px 16px;
+            padding: 6px 14px; /* reduced */
             border-radius: 30px;
-            font-size: 13px;
+            font-size: 12px; /* reduced */
             font-weight: 700;
             border: 1px solid rgba(22,163,74,0.3);
             cursor: pointer;
@@ -250,19 +234,19 @@ body {
         .chip-count {
             background: rgba(0,0,0,0.1);
             border-radius: 20px;
-            padding: 3px 8px;
-            margin-left: 6px;
-            font-size: 11px;
+            padding: 2px 6px; /* reduced */
+            margin-left: 4px;
+            font-size: 10px; /* reduced */
         }
 
-        /* map wrapper: remove bottom border radius */
+        /* map wrapper: now takes all remaining space */
         .map-wrapper {
             position: relative;
-            height: 240px;
+            flex: 1;
             width: 100%;
             border-bottom: 2px solid white;
             flex-shrink: 0;
-            border-radius: 0;            /* flat */
+            border-radius: 0;
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0,40,0,0.2);
         }
@@ -283,22 +267,22 @@ body {
         }
         .map-left-buttons {
             position: absolute;
-            bottom: 14px;
-            left: 14px;
+            top: 14px;
+            right: 14px;  /* moved to top right */
             display: flex;
             flex-direction: column;
             gap: 10px;
             z-index: 10;
         }
         .float-btn {
-            width: 48px;
-            height: 48px;
+            width: 42px; /* reduced */
+            height: 42px; /* reduced */
             background: white;
             border-radius: 50px;
             box-shadow: 0 8px 16px rgba(0,80,0,0.3);
             border: none;
             color: #16a34a;
-            font-size: 22px;
+            font-size: 20px; /* reduced */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -312,98 +296,19 @@ body {
         .overlay-btn {
             background: #16a34a;
             color: white;
-            font-size: 14px;
+            font-size: 12px; /* reduced */
             font-weight: 700;
             width: auto;
-            padding: 0 16px;
+            padding: 0 12px; /* reduced */
             border-radius: 40px;
-            gap: 6px;
-        }
-
-        .station-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 14px 14px 10px 14px;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .station-card {
-            background: #ffffff;
-            border-radius: 24px;        /* card rounding stays for style */
-            padding: 16px;
-            box-shadow: 0 12px 20px -8px rgba(0,60,0,0.2);
-            border: 1px solid #e0f0e0;
-            cursor: pointer;
-        }
-        .station-name {
-            font-weight: 800;
-            font-size: 18px;
-            color: #0c3b1e;
-        }
-        .open-now-badge {
-            background: #22c55e;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 700;
-            margin-left: 8px;
-        }
-        .address {
-            font-size: 12px;
-            color: #2c4a2c;
-            margin: 5px 0 8px 0;
-            display: flex;
-            gap: 5px;
-        }
-        .distance-rating {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .fuel-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin: 8px 0 5px 0;
-        }
-        .fuel-badge {
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-        .fuel-badge.available { background: #16a34a; color: white; }
-        .fuel-badge.unavailable { background: #dc2626; color: white; }
-        .fuel-badge.unknown { background: #3b82f6; color: white; }
-        .service-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        .service-tag {
-            background: rgba(22,163,74,0.15);
-            color: #14532d;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #86efac;
+            gap: 4px;
         }
 
         /* bottom nav LOCKED – always visible */
         .bottom-nav {
             background: #ffffff;
             border-top: 1px solid #c0e0c0;
-            padding: 6px 8px 10px 8px;
+            padding: 4px 6px 8px 6px; /* reduced */
             display: flex;
             justify-content: space-around;
             flex-shrink: 0;
@@ -414,12 +319,12 @@ body {
             flex-direction: column;
             align-items: center;
             color: #4b6b4b;
-            font-size: 10px;
+            font-size: 9px; /* reduced */
             font-weight: 600;
             cursor: pointer;
         }
         .nav-item.active { color: #16a34a; }
-        .nav-item i { font-size: 20px; margin-bottom: 3px; }
+        .nav-item i { font-size: 18px; margin-bottom: 2px; } /* reduced */
 
         /* modals */
         .modal-overlay {
@@ -434,72 +339,72 @@ body {
             visibility: hidden;
             opacity: 0;
             transition: 0.2s;
-            padding: 16px;
+            padding: 14px;
         }
         .modal-overlay.show { visibility: visible; opacity: 1; }
         .modal-content {
             background: white;
             width: 100%;
             max-width: 480px;
-            border-radius: 40px;
-            padding: 28px 24px;
+            border-radius: 34px; /* reduced */
+            padding: 24px 20px; /* reduced */
             box-shadow: 0 40px 60px rgba(0,100,0,0.5);
             max-height: 85vh;
             overflow-y: auto;
         }
         .modal-close {
             position: absolute;
-            top: 16px; right: 18px;
+            top: 14px; right: 16px;
             background: #f1f5f9;
             border: none;
-            width: 42px; height: 42px;
+            width: 36px; height: 36px; /* reduced */
             border-radius: 30px;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
         }
         .station-photo {
             width: 100%;
-            height: 160px;
+            height: 140px; /* reduced */
             background: #e2f3e2;
-            border-radius: 24px;
+            border-radius: 20px; /* reduced */
             object-fit: cover;
-            margin: 12px 0;
+            margin: 10px 0;
         }
         .fuel-list {
             background: #f0fdf4;
-            border-radius: 24px;
-            padding: 16px;
-            margin: 16px 0;
+            border-radius: 20px; /* reduced */
+            padding: 14px; /* reduced */
+            margin: 14px 0;
         }
         .amenity-tag {
             display: inline-block;
             background: #ecfdf3;
-            padding: 7px 16px;
+            padding: 5px 12px; /* reduced */
             border-radius: 40px;
-            font-size: 13px;
-            margin: 4px 6px 4px 0;
+            font-size: 11px; /* reduced */
+            margin: 3px 4px 3px 0;
             border: 1px solid #86efac;
             font-weight: 600;
             color: #14532d;
         }
         .action-btn {
             border-radius: 40px;
-            padding: 14px 18px;
+            padding: 12px 16px; /* reduced */
             font-weight: 700;
             border: none;
             cursor: pointer;
             background: #f8fafc;
-            font-size: 14px;
+            font-size: 13px; /* reduced */
         }
         .navigate-btn { background: #16a34a; color: white; }
         .action-btn#modalFav { background: #fee2e2; color: #b91c1c; }
-        .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
+        .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .price-report { font-size: 12px; margin-top: 8px; background: #f3f4f6; padding: 8px; border-radius: 20px; }
-        .report-btn { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; margin-left: 6px; }
+        .price-report { font-size: 11px; margin-top: 6px; background: #f3f4f6; padding: 6px; border-radius: 18px; }
+        .report-btn { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 3px 10px; font-size: 10px; margin-left: 4px; }
 
-        /* ---------- LOADING OVERLAY (big logo, percentage bar) ---------- */
+        /* ---------- LOADING OVERLAY (pulsing logo, then move to corner) ---------- */
         #loadingOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -519,67 +424,136 @@ body {
             background: white;
             padding: 12px;
             box-shadow: 0 10px 30px rgba(0,150,0,0.3);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .progress-container {
-            width: 70%;
-            max-width: 320px;
-            height: 24px;
-            background: #e6f0e6;
-            border-radius: 60px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+        .loading-logo.pulse {
+            animation: pulse 1.5s infinite;
         }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: #16a34a;
-            border-radius: 60px;
-            transition: width 0.1s linear;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .loading-logo.move-to-corner {
+            width: 40px;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            transform: translate(0, 0);
+            margin: 0;
+            box-shadow: 0 4px 8px rgba(0,150,0,0.3);
+        }
+
+        /* stations list modal specific */
+        .station-list-item {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,60,0,0.1);
+            border: 1px solid #e0f0e0;
+            cursor: pointer;
+        }
+        .station-list-item .row {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
+        }
+        .station-list-item .name {
+            font-weight: 800;
+            font-size: 15px;
+            color: #0c3b1e;
+        }
+        .station-list-item .eta {
+            font-size: 11px;
+            background: #dcfce7;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: #166534;
+        }
+        .station-list-item .address {
+            font-size: 11px;
+            color: #2c4a2c;
+            margin: 4px 0;
+        }
+        .station-list-item .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .amenity-mini {
+            background: #f0fdf4;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            color: #14532d;
+        }
+        .open-badge {
+            background: #22c55e;
             color: white;
-            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 9px;
             font-weight: 700;
         }
-        .percent-text {
-            font-size: 28px;
-            font-weight: 800;
-            color: #16a34a;
-            margin-top: 8px;
+        .closed-badge {
+            background: #a16207;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* file inputs in profile */
+        .file-input-group {
+            margin: 12px 0;
+        }
+        .file-input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #14532d;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .file-input-group input[type="file"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px dashed #16a34a;
+            border-radius: 20px;
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
-    <!-- LOADING OVERLAY (visible until 5s) -->
+    <!-- LOADING OVERLAY (pulsing then move) -->
     <div id="loadingOverlay">
-        <img src="fuel.jpeg" alt="FuelWatch" class="loading-logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-        <div class="progress-container">
-            <div class="progress-bar" id="loadingProgressBar" style="width:0%;">0%</div>
-        </div>
-        <div class="percent-text" id="loadingPercent">0%</div>
+        <img src="fuel.jpeg" alt="FuelRadar" class="loading-logo pulse" id="loadingLogo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
     </div>
 
     <!-- main app container (flat) -->
-    <div class="app-container">
+    <div class="app-container" id="appContainer" style="display: none;">
         <div class="header">
             <div class="header-top">
-                <img src="fuel.jpeg" alt="FuelWatch" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+                <img src="fuel.jpeg" alt="FuelRadar" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
                 <div class="header-text">
-                    <h1>FuelWatch · <span class="city-badge" id="cityDisplay"><i class="fas fa-map-pin"></i> locating..</span></h1>
-                    <p><span class="live-badge">LIVE ZAMBIA</span> <span id="stationCount">0</span> stations · <i class="fas fa-location-dot" style="color:#16a34a;"></i> <span id="userLocationStatus">acquiring</span></p>
+                    <h1>FuelRadar</h1>
+                    <div class="location-details" id="locationDetails">
+                        <i class="fas fa-location-dot"></i> <span id="cityAreaRoad">Detecting location...</span>
+                    </div>
                 </div>
             </div>
-            <div class="city-search-row">
-                <i class="fas fa-search"></i>
-                <input type="text" id="citySearchInput" placeholder="Search city (e.g. Lusaka)" value="">
-                <button id="citySearchBtn">Go</button>
-            </div>
+            <!-- city search row removed -->
             <div class="radius-row">
-                <span class="radius-label"><i class="fas fa-ruler"></i> radius</span>
-                <input type="range" min="1" max="8" step="0.5" value="3" class="radius-slider" id="radiusSlider">
+                <span class="radius-label"><i class="fas fa-car"></i> radius</span>
+                <div class="custom-slider" id="customSlider">
+                    <div class="slider-track"></div>
+                    <div class="slider-car" id="sliderCar" style="left: 37.5%;"> <!-- 3km default (min1 max8 step0.5, 3km is 2/7 of range? we'll set left percentage based on value) -->
+                        <i class="fas fa-car"></i>
+                    </div>
+                </div>
                 <span class="radius-value" id="radiusDisplay">3 km</span>
             </div>
         </div>
@@ -615,54 +589,84 @@ body {
             </div>
             <div class="map-floating-buttons">
                 <button class="float-btn locate" id="floatLocateBtn" title="My location"><i class="fas fa-crosshairs"></i></button>
-                <button class="float-btn refresh" id="floatRefreshBtn" title="Refresh stations"><i class="fas fa-sync-alt"></i></button>
+                <button class="float-btn" id="stationsListBtn" title="All stations"><i class="fas fa-gas-pump"></i></button>
                 <button class="float-btn clear-route" id="clearRouteBtn" title="Clear route"><i class="fas fa-times-circle"></i></button>
             </div>
-        </div>
-
-        <div class="station-list" id="stationList">
-            <div style="text-align: center; color: #4b6b4b; padding: 20px;">📍 Turn on location to see real fuel stations</div>
         </div>
 
         <!-- bottom nav (locked) always visible -->
         <div class="bottom-nav">
             <div class="nav-item active" id="navMap"><i class="fas fa-map"></i><span>Map</span></div>
             <div class="nav-item" id="navSearch"><i class="fas fa-search"></i><span>Search</span></div>
-            <div class="nav-item" id="navRefresh"><i class="fas fa-sync-alt"></i><span>Refresh</span></div>
             <div class="nav-item" id="navFav"><i class="fas fa-heart"></i><span>Fav</span></div>
             <div class="nav-item" id="navProfile"><i class="fas fa-user"></i><span>Profile</span></div>
         </div>
     </div>
 
-    <!-- modals (same) -->
+    <!-- modals -->
     <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></button><div id="modalContent"></div></div></div>
-    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal"><i class="fas fa-times"></i></button><h2><i class="fas fa-search"></i> Search station</h2><p>City: <strong id="searchCurrentCity">-</strong></p><input type="text" id="searchFuelInput" placeholder="Name..." style="width:100%; padding:14px; border-radius:40px; border:1px solid #16a34a; margin-bottom:16px;"><div id="searchResults" style="max-height:300px; overflow-y:auto;"></div></div></div>
+    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal"><i class="fas fa-times"></i></button><h2><i class="fas fa-search"></i> Search station</h2><input type="text" id="searchFuelInput" placeholder="Name..." style="width:100%; padding:12px; border-radius:40px; border:1px solid #16a34a; margin-bottom:16px;"><div id="searchResults" style="max-height:300px; overflow-y:auto;"></div></div></div>
     <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal"><i class="fas fa-times"></i></button><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><div id="favList" style="margin-top:16px;"></div></div></div>
-    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal"><i class="fas fa-times"></i></button><div style="text-align:center;"><img src="fuel.jpeg" style="width:80px; border-radius:50%; background:#16a34a; padding:10px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'white\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"><h3>FuelWatch Zambia</h3></div><div style="display:flex; gap:10px; margin:20px 0;"><button id="showCreateForm" class="action-btn" style="flex:1; background:#16a34a; color:white;">Create</button><button id="showLoginForm" class="action-btn" style="flex:1;">Log in</button></div><div id="createAccountForm" style="display:none;"><input placeholder="Full name" class="action-btn" style="width:100%; margin-bottom:10px;"><input placeholder="Phone" class="action-btn" style="width:100%; margin-bottom:10px;"><input placeholder="Email" class="action-btn" style="width:100%; margin-bottom:10px;"><input type="password" placeholder="Password" class="action-btn" style="width:100%; margin-bottom:10px;"><button class="action-btn navigate-btn" style="width:100%;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email" class="action-btn" style="width:100%; margin-bottom:10px;"><input type="password" placeholder="Password" class="action-btn" style="width:100%; margin-bottom:10px;"><button class="action-btn navigate-btn" style="width:100%;">Log in (demo)</button></div></div></div>
+    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal"><i class="fas fa-times"></i></button><div style="text-align:center;"><img src="fuel.jpeg" style="width:70px; border-radius:50%; background:#16a34a; padding:8px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'white\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"><h3>FuelRadar Zambia</h3></div>
+        <div style="display:flex; gap:8px; margin:16px 0;">
+            <button id="showCreateForm" class="action-btn" style="flex:1; background:#16a34a; color:white;">Create</button>
+            <button id="showLoginForm" class="action-btn" style="flex:1;">Log in</button>
+        </div>
+        <div id="createAccountForm" style="display:none;">
+            <input placeholder="Full name" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <input placeholder="Phone" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <input placeholder="Email" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <input type="password" placeholder="Password" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <!-- file uploads -->
+            <div class="file-input-group">
+                <label>Profile picture</label>
+                <input type="file" accept="image/*">
+            </div>
+            <div class="file-input-group">
+                <label>Car photo 1</label>
+                <input type="file" accept="image/*">
+            </div>
+            <div class="file-input-group">
+                <label>Car photo 2</label>
+                <input type="file" accept="image/*">
+            </div>
+            <button class="action-btn navigate-btn" style="width:100%;">Register (demo)</button>
+        </div>
+        <div id="loginForm" style="display:none;">
+            <input placeholder="Email" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <input type="password" placeholder="Password" class="action-btn" style="width:100%; margin-bottom:8px; padding:10px;">
+            <button class="action-btn navigate-btn" style="width:100%;">Log in (demo)</button>
+        </div>
+    </div></div>
+
+    <!-- new modal for stations list (triggered by fuel station icon) -->
+    <div class="modal-overlay" id="stationsListModal"><div class="modal-content"><button class="modal-close" id="closeStationsListModal"><i class="fas fa-times"></i></button><h2><i class="fas fa-gas-pump"></i> All stations</h2><div id="stationsListContainer" style="margin-top:16px; max-height:60vh; overflow-y:auto;"></div></div></div>
 
     <script>
     (function() {
-        // ---------- LOADING OVERLAY CONTROLLER (5s, percentage) ----------
+        // ---------- LOADING OVERLAY: pulse 5s, then move to corner ----------
         const overlay = document.getElementById('loadingOverlay');
-        const progressBar = document.getElementById('loadingProgressBar');
-        const percentSpan = document.getElementById('loadingPercent');
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 1; // every 50ms → 5s = 100%
-            const percent = Math.min(progress, 100);
-            progressBar.style.width = percent + '%';
-            progressBar.innerText = percent + '%';
-            percentSpan.innerText = percent + '%';
-            if (percent >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { overlay.style.display = 'none'; }, 400);
-                }, 200); // tiny pause at 100%
-            }
-        }, 50); // 50ms * 100 = 5s
+        const logo = document.getElementById('loadingLogo');
+        const appContainer = document.getElementById('appContainer');
 
-        // ---------- EXISTING APP STATE ----------
+        // Pulse is already applied via class
+        setTimeout(() => {
+            logo.classList.remove('pulse');
+            logo.classList.add('move-to-corner');
+        }, 5000); // after 5s pulse, start moving
+
+        // When move animation ends, hide overlay and show app
+        logo.addEventListener('transitionend', (e) => {
+            if (e.propertyName.includes('transform') || e.propertyName.includes('width')) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    appContainer.style.display = 'flex'; // show app
+                }, 400);
+            }
+        });
+
+        // ---------- APP STATE ----------
         let stations = [];
         let userLocation = null;
         let currentFilter = 'all';
@@ -673,7 +677,7 @@ body {
         let currentModalId = null;
         let userMarker = null;
         const cityCache = new Map();
-        let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
+        let favoriteIds = JSON.parse(localStorage.getItem('fuelRadarFavs')) || [];
 
         // utils
         const haversine = (lat1, lon1, lat2, lon2) => {
@@ -825,8 +829,8 @@ body {
         function getIconForStatus(status) {
             let color = (status === 'available') ? '#16a34a' : (status === 'empty' ? '#dc2626' : '#3b82f6');
             return L.divIcon({
-                html: `<i class="fas fa-gas-pump" style="color: ${color}; font-size: 26px; filter: drop-shadow(0 2px 6px #00000040);"></i>`,
-                iconSize: [30, 30],
+                html: `<i class="fas fa-gas-pump" style="color: ${color}; font-size: 24px; filter: drop-shadow(0 2px 6px #00000040);"></i>`,
+                iconSize: [28, 28],
                 className: 'fuel-marker'
             });
         }
@@ -836,7 +840,8 @@ body {
             if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<span class="spinner"></span> loading';
             stations = await fetchStations(userLocation.lat, userLocation.lng, radiusKm);
             updateDistances();
-            renderCardsAndMarkers();
+            renderMarkers();
+            updateFilterCounts();
             if (showSpinner) document.getElementById('nearMeBtn').innerHTML = '<i class="fas fa-location-arrow"></i> Near me';
         }
 
@@ -873,24 +878,8 @@ body {
             chips[3].innerHTML = `Diesel <span class="chip-count">${diesel}</span>`;
         }
 
-        function renderCardsAndMarkers() {
+        function renderMarkers() {
             const filtered = getFilteredStations();
-            const container = document.getElementById('stationList');
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #4b6b4b; padding: 20px;">⛽ No real stations found in this radius</div>';
-            } else {
-                container.innerHTML = filtered.map(s => generateCard(s)).join('');
-            }
-            document.querySelectorAll('.favorite-icon').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(parseInt(btn.dataset.id)); });
-            });
-            document.querySelectorAll('.station-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if (e.target.closest('.favorite-icon')) return;
-                    openModal(parseInt(card.dataset.id));
-                });
-            });
-
             if (map && clusterGroup) {
                 clusterGroup.clearLayers();
                 filtered.forEach(s => {
@@ -900,52 +889,131 @@ body {
                     clusterGroup.addLayer(marker);
                 });
             }
-            document.getElementById('stationCount').innerText = filtered.length;
-            updateFilterCounts();
+            document.getElementById('stationCount')?.remove(); // not used
         }
 
-        function generateCard(s) {
-            const fuels = ['petrol','diesel','lpg','cng'];
-            const fuelBadges = fuels.map(f => {
-                let cls = 'unknown';
-                if (s.fuel[f] === 'yes') cls = 'available';
-                else if (s.fuel[f] === 'no') cls = 'unavailable';
-                else cls = 'unknown';
-                return `<span class="fuel-badge ${cls}">${f.toUpperCase()}</span>`;
-            }).join('');
-            const favClass = s.favorite ? 'fas fa-heart' : 'far fa-heart';
-            const amenityPreview = s.amenities.slice(0,3).map(a => `<span class="service-tag">${a}</span>`).join('');
-            const openNow = isOpenNow(s.openingHours);
-            const openBadge = openNow === true ? '<span class="open-now-badge">OPEN NOW</span>' : (openNow === false ? '<span class="open-now-badge" style="background:#a16207;">CLOSED</span>' : '');
-            return `
-                <div class="station-card" data-id="${s.id}">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="station-name">${s.name} ${openBadge}</span>
-                        <button class="favorite-icon" data-id="${s.id}"><i class="${favClass}" style="color:#dc2626;"></i></button>
-                    </div>
-                    <div class="address"><i class="fas fa-location-dot" style="color:#16a34a;"></i> ${s.address}</div>
-                    <div class="distance-rating">
-                        <span><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km</span>
-                        <span><i class="far fa-clock"></i> ${s.openingHours === 'unknown' ? '⏳' : s.openingHours.substring(0,12)}</span>
-                    </div>
-                    <div class="fuel-badges">${fuelBadges}</div>
-                    <div class="service-tags">${amenityPreview}</div>
-                </div>
-            `;
-        }
+        // custom slider logic
+        const sliderCar = document.getElementById('sliderCar');
+        const sliderTrack = document.querySelector('.custom-slider');
+        const radiusDisplay = document.getElementById('radiusDisplay');
+        let isDragging = false;
 
-        function toggleFavorite(id) {
-            const s = stations.find(s => s.id === id);
-            if (s) { 
-                s.favorite = !s.favorite; 
-                if (s.favorite) { if (!favoriteIds.includes(id)) favoriteIds.push(id); } 
-                else { favoriteIds = favoriteIds.filter(fid => fid !== id); }
-                localStorage.setItem('fuelWatchFavs', JSON.stringify(favoriteIds));
-                renderCardsAndMarkers(); 
-                if (currentModalId === id) openModal(id); 
+        const updateRadiusFromPosition = (clientX) => {
+            const rect = sliderTrack.getBoundingClientRect();
+            let x = clientX - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            const percent = x / rect.width;
+            // radius range 1 to 8 step 0.5
+            const value = 1 + percent * 7; // 7 = 8-1
+            // round to nearest 0.5
+            const rounded = Math.round(value * 2) / 2;
+            radiusKm = Math.min(8, Math.max(1, rounded));
+            sliderCar.style.left = ((radiusKm - 1) / 7 * 100) + '%';
+            radiusDisplay.innerText = radiusKm + ' km';
+            if (userLocation) loadStations(false);
+        };
+
+        sliderCar.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateRadiusFromPosition(e.clientX);
+        });
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        // touch events
+        sliderCar.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            updateRadiusFromPosition(e.touches[0].clientX);
+        });
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+        // initial position
+        radiusKm = 3;
+        sliderCar.style.left = ((radiusKm - 1) / 7 * 100) + '%';
+
+        // reverse geocoding for location details
+        async function updateLocationDetails(lat, lon) {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+                const data = await res.json();
+                const addr = data.address;
+                const city = addr.city || addr.town || addr.village || addr.county || '';
+                const road = addr.road || '';
+                const suburb = addr.suburb || addr.neighbourhood || '';
+                let details = '';
+                if (city) details += city;
+                if (suburb) details += (details ? ', ' : '') + suburb;
+                if (road) details += (details ? ', ' : '') + road;
+                document.getElementById('cityAreaRoad').innerText = details || 'Zambia';
+            } catch {
+                document.getElementById('cityAreaRoad').innerText = 'Lusaka, Zambia';
             }
         }
 
+        // modal for all stations
+        function showAllStationsModal() {
+            const filtered = getFilteredStations();
+            const container = document.getElementById('stationsListContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center;">No stations found</p>';
+            } else {
+                container.innerHTML = filtered.map(s => {
+                    const eta = s.distance ? Math.round(s.distance / 50 * 60) : null;
+                    const etaText = eta ? `${eta} min` : '?';
+                    const open = isOpenNow(s.openingHours);
+                    const openClass = open === true ? 'open-badge' : (open === false ? 'closed-badge' : '');
+                    const openText = open === true ? 'OPEN' : (open === false ? 'CLOSED' : '');
+                    const amenityPreview = s.amenities.slice(0, 3).map(a => `<span class="amenity-mini">${a}</span>`).join('');
+                    return `
+                        <div class="station-list-item" data-id="${s.id}">
+                            <div class="row">
+                                <span class="name">${s.name}</span>
+                                <span class="eta"><i class="fas fa-clock"></i> ${etaText}</span>
+                            </div>
+                            <div class="address"><i class="fas fa-location-dot"></i> ${s.address} (${s.distance?.toFixed(1)} km)</div>
+                            <div class="amenities">${amenityPreview}</div>
+                            <div style="margin-top:4px;">${open ? `<span class="${openClass}">${openText}</span>` : ''}</div>
+                        </div>
+                    `;
+                }).join('');
+                container.querySelectorAll('.station-list-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const id = parseInt(item.dataset.id);
+                        document.getElementById('stationsListModal').classList.remove('show');
+                        const station = stations.find(s => s.id === id);
+                        if (station) {
+                            map.setView([station.lat, station.lon], 15);
+                            startNavigation(station.lat, station.lon, station.name);
+                        }
+                    });
+                });
+            }
+            document.getElementById('stationsListModal').classList.add('show');
+        }
+
+        // navigation
+        function startNavigation(destLat, destLon, destName) {
+            if (!userLocation) { alert('Location not available'); return; }
+            if (routingControl) map.removeControl(routingControl);
+            routingControl = L.Routing.control({
+                waypoints: [L.latLng(userLocation.lat, userLocation.lng), L.latLng(destLat, destLon)],
+                routeWhileDragging: false,
+                fitSelectedRoutes: true,
+                lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
+            }).addTo(map);
+            document.getElementById('clearRouteBtn').style.display = 'flex';
+        }
+
+        // existing openModal, toggleFavorite etc (shortened for brevity, but keep as before)
         function openModal(id) {
             const s = stations.find(s => s.id === id);
             if (!s) return;
@@ -962,22 +1030,22 @@ body {
             const travelTime = s.distance ? Math.round(s.distance / 50 * 60) : null;
             const timeHtml = travelTime ? `<span><i class="fas fa-clock"></i> ~${travelTime} min drive</span>` : '';
             const modalHtml = `
-                <h2 style="font-size:24px; margin-bottom:2px;">${s.name}</h2>
-                <p style="color:#2c4a2c; font-size:14px;"><i class="fas fa-map-pin"></i> ${s.address} (${s.distance?.toFixed(1)} km) ${timeHtml}</p>
+                <h2 style="font-size:20px; margin-bottom:2px;">${s.name}</h2>
+                <p style="color:#2c4a2c; font-size:13px;"><i class="fas fa-map-pin"></i> ${s.address} (${s.distance?.toFixed(1)} km) ${timeHtml}</p>
                 ${photoHtml}
-                <div style="display:flex; gap:12px; margin:8px 0; background:#ecfdf5; padding:8px 16px; border-radius:40px; font-size:13px;">
+                <div style="display:flex; gap:10px; margin:6px 0; background:#ecfdf5; padding:6px 14px; border-radius:40px; font-size:12px;">
                     <span><i class="far fa-clock"></i> ${s.openingHours}</span>
                 </div>
                 <div class="fuel-list">
-                    <h4 style="margin-bottom:6px;">⛽ Fuel availability</h4>
+                    <h4 style="margin-bottom:4px;">⛽ Fuel availability</h4>
                     ${fuelRows}
                 </div>
-                <div style="margin: 14px 0;">
-                    <h4 style="font-size:14px;"><i class="fas fa-store-alt"></i> Amenities</h4>
-                    <div style="margin-top:6px;">${amenitiesHtml || '— none reported —'}</div>
+                <div style="margin: 12px 0;">
+                    <h4 style="font-size:13px;"><i class="fas fa-store-alt"></i> Amenities</h4>
+                    <div style="margin-top:4px;">${amenitiesHtml || '— none reported —'}</div>
                 </div>
-                <p style="font-size:9px; color:#6b7e6b;">last sync: ${s.lastUpdated} · currency: Zambian Kwacha (K)</p>
-                <div style="display:flex; gap:8px; margin-top:16px;">
+                <p style="font-size:8px; color:#6b7e6b;">last sync: ${s.lastUpdated} · currency: Zambian Kwacha (K)</p>
+                <div style="display:flex; gap:6px; margin-top:14px;">
                     <button class="action-btn navigate-btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button>
                     <button class="action-btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> Fav</button>
                     <button class="action-btn" id="modalShare"><i class="fas fa-share-alt"></i> Share</button>
@@ -986,73 +1054,37 @@ body {
             document.getElementById('modalContent').innerHTML = modalHtml;
             document.getElementById('modalNav').addEventListener('click', () => startNavigation(s.lat, s.lon, s.name));
             document.getElementById('modalFav').addEventListener('click', () => toggleFavorite(s.id));
-            document.getElementById('modalShare').addEventListener('click', () => { navigator.share?.( {title:s.name, text:`Check ${s.name} on FuelWatch`} ).catch(()=>alert('Share demo')); });
+            document.getElementById('modalShare').addEventListener('click', () => { navigator.share?.( {title:s.name, text:`Check ${s.name} on FuelRadar`} ).catch(()=>alert('Share demo')); });
             document.querySelectorAll('.report-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => { e.stopPropagation(); alert(`Report price for ${btn.dataset.fuel} (demo)`); });
             });
             document.getElementById('stationModal').classList.add('show');
         }
 
-        function startNavigation(destLat, destLon, destName) {
-            document.getElementById('stationModal').classList.remove('show');
-            if (!userLocation) { alert('Location not available'); return; }
-            if (routingControl) map.removeControl(routingControl);
-            routingControl = L.Routing.control({
-                waypoints: [L.latLng(userLocation.lat, userLocation.lng), L.latLng(destLat, destLon)],
-                routeWhileDragging: false,
-                fitSelectedRoutes: true,
-                lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
-            }).addTo(map);
-            document.getElementById('clearRouteBtn').style.display = 'flex';
-        }
-
-        async function updateCityName(lat, lon) {
-            const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
-            if (cityCache.has(key)) {
-                document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${cityCache.get(key)}`;
-                return;
+        function toggleFavorite(id) {
+            const s = stations.find(s => s.id === id);
+            if (s) { 
+                s.favorite = !s.favorite; 
+                if (s.favorite) { if (!favoriteIds.includes(id)) favoriteIds.push(id); } 
+                else { favoriteIds = favoriteIds.filter(fid => fid !== id); }
+                localStorage.setItem('fuelRadarFavs', JSON.stringify(favoriteIds));
+                renderMarkers(); 
+                if (currentModalId === id) openModal(id); 
             }
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
-                const data = await res.json();
-                const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Zambia';
-                cityCache.set(key, city);
-                document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> ${city}`;
-            } catch { document.getElementById('cityDisplay').innerHTML = `<i class="fas fa-map-pin"></i> Lusaka?`; }
         }
 
-        async function searchCity(query) {
-            if (!query) return;
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}, Zambia&limit=1`);
-                const data = await res.json();
-                if (data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lon = parseFloat(data[0].lon);
-                    map.setView([lat, lon], 12);
-                } else alert('City not found');
-            } catch (e) { alert('Geocoding error'); }
-        }
-
-        function initMap() {
-            map = L.map('map').setView([-13.133, 27.849], 6);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-            clusterGroup = L.markerClusterGroup({ chunkedLoading: true });
-            map.addLayer(clusterGroup);
-        }
-
+        // location
         function locateAndFetch() {
             if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
-            document.getElementById('userLocationStatus').innerText = 'locating...';
+            document.getElementById('locationDetails').innerHTML = '<i class="fas fa-location-dot"></i> locating...';
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                 if (userMarker) map.removeLayer(userMarker);
                 userMarker = L.circleMarker([userLocation.lat, userLocation.lng], {
-                    radius: 8, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
+                    radius: 7, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9, weight: 2
                 }).addTo(map).bindPopup('You are here').openPopup();
                 map.setView([userLocation.lat, userLocation.lng], 13);
-                document.getElementById('userLocationStatus').innerHTML = `${userLocation.lat.toFixed(3)}, ${userLocation.lng.toFixed(3)}`;
-                updateCityName(userLocation.lat, userLocation.lng);
+                updateLocationDetails(userLocation.lat, userLocation.lng);
                 await loadStations(true);
             }, (err) => {
                 alert('Location error: ' + err.message);
@@ -1060,43 +1092,64 @@ body {
             }, { enableHighAccuracy: true, timeout: 10000 });
         }
 
-        // search modal
-        function showSearchModal() {
-            document.getElementById('searchCurrentCity').innerText = cityCache.values().next().value || 'unknown';
-            document.getElementById('searchModal').classList.add('show');
-            document.getElementById('searchFuelInput').focus();
-            updateSearchResults('');
-        }
-        function updateSearchResults(query) {
-            const resultsDiv = document.getElementById('searchResults');
-            if (!stations.length) { resultsDiv.innerHTML = '<p>No stations loaded</p>'; return; }
-            let filtered = stations.filter(s => s.name.toLowerCase().includes(query.toLowerCase()) || s.address.toLowerCase().includes(query.toLowerCase()));
-            filtered.sort((a,b) => (a.distance||999)-(b.distance||999));
-            if (filtered.length===0) resultsDiv.innerHTML = '<p>No matches</p>';
-            else {
-                resultsDiv.innerHTML = filtered.slice(0,10).map(s => `
-                    <div class="station-card" style="padding:10px; cursor:pointer;" data-id="${s.id}">
-                        <strong>${s.name}</strong> <span style="float:right;">${s.distance?.toFixed(1)} km</span>
-                        <div style="font-size:12px;">${s.address}</div>
-                    </div>
-                `).join('');
-                resultsDiv.querySelectorAll('.station-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        const id = parseInt(card.dataset.id);
-                        document.getElementById('searchModal').classList.remove('show');
-                        openModal(id);
-                    });
-                });
-            }
+        // init map
+        function initMap() {
+            map = L.map('map').setView([-13.133, 27.849], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+            clusterGroup = L.markerClusterGroup({ chunkedLoading: true });
+            map.addLayer(clusterGroup);
         }
 
-        function showFavModal() {
+        // event listeners
+        document.getElementById('nearMeBtn').addEventListener('click', locateAndFetch);
+        document.getElementById('floatLocateBtn').addEventListener('click', () => { if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15); else locateAndFetch(); });
+        document.getElementById('stationsListBtn').addEventListener('click', showAllStationsModal);
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMarkers(); });
+        document.getElementById('clearSearchBtn').addEventListener('click', () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); });
+        document.getElementById('sortSelect').addEventListener('change', (e) => { sortBy = e.target.value; renderMarkers(); });
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                currentFilter = chip.dataset.filter;
+                renderMarkers();
+            });
+        });
+        document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('stationModal').classList.remove('show'));
+        window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show')); });
+        document.getElementById('clearRouteBtn').addEventListener('click', () => {
+            if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; }
+        });
+        document.getElementById('navSearch').addEventListener('click', () => {
+            document.getElementById('searchModal').classList.add('show');
+            document.getElementById('searchFuelInput').focus();
+        });
+        document.getElementById('navFav').addEventListener('click', showFavModal);
+        document.getElementById('navProfile').addEventListener('click', showProfileModal);
+        document.getElementById('navMap').addEventListener('click', () => { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); });
+
+        document.getElementById('searchFuelInput').addEventListener('input', (e) => updateSearchResults(e.target.value));
+        document.getElementById('closeSearchModal').addEventListener('click', () => document.getElementById('searchModal').classList.remove('show'));
+        document.getElementById('closeFavModal').addEventListener('click', () => document.getElementById('favModal').classList.remove('show'));
+        document.getElementById('closeProfileModal').addEventListener('click', () => document.getElementById('profileModal').classList.remove('show'));
+        document.getElementById('closeStationsListModal').addEventListener('click', () => document.getElementById('stationsListModal').classList.remove('show'));
+
+        document.getElementById('showCreateForm').addEventListener('click', () => { document.getElementById('createAccountForm').style.display = 'block'; document.getElementById('loginForm').style.display = 'none'; });
+        document.getElementById('showLoginForm').addEventListener('click', () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('createAccountForm').style.display = 'none'; });
+
+        document.getElementById('overlayMapBtn').addEventListener('click', () => {
+            const mapWrapper = document.getElementById('mapWrapper');
+            if (mapWrapper.requestFullscreen) mapWrapper.requestFullscreen();
+            else if (mapWrapper.webkitRequestFullscreen) mapWrapper.webkitRequestFullscreen();
+        });
+
+        function showFavModal() { /* same as before, but with updated station list */ 
             const favStations = stations.filter(s => favoriteIds.includes(s.id));
             const container = document.getElementById('favList');
             if (favStations.length===0) container.innerHTML = '<p>No favorites yet</p>';
             else {
                 container.innerHTML = favStations.map(s => `
-                    <div class="station-card" style="padding:12px; margin-bottom:8px;" data-id="${s.id}">
+                    <div class="station-card" style="padding:10px; margin-bottom:6px;" data-id="${s.id}">
                         <div style="display:flex; justify-content:space-between;"><strong>${s.name}</strong> <span>${s.distance?.toFixed(1)} km</span></div>
                         <button class="favorite-icon" data-id="${s.id}"><i class="fas fa-heart" style="color:#dc2626;"></i> remove</button>
                     </div>
@@ -1111,58 +1164,30 @@ body {
             document.getElementById('favModal').classList.add('show');
         }
 
-        function showProfileModal() {
-            document.getElementById('profileModal').classList.add('show');
+        function showProfileModal() { document.getElementById('profileModal').classList.add('show'); }
+
+        function updateSearchResults(query) {
+            const resultsDiv = document.getElementById('searchResults');
+            if (!stations.length) { resultsDiv.innerHTML = '<p>No stations loaded</p>'; return; }
+            let filtered = stations.filter(s => s.name.toLowerCase().includes(query.toLowerCase()) || s.address.toLowerCase().includes(query.toLowerCase()));
+            filtered.sort((a,b) => (a.distance||999)-(b.distance||999));
+            if (filtered.length===0) resultsDiv.innerHTML = '<p>No matches</p>';
+            else {
+                resultsDiv.innerHTML = filtered.slice(0,10).map(s => `
+                    <div class="station-card" style="padding:8px; cursor:pointer;" data-id="${s.id}">
+                        <strong>${s.name}</strong> <span style="float:right;">${s.distance?.toFixed(1)} km</span>
+                        <div style="font-size:11px;">${s.address}</div>
+                    </div>
+                `).join('');
+                resultsDiv.querySelectorAll('.station-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const id = parseInt(card.dataset.id);
+                        document.getElementById('searchModal').classList.remove('show');
+                        openModal(id);
+                    });
+                });
+            }
         }
-
-        // overlay map fullscreen
-        document.getElementById('overlayMapBtn').addEventListener('click', () => {
-            const mapWrapper = document.getElementById('mapWrapper');
-            if (mapWrapper.requestFullscreen) mapWrapper.requestFullscreen();
-            else if (mapWrapper.webkitRequestFullscreen) mapWrapper.webkitRequestFullscreen();
-        });
-
-        // event listeners
-        document.getElementById('nearMeBtn').addEventListener('click', locateAndFetch);
-        document.getElementById('floatLocateBtn').addEventListener('click', () => { if (userLocation) map.setView([userLocation.lat, userLocation.lng], 15); else locateAndFetch(); });
-        document.getElementById('floatRefreshBtn').addEventListener('click', () => { if (userLocation) loadStations(true); });
-        document.getElementById('navRefresh').addEventListener('click', () => { if (userLocation) loadStations(true); else locateAndFetch(); });
-        document.getElementById('radiusSlider').addEventListener('input', (e) => {
-            radiusKm = parseFloat(e.target.value);
-            document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
-            if (userLocation) loadStations(false);
-        });
-        document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderCardsAndMarkers(); });
-        document.getElementById('clearSearchBtn').addEventListener('click', () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderCardsAndMarkers(); });
-        document.getElementById('sortSelect').addEventListener('change', (e) => { sortBy = e.target.value; renderCardsAndMarkers(); });
-        document.querySelectorAll('.chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                currentFilter = chip.dataset.filter;
-                renderCardsAndMarkers();
-            });
-        });
-        document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('stationModal').classList.remove('show'));
-        window.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show')); });
-        document.getElementById('citySearchBtn').addEventListener('click', () => { searchCity(document.getElementById('citySearchInput').value); });
-        document.getElementById('citySearchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') searchCity(e.target.value); });
-        document.getElementById('clearRouteBtn').addEventListener('click', () => {
-            if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; }
-        });
-
-        document.getElementById('navSearch').addEventListener('click', showSearchModal);
-        document.getElementById('navFav').addEventListener('click', showFavModal);
-        document.getElementById('navProfile').addEventListener('click', showProfileModal);
-        document.getElementById('navMap').addEventListener('click', () => { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); });
-
-        document.getElementById('searchFuelInput').addEventListener('input', (e) => updateSearchResults(e.target.value));
-        document.getElementById('closeSearchModal').addEventListener('click', () => document.getElementById('searchModal').classList.remove('show'));
-        document.getElementById('closeFavModal').addEventListener('click', () => document.getElementById('favModal').classList.remove('show'));
-        document.getElementById('closeProfileModal').addEventListener('click', () => document.getElementById('profileModal').classList.remove('show'));
-
-        document.getElementById('showCreateForm').addEventListener('click', () => { document.getElementById('createAccountForm').style.display = 'block'; document.getElementById('loginForm').style.display = 'none'; });
-        document.getElementById('showLoginForm').addEventListener('click', () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('createAccountForm').style.display = 'none'; });
 
         initMap();
         locateAndFetch();
@@ -1170,8 +1195,3 @@ body {
     </script>
 </body>
 </html>
-
-
-
-
-
