@@ -52,7 +52,7 @@
             position: relative;
         }
 
-        /* Header */
+        /* Header with driver left, logo right */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -70,7 +70,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: transparent;
         }
         .driver-left img {
             width: 48px;
@@ -87,12 +86,8 @@
             margin: 0;
             letter-spacing: -0.3px;
         }
-        .fuel-green {
-            color: #16a34a;
-        }
-        .radar-red {
-            color: #dc2626;
-        }
+        .fuel-green { color: #16a34a; }
+        .radar-red { color: #dc2626; }
         .slogan {
             font-size: 11px;
             font-weight: 700;
@@ -164,9 +159,7 @@
             padding: 4px 4px 4px 14px;
             border: 1px solid #bbf7d0;
         }
-        .city-search-row i {
-            color: #16a34a;
-        }
+        .city-search-row i { color: #16a34a; }
         .city-search-row input {
             flex: 1;
             border: none;
@@ -377,9 +370,10 @@
         .overlay-top {
             background: #16a34a;
             color: white;
+            margin-bottom: 10px; /* to be above locate/refresh */
         }
 
-        /* floating fuel pill */
+        /* floating fuel pill - icon white */
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -459,7 +453,7 @@
             gap: 5px;
         }
 
-        /* Modals enhanced */
+        /* Modal styles */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -502,7 +496,7 @@
         }
         .modal-close:hover { background: #e5e7eb; }
 
-        /* new station modal styles */
+        /* Enhanced station modal card */
         .station-modal-header {
             display: flex;
             align-items: center;
@@ -639,6 +633,7 @@
         .navigate-btn { background: #16a34a; color: white; }
         .fav-btn { background: #fee2e2; color: #b91c1c; }
         .share-btn { background: #f3f4f6; color: #374151; }
+        .price-note { font-size: 9px; color: #6b7280; text-align: center; margin-top: 8px; }
 
         /* Sidebar with logo */
         .sidebar-overlay {
@@ -693,7 +688,7 @@
         .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
         .sidebar-item:hover { background: #f0fdf4; }
 
-        /* Form styling */
+        /* Forms styling */
         #createAccountForm input, #loginForm input {
             width: 100%;
             padding: 10px 14px;
@@ -731,17 +726,8 @@
             transition: width 0.05s linear;
         }
 
-        /* cluster + zoom styling */
-        .leaflet-control-zoom a.leaflet-control-zoom-in { background: #16a34a; color: white; border-radius: 8px 8px 0 0; }
-        .leaflet-control-zoom a.leaflet-control-zoom-out { background: #dc2626; color: white; border-radius: 0 0 8px 8px; }
-        .marker-cluster-small { background-color: rgba(34, 197, 94, 0.6); }
-        .marker-cluster-small div { background-color: rgba(34, 197, 94, 0.8); }
-        .marker-cluster-medium { background-color: rgba(249, 115, 22, 0.6); }
-        .marker-cluster-medium div { background-color: rgba(249, 115, 22, 0.8); }
-        .marker-cluster-large { background-color: rgba(220, 38, 38, 0.6); }
-        .marker-cluster-large div { background-color: rgba(220, 38, 38, 0.8); }
-        .price-note { font-size: 9px; color: #6b7280; text-align: center; margin-top: 8px; }
-        .search-result-item { cursor: pointer; }
+        /* ensure default leaflet zoom controls unchanged */
+        .leaflet-control-zoom a { background: white; color: #333; }
     </style>
 </head>
 <body>
@@ -794,10 +780,30 @@
 
     <script>
     (function() {
-        let prog = 0; const interval = setInterval(() => { prog += 2; if (prog >= 100) { clearInterval(interval); document.getElementById('loadingOverlay').style.display = 'none'; } document.getElementById('loadingBar').style.width = prog + '%'; document.getElementById('loadingPercent').innerText = prog + '%'; }, 50);
+        // loading animation
+        let prog = 0;
+        const interval = setInterval(() => {
+            prog += 2;
+            if (prog >= 100) { clearInterval(interval); document.getElementById('loadingOverlay').style.display = 'none'; }
+            document.getElementById('loadingBar').style.width = prog + '%';
+            document.getElementById('loadingPercent').innerText = prog + '%';
+        }, 50);
         
+        // ---------- FUEL PRICES ----------
         let currentPrices = { petrol: 'K28.50', diesel: 'K26.80', lpg: 'K15.00', cng: 'K12.50' };
-        async function fetchFuelPricesFromERB() { try { const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm')); if (!res.ok) throw new Error(); const data = await res.json(); const html = data.contents; const petrolMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i); const dieselMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i); if (petrolMatch) currentPrices.petrol = `K${petrolMatch[1]}`; if (dieselMatch) currentPrices.diesel = `K${dieselMatch[1]}`; } catch(e) {} } fetchFuelPricesFromERB();
+        async function fetchFuelPricesFromERB() {
+            try {
+                const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm'));
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const html = data.contents;
+                const petrolMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i);
+                const dieselMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i);
+                if (petrolMatch) currentPrices.petrol = `K${petrolMatch[1]}`;
+                if (dieselMatch) currentPrices.diesel = `K${dieselMatch[1]}`;
+            } catch(e) {}
+        }
+        fetchFuelPricesFromERB();
         function getFuelPrice(fuelType, availability) { if (availability !== 'yes') return '—'; return currentPrices[fuelType] || 'K?.??'; }
         
         let stations = [], actualUserLocation = null, activeLocation = null, currentFilter = 'all', searchQuery = '', radiusKm = 3, map, clusterGroup, routingControl = null, userMarker = null, favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
@@ -824,7 +830,29 @@
             return amenities;
         }
         
-        async function fetchStations(lat, lon, rad) { const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`; const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`; try{ const res=await fetch(url); const data=await res.json(); const mapSt=new Map(); data.elements.forEach(el=>{ let name=el.tags?.name||el.tags?.brand||"Fuel station"; let lat=el.lat||(el.center?.lat); let lon=el.lon||(el.center?.lon); if(!lat||!lon) return; const id=el.id; if(!mapSt.has(id)){ let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road'; mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) }); } }); let st=Array.from(mapSt.values()); st.forEach(s=>{ s.status=overallStatus(s.fuel); }); return st; } catch(e){ return []; } }
+        async function fetchStations(lat, lon, rad) {
+            const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
+            const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`;
+            try{
+                const res=await fetch(url);
+                const data=await res.json();
+                const mapSt=new Map();
+                data.elements.forEach(el=>{
+                    let name=el.tags?.name||el.tags?.brand||"Fuel station";
+                    let lat=el.lat||(el.center?.lat);
+                    let lon=el.lon||(el.center?.lon);
+                    if(!lat||!lon) return;
+                    const id=el.id;
+                    if(!mapSt.has(id)){
+                        let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road';
+                        mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) });
+                    }
+                });
+                let st=Array.from(mapSt.values());
+                st.forEach(s=>{ s.status=overallStatus(s.fuel); });
+                return st;
+            } catch(e){ return []; }
+        }
         
         function getFilteredStations(){ let filtered=stations.slice(); if(currentFilter!=='all'){ if(currentFilter==='available') filtered=filtered.filter(s=>s.status==='available'); else filtered=filtered.filter(s=>s.fuel[currentFilter]==='yes'); } if(searchQuery.trim()){ const q=searchQuery.toLowerCase(); filtered=filtered.filter(s=>s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q)||s.enhancedAmenities.some(a=>a.name.toLowerCase().includes(q))); } filtered.sort((a,b)=>(a.distance||999)-(b.distance||999)); return filtered; }
         function updateUIcounters(){ const filtered=getFilteredStations(); document.getElementById('stationCountHeader').innerHTML = `${filtered.length} stations`; const chips=document.querySelectorAll('.chip'); if(stations.length){ chips[0].innerHTML=`All <span class="chip-count">${stations.length}</span>`; chips[1].innerHTML=`Fuel available <span class="chip-count">${stations.filter(s=>s.status==='available').length}</span>`; chips[2].innerHTML=`Petrol <span class="chip-count">${stations.filter(s=>s.fuel.petrol==='yes').length}</span>`; chips[3].innerHTML=`Diesel <span class="chip-count">${stations.filter(s=>s.fuel.diesel==='yes').length}</span>`; } }
@@ -860,12 +888,13 @@
         
         function showFuelStationsList(){ const sorted=getFilteredStations(); const container=document.getElementById('fuelStationsList'); if(!sorted.length) container.innerHTML='<p>No stations found</p>'; else{ container.innerHTML=sorted.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><span class="station-name">${s.name}</span><span>${s.distance?.toFixed(1)} km</span></div><div class="address">${s.address}</div><div class="fuel-badges">${['petrol','diesel'].map(f=>`<span class="fuel-badge ${s.fuel[f]==='yes'?'available':(s.fuel[f]==='no'?'unavailable':'unknown')}">${f.toUpperCase()}</span>`).join('')}</div><button class="nav-btn-sm" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button></div>`).join(''); container.querySelectorAll('.station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; openStationModal(parseInt(c.dataset.id)); }); }); container.querySelectorAll('.nav-btn-sm').forEach(btn=>{ btn.onclick=(e)=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); } document.getElementById('fuelStationsModal').classList.add('show'); }
         
-        function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); L.control.zoom({position:'topleft'}).addTo(map); }
+        function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); }
         
-        // sidebar and events
+        // sidebar
         const sidebar=document.getElementById('sidebarOverlay'); document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open'); document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open'); sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
         document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(activeLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='settings') alert('⚙️ Settings demo'); if(act==='logout') alert('Logged out (demo)'); }; });
         
+        // Event listeners
         document.getElementById('nearMeBtn').onclick=()=>{ if(actualUserLocation) setActiveLocation(actualUserLocation.lat, actualUserLocation.lng, true); else locateAndFetch(); };
         document.getElementById('floatLocateBtn').onclick=()=>{ if(activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
         document.getElementById('floatRefreshBtn').onclick=()=>{ if(activeLocation) loadStations(true); };
