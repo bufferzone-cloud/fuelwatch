@@ -979,7 +979,6 @@
                     // Set currentViewLocation to searched location and load stations
                     currentViewLocation = { lat, lon };
                     await loadStations(true);
-                    // Optionally update city display
                     await updateCityName(lat, lon);
                 } else {
                     alert('City not found');
@@ -1011,7 +1010,6 @@
                     const etaText = eta !== '?' ? `${eta} min` : '—';
                     const petrolAvailable = s.fuel.petrol === 'yes';
                     const dieselAvailable = s.fuel.diesel === 'yes';
-                    // Show tyre pump if present in amenities
                     const hasTyrePump = s.enhancedAmenities.some(a => a.name.toLowerCase().includes('tyre') || a.name.toLowerCase().includes('compressed'));
                     const tyreIcon = hasTyrePump ? '<span class="amenity-icon-small"><i class="fas fa-fill-drip"></i> Tyre pump</span>' : '';
                     return `
