@@ -348,7 +348,6 @@
             gap: 10px;
             z-index: 1000;
         }
-        /* No separate top-right overlay button now; overlay is first in this group */
         .float-btn {
             width: 44px;
             height: 44px;
@@ -464,7 +463,22 @@
             font-size: 11px;
             font-weight: 600;
             color: #4b6b4b;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+        }
+        .amenities-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .amenity-icon-small {
+            background: #f3f4f6;
+            border-radius: 20px;
+            padding: 3px 8px;
+            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         .navigate-center {
             text-align: center;
@@ -500,12 +514,7 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #e0f0e0;
         }
-        .modal-header-left img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-        .modal-header-right img {
+        .modal-header-left img, .modal-header-right img {
             width: 40px;
             height: 40px;
             object-fit: contain;
@@ -546,7 +555,7 @@
         }
         .modal-overlay.show { visibility: visible; opacity: 1; }
 
-        /* side bar */
+        /* Sidebar */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -842,7 +851,7 @@
         function getFuelStatus(tags) { return { petrol: tags['fuel:petrol']==='yes'?'yes':(tags['fuel:petrol']==='no'?'no':null), diesel: tags['fuel:diesel']==='yes'?'yes':(tags['fuel:diesel']==='no'?'no':null), lpg: tags['fuel:lpg']==='yes'?'yes':(tags['fuel:lpg']==='no'?'no':null), cng: tags['fuel:cng']==='yes'?'yes':(tags['fuel:cng']==='no'?'no':null) }; }
         function overallStatus(fuel) { const vals=[fuel.petrol,fuel.diesel,fuel.lpg,fuel.cng].filter(v=>v!==null); if(vals.includes('yes')) return 'available'; if(vals.length && vals.every(v=>v==='no')) return 'empty'; return 'unknown'; }
         
-        // Enhanced amenities extractor
+        // Enhanced amenities extractor including tyre pump
         function extractEnhancedAmenities(tags) {
             const amenities = [];
             if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
@@ -854,6 +863,10 @@
             if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
             if (tags['truck_parking'] === 'yes') amenities.push({ icon: 'fa-truck', name: 'Truck park' });
             if (tags['parking'] === 'yes') amenities.push({ icon: 'fa-parking', name: 'Parking' });
+            // Tyre pump / compressed air detection
+            if (tags['service:tyre'] === 'yes' || tags['service:tyres'] === 'yes' || tags['compressed_air'] === 'yes' || tags['amenity'] === 'compressed_air') {
+                amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump / Compressed air' });
+            }
             if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
             return amenities;
         }
@@ -976,7 +989,7 @@
             }
         }
         
-        // Show fuel stations modal with redesigned cards
+        // Show fuel stations modal with redesigned cards including tyre pump
         function showFuelStationsList() {
             const sorted = getFilteredStations();
             const container = document.getElementById('fuelStationsListContainer');
@@ -998,6 +1011,9 @@
                     const etaText = eta !== '?' ? `${eta} min` : '—';
                     const petrolAvailable = s.fuel.petrol === 'yes';
                     const dieselAvailable = s.fuel.diesel === 'yes';
+                    // Show tyre pump if present in amenities
+                    const hasTyrePump = s.enhancedAmenities.some(a => a.name.toLowerCase().includes('tyre') || a.name.toLowerCase().includes('compressed'));
+                    const tyreIcon = hasTyrePump ? '<span class="amenity-icon-small"><i class="fas fa-fill-drip"></i> Tyre pump</span>' : '';
                     return `
                         <div class="station-card" data-id="${s.id}">
                             <div class="card-header">
@@ -1015,6 +1031,7 @@
                                 <span><i class="fas fa-route"></i> ${distance} km</span>
                                 <span><i class="far fa-clock"></i> ${etaText}</span>
                             </div>
+                            ${tyreIcon ? `<div class="amenities-inline">${tyreIcon}</div>` : ''}
                             <div class="navigate-center">
                                 <button class="nav-btn-card" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button>
                             </div>
