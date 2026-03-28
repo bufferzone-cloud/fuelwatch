@@ -15,6 +15,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ... (all existing styles remain same, but ensure map container has height) ... */
         * {
             margin: 0;
             padding: 0;
@@ -52,7 +53,7 @@
             position: relative;
         }
 
-        /* Header with top-left driver icon, centered brand, top-right logo */
+        /* Header styles (same as previous) */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -152,8 +153,6 @@
             align-items: center;
             justify-content: center;
         }
-
-        /* City search row */
         .city-search-row {
             display: flex;
             align-items: center;
@@ -185,8 +184,6 @@
             font-size: 12px;
             cursor: pointer;
         }
-
-        /* Custom radius slider with horizontal car icon (front right) - size increased 30% */
         .radius-row {
             display: flex;
             align-items: center;
@@ -247,8 +244,6 @@
             min-width: 60px;
             text-align: center;
         }
-
-        /* search section */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -288,7 +283,6 @@
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,80,0,0.2);
         }
-
         .filter-section {
             padding: 6px 16px;
             background: white;
@@ -322,8 +316,6 @@
             margin-left: 5px;
             font-size: 10px;
         }
-
-        /* map wrapper - takes remaining space */
         .map-wrapper {
             position: relative;
             flex: 1;
@@ -338,7 +330,6 @@
             width: 100%;
             background: #cbd5e1;
         }
-        /* Custom zoom controls (green/red) */
         .leaflet-control-zoom a {
             background-color: white;
             border-radius: 4px;
@@ -352,7 +343,6 @@
         .leaflet-control-zoom a.leaflet-control-zoom-out {
             color: #dc2626 !important;
         }
-        /* Map floating buttons - bottom right group with overlay on top */
         .map-floating-buttons {
             position: absolute;
             bottom: 14px;
@@ -385,8 +375,6 @@
             background: #16a34a;
             color: white;
         }
-
-        /* floating fuel stations pill - white icon */
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -411,8 +399,6 @@
             font-size: 20px;
             color: white;
         }
-
-        /* station card style (used in lists) - redesigned */
         .station-card {
             background: #ffffff;
             border-radius: 24px;
@@ -511,8 +497,6 @@
             align-items: center;
             gap: 6px;
         }
-
-        /* Modal improvements for fuel stations list */
         .modal-content {
             background: white;
             border-radius: 36px;
@@ -551,8 +535,6 @@
             cursor: pointer;
             color: #4b5563;
         }
-
-        /* Station detail modal specific styles */
         .station-header {
             display: flex;
             align-items: center;
@@ -701,8 +683,6 @@
             background: #f3f4f6;
             color: #374151;
         }
-
-        /* Other modals */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -718,8 +698,6 @@
             padding: 16px;
         }
         .modal-overlay.show { visibility: visible; opacity: 1; }
-
-        /* Sidebar */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -790,8 +768,6 @@
             color: #16a34a;
         }
         .sidebar-item:hover { background: #f0fdf4; }
-
-        /* Form styling */
         #createAccountForm input, #loginForm input {
             width: 100%;
             padding: 10px 14px;
@@ -804,10 +780,8 @@
         #createAccountForm input:focus, #loginForm input:focus {
             border-color: #16a34a;
         }
-
         .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .loading-overlay {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
@@ -1023,7 +997,7 @@
             return amenities;
         }
         
-        async function fetchStations(lat,lon,rad){ const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`; const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`; try{ const res=await fetch(url); const data=await res.json(); const mapSt=new Map(); data.elements.forEach(el=>{ let name=el.tags?.name||el.tags?.brand||"Fuel station"; let lat=el.lat||(el.center?.lat); let lon=el.lon||(el.center?.lon); if(!lat||!lon) return; const id=el.id; if(!mapSt.has(id)){ let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road'; mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) }); } }); let st=Array.from(mapSt.values()); st.forEach(s=>{ s.status=overallStatus(s.fuel); }); return st; } catch(e){ return []; } }
+        async function fetchStations(lat,lon,rad){ const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`; const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`; try{ const res=await fetch(url); const data=await res.json(); const mapSt=new Map(); data.elements.forEach(el=>{ let name=el.tags?.name||el.tags?.brand||"Fuel station"; let lat=el.lat||(el.center?.lat); let lon=el.lon||(el.center?.lon); if(!lat||!lon) return; const id=el.id; if(!mapSt.has(id)){ let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road'; mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) }); } }); let st=Array.from(mapSt.values()); st.forEach(s=>{ s.status=overallStatus(s.fuel); }); return st; } catch(e){ console.warn('Overpass fetch error:', e); return []; } }
         
         function getFilteredStations(){ let filtered=stations.slice(); if(currentFilter!=='all'){ if(currentFilter==='available') filtered=filtered.filter(s=>s.status==='available'); else filtered=filtered.filter(s=>s.fuel[currentFilter]==='yes'); } if(searchQuery.trim()){ const q=searchQuery.toLowerCase(); filtered=filtered.filter(s=>s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q)||s.enhancedAmenities.some(a=>a.name.toLowerCase().includes(q))); } filtered.sort((a,b)=>(a.distance||999)-(b.distance||999)); return filtered; }
         
@@ -1116,14 +1090,28 @@
         
         async function updateCityName(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`); const data=await res.json(); const city=data.address?.city||data.address?.town||data.address?.village||'Zambia'; document.getElementById('cityDisplay').innerHTML=`${city}`; await reverseGeocodeRoad(lat,lng); } catch(e){ document.getElementById('cityDisplay').innerHTML=`Lusaka`; } }
         
-        function locateAndFetch(){ if(!navigator.geolocation) return; navigator.geolocation.getCurrentPosition(async pos=>{ userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude}; currentViewLocation = userLocation; if(userMarker) map.removeLayer(userMarker); userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:6,color:'#16a34a',fillColor:'#16a34a',fillOpacity:0.9}).addTo(map).bindPopup('You').openPopup(); map.setView([userLocation.lat,userLocation.lng],14); await updateCityName(userLocation.lat,userLocation.lng); await loadStations(true); }, err=>{ console.warn('Geolocation error:', err); // fallback to default city (Lusaka)
-            const defaultLat = -15.3875, defaultLng = 28.3228; // Lusaka coordinates
-            userLocation = null; // no user location for navigation
-            currentViewLocation = { lat: defaultLat, lng: defaultLng };
-            map.setView([defaultLat, defaultLng], 12);
-            updateCityName(defaultLat, defaultLng);
-            loadStations(true);
-        }, {enableHighAccuracy:true}); }
+        function locateAndFetch(){ if(!navigator.geolocation) { alert('Geolocation not supported'); return; } 
+            document.getElementById('nearMeBtn').innerHTML='<span class="spinner"></span> locating...';
+            navigator.geolocation.getCurrentPosition(async pos=>{ 
+                userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude}; 
+                currentViewLocation = userLocation; 
+                if(userMarker) map.removeLayer(userMarker); 
+                userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:6,color:'#16a34a',fillColor:'#16a34a',fillOpacity:0.9}).addTo(map).bindPopup('You').openPopup(); 
+                map.setView([userLocation.lat,userLocation.lng],14); 
+                await updateCityName(userLocation.lat,userLocation.lng); 
+                await loadStations(true); 
+            }, err=>{ 
+                console.warn('Geolocation error:', err); 
+                alert('Could not get your location. Using default (Lusaka).'); 
+                const defaultLat = -15.3875, defaultLng = 28.3228; // Lusaka coordinates
+                userLocation = null; // no user location for navigation
+                currentViewLocation = { lat: defaultLat, lng: defaultLng };
+                map.setView([defaultLat, defaultLng], 12);
+                updateCityName(defaultLat, defaultLng);
+                loadStations(true);
+                document.getElementById('nearMeBtn').innerHTML='<i class="fas fa-location-arrow"></i> Near me';
+            }, {enableHighAccuracy:true, timeout:10000}); 
+        }
         
         // City search: center map, fetch stations at that location
         async function searchCityAndLoadStations(query) {
@@ -1221,9 +1209,18 @@
         }
         
         function initMap(){
-            map = L.map('map', { zoomControl: true }).setView([-13.133,27.849],6);
-            // Style zoom buttons with custom colors via CSS
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+            // Ensure map container exists
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) {
+                console.error('Map container not found');
+                return;
+            }
+            map = L.map('map', { zoomControl: true }).setView([-15.3875, 28.3228], 6); // Lusaka centered
+            // Use reliable tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
             clusterGroup = L.markerClusterGroup({ chunkedLoading: true });
             map.addLayer(clusterGroup);
         }
