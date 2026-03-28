@@ -84,14 +84,9 @@
         .brand-center h1 {
             font-size: 18px;
             font-weight: 800;
+            color: #0a2a1f;
             margin: 0;
             letter-spacing: -0.3px;
-        }
-        .brand-center h1 .fuel-green {
-            color: #16a34a;
-        }
-        .brand-center h1 .radar-red {
-            color: #dc2626;
         }
         .slogan {
             font-size: 11px;
@@ -373,7 +368,6 @@
             color: white;
         }
 
-        /* Floating fuel stations pill - bright red icon */
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -393,10 +387,6 @@
             cursor: pointer;
             z-index: 1000;
             backdrop-filter: blur(2px);
-        }
-        .floating-fuel-pill i {
-            font-size: 20px;
-            color: #ff3333;
         }
 
         /* Station card style (for list) */
@@ -460,24 +450,6 @@
             padding: 24px;
             max-height: 85vh;
             overflow-y: auto;
-        }
-        .modal-close {
-            float: right;
-            background: #f3f4f6;
-            border: none;
-            font-size: 22px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #4b5563;
-            transition: 0.1s;
-        }
-        .modal-close:hover {
-            background: #e5e7eb;
         }
         .station-header {
             display: flex;
@@ -696,22 +668,6 @@
         }
         .sidebar-item:hover { background: #f0fdf4; }
 
-        /* Profile modal form styling */
-        #createAccountForm input, #loginForm input {
-            width: 100%;
-            padding: 10px 14px;
-            margin-bottom: 10px;
-            border-radius: 40px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            outline: none;
-        }
-        #createAccountForm input:focus, #loginForm input:focus {
-            border-color: #16a34a;
-        }
-        #createAccountForm, #loginForm {
-            margin-top: 16px;
-        }
         .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -738,12 +694,6 @@
             background: #16a34a;
             transition: width 0.05s linear;
         }
-        .price-fetch-note {
-            font-size: 9px;
-            color: #6b7280;
-            text-align: center;
-            margin-top: 4px;
-        }
     </style>
 </head>
 <body>
@@ -760,7 +710,7 @@
                     <img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
                 </div>
                 <div class="brand-center">
-                    <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1>
+                    <h1>FuelRadar</h1>
                     <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
                 </div>
                 <div class="logo-right">
@@ -823,16 +773,16 @@
     <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
 
     <!-- Modals -->
-    <div class="modal-overlay" id="stationModal"><div class="modal-content" id="stationModalContent"><button class="modal-close" id="closeModalBtn">&times;</button><div id="modalContent"></div></div></div>
-    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal">&times;</button><h3><i class="fas fa-search"></i> Search station</h3><input type="text" id="searchFuelInput" placeholder="Name or amenity..." style="width:100%; padding:10px; border-radius:40px; border:1px solid #16a34a; margin-bottom:12px;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto;"></div></div></div>
-    <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal">&times;</button><h3><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h3><div id="favListModal"></div></div></div>
-    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal">&times;</button><div style="text-align:center;"><img src="logo.png" style="width:60px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn" style="background:#16a34a; color:white;">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none;"><input placeholder="Full name"><input placeholder="Phone"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Login demo</button></div></div></div></div>
-    <div class="modal-overlay" id="fuelStationsModal"><div class="modal-content"><button class="modal-close" id="closeFuelStationsBtn">&times;</button><h3><i class="fas fa-gas-pump"></i> All stations (nearest first)</h3><div id="fuelStationsList" style="max-height: 60vh; overflow-y: auto; margin-top: 12px;"></div></div></div>
+    <div class="modal-overlay" id="stationModal"><div class="modal-content" id="stationModalContent"><button class="modal-close" id="closeModalBtn" style="float:right; background:none; border:none; font-size:22px;">&times;</button><div id="modalContent"></div></div></div>
+    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal" style="float:right;">&times;</button><h3><i class="fas fa-search"></i> Search station</h3><input type="text" id="searchFuelInput" placeholder="Name or amenity..." style="width:100%; padding:10px; border-radius:40px; border:1px solid #16a34a; margin-bottom:12px;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto;"></div></div></div>
+    <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal" style="float:right;">&times;</button><h3><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h3><div id="favListModal"></div></div></div>
+    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal" style="float:right;">&times;</button><div style="text-align:center;"><img src="logo.png" style="width:60px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none; margin-top:12px;"><input placeholder="Name" style="width:100%;"><input placeholder="Email"><button class="action-btn navigate-btn" style="width:100%; margin-top:8px;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input placeholder="Password"><button class="action-btn navigate-btn">Login demo</button></div></div></div></div>
+    <div class="modal-overlay" id="fuelStationsModal"><div class="modal-content"><button class="modal-close" id="closeFuelStationsBtn" style="float:right;">&times;</button><h3><i class="fas fa-gas-pump"></i> All stations (nearest first)</h3><div id="fuelStationsList" style="max-height: 60vh; overflow-y: auto; margin-top: 12px;"></div></div></div>
 
     <div id="sidebarOverlay" class="sidebar-overlay">
         <div class="sidebar-panel">
             <div class="sidebar-logo">
-                <img src="logo.png" alt="FuelRadar">
+                <img src="driver.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
             </div>
             <div class="sidebar-header">
                 <span>⚡ FuelRadar</span>
@@ -860,58 +810,6 @@
             document.getElementById('loadingPercent').innerText = prog + '%';
         }, 50);
         
-        // ---------- FUEL PRICES FROM ERB (mock + fallback) ----------
-        let currentPrices = {
-            petrol: 'K28.50',
-            diesel: 'K26.80',
-            kerosene: 'K19.20',
-            jetA1: 'K25.00'
-        };
-        
-        async function fetchFuelPricesFromERB() {
-            try {
-                // Attempt to fetch from ERB website - note: CORS may block; we use a proxy approach in real app
-                // For demo, we'll simulate with a fetch and fallback to known values.
-                // Since the site might not allow direct CORS, we'll set a timeout and use mock data.
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                const response = await fetch('https://www.erb.org.zm', { signal: controller.signal });
-                clearTimeout(timeoutId);
-                if (!response.ok) throw new Error('Network error');
-                const html = await response.text();
-                // Try to extract prices from HTML (simplified regex for demo)
-                const petrolMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i);
-                const dieselMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i);
-                if (petrolMatch) currentPrices.petrol = `K${petrolMatch[1]}`;
-                if (dieselMatch) currentPrices.diesel = `K${dieselMatch[1]}`;
-                console.log('Prices fetched from ERB');
-            } catch (err) {
-                console.warn('Could not fetch ERB prices, using default Zambia rates:', err);
-                // Use known Zambia ERB prices as of March 2026 (simulated)
-                currentPrices = {
-                    petrol: 'K29.31',
-                    diesel: 'K27.41',
-                    kerosene: 'K19.88',
-                    jetA1: 'K26.15'
-                };
-            }
-        }
-        
-        // Helper: get price per liter
-        function getFuelPrice(fuelType, availability) {
-            if (availability !== 'yes') return '—';
-            const map = {
-                petrol: currentPrices.petrol,
-                diesel: currentPrices.diesel,
-                lpg: 'K15.00',   // LPG not on ERB, mock
-                cng: 'K12.50'
-            };
-            return map[fuelType] || 'K?.??';
-        }
-        
-        // Call once to load prices
-        fetchFuelPricesFromERB();
-        
         let stations = [];
         let userLocation = null;
         let currentFilter = 'all';
@@ -921,7 +819,20 @@
         let userMarker = null;
         let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
         let currentRoad = '—';
-        
+
+        // Helper: estimate price per liter (demo)
+        function getFuelPrice(fuelType, availability) {
+            if (availability !== 'yes') return '—';
+            // Demo prices in Zambian Kwacha (K)
+            const prices = {
+                petrol: 'K28.50',
+                diesel: 'K26.80',
+                lpg: 'K15.00',
+                cng: 'K12.50'
+            };
+            return prices[fuelType] || 'K?.??';
+        }
+
         // Extract enhanced amenities with proper icons
         function extractEnhancedAmenities(tags) {
             const amenities = [];
@@ -939,8 +850,145 @@
             if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
             return amenities;
         }
-        
+
         const haversine = (lat1,lng1,lat2,lng2) => { const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLng=(lng2-lng1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); };
         const updateDistances = () => { if(userLocation) stations.forEach(s => s.distance = haversine(userLocation.lat, userLocation.lng, s.lat, s.lon)); };
         
-        function getFuelStatus(tags) { return { petrol: tags['fuel:petrol']==='yes'?'yes':(tags['fuel:petrol']==='no'?'no':null), diesel: tags['fuel
+        function getFuelStatus(tags) { return { petrol: tags['fuel:petrol']==='yes'?'yes':(tags['fuel:petrol']==='no'?'no':null), diesel: tags['fuel:diesel']==='yes'?'yes':(tags['fuel:diesel']==='no'?'no':null), lpg: tags['fuel:lpg']==='yes'?'yes':(tags['fuel:lpg']==='no'?'no':null), cng: tags['fuel:cng']==='yes'?'yes':(tags['fuel:cng']==='no'?'no':null) }; }
+        function overallStatus(fuel) { const vals=[fuel.petrol,fuel.diesel,fuel.lpg,fuel.cng].filter(v=>v!==null); if(vals.includes('yes')) return 'available'; if(vals.length && vals.every(v=>v==='no')) return 'empty'; return 'unknown'; }
+        function extractAmenities(tags){ let a=[]; if(tags.shop) a.push(`🛒 Shop: ${tags.shop}`); if(tags.pharmacy) a.push(`💊 Pharmacy`); if(tags.atm==='yes') a.push(`🏧 ATM`); if(tags.car_wash==='yes') a.push(`🧼 Car wash`); if(tags.amenity==='restaurant') a.push(`🍽️ Restaurant`); if(tags.toilets==='yes') a.push(`🚻 Toilets`); if(tags['truck_parking']==='yes') a.push(`🚛 Truck park`); if(a.length===0) a.push('⛽ Fuel station'); return [...new Set(a)]; }
+        async function fetchStations(lat,lon,rad){ const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`; const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`; try{ const res=await fetch(url); const data=await res.json(); const mapSt=new Map(); data.elements.forEach(el=>{ let name=el.tags?.name||el.tags?.brand||"Fuel station"; let lat=el.lat||(el.center?.lat); let lon=el.lon||(el.center?.lon); if(!lat||!lon) return; const id=el.id; if(!mapSt.has(id)){ let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road'; mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), amenities:extractAmenities(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), photoUrl:null, lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) }); } }); let st=Array.from(mapSt.values()); st.forEach(s=>{ s.status=overallStatus(s.fuel); }); return st; } catch(e){ return []; } }
+        
+        function getFilteredStations(){ let filtered=stations.slice(); if(currentFilter!=='all'){ if(currentFilter==='available') filtered=filtered.filter(s=>s.status==='available'); else filtered=filtered.filter(s=>s.fuel[currentFilter]==='yes'); } if(searchQuery.trim()){ const q=searchQuery.toLowerCase(); filtered=filtered.filter(s=>s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q)||s.amenities.some(a=>a.toLowerCase().includes(q))); } filtered.sort((a,b)=>(a.distance||999)-(b.distance||999)); return filtered; }
+        
+        function updateUIcounters(){ const filtered=getFilteredStations(); document.getElementById('stationCountHeader').innerHTML = `${filtered.length} stations`; const chips=document.querySelectorAll('.chip'); if(stations.length){ chips[0].innerHTML=`All <span class="chip-count">${stations.length}</span>`; chips[1].innerHTML=`Fuel available <span class="chip-count">${stations.filter(s=>s.status==='available').length}</span>`; chips[2].innerHTML=`Petrol <span class="chip-count">${stations.filter(s=>s.fuel.petrol==='yes').length}</span>`; chips[3].innerHTML=`Diesel <span class="chip-count">${stations.filter(s=>s.fuel.diesel==='yes').length}</span>`; } }
+        
+        function renderMarkers(){ if(!map||!clusterGroup) return; clusterGroup.clearLayers(); getFilteredStations().forEach(s=>{ const color=s.status==='available'?'#16a34a':(s.status==='empty'?'#dc2626':'#3b82f6'); const icon=L.divIcon({ html:`<i class="fas fa-gas-pump" style="color:${color}; font-size:26px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>`, iconSize:[26,26], className:'fuel-marker' }); const marker=L.marker([s.lat,s.lon],{icon}).bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⚠️ '+s.status}`); marker.on('click',()=>openStationModal(s.id)); clusterGroup.addLayer(marker); }); }
+        
+        async function loadStations(showToast=true){ if(!userLocation) return; if(showToast) document.getElementById('nearMeBtn').innerHTML='<span class="spinner"></span> loading'; stations=await fetchStations(userLocation.lat,userLocation.lng,radiusKm); updateDistances(); renderMarkers(); updateUIcounters(); if(showToast) document.getElementById('nearMeBtn').innerHTML='<i class="fas fa-location-arrow"></i> Near me'; }
+        
+        function toggleFavorite(id){ const s=stations.find(s=>s.id===id); if(s){ s.favorite=!s.favorite; if(s.favorite){ if(!favoriteIds.includes(id)) favoriteIds.push(id); } else favoriteIds=favoriteIds.filter(fid=>fid!==id); localStorage.setItem('fuelWatchFavs',JSON.stringify(favoriteIds)); renderMarkers(); updateUIcounters(); if(document.getElementById('stationModal').classList.contains('show')) openStationModal(id); } }
+        
+        function openStationModal(id){
+            const s = stations.find(s => s.id === id);
+            if (!s) return;
+            const distance = s.distance ? s.distance.toFixed(1) : '?';
+            const eta = s.distance ? Math.round(s.distance / 40 * 60) : '?'; // assume 40 km/h avg
+            const etaText = eta !== '?' ? `${eta} min` : '—';
+            
+            // Fuel items
+            const fuelTypes = ['petrol', 'diesel', 'lpg', 'cng'];
+            const fuelItemsHtml = fuelTypes.map(f => {
+                const status = s.fuel[f];
+                let statusClass = '', statusText = '', icon = '';
+                if (status === 'yes') {
+                    statusClass = 'available';
+                    statusText = 'Available';
+                    icon = '<i class="fas fa-check-circle"></i>';
+                } else if (status === 'no') {
+                    statusClass = 'unavailable';
+                    statusText = 'Unavailable';
+                    icon = '<i class="fas fa-times-circle"></i>';
+                } else {
+                    statusClass = 'unknown';
+                    statusText = 'Unknown';
+                    icon = '<i class="fas fa-question-circle"></i>';
+                }
+                const price = getFuelPrice(f, status);
+                return `
+                    <div class="fuel-item">
+                        <div class="fuel-name"><i class="fas fa-gas-pump"></i> ${f.toUpperCase()}</div>
+                        <div><span class="fuel-status ${statusClass}">${icon} ${statusText}</span></div>
+                        <div class="fuel-price">${price}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Amenities
+            const amenities = s.enhancedAmenities || [];
+            const amenitiesHtml = amenities.length ? `
+                <div class="amenities-section">
+                    <div class="amenities-title"><i class="fas fa-concierge-bell"></i> Amenities & Services</div>
+                    <div class="amenities-grid">
+                        ${amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}
+                    </div>
+                </div>
+            ` : '<div class="amenities-section"><div class="amenities-title">No additional services reported</div></div>';
+            
+            const modalHtml = `
+                <div class="station-header">
+                    <i class="fas fa-gas-pump"></i>
+                    <h2>${s.name}</h2>
+                </div>
+                <div class="location-details">
+                    <div class="address-detail">
+                        <i class="fas fa-map-marker-alt"></i> ${s.address}
+                    </div>
+                    <div class="distance-eta">
+                        <i class="fas fa-route"></i> ${distance} km · <i class="far fa-clock"></i> ${etaText}
+                    </div>
+                </div>
+                <div class="fuel-grid">
+                    ${fuelItemsHtml}
+                </div>
+                ${amenitiesHtml}
+                <div class="action-buttons">
+                    <button class="action-btn navigate-btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button>
+                    <button class="action-btn fav-btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button>
+                    <button class="action-btn share-btn" id="modalShare"><i class="fas fa-share-alt"></i> Share</button>
+                </div>
+                <div style="font-size: 10px; color: #888; margin-top: 12px; text-align: center;">Prices estimated · last sync: ${s.lastUpdated}</div>
+            `;
+            document.getElementById('modalContent').innerHTML = modalHtml;
+            document.getElementById('modalNav').onclick = () => startNavigation(s.lat, s.lon, s.name);
+            document.getElementById('modalFav').onclick = () => toggleFavorite(s.id);
+            document.getElementById('modalShare').onclick = () => navigator.share?.({ title: s.name, text: `Check ${s.name} on FuelRadar` }) || alert('Share demo');
+            document.getElementById('stationModal').classList.add('show');
+        }
+        
+        function startNavigation(destLat,destLon,name){ document.getElementById('stationModal').classList.remove('show'); if(!userLocation) return; if(routingControl) map.removeControl(routingControl); routingControl=L.Routing.control({ waypoints:[L.latLng(userLocation.lat,userLocation.lng),L.latLng(destLat,destLon)], routeWhileDragging:false, fitSelectedRoutes:true, lineOptions:{styles:[{color:'#16a34a',weight:5}]} }).addTo(map); document.getElementById('clearRouteBtn').style.display='flex'; }
+        
+        async function reverseGeocodeRoad(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`); const data=await res.json(); const road=data.address?.road||data.address?.pedestrian||data.address?.suburb||'local road'; currentRoad=road; document.getElementById('roadLocation').innerHTML=`${road.substring(0,28)}`; } catch(e){ currentRoad='unknown road'; document.getElementById('roadLocation').innerHTML=`approx road`; } }
+        
+        async function updateCityName(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`); const data=await res.json(); const city=data.address?.city||data.address?.town||data.address?.village||'Zambia'; document.getElementById('cityDisplay').innerHTML=`${city}`; await reverseGeocodeRoad(lat,lng); } catch(e){ document.getElementById('cityDisplay').innerHTML=`Lusaka`; } }
+        
+        function locateAndFetch(){ if(!navigator.geolocation) return; navigator.geolocation.getCurrentPosition(async pos=>{ userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude}; if(userMarker) map.removeLayer(userMarker); userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:6,color:'#16a34a',fillColor:'#16a34a',fillOpacity:0.9}).addTo(map).bindPopup('You').openPopup(); map.setView([userLocation.lat,userLocation.lng],14); await updateCityName(userLocation.lat,userLocation.lng); await loadStations(true); }, err=>alert('Location error'),{enableHighAccuracy:true}); }
+        
+        function showFuelStationsList(){ const sorted=getFilteredStations(); const container=document.getElementById('fuelStationsList'); if(!sorted.length) container.innerHTML='<p>No stations found</p>'; else{ container.innerHTML=sorted.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><span class="station-name">${s.name}</span><span>${s.distance?.toFixed(1)} km</span></div><div class="address">${s.address}</div><div class="fuel-badges">${['petrol','diesel'].map(f=>`<span class="fuel-badge ${s.fuel[f]==='yes'?'available':(s.fuel[f]==='no'?'unavailable':'unknown')}">${f.toUpperCase()}</span>`).join('')}</div><button class="nav-btn-sm" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button></div>`).join(''); container.querySelectorAll('.station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; openStationModal(parseInt(c.dataset.id)); }); }); container.querySelectorAll('.nav-btn-sm').forEach(btn=>{ btn.onclick=(e)=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); } document.getElementById('fuelStationsModal').classList.add('show'); }
+        
+        function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); }
+        
+        // sidebar
+        const sidebar=document.getElementById('sidebarOverlay');
+        document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open');
+        document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open');
+        sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
+        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(userLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='settings') alert('⚙️ Settings: units, theme (demo)'); if(act==='logout') alert('Logged out (demo)'); }; });
+        
+        // Event listeners
+        document.getElementById('nearMeBtn').onclick=locateAndFetch;
+        document.getElementById('floatLocateBtn').onclick=()=>{ if(userLocation) map.setView([userLocation.lat,userLocation.lng],15); else locateAndFetch(); };
+        document.getElementById('floatRefreshBtn').onclick=()=>{ if(userLocation) loadStations(true); };
+        document.getElementById('radiusSlider').oninput=(e)=>{ radiusKm=parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText=radiusKm+' km'; if(userLocation) loadStations(false); };
+        document.getElementById('searchInput').oninput=(e)=>{ searchQuery=e.target.value; renderMarkers(); updateUIcounters(); };
+        document.getElementById('clearSearchBtn').onclick=()=>{ document.getElementById('searchInput').value=''; searchQuery=''; renderMarkers(); updateUIcounters(); };
+        document.querySelectorAll('.chip').forEach(chip=>{ chip.onclick=()=>{ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter=chip.dataset.filter; renderMarkers(); updateUIcounters(); }; });
+        document.getElementById('citySearchBtn').onclick=async()=>{ const q=document.getElementById('citySearchInput').value; if(!q) return; try{ const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q+', Zambia')}&limit=1`); const data=await res.json(); if(data.length){ map.setView([parseFloat(data[0].lat),parseFloat(data[0].lon)],12); } else alert('City not found'); }catch(e){ alert('Geocoding error'); } };
+        document.getElementById('overlayMapBtn').onclick=()=>{ const wrap=document.getElementById('mapWrapper'); if(wrap.requestFullscreen) wrap.requestFullscreen(); else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); };
+        document.getElementById('clearRouteBtn').onclick=()=>{ if(routingControl){ map.removeControl(routingControl); routingControl=null; document.getElementById('clearRouteBtn').style.display='none'; } };
+        document.getElementById('floatingFuelBtn').onclick=showFuelStationsList;
+        document.getElementById('closeFuelStationsBtn').onclick=()=>document.getElementById('fuelStationsModal').classList.remove('show');
+        document.getElementById('closeModalBtn').onclick=()=>document.getElementById('stationModal').classList.remove('show');
+        document.getElementById('closeSearchModal').onclick=()=>document.getElementById('searchModal').classList.remove('show');
+        document.getElementById('closeFavModal').onclick=()=>document.getElementById('favModal').classList.remove('show');
+        document.getElementById('closeProfileModal').onclick=()=>document.getElementById('profileModal').classList.remove('show');
+        document.getElementById('searchFuelInput').addEventListener('input',e=>{ const val=e.target.value; const filtered=stations.filter(s=>s.name.toLowerCase().includes(val.toLowerCase())||s.address.toLowerCase().includes(val.toLowerCase())||s.amenities.some(a=>a.toLowerCase().includes(val.toLowerCase()))).slice(0,15); document.getElementById('searchResultsModal').innerHTML=filtered.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><strong>${s.name}</strong> <span>${s.distance?.toFixed(1)} km</span></div><div>${s.address}</div><button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button></div>`).join(''); document.querySelectorAll('#searchResultsModal .station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; openStationModal(parseInt(c.dataset.id)); document.getElementById('searchModal').classList.remove('show'); }); }); document.querySelectorAll('#searchResultsModal .nav-btn-sm').forEach(btn=>{ btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); });
+        document.getElementById('showCreateForm').onclick=()=>{ document.getElementById('createAccountForm').style.display='block'; document.getElementById('loginForm').style.display='none'; };
+        document.getElementById('showLoginForm').onclick=()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('createAccountForm').style.display='none'; };
+        
+        initMap();
+        locateAndFetch();
+    })();
+    </script>
+</body>
+</html>
