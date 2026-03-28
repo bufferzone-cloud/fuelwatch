@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · live stations</title>
+    <title>FuelRadar · Zambia · before your tank runs dry</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -52,7 +52,7 @@
             position: relative;
         }
 
-        /* header */
+        /* Header with slogan and stats */
         .header {
             padding: 12px 16px 8px 16px;
             background: #ffffff;
@@ -61,48 +61,45 @@
         .header-top {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .logo-img {
-            height: 40px;
-            width: auto;
-            border-radius: 12px;
-            background: white;
-            padding: 4px;
-            box-shadow: 0 4px 10px rgba(0,150,0,0.25);
-            object-fit: contain;
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
         }
-        .header-text {
-            flex: 1;
-        }
-        .header-text h1 {
+        .brand h1 {
             font-size: 20px;
             font-weight: 800;
             color: #0a2a1f;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-        .city-badge {
-            background: #dcfce7;
-            border-radius: 40px;
-            padding: 5px 12px;
-            font-size: 12px;
+        .slogan {
+            font-size: 13px;
             font-weight: 700;
-            color: #166534;
-            border: 1px solid #86efac;
+            color: #16a34a;
+            background: #eef5e8;
+            padding: 3px 10px;
+            border-radius: 30px;
             white-space: nowrap;
         }
-        .header-text p {
-            font-size: 12px;
-            color: #2c3e2c;
+        .stats-row {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 3px;
-            flex-wrap: wrap;
+            font-size: 12px;
+            background: #f9fafb;
+            padding: 4px 12px;
+            border-radius: 40px;
         }
-        .road-badge {
+        .stats-row span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .road-badge, .city-badge-sm {
             background: #eef2ff;
             border-radius: 30px;
             padding: 3px 10px;
@@ -113,8 +110,8 @@
         .menu-btn {
             background: #f0fdf4;
             border: none;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 30px;
             font-size: 20px;
             color: #16a34a;
@@ -122,9 +119,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
+        /* City search row */
         .city-search-row {
             display: flex;
             align-items: center;
@@ -137,7 +134,6 @@
         }
         .city-search-row i {
             color: #16a34a;
-            font-size: 15px;
         }
         .city-search-row input {
             flex: 1;
@@ -158,29 +154,58 @@
             cursor: pointer;
         }
 
+        /* Custom radius slider with car icon */
         .radius-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             margin-top: 10px;
+            background: #ffffff;
+            padding: 6px 0;
         }
-        .radius-icon {
-            font-size: 20px;
-            color: #16a34a;
-            background: #eef2ff;
+        .radius-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c5e2c;
+        }
+        .slider-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        input[type="range"].car-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #d9f0d9;
+            border-radius: 10px;
+            outline: none;
+        }
+        input[type="range"].car-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
             width: 32px;
             height: 32px;
+            background: url('driver.png') no-repeat center center;
+            background-size: contain;
+            cursor: pointer;
+            border: none;
+            transform: rotate(0deg);
+            /* Fallback if image missing */
+            background-color: #16a34a;
+            border-radius: 50%;
+        }
+        /* fallback using font awesome if image not available */
+        input[type="range"].car-slider:not(:valid)::-webkit-slider-thumb {
+            background: #16a34a;
+            content: "\f1b9";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: white;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 30px;
-        }
-        .radius-slider {
-            flex: 1;
-            height: 6px;
-            background: rgba(0,150,0,0.2);
-            border-radius: 10px;
-            accent-color: #16a34a;
         }
         .radius-value {
             background: #16a34a;
@@ -189,8 +214,11 @@
             border-radius: 30px;
             font-size: 13px;
             font-weight: 700;
+            min-width: 60px;
+            text-align: center;
         }
 
+        /* search section */
         .search-section {
             padding: 8px 16px 8px 16px;
             background: white;
@@ -265,7 +293,7 @@
             font-size: 11px;
         }
 
-        /* map wrapper: full remaining space */
+        /* map wrapper */
         .map-wrapper {
             position: relative;
             flex: 1;
@@ -277,8 +305,6 @@
         #map {
             height: 100%;
             width: 100%;
-            background: #cbd5e1;
-            z-index: 1;
         }
         .map-floating-buttons {
             position: absolute;
@@ -338,13 +364,9 @@
             cursor: pointer;
             z-index: 100;
             backdrop-filter: blur(2px);
-            transition: 0.2s;
-        }
-        .floating-fuel-pill i {
-            font-size: 24px;
         }
 
-        /* station card (reused in modal) */
+        /* station card style */
         .station-card {
             background: #ffffff;
             border-radius: 24px;
@@ -353,20 +375,12 @@
             border: 1px solid #e0f0e0;
             cursor: pointer;
             margin-bottom: 12px;
+            transition: 0.1s;
         }
         .station-name {
             font-weight: 800;
             font-size: 18px;
             color: #0c3b1e;
-        }
-        .open-now-badge {
-            background: #22c55e;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 700;
-            margin-left: 8px;
         }
         .address {
             font-size: 12px;
@@ -412,7 +426,20 @@
             border-radius: 30px;
             font-size: 11px;
             font-weight: 600;
-            border: 1px solid #86efac;
+        }
+        .nav-btn-sm {
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* modals */
@@ -441,33 +468,15 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .station-photo {
-            width: 100%;
-            height: 160px;
-            background: #e2f3e2;
-            border-radius: 24px;
-            object-fit: cover;
-            margin: 12px 0;
-        }
         .fuel-list {
             background: #f0fdf4;
             border-radius: 24px;
             padding: 16px;
             margin: 16px 0;
         }
-        .amenity-tag {
-            display: inline-block;
-            background: #ecfdf3;
-            padding: 7px 16px;
-            border-radius: 40px;
-            font-size: 13px;
-            margin: 4px 6px 4px 0;
-            border: 1px solid #86efac;
-            font-weight: 600;
-        }
         .action-btn {
             border-radius: 40px;
-            padding: 14px 18px;
+            padding: 12px 18px;
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -477,7 +486,7 @@
         .navigate-btn { background: #16a34a; color: white; }
         .report-btn { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 11px; margin-left: 6px; cursor: pointer; }
 
-        /* SIDEBAR */
+        /* sidebar */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -531,18 +540,14 @@
             font-weight: 600;
             color: #1e3a1e;
             cursor: pointer;
-            transition: 0.1s;
         }
         .sidebar-item i {
             width: 28px;
             font-size: 20px;
             color: #16a34a;
         }
-        .sidebar-item:hover {
-            background: #f0fdf4;
-        }
+        .sidebar-item:hover { background: #f0fdf4; }
 
-        /* misc */
         .spinner { border: 3px solid #e2f3e2; border-top: 3px solid #16a34a; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -562,7 +567,6 @@
             background: #e6f0e6;
             border-radius: 60px;
             overflow: hidden;
-            margin-bottom: 15px;
         }
         .progress-bar {
             width: 0%;
@@ -573,32 +577,36 @@
     </style>
 </head>
 <body>
-    <!-- loading overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <img src="fuel.jpeg" alt="FuelRadar" style="width:140px; margin-bottom:20px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
         <div class="progress-container"><div class="progress-bar" id="loadingBar"></div></div>
-        <div id="loadingPercent" style="font-weight:800;">0%</div>
+        <div id="loadingPercent" style="font-weight:800; margin-top:12px;">0%</div>
     </div>
 
     <div class="app-container">
         <div class="header">
             <div class="header-top">
-                <img src="fuel.jpeg" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-                <div class="header-text">
-                    <h1>FuelRadar · <span class="city-badge" id="cityDisplay"><i class="fas fa-map-pin"></i> locating..</span></h1>
-                    <p><span id="stationCountHeader">0 stations</span> <span id="roadLocation" class="road-badge"><i class="fas fa-road"></i> road: —</span></p>
+                <div class="brand">
+                    <h1>FuelRadar</h1>
+                    <span class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</span>
                 </div>
                 <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
             </div>
+            <div class="stats-row">
+                <span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span>
+                <span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span>
+                <span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">Lusaka</span></span>
+            </div>
             <div class="city-search-row">
                 <i class="fas fa-search"></i>
-                <input type="text" id="citySearchInput" placeholder="Search city (e.g. Lusaka)">
+                <input type="text" id="citySearchInput" placeholder="Search city (e.g. Ndola)">
                 <button id="citySearchBtn">Go</button>
             </div>
             <div class="radius-row">
-                <i class="fas fa-car radius-icon"></i>
-                <input type="range" min="1" max="8" step="0.5" value="3" class="radius-slider" id="radiusSlider">
-                <i class="fas fa-car radius-icon"></i>
+                <span class="radius-label"><i class="fas fa-arrows-alt-h"></i> radius</span>
+                <div class="slider-container">
+                    <input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider">
+                </div>
                 <span class="radius-value" id="radiusDisplay">3 km</span>
             </div>
         </div>
@@ -606,7 +614,7 @@
         <div class="search-section">
             <div class="search-box">
                 <i class="fas fa-search" style="color:#16a34a;"></i>
-                <input type="text" placeholder="Search station or amenity..." id="searchInput">
+                <input type="text" placeholder="Search station, amenity, or filling station..." id="searchInput">
                 <i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i>
             </div>
             <div class="near-me-row">
@@ -629,24 +637,22 @@
                 <button class="float-btn overlay-top" id="overlayMapBtn"><i class="fas fa-expand-alt"></i></button>
             </div>
             <div class="map-floating-buttons">
-                <button class="float-btn locate" id="floatLocateBtn" title="My location"><i class="fas fa-crosshairs"></i></button>
-                <button class="float-btn refresh" id="floatRefreshBtn" title="Refresh stations"><i class="fas fa-sync-alt"></i></button>
-                <button class="float-btn clear-route" id="clearRouteBtn" title="Clear route"><i class="fas fa-times-circle"></i></button>
+                <button class="float-btn locate" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
+                <button class="float-btn refresh" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
+                <button class="float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- floating pill for stations list -->
     <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
 
-    <!-- modals: station detail, search, fav, profile, fuel list modal -->
+    <!-- Modals -->
     <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn" style="float:right; background:none; border:none; font-size:24px;">&times;</button><div id="modalContent"></div></div></div>
-    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal" style="float:right;">&times;</button><h3><i class="fas fa-search"></i> Search station</h3><input type="text" id="searchFuelInput" placeholder="Name..." style="width:100%; padding:12px; border-radius:40px; border:1px solid #16a34a;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto; margin-top:16px;"></div></div></div>
+    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal" style="float:right;">&times;</button><h3><i class="fas fa-search"></i> Search station</h3><input type="text" id="searchFuelInput" placeholder="Name or amenity..." style="width:100%; padding:12px; border-radius:40px; border:1px solid #16a34a; margin-bottom:16px;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto;"></div></div></div>
     <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal" style="float:right;">&times;</button><h3><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h3><div id="favListModal"></div></div></div>
-    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal" style="float:right;">&times;</button><div style="text-align:center;"><img src="fuel.jpeg" style="width:70px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none; margin-top:12px;"><input placeholder="Name" style="width:100%; margin:5px 0;"><input placeholder="Email"><button class="action-btn navigate-btn" style="width:100%; margin-top:8px;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input placeholder="Password"><button class="action-btn navigate-btn">Login demo</button></div></div></div></div>
+    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal" style="float:right;">&times;</button><div style="text-align:center;"><img src="fuel.jpeg" style="width:70px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none; margin-top:12px;"><input placeholder="Name" style="width:100%;"><input placeholder="Email"><button class="action-btn navigate-btn" style="width:100%; margin-top:8px;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input placeholder="Password"><button class="action-btn navigate-btn">Login demo</button></div></div></div></div>
     <div class="modal-overlay" id="fuelStationsModal"><div class="modal-content"><button class="modal-close" id="closeFuelStationsBtn" style="float:right;">&times;</button><h3><i class="fas fa-gas-pump"></i> All stations (nearest first)</h3><div id="fuelStationsList" style="max-height: 60vh; overflow-y: auto; margin-top: 16px;"></div></div></div>
 
-    <!-- sidebar -->
     <div id="sidebarOverlay" class="sidebar-overlay">
         <div class="sidebar-panel">
             <div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:24px;">&times;</button></div>
@@ -694,7 +700,7 @@
         
         function updateUIcounters(){ const filtered=getFilteredStations(); document.getElementById('stationCountHeader').innerHTML = `${filtered.length} stations`; const chips=document.querySelectorAll('.chip'); if(stations.length){ chips[0].innerHTML=`All <span class="chip-count">${stations.length}</span>`; chips[1].innerHTML=`Fuel available <span class="chip-count">${stations.filter(s=>s.status==='available').length}</span>`; chips[2].innerHTML=`Petrol <span class="chip-count">${stations.filter(s=>s.fuel.petrol==='yes').length}</span>`; chips[3].innerHTML=`Diesel <span class="chip-count">${stations.filter(s=>s.fuel.diesel==='yes').length}</span>`; } }
         
-        function renderMarkers(){ if(!map||!clusterGroup) return; clusterGroup.clearLayers(); getFilteredStations().forEach(s=>{ const color=s.status==='available'?'#16a34a':(s.status==='empty'?'#dc2626':'#3b82f6'); const icon=L.divIcon({ html:`<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>`, iconSize:[28,28], className:'fuel-marker' }); const marker=L.marker([s.lat,s.lon],{icon}).bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⚠️ status: '+s.status}`); marker.on('click',()=>openStationModal(s.id)); clusterGroup.addLayer(marker); }); }
+        function renderMarkers(){ if(!map||!clusterGroup) return; clusterGroup.clearLayers(); getFilteredStations().forEach(s=>{ const color=s.status==='available'?'#16a34a':(s.status==='empty'?'#dc2626':'#3b82f6'); const icon=L.divIcon({ html:`<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>`, iconSize:[28,28], className:'fuel-marker' }); const marker=L.marker([s.lat,s.lon],{icon}).bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⚠️ '+s.status}`); marker.on('click',()=>openStationModal(s.id)); clusterGroup.addLayer(marker); }); }
         
         async function loadStations(showToast=true){ if(!userLocation) return; if(showToast) document.getElementById('nearMeBtn').innerHTML='<span class="spinner"></span> loading'; stations=await fetchStations(userLocation.lat,userLocation.lng,radiusKm); updateDistances(); renderMarkers(); updateUIcounters(); if(showToast) document.getElementById('nearMeBtn').innerHTML='<i class="fas fa-location-arrow"></i> Near me'; }
         
@@ -706,11 +712,11 @@
         
         async function reverseGeocodeRoad(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`); const data=await res.json(); const road=data.address?.road||data.address?.pedestrian||data.address?.suburb||'local road'; currentRoad=road; document.getElementById('roadLocation').innerHTML=`<i class="fas fa-road"></i> ${road.substring(0,28)}`; } catch(e){ currentRoad='unknown road'; document.getElementById('roadLocation').innerHTML=`<i class="fas fa-road"></i> road: approx`; } }
         
-        async function updateCityName(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`); const data=await res.json(); const city=data.address?.city||data.address?.town||data.address?.village||'Zambia'; document.getElementById('cityDisplay').innerHTML=`<i class="fas fa-map-pin"></i> ${city}`; await reverseGeocodeRoad(lat,lng); } catch(e){ document.getElementById('cityDisplay').innerHTML=`<i class="fas fa-map-pin"></i> Lusaka`; } }
+        async function updateCityName(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`); const data=await res.json(); const city=data.address?.city||data.address?.town||data.address?.village||'Zambia'; document.getElementById('cityDisplay').innerHTML=`${city}`; await reverseGeocodeRoad(lat,lng); } catch(e){ document.getElementById('cityDisplay').innerHTML=`Lusaka`; } }
         
-        function locateAndFetch(){ if(!navigator.geolocation) return; document.getElementById('userLocationStatus')&&(document.getElementById('userLocationStatus').innerText='locating'); navigator.geolocation.getCurrentPosition(async pos=>{ userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude}; if(userMarker) map.removeLayer(userMarker); userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:7,color:'#16a34a',fillColor:'#16a34a',fillOpacity:0.9}).addTo(map).bindPopup('You').openPopup(); map.setView([userLocation.lat,userLocation.lng],14); await updateCityName(userLocation.lat,userLocation.lng); await loadStations(true); }, err=>alert('Location error'),{enableHighAccuracy:true}); }
+        function locateAndFetch(){ if(!navigator.geolocation) return; navigator.geolocation.getCurrentPosition(async pos=>{ userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude}; if(userMarker) map.removeLayer(userMarker); userMarker=L.circleMarker([userLocation.lat,userLocation.lng],{radius:7,color:'#16a34a',fillColor:'#16a34a',fillOpacity:0.9}).addTo(map).bindPopup('You').openPopup(); map.setView([userLocation.lat,userLocation.lng],14); await updateCityName(userLocation.lat,userLocation.lng); await loadStations(true); }, err=>alert('Location error'),{enableHighAccuracy:true}); }
         
-        function showFuelStationsList(){ const sorted=getFilteredStations(); const container=document.getElementById('fuelStationsList'); if(!sorted.length) container.innerHTML='<p>No stations found</p>'; else{ container.innerHTML=sorted.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><span class="station-name">${s.name}</span><span>${s.distance?.toFixed(1)} km</span></div><div class="address">${s.address}</div><div class="fuel-badges">${['petrol','diesel'].map(f=>`<span class="fuel-badge ${s.fuel[f]==='yes'?'available':(s.fuel[f]==='no'?'unavailable':'unknown')}">${f.toUpperCase()}</span>`).join('')}</div></div>`).join(''); container.querySelectorAll('.station-card').forEach(c=>c.addEventListener('click',()=>{ document.getElementById('fuelStationsModal').classList.remove('show'); openStationModal(parseInt(c.dataset.id)); })); } document.getElementById('fuelStationsModal').classList.add('show'); }
+        function showFuelStationsList(){ const sorted=getFilteredStations(); const container=document.getElementById('fuelStationsList'); if(!sorted.length) container.innerHTML='<p>No stations found</p>'; else{ container.innerHTML=sorted.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><span class="station-name">${s.name}</span><span>${s.distance?.toFixed(1)} km</span></div><div class="address">${s.address}</div><div class="fuel-badges">${['petrol','diesel'].map(f=>`<span class="fuel-badge ${s.fuel[f]==='yes'?'available':(s.fuel[f]==='no'?'unavailable':'unknown')}">${f.toUpperCase()}</span>`).join('')}</div><button class="nav-btn-sm" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button></div>`).join(''); container.querySelectorAll('.station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; openStationModal(parseInt(c.dataset.id)); }); }); container.querySelectorAll('.nav-btn-sm').forEach(btn=>{ btn.onclick=(e)=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); } document.getElementById('fuelStationsModal').classList.add('show'); }
         
         function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); }
         
@@ -719,9 +725,9 @@
         document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open');
         document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open');
         sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
-        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(userLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> <button class="action-btn" data-id="${s.id}" style="background:#fee2e2;">remove fav</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='settings') alert('⚙️ Settings demo: report prices, units'); if(act==='logout') alert('Logged out (demo)'); }; });
+        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(userLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='settings') alert('⚙️ Settings: units, dark mode (demo)'); if(act==='logout') alert('Logged out (demo)'); }; });
         
-        // event binding
+        // Event listeners
         document.getElementById('nearMeBtn').onclick=locateAndFetch;
         document.getElementById('floatLocateBtn').onclick=()=>{ if(userLocation) map.setView([userLocation.lat,userLocation.lng],15); else locateAndFetch(); };
         document.getElementById('floatRefreshBtn').onclick=()=>{ if(userLocation) loadStations(true); };
@@ -738,7 +744,7 @@
         document.getElementById('closeSearchModal').onclick=()=>document.getElementById('searchModal').classList.remove('show');
         document.getElementById('closeFavModal').onclick=()=>document.getElementById('favModal').classList.remove('show');
         document.getElementById('closeProfileModal').onclick=()=>document.getElementById('profileModal').classList.remove('show');
-        document.getElementById('searchFuelInput').addEventListener('input',e=>{ const val=e.target.value; const filtered=stations.filter(s=>s.name.toLowerCase().includes(val.toLowerCase())||s.address.toLowerCase().includes(val.toLowerCase())).slice(0,12); document.getElementById('searchResultsModal').innerHTML=filtered.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km</div>`).join(''); document.querySelectorAll('#searchResultsModal .station-card').forEach(c=>c.onclick=()=>{ document.getElementById('searchModal').classList.remove('show'); openStationModal(parseInt(c.dataset.id)); }); });
+        document.getElementById('searchFuelInput').addEventListener('input',e=>{ const val=e.target.value; const filtered=stations.filter(s=>s.name.toLowerCase().includes(val.toLowerCase())||s.address.toLowerCase().includes(val.toLowerCase())||s.amenities.some(a=>a.toLowerCase().includes(val.toLowerCase()))).slice(0,15); document.getElementById('searchResultsModal').innerHTML=filtered.map(s=>`<div class="station-card" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><strong>${s.name}</strong> <span>${s.distance?.toFixed(1)} km</span></div><div>${s.address}</div><button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button></div>`).join(''); document.querySelectorAll('#searchResultsModal .station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; openStationModal(parseInt(c.dataset.id)); document.getElementById('searchModal').classList.remove('show'); }); }); document.querySelectorAll('#searchResultsModal .nav-btn-sm').forEach(btn=>{ btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&userLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); });
         document.getElementById('showCreateForm').onclick=()=>{ document.getElementById('createAccountForm').style.display='block'; document.getElementById('loginForm').style.display='none'; };
         document.getElementById('showLoginForm').onclick=()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('createAccountForm').style.display='none'; };
         
