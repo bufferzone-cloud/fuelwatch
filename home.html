@@ -52,7 +52,7 @@
             position: relative;
         }
 
-        /* Header with centered brand and right logo */
+        /* Header with top-left driver icon, centered brand, top-right logo */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -63,6 +63,19 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+        }
+        .driver-left {
+            width: 52px;  /* increased by 20% relative to original 40px logo concept */
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        .driver-left img {
+            width: 48px;   /* 20% bigger than 40px original */
+            height: 48px;
+            object-fit: contain;
         }
         .brand-center {
             flex: 1;
@@ -86,16 +99,15 @@
             margin-top: 2px;
         }
         .logo-right {
-            width: 44px;
-            height: 44px;
-            background: transparent;
+            width: 52px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .logo-right img {
-            width: 40px;
-            height: 40px;
+            width: 48px;   /* increased by 20% from 40px */
+            height: 48px;
             object-fit: contain;
         }
         .stats-row {
@@ -169,7 +181,7 @@
             cursor: pointer;
         }
 
-        /* Custom radius slider with horizontal car icon (front right) */
+        /* Custom radius slider with horizontal car icon (front right) - size increased 30% */
         .radius-row {
             display: flex;
             align-items: center;
@@ -197,21 +209,32 @@
             border-radius: 10px;
             outline: none;
         }
-        /* Custom thumb: horizontal car icon (front facing right), enlarged, no circle */
+        /* thumb size increased by 30% (38px * 1.3 ≈ 49px) */
         input[type="range"].car-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 38px;   /* increased by 20% from ~32px */
-            height: 38px;
+            width: 49px;
+            height: 49px;
             background: url('driver.png') no-repeat center center;
             background-size: contain;
             cursor: pointer;
             border: none;
-            transform: rotate(0deg); /* horizontal orientation: front faces right by default if image is left->right */
-            border-radius: 0;        /* remove any circular shape */
+            transform: rotate(0deg);
+            border-radius: 0;
             box-shadow: none;
             background-color: transparent;
         }
-        /* Fallback if image missing: use Font Awesome car icon with no circle */
+        /* Firefox support */
+        input[type="range"].car-slider::-moz-range-thumb {
+            width: 49px;
+            height: 49px;
+            background: url('driver.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            border-radius: 0;
+            background-color: transparent;
+            transform: rotate(0deg);
+        }
+        /* Fallback if image missing */
         input[type="range"].car-slider:invalid::-webkit-slider-thumb,
         input[type="range"].car-slider:not(:valid)::-webkit-slider-thumb {
             background: none;
@@ -220,22 +243,11 @@
             font-weight: 900;
             content: "\f1b9";
             color: #16a34a;
-            font-size: 28px;
+            font-size: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 0;
-            transform: rotate(0deg);
-        }
-        /* Firefox support */
-        input[type="range"].car-slider::-moz-range-thumb {
-            width: 38px;
-            height: 38px;
-            background: url('driver.png') no-repeat center center;
-            background-size: contain;
-            border: none;
-            border-radius: 0;
-            background-color: transparent;
             transform: rotate(0deg);
         }
         .radius-value {
@@ -332,13 +344,14 @@
             border-radius: 0;
             overflow: hidden;
             background: #cbd5e1;
-            min-height: 0; /* ensures flex shrink */
+            min-height: 0;
         }
         #map {
             height: 100%;
             width: 100%;
             background: #cbd5e1;
         }
+        /* Floating map buttons - ensure visibility */
         .map-floating-buttons {
             position: absolute;
             bottom: 14px;
@@ -346,13 +359,13 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            z-index: 10;
+            z-index: 1000;
         }
         .map-top-right {
             position: absolute;
             top: 14px;
             right: 14px;
-            z-index: 10;
+            z-index: 1000;
         }
         .float-btn {
             width: 44px;
@@ -367,6 +380,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: 0.1s;
         }
         .float-btn.clear-route {
             color: #dc2626;
@@ -395,7 +409,7 @@
             gap: 10px;
             box-shadow: 0 8px 18px rgba(0,100,0,0.4);
             cursor: pointer;
-            z-index: 150;
+            z-index: 1000;
             backdrop-filter: blur(2px);
         }
         .floating-fuel-pill i {
@@ -522,7 +536,7 @@
         .navigate-btn { background: #16a34a; color: white; }
         .report-btn { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 3px 10px; font-size: 10px; margin-left: 6px; cursor: pointer; }
 
-        /* sidebar */
+        /* sidebar with huge logo */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -541,7 +555,7 @@
             position: fixed;
             top: 0;
             right: -300px;
-            width: 270px;
+            width: 280px;
             height: 100%;
             background: white;
             box-shadow: -4px 0 24px rgba(0,0,0,0.2);
@@ -554,6 +568,15 @@
         .sidebar-overlay.open .sidebar-panel {
             right: 0;
         }
+        .sidebar-logo {
+            text-align: center;
+            padding: 20px 0 10px 0;
+        }
+        .sidebar-logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
         .sidebar-header {
             padding: 12px 20px;
             border-bottom: 1px solid #e0f0e0;
@@ -562,6 +585,7 @@
             color: #16a34a;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .sidebar-menu {
             flex: 1;
@@ -622,7 +646,9 @@
     <div class="app-container">
         <div class="header">
             <div class="header-top">
-                <div></div> <!-- spacer for balance -->
+                <div class="driver-left">
+                    <img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+                </div>
                 <div class="brand-center">
                     <h1>FuelRadar</h1>
                     <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
@@ -695,7 +721,13 @@
 
     <div id="sidebarOverlay" class="sidebar-overlay">
         <div class="sidebar-panel">
-            <div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div>
+            <div class="sidebar-logo">
+                <img src="driver.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            </div>
+            <div class="sidebar-header">
+                <span>⚡ FuelRadar</span>
+                <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button>
+            </div>
             <div class="sidebar-menu">
                 <div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div>
                 <div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div>
