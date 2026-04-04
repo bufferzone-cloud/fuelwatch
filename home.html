@@ -775,14 +775,19 @@
         userMarker = L.marker([lat, lng], { icon: carIcon }).addTo(map).bindPopup('You are here');
     }
 
+    // Global function to attach navigation events (used by popups and dynamic lists)
     function attachNavigationEventsToContainer(container) {
         if (!container) return;
         container.querySelectorAll('[data-nav-id]').forEach(btn => {
-            btn.onclick = (e) => {
+            // Remove any previous listener to avoid duplicates
+            btn.removeEventListener('click', btn._navHandler);
+            const handler = (e) => {
                 e.stopPropagation();
-                let st = stations.find(x => x.id == btn.dataset.navId);
+                const st = stations.find(x => x.id == btn.dataset.navId);
                 if (st) startNavigationWithMessage(st);
             };
+            btn._navHandler = handler;
+            btn.addEventListener('click', handler);
         });
     }
 
@@ -823,6 +828,8 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
+        // Attach events to popups when they open
+        map.off('popupopen');
         map.on('popupopen', function(e) {
             const popupNode = e.popup.getElement();
             if (popupNode) {
