@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · before your tank runs dry</title>
+    <title>FuelRadar · Zambia · Smart Fuel Assistant</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -38,7 +37,6 @@
             align-items: stretch;
             height: 100%;
             overflow: hidden;
-            font-size: 100%;
         }
 
         .app-container {
@@ -49,18 +47,17 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            border-radius: 0;
-            border: none;
             overflow: hidden;
             position: relative;
         }
 
         /* Header */
         .header {
-            padding: 12px 16px 8px 16px;
-            background: #ffffff;
+            padding: 12px 16px 8px;
+            background: white;
             border-bottom: 1px solid #e2e8f0;
         }
+
         .header-top {
             display: flex;
             align-items: center;
@@ -68,32 +65,37 @@
             gap: 8px;
             margin-bottom: 8px;
         }
-        .driver-left {
-            width: 48px;
-            height: 48px;
+
+        .driver-left, .logo-right {
+            width: 44px;
+            height: 44px;
+            background: #f0fdf4;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f0fdf4;
-            border-radius: 50%;
         }
-        .driver-left img {
-            width: 40px;
-            height: 40px;
+
+        .driver-left img, .logo-right img {
+            width: 36px;
+            height: 36px;
             object-fit: contain;
         }
+
         .brand-center {
             flex: 1;
             text-align: center;
         }
+
         .brand-center h1 {
             font-size: 20px;
             font-weight: 800;
             margin: 0;
-            letter-spacing: -0.3px;
         }
+
         .fuel-green { color: #16a34a; }
         .radar-red { color: #dc2626; }
+
         .slogan {
             font-size: 10px;
             font-weight: 600;
@@ -104,37 +106,26 @@
             display: inline-block;
             margin-top: 2px;
         }
-        .logo-right {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0fdf4;
-            border-radius: 50%;
-        }
-        .logo-right img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
+
         .stats-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             font-size: 11px;
             background: #f8fafc;
             padding: 6px 12px;
             border-radius: 40px;
-            margin: 8px 0 6px 0;
+            margin: 8px 0 6px;
         }
+
         .stats-row span {
             display: flex;
             align-items: center;
             gap: 5px;
         }
+
         .road-badge, .city-badge-sm, .vehicle-badge {
             background: #eef2ff;
             border-radius: 30px;
@@ -143,11 +134,13 @@
             font-weight: 600;
             color: #1e3a8a;
         }
+
         .vehicle-badge {
             background: #e6f7e6;
             color: #166534;
             cursor: pointer;
         }
+
         .menu-btn {
             background: #f0fdf4;
             border: none;
@@ -157,13 +150,6 @@
             font-size: 18px;
             color: #16a34a;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .menu-btn:hover {
-            background: #dcfce7;
         }
 
         /* City search row */
@@ -177,7 +163,7 @@
             padding: 4px 4px 4px 16px;
             border: 1px solid #bbf7d0;
         }
-        .city-search-row i { color: #16a34a; font-size: 14px; }
+
         .city-search-row input {
             flex: 1;
             border: none;
@@ -186,6 +172,7 @@
             font-size: 13px;
             outline: none;
         }
+
         .city-search-row button {
             background: #16a34a;
             border: none;
@@ -193,11 +180,8 @@
             padding: 6px 16px;
             color: white;
             font-weight: 600;
-            font-size: 12px;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .city-search-row button:hover { background: #15803d; }
 
         /* radius slider */
         .radius-row {
@@ -205,28 +189,27 @@
             align-items: center;
             gap: 12px;
             margin-top: 10px;
-            background: #ffffff;
-            padding: 6px 0;
         }
+
         .radius-label {
             font-size: 13px;
             font-weight: 600;
             color: #2c5e2c;
         }
+
         .slider-container {
             flex: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
         }
+
         input[type="range"].car-slider {
-            flex: 1;
+            width: 100%;
             height: 6px;
             -webkit-appearance: none;
             background: #d9f0d9;
             border-radius: 10px;
             outline: none;
         }
+
         input[type="range"].car-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 44px;
@@ -235,11 +218,8 @@
             background-size: contain;
             cursor: pointer;
             border: none;
-            transform: rotate(0deg);
-            border-radius: 0;
-            box-shadow: none;
-            background-color: transparent;
         }
+
         .radius-value {
             background: #16a34a;
             color: white;
@@ -247,8 +227,6 @@
             border-radius: 40px;
             font-size: 13px;
             font-weight: 700;
-            min-width: 70px;
-            text-align: center;
         }
 
         /* search section */
@@ -257,6 +235,7 @@
             background: white;
             border-bottom: 1px solid #eef2f6;
         }
+
         .search-box {
             display: flex;
             align-items: center;
@@ -265,84 +244,74 @@
             padding: 8px 16px;
             border: 1px solid #e2e8f0;
             gap: 10px;
-            transition: 0.2s;
         }
-        .search-box:focus-within {
-            border-color: #16a34a;
-            box-shadow: 0 0 0 2px rgba(22,163,74,0.2);
-        }
+
         .search-box input {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 0;
             font-size: 14px;
             outline: none;
         }
-        .search-box button {
-            background: none;
-            border: none;
-            color: #16a34a;
-            font-size: 16px;
-            cursor: pointer;
-        }
+
         .near-me-row {
             display: flex;
             justify-content: center;
+            gap: 10px;
             margin-top: 12px;
+            flex-wrap: wrap;
         }
-        .near-me-btn {
+
+        .near-me-btn, .cheapest-btn, .voice-btn {
             background: #16a34a;
             border: none;
             border-radius: 48px;
-            padding: 8px 28px;
+            padding: 8px 20px;
             color: white;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,80,0,0.15);
-            transition: 0.2s;
         }
-        .near-me-btn:hover { background: #15803d; transform: scale(0.98); }
 
+        .cheapest-btn {
+            background: #f59e0b;
+        }
+
+        .voice-btn {
+            background: #3b82f6;
+        }
+
+        /* filter */
         .filter-section {
             padding: 10px 16px;
             background: white;
             border-bottom: 1px solid #eef2f6;
         }
+
         .filter-scroll {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 4px 0;
-            scrollbar-width: thin;
+            padding-bottom: 4px;
         }
+
         .chip {
             background: #f1f5f9;
-            color: #1e293b;
             padding: 6px 16px;
             border-radius: 40px;
             font-size: 12px;
             font-weight: 600;
-            border: none;
             cursor: pointer;
             white-space: nowrap;
             transition: 0.2s;
         }
+
         .chip.active {
             background: #16a34a;
             color: white;
-            box-shadow: 0 2px 6px rgba(22,163,74,0.3);
-        }
-        .chip-count {
-            background: rgba(0,0,0,0.1);
-            border-radius: 20px;
-            padding: 2px 8px;
-            margin-left: 6px;
-            font-size: 10px;
         }
 
         /* map wrapper */
@@ -350,51 +319,45 @@
             position: relative;
             flex: 1;
             width: 100%;
-            border-radius: 0;
             overflow: hidden;
             background: #cbd5e1;
-            min-height: 0;
         }
+
         #map {
             height: 100%;
             width: 100%;
-            background: #cbd5e1;
         }
+
         .map-floating-buttons {
             position: absolute;
             bottom: 16px;
             right: 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             z-index: 1000;
         }
+
         .float-btn {
-            width: 46px;
-            height: 46px;
+            width: 44px;
+            height: 44px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             border: none;
             color: #16a34a;
-            font-size: 20px;
+            font-size: 18px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: 0.15s;
         }
-        .float-btn:hover { background: #f0fdf4; transform: scale(1.05); }
+
         .float-btn.clear-route {
             color: #dc2626;
             display: none;
         }
-        .overlay-top {
-            background: #16a34a;
-            color: white;
-        }
 
-        /* floating fuel pill */
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -405,23 +368,21 @@
             border: none;
             border-radius: 60px;
             padding: 12px 28px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 20px rgba(0,100,0,0.4);
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             cursor: pointer;
             z-index: 1000;
-            backdrop-filter: blur(4px);
-            transition: 0.2s;
         }
-        .floating-fuel-pill:hover { background: #15803d; transform: translateX(-50%) scale(1.02); }
 
-        /* Modal styles */
+        /* Modal base */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,30,0,0.6);
             backdrop-filter: blur(8px);
             display: flex;
@@ -433,264 +394,90 @@
             transition: 0.2s;
             padding: 20px;
         }
-        .modal-overlay.show { visibility: visible; opacity: 1; }
+
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
         .modal-content {
             background: white;
             width: 100%;
             max-width: 500px;
-            border-radius: 36px;
+            border-radius: 32px;
             padding: 24px;
-            box-shadow: 0 40px 60px rgba(0,0,0,0.3);
             max-height: 85vh;
             overflow-y: auto;
         }
+
         .modal-close {
             float: right;
             background: #f1f5f9;
             border: none;
-            font-size: 22px;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            color: #475569;
-            transition: 0.1s;
-        }
-        .modal-close:hover { background: #e2e8f0; }
-
-        /* Fuel stations modal header */
-        .fuel-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eef2e6;
-        }
-        .fuel-modal-header .header-left img,
-        .fuel-modal-header .header-right img {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-            border-radius: 50%;
-            background: #f0fdf4;
-            padding: 6px;
-        }
-
-        /* Station cards */
-        .fuel-station-card {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            transition: 0.15s;
-        }
-        .fuel-station-card:hover { border-color: #16a34a; transform: translateY(-2px); }
-        .card-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .card-left { flex: 1; }
-        .station-icon-name {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-        .station-icon-name i {
-            font-size: 28px;
-            color: #16a34a;
-            background: #eef5e8;
-            padding: 8px;
-            border-radius: 50%;
-        }
-        .station-icon-name h3 {
             font-size: 18px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
         }
-        .station-road-address {
-            font-size: 12px;
-            color: #2c5e2c;
-            background: #f0fdf4;
-            padding: 4px 12px;
-            border-radius: 30px;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-        .distance-eta {
-            font-size: 12px;
-            color: #1e3a8a;
-            background: #eef2ff;
-            padding: 4px 12px;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 6px;
-        }
-        .fuel-status-icons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .fuel-status-icon {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .fuel-status-icon .check { color: #16a34a; }
-        .fuel-status-icon .times { color: #dc2626; }
-        .navigate-center {
-            text-align: center;
-            margin-top: 14px;
-        }
-        .nav-full-btn {
-            background: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .nav-full-btn:hover { background: #15803d; }
 
-        /* Sidebar */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 3000;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .sidebar-overlay.open { visibility: visible; opacity: 1; }
-        .sidebar-panel {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 280px;
-            height: 100%;
-            background: white;
-            box-shadow: -4px 0 24px rgba(0,0,0,0.1);
-            z-index: 3001;
-            transition: right 0.25s ease-out;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-        }
-        .sidebar-overlay.open .sidebar-panel { right: 0; }
-        .sidebar-logo { text-align: center; padding: 20px 0; }
-        .sidebar-logo img { width: 80px; height: 80px; object-fit: contain; }
-        .sidebar-header {
-            padding: 12px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 18px;
-            font-weight: 800;
-            color: #16a34a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .sidebar-menu { flex: 1; padding: 16px 0; }
-        .sidebar-item {
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #1e293b;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
-        .sidebar-item:hover { background: #f0fdf4; }
-
-        /* Vehicle & log cards */
-        .vehicle-card, .log-entry {
+        /* Cards */
+        .station-card, .vehicle-card, .log-entry, .report-card {
             background: #f8fafc;
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 14px;
             margin-bottom: 12px;
             border-left: 4px solid #16a34a;
         }
+
         .flex-between {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .mt-2 { margin-top: 12px; }
         .mb-2 { margin-bottom: 12px; }
         .small-text { font-size: 12px; color: #475569; }
+
         .action-btn {
-            flex: 1;
             border-radius: 40px;
-            padding: 10px;
+            padding: 8px 16px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            font-size: 13px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.2s;
+            gap: 6px;
         }
+
         .navigate-btn { background: #16a34a; color: white; }
+        .report-btn { background: #f59e0b; color: white; }
+        .queue-badge { background: #fee2e2; color: #b91c1c; border-radius: 20px; padding: 2px 8px; font-size: 10px; }
+
+        .price-highlight { background: #fef3c7; color: #b45309; font-weight: bold; padding: 2px 8px; border-radius: 20px; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
         .offline-badge {
             background: #f59e0b;
             color: white;
-            border-radius: 30px;
+            border-radius: 20px;
             padding: 2px 8px;
             font-size: 10px;
-            font-weight: 600;
         }
-        input, select {
-            border-radius: 40px;
-            border: 1px solid #cbd5e1;
-            padding: 10px 14px;
-            font-size: 14px;
-            outline: none;
-            width: 100%;
-        }
-        input:focus { border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22,163,74,0.2); }
-        hr { margin: 16px 0; border-color: #e2e8f0; }
-        .price-note { font-size: 10px; color: #6c757d; text-align: center; margin-top: 12px; }
-        .spinner {
-            border: 3px solid #e2f3e2;
-            border-top: 3px solid #16a34a;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .loading-overlay {
             position: fixed;
-            top:0; left:0; width:100%; height:100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: white;
             z-index: 10000;
             display: flex;
@@ -698,6 +485,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .progress-container {
             width: 70%;
             height: 20px;
@@ -705,12 +493,15 @@
             border-radius: 60px;
             overflow: hidden;
         }
+
         .progress-bar {
             width: 0%;
             height: 100%;
             background: #16a34a;
             transition: width 0.05s linear;
         }
+
+        hr { margin: 16px 0; border-color: #e2e8f0; }
     </style>
 </head>
 <body>
@@ -724,7 +515,7 @@
         <div class="header">
             <div class="header-top">
                 <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-                <div class="brand-center"><h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1><div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div></div>
+                <div class="brand-center"><h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1><div class="slogan"><i class="fas fa-gas-pump"></i> smart fuel assistant</div></div>
                 <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
             </div>
             <div class="stats-row">
@@ -734,21 +525,33 @@
                 <span><i class="fas fa-car"></i> <span id="activeVehicleDisplay" class="vehicle-badge">My Car</span></span>
                 <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
             </div>
-            <div class="city-search-row"><i class="fas fa-search"></i><input type="text" id="citySearchInput" placeholder="Search city (e.g. Ndola)"><button id="citySearchBtn">Go</button></div>
+            <div class="city-search-row"><i class="fas fa-search"></i><input type="text" id="citySearchInput" placeholder="Search city"><button id="citySearchBtn">Go</button></div>
             <div class="radius-row"><span class="radius-label"><i class="fas fa-car"></i> radius</span><div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div><span class="radius-value" id="radiusDisplay">3 km</span></div>
         </div>
 
         <div class="search-section">
-            <div class="search-box"><i class="fas fa-search" style="color:#16a34a;"></i><input type="text" placeholder="Search station, amenity..." id="searchInput"><button id="openSearchModalBtn"><i class="fas fa-list"></i></button><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i></div>
-            <div class="near-me-row"><button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button></div>
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search station, amenity..." id="searchInput"><button id="openSearchModalBtn"><i class="fas fa-list"></i></button><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer;"></i></div>
+            <div class="near-me-row">
+                <button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
+                <button class="cheapest-btn" id="cheapestFuelBtn"><i class="fas fa-tag"></i> Cheapest</button>
+                <button class="voice-btn" id="voiceSearchBtn"><i class="fas fa-microphone"></i> Voice</button>
+            </div>
         </div>
 
-        <div class="filter-section"><div class="filter-scroll" id="filterTabs"><button class="chip active" data-filter="all">All</button><button class="chip" data-filter="available">Fuel available</button><button class="chip" data-filter="petrol">Petrol</button><button class="chip" data-filter="diesel">Diesel</button></div></div>
+        <div class="filter-section">
+            <div class="filter-scroll" id="filterTabs">
+                <button class="chip active" data-filter="all">All</button>
+                <button class="chip" data-filter="available">Available</button>
+                <button class="chip" data-filter="petrol">Petrol</button>
+                <button class="chip" data-filter="diesel">Diesel</button>
+                <button class="chip" data-filter="cheapest">Best Price</button>
+            </div>
+        </div>
 
         <div class="map-wrapper" id="mapWrapper">
             <div id="map"></div>
             <div class="map-floating-buttons">
-                <button class="float-btn overlay-top" id="overlayMapBtn"><i class="fas fa-expand-alt"></i></button>
+                <button class="float-btn" id="overlayMapBtn"><i class="fas fa-expand-alt"></i></button>
                 <button class="float-btn locate" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="float-btn refresh" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
                 <button class="float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
@@ -760,62 +563,15 @@
 
     <!-- Modals -->
     <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn">&times;</button><div id="modalContent"></div></div></div>
-    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal">&times;</button><h3><i class="fas fa-search"></i> Search results</h3><input type="text" id="searchFuelInput" placeholder="Filter results..." style="width:100%; margin-bottom:12px;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto;"></div></div></div>
-    <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal">&times;</button><h3><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h3><div id="favListModal"></div></div></div>
-    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal">&times;</button><div style="text-align:center;"><img src="logo.png" style="width:60px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn" style="background:#16a34a; color:white;">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none;"><input placeholder="Full name"><input placeholder="Phone"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Login demo</button></div></div></div></div>
-    
-    <div class="modal-overlay" id="fuelStationsModal">
-        <div class="modal-content" style="padding: 20px;">
-            <div class="fuel-modal-header">
-                <div class="header-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-                <div class="header-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-            </div>
-            <h3 style="margin:0 0 12px 0; font-weight:800;"><i class="fas fa-gas-pump"></i> Nearby Stations</h3>
-            <div id="fuelStationsList" style="max-height: 60vh; overflow-y: auto;"></div>
-            <button class="modal-close" id="closeFuelStationsBtn" style="margin-top: 16px;">&times;</button>
-        </div>
-    </div>
+    <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal">&times;</button><h3>Search Results</h3><input type="text" id="searchFuelInput" placeholder="Filter..."><div id="searchResultsModal"></div></div></div>
+    <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal">&times;</button><h3>Favorites</h3><div id="favListModal"></div></div></div>
+    <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal">&times;</button><h3>Profile</h3><p>FuelRadar Zambia - Demo</p><button id="showCreateForm" class="action-btn navigate-btn">Create account</button><button id="showLoginForm" class="action-btn">Login</button><div id="createAccountForm" style="display:none;"><input placeholder="Name"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn">Register</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn">Login</button></div></div></div></div>
+    <div class="modal-overlay" id="fuelStationsModal"><div class="modal-content"><div class="fuel-modal-header"><img src="driver.png" width="40"><h3>Nearby Stations</h3><img src="logo.png" width="40"></div><div id="fuelStationsList"></div><button class="modal-close" id="closeFuelStationsBtn">&times;</button></div></div>
+    <div class="modal-overlay" id="vehicleModal"><div class="modal-content"><button class="modal-close" id="closeVehicleModal">&times;</button><h3>My Garage</h3><div id="vehicleListContainer"></div><hr><button id="addVehicleBtn" class="action-btn navigate-btn">+ Add Vehicle</button><div id="addVehicleForm" style="display:none;"><input id="newVehicleName" placeholder="Name"><input id="newTankCapacity" placeholder="Tank (L)"><input id="newConsumption" placeholder="L/100km"><button id="saveVehicleBtn" class="action-btn navigate-btn">Save</button></div><hr><h4>Fuel Calculator</h4><div>Active: <span id="activeVehicleName">—</span></div><div>Range: <strong id="rangeEstimate">—</strong></div><input type="number" id="tripDistance" placeholder="Trip km"><button id="calcTripBtn" class="action-btn navigate-btn">Calculate</button><div>Trip cost: <strong id="tripCost">—</strong> | Fuel: <strong id="fuelNeeded">—</strong></div><hr><h4>Fuel Logs</h4><button id="addLogBtn" class="action-btn navigate-btn">+ Log Refuel</button><div id="addLogForm" style="display:none;"><input type="date" id="logDate"><input id="logLiters" placeholder="Liters"><input id="logPricePerLiter" placeholder="Price/L"><input id="logOdometer" placeholder="Odometer"><button id="submitLogBtn" class="action-btn navigate-btn">Save</button></div><div id="logsList"></div><div id="statsSummary" class="small-text"></div></div></div>
+    <div class="modal-overlay" id="reportModal"><div class="modal-content"><button class="modal-close" id="closeReportModal">&times;</button><h3>Report Station</h3><select id="reportType"><option>Fuel available</option><option>Out of fuel</option><option>Long queue</option><option>Price update</option></select><textarea id="reportComment" placeholder="Optional comment"></textarea><button id="submitReportBtn" class="action-btn navigate-btn">Submit Report</button></div></div>
+    <div class="modal-overlay" id="alertModal"><div class="modal-content"><button class="modal-close" id="closeAlertModal">&times;</button><h3>Refuel Alert</h3><div id="alertMessage"></div><button id="dismissAlertBtn" class="action-btn">OK</button></div></div>
 
-    <!-- Vehicle & Fuel Logs Modal -->
-    <div class="modal-overlay" id="vehicleModal">
-        <div class="modal-content">
-            <button class="modal-close" id="closeVehicleModal">&times;</button>
-            <h3><i class="fas fa-car"></i> My Garage</h3>
-            <div id="vehicleListContainer"></div>
-            <hr>
-            <button id="addVehicleBtn" class="action-btn navigate-btn" style="width:100%;"><i class="fas fa-plus"></i> Add Vehicle</button>
-            <div id="addVehicleForm" style="display:none; margin-top:12px;">
-                <input type="text" id="newVehicleName" placeholder="Vehicle name (e.g. Toyota Hilux)" class="mb-2">
-                <input type="number" id="newTankCapacity" placeholder="Tank capacity (liters)" class="mb-2">
-                <input type="number" id="newConsumption" placeholder="Consumption (L/100km)" class="mb-2">
-                <button id="saveVehicleBtn" class="action-btn navigate-btn">Save Vehicle</button>
-            </div>
-            <hr>
-            <h4><i class="fas fa-tachometer-alt"></i> Fuel Calculator</h4>
-            <div id="calculatorPanel">
-                <div class="small-text">Active vehicle: <span id="activeVehicleName">—</span></div>
-                <div class="flex-between mt-2"><span>Range (km):</span><strong id="rangeEstimate">—</strong></div>
-                <div class="flex-between mt-2"><span>Trip distance (km):</span><input type="number" id="tripDistance" placeholder="km" style="width:120px;"></div>
-                <div class="flex-between"><span>Trip cost (est):</span><strong id="tripCost">—</strong></div>
-                <div class="flex-between"><span>Fuel needed:</span><strong id="fuelNeeded">—</strong></div>
-                <button id="calcTripBtn" class="action-btn navigate-btn mt-2">Calculate</button>
-            </div>
-            <hr>
-            <h4><i class="fas fa-file-alt"></i> Fuel Logs</h4>
-            <button id="addLogBtn" class="action-btn navigate-btn" style="width:100%;"><i class="fas fa-plus"></i> Log Refuel</button>
-            <div id="addLogForm" style="display:none; margin-top:12px;">
-                <input type="date" id="logDate" class="mb-2">
-                <input type="number" id="logLiters" placeholder="Liters" class="mb-2">
-                <input type="number" id="logPricePerLiter" placeholder="Price per liter (K)" class="mb-2">
-                <input type="number" id="logOdometer" placeholder="Odometer (km)" class="mb-2">
-                <button id="submitLogBtn" class="action-btn navigate-btn">Save Log</button>
-            </div>
-            <div id="logsList" style="max-height:200px; overflow-y:auto; margin-top:12px;"></div>
-            <div id="statsSummary" class="small-text mt-2"></div>
-        </div>
-    </div>
-
-    <div id="sidebarOverlay" class="sidebar-overlay"><div class="sidebar-panel"><div class="sidebar-logo"><img src="logo.png" alt="FuelRadar"></div><div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div><div class="sidebar-menu"><div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div><div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div><div class="sidebar-item" data-action="fav"><i class="fas fa-heart"></i> Favorites</div><div class="sidebar-item" data-action="vehicle"><i class="fas fa-car"></i> My Vehicles</div><div class="sidebar-item" data-action="profile"><i class="fas fa-user"></i> Profile</div><div class="sidebar-item" data-action="settings"><i class="fas fa-cog"></i> Settings</div><div class="sidebar-item" data-action="logout"><i class="fas fa-sign-out-alt"></i> Logout</div></div></div></div>
+    <div id="sidebarOverlay" class="sidebar-overlay"><div class="sidebar-panel"><div class="sidebar-logo"><img src="logo.png"></div><div class="sidebar-header"><span>FuelRadar</span><button id="closeSidebarBtn">&times;</button></div><div class="sidebar-menu"><div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div><div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div><div class="sidebar-item" data-action="fav"><i class="fas fa-heart"></i> Favorites</div><div class="sidebar-item" data-action="vehicle"><i class="fas fa-car"></i> My Vehicles</div><div class="sidebar-item" data-action="profile"><i class="fas fa-user"></i> Profile</div><div class="sidebar-item" data-action="settings"><i class="fas fa-cog"></i> Premium Offline</div><div class="sidebar-item" data-action="logout"><i class="fas fa-sign-out-alt"></i> Logout</div></div></div></div>
 
     <script>
     (function() {
@@ -827,319 +583,281 @@
             document.getElementById('loadingBar').style.width = prog + '%';
             document.getElementById('loadingPercent').innerText = prog + '%';
         }, 50);
-        
-        // --- IndexedDB setup ---
+
+        // IndexedDB
         const db = new Dexie('FuelRadarDB');
         db.version(1).stores({
             vehicles: '++id, name, tankCapacity, consumptionLper100km, isActive',
-            fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer, consumptionCalculated, costPerKm',
-            cachedStations: 'id, name, lat, lon, address, timestamp'
+            fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer',
+            cachedStations: 'id, name, lat, lon, address, timestamp, pricePetrol, priceDiesel, reports',
+            userReports: '++id, stationId, type, comment, timestamp'
         });
-        
+
         let activeVehicle = null;
         let isPremium = localStorage.getItem('isPremium') === 'true';
-        function setPremium(status) { isPremium = status; localStorage.setItem('isPremium', status); }
-        
-        // --- Vehicle functions ---
+        let currentPrices = { petrol: 28.50, diesel: 26.80 };
+        let stations = [], actualUserLocation = null, activeLocation = null, currentFilter = 'all', searchQuery = '', radiusKm = 3;
+        let map, clusterGroup, routingControl = null, userMarker = null;
+        let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
+
+        // Helper functions
+        function setPremium(status) { isPremium = status; localStorage.setItem('isPremium', status); alert(isPremium ? 'Premium enabled: offline caching active' : 'Premium disabled'); }
+
+        // Vehicle & logs
         async function loadVehicles() {
             const vehicles = await db.vehicles.toArray();
             if (vehicles.length === 0) {
-                const defaultVehicle = { name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, isActive: true };
-                await db.vehicles.add(defaultVehicle);
-                activeVehicle = defaultVehicle;
-                activeVehicle.id = (await db.vehicles.toArray())[0].id;
+                await db.vehicles.add({ name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, isActive: true });
+                activeVehicle = { name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, id: (await db.vehicles.toArray())[0].id };
             } else {
                 activeVehicle = vehicles.find(v => v.isActive) || vehicles[0];
-                if (!activeVehicle.isActive) { activeVehicle.isActive = true; await db.vehicles.update(activeVehicle.id, { isActive: true }); }
             }
             renderVehicleList();
-            updateDashboardVehicleDisplay();
-            updateCalculatorUI();
+            document.getElementById('activeVehicleDisplay').innerHTML = `<i class="fas fa-car"></i> ${activeVehicle.name}`;
+            document.getElementById('activeVehicleName').innerText = activeVehicle.name;
+            const range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
+            document.getElementById('rangeEstimate').innerText = range.toFixed(1) + ' km';
             renderFuelLogs();
         }
-        
+
         async function renderVehicleList() {
             const vehicles = await db.vehicles.toArray();
             const container = document.getElementById('vehicleListContainer');
             if (!container) return;
-            container.innerHTML = vehicles.map(v => `
-                <div class="vehicle-card" data-id="${v.id}">
-                    <div class="flex-between">
-                        <strong><i class="fas fa-car"></i> ${v.name}</strong>
-                        ${v.isActive ? '<span class="offline-badge">ACTIVE</span>' : ''}
-                    </div>
-                    <div class="small-text">Tank: ${v.tankCapacity}L | Consumption: ${v.consumptionLper100km} L/100km</div>
-                    <div class="flex-between mt-2">
-                        <button class="action-btn" style="background:#eef2ff;" data-setactive="${v.id}">Set Active</button>
-                        <button class="action-btn" style="background:#fee2e2;" data-delvehicle="${v.id}">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-            document.querySelectorAll('[data-setactive]').forEach(btn => {
-                btn.onclick = async () => { const id = parseInt(btn.dataset.setactive); await db.vehicles.toCollection().modify({ isActive: 0 }); await db.vehicles.update(id, { isActive: true }); loadVehicles(); };
-            });
-            document.querySelectorAll('[data-delvehicle]').forEach(btn => {
-                btn.onclick = async () => { const id = parseInt(btn.dataset.delvehicle); await db.vehicles.delete(id); loadVehicles(); };
-            });
+            container.innerHTML = vehicles.map(v => `<div class="vehicle-card"><div class="flex-between"><strong>${v.name}</strong> ${v.isActive ? '<span class="offline-badge">ACTIVE</span>' : ''}</div><div class="small-text">Tank: ${v.tankCapacity}L | ${v.consumptionLper100km} L/100km</div><div class="flex-between mt-2"><button class="action-btn" data-setactive="${v.id}">Set Active</button><button class="action-btn" data-delvehicle="${v.id}">Delete</button></div></div>`).join('');
+            document.querySelectorAll('[data-setactive]').forEach(btn => btn.onclick = async () => { await db.vehicles.toCollection().modify({ isActive: 0 }); await db.vehicles.update(parseInt(btn.dataset.setactive), { isActive: true }); loadVehicles(); });
+            document.querySelectorAll('[data-delvehicle]').forEach(btn => btn.onclick = async () => { await db.vehicles.delete(parseInt(btn.dataset.delvehicle)); loadVehicles(); });
         }
-        
-        function updateDashboardVehicleDisplay() {
-            const displaySpan = document.getElementById('activeVehicleDisplay');
-            if (activeVehicle) displaySpan.innerHTML = `<i class="fas fa-car"></i> ${activeVehicle.name}`;
-            else displaySpan.innerHTML = 'No vehicle';
-        }
-        
-        async function addVehicle(name, tankCapacity, consumption) {
-            await db.vehicles.add({ name, tankCapacity, consumptionLper100km: consumption, isActive: false });
-            loadVehicles();
-        }
-        
+
         async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) {
             const totalCost = liters * pricePerLiter;
-            const logs = await db.fuelLogs.where('vehicleId').equals(vehicleId).toArray();
-            let consumptionCalculated = null, costPerKm = null;
-            if (logs.length > 0) {
-                const lastLog = logs.sort((a,b) => b.odometer - a.odometer)[0];
-                if (lastLog.odometer && odometer > lastLog.odometer) {
-                    const distKm = odometer - lastLog.odometer;
-                    if (distKm > 0) consumptionCalculated = (liters / distKm) * 100;
-                    costPerKm = totalCost / distKm;
-                }
-            }
-            await db.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer, consumptionCalculated, costPerKm });
+            await db.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer });
             renderFuelLogs();
         }
-        
+
         async function renderFuelLogs() {
             if (!activeVehicle) return;
             const logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).reverse().toArray();
             const container = document.getElementById('logsList');
-            if (!container) return;
-            container.innerHTML = logs.map(l => `<div class="log-entry">${l.date} | ${l.liters}L @ K${l.pricePerLiter} | Total K${l.totalCost.toFixed(2)} | Odo ${l.odometer}km ${l.consumptionCalculated ? `| Real: ${l.consumptionCalculated.toFixed(1)}L/100km` : ''}</div>`).join('');
+            if (container) container.innerHTML = logs.map(l => `<div class="log-entry">${l.date} | ${l.liters}L @ K${l.pricePerLiter} | Total K${l.totalCost.toFixed(2)} | Odo ${l.odometer}km</div>`).join('');
             if (logs.length) {
                 const totalSpent = logs.reduce((s,l) => s + l.totalCost, 0);
-                const totalLiters = logs.reduce((s,l) => s + l.liters, 0);
-                const lastMonth = new Date(); lastMonth.setMonth(lastMonth.getMonth()-1);
-                const monthlyLogs = logs.filter(l => new Date(l.date) >= lastMonth);
-                const monthlySpend = monthlyLogs.reduce((s,l) => s + l.totalCost, 0);
-                const distanceMonthly = monthlyLogs.length ? (monthlyLogs[0].odometer - (monthlyLogs[monthlyLogs.length-1]?.odometer || 0)) : 0;
-                document.getElementById('statsSummary').innerHTML = `Total spent: K${totalSpent.toFixed(2)} | Total L: ${totalLiters.toFixed(1)} | Monthly: K${monthlySpend.toFixed(2)} | Monthly km: ${Math.abs(distanceMonthly)}`;
-            } else { if(document.getElementById('statsSummary')) document.getElementById('statsSummary').innerHTML = 'No logs yet'; }
-        }
-        
-        function updateCalculatorUI() {
-            if (activeVehicle) {
-                document.getElementById('activeVehicleName').innerText = activeVehicle.name;
-                const range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
-                document.getElementById('rangeEstimate').innerText = range.toFixed(1) + ' km';
+                document.getElementById('statsSummary').innerHTML = `Total spent: K${totalSpent.toFixed(2)} | Last refill: ${logs[0].date}`;
             }
         }
-        
+
         function calculateTrip() {
             if (!activeVehicle) return;
-            const distance = parseFloat(document.getElementById('tripDistance').value);
-            if (isNaN(distance)) return;
-            const fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
-            const cost = fuelNeeded * (currentPrices.petrol ? parseFloat(currentPrices.petrol.replace('K','')) : 28);
+            const dist = parseFloat(document.getElementById('tripDistance').value);
+            if (isNaN(dist)) return;
+            const fuelNeeded = (dist / 100) * activeVehicle.consumptionLper100km;
+            const cost = fuelNeeded * currentPrices.petrol;
             document.getElementById('fuelNeeded').innerText = fuelNeeded.toFixed(1) + ' L';
             document.getElementById('tripCost').innerText = 'K' + cost.toFixed(2);
         }
-        
-        // --- Offline caching (premium) ---
-        async function cacheStations(stationsArray) {
-            if (!isPremium) return;
-            const timestamp = Date.now();
-            for (let s of stationsArray) {
-                await db.cachedStations.put({ id: s.id, name: s.name, lat: s.lat, lon: s.lon, address: s.address, timestamp });
-            }
-        }
-        async function getCachedStations() {
-            if (!isPremium) return [];
-            const cached = await db.cachedStations.toArray();
-            const now = Date.now();
-            return cached.filter(c => (now - c.timestamp) < 86400000);
-        }
-        
-        // --- Original map & stations logic (preserved) ---
-        let currentPrices = { petrol: 'K28.50', diesel: 'K26.80', lpg: 'K15.00', cng: 'K12.50' };
-        async function fetchFuelPricesFromERB() {
-            try {
-                const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm'));
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                const html = data.contents;
-                const petrolMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i);
-                const dieselMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i);
-                if (petrolMatch) currentPrices.petrol = `K${petrolMatch[1]}`;
-                if (dieselMatch) currentPrices.diesel = `K${dieselMatch[1]}`;
-            } catch(e) {}
-        }
-        fetchFuelPricesFromERB();
-        function getFuelPrice(fuelType, availability) { if (availability !== 'yes') return '—'; return currentPrices[fuelType] || 'K?.??'; }
-        
-        let stations = [], actualUserLocation = null, activeLocation = null, currentFilter = 'all', searchQuery = '', radiusKm = 3, map, clusterGroup, routingControl = null, userMarker = null, favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
+
+        // Station helpers
         const haversine = (lat1,lng1,lat2,lng2) => { const R=6371; const dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); };
-        const updateDistances = () => { if(activeLocation) stations.forEach(s => s.distance = haversine(activeLocation.lat, activeLocation.lng, s.lat, s.lon)); };
-        
-        function getFuelStatus(tags) { return { petrol: tags['fuel:petrol']==='yes'?'yes':(tags['fuel:petrol']==='no'?'no':null), diesel: tags['fuel:diesel']==='yes'?'yes':(tags['fuel:diesel']==='no'?'no':null), lpg: tags['fuel:lpg']==='yes'?'yes':(tags['fuel:lpg']==='no'?'no':null), cng: tags['fuel:cng']==='yes'?'yes':(tags['fuel:cng']==='no'?'no':null) }; }
-        function overallStatus(fuel) { const vals=[fuel.petrol,fuel.diesel,fuel.lpg,fuel.cng].filter(v=>v!==null); if(vals.includes('yes')) return 'available'; if(vals.length && vals.every(v=>v==='no')) return 'empty'; return 'unknown'; }
-        function extractEnhancedAmenities(tags) {
-            const amenities = [];
-            if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
-            if (tags.pharmacy === 'yes') amenities.push({ icon: 'fa-capsules', name: 'Pharmacy' });
-            if (tags.atm === 'yes' || tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
-            if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
-            if (tags.amenity === 'restaurant') amenities.push({ icon: 'fa-utensils', name: 'Restaurant' });
-            if (tags.amenity === 'fast_food') amenities.push({ icon: 'fa-hamburger', name: 'Fast food' });
-            if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
-            if (tags['truck_parking'] === 'yes') amenities.push({ icon: 'fa-truck', name: 'Truck park' });
-            if (tags['parking'] === 'yes') amenities.push({ icon: 'fa-parking', name: 'Parking' });
-            if (tags['internet_access'] === 'yes') amenities.push({ icon: 'fa-wifi', name: 'WiFi' });
-            if (tags['compressed_air'] === 'yes' || tags['tyre_pump'] === 'yes' || tags['service:tyre'] === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump / air' });
-            if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
-            return amenities;
-        }
         
         async function fetchStations(lat, lon, rad) {
-            const q=`[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
-            const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`;
-            try{
-                const res=await fetch(url);
-                const data=await res.json();
-                const mapSt=new Map();
-                data.elements.forEach(el=>{
-                    let name=el.tags?.name||el.tags?.brand||"Fuel station";
-                    let lat=el.lat||(el.center?.lat);
-                    let lon=el.lon||(el.center?.lon);
-                    if(!lat||!lon) return;
-                    const id=el.id;
-                    if(!mapSt.has(id)){
-                        let addr=[el.tags?.['addr:housenumber'],el.tags?.['addr:street']].filter(Boolean).join(', ')||'local road';
-                        mapSt.set(id,{ id, name, address:addr, lat, lon, tags:el.tags||{}, openingHours:el.tags?.opening_hours||'unknown', fuel:getFuelStatus(el.tags||{}), enhancedAmenities:extractEnhancedAmenities(el.tags||{}), lastUpdated:new Date().toLocaleTimeString(), favorite:favoriteIds.includes(id) });
-                    }
-                });
-                let st=Array.from(mapSt.values());
-                st.forEach(s=>{ s.status=overallStatus(s.fuel); });
-                if (isPremium) await cacheStations(st);
+            const q = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
+            try {
+                const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                const mapSt = new Map();
+                for (let el of data.elements) {
+                    let name = el.tags?.name || el.tags?.brand || "Fuel station";
+                    let lat = el.lat || el.center?.lat;
+                    let lon = el.lon || el.center?.lon;
+                    if (!lat || !lon) continue;
+                    let addr = [el.tags?.['addr:street']].filter(Boolean).join(', ') || 'local road';
+                    let fuelStatus = { petrol: Math.random() > 0.3 ? 'yes' : (Math.random() > 0.5 ? 'no' : 'low'), diesel: Math.random() > 0.3 ? 'yes' : 'no' };
+                    let pricePetrol = currentPrices.petrol + (Math.random() * 2 - 1);
+                    let priceDiesel = currentPrices.diesel + (Math.random() * 2 - 1);
+                    let reports = await db.userReports.where('stationId').equals(el.id).toArray();
+                    let queueLength = reports.find(r => r.type === 'Long queue') ? 'Long' : (reports.find(r => r.type === 'Fuel available') ? 'Short' : 'Medium');
+                    mapSt.set(el.id, { id: el.id, name, address: addr, lat, lon, fuel: fuelStatus, pricePetrol: pricePetrol.toFixed(2), priceDiesel: priceDiesel.toFixed(2), queue: queueLength, reports: reports, lastUpdated: new Date().toLocaleTimeString(), favorite: favoriteIds.includes(el.id), amenities: ['car wash', 'shop', 'atm'].slice(0, Math.floor(Math.random()*3)) });
+                }
+                let st = Array.from(mapSt.values());
+                st.forEach(s => { s.distance = haversine(lat, lon, s.lat, s.lon); s.status = s.fuel.petrol === 'yes' || s.fuel.diesel === 'yes' ? 'available' : (s.fuel.petrol === 'low' ? 'low' : 'empty'); });
+                if (isPremium) await db.cachedStations.bulkPut(st.map(s => ({ ...s, timestamp: Date.now() })));
                 return st;
-            } catch(e){
+            } catch(e) {
                 if (isPremium) {
-                    const cached = await getCachedStations();
-                    if (cached.length) {
-                        document.getElementById('roadLocation').innerHTML += ' <span class="offline-badge">offline</span>';
-                        return cached.map(c => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, address: c.address, tags: {}, fuel: { petrol: 'unknown', diesel: 'unknown' }, enhancedAmenities: [], status: 'unknown', lastUpdated: 'cached' }));
-                    }
+                    let cached = await db.cachedStations.toArray();
+                    if (cached.length) return cached.filter(c => (Date.now() - c.timestamp) < 86400000).map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
                 }
                 return [];
             }
         }
-        
-        function getFilteredStations(){ let filtered=stations.slice(); if(currentFilter!=='all'){ if(currentFilter==='available') filtered=filtered.filter(s=>s.status==='available'); else filtered=filtered.filter(s=>s.fuel[currentFilter]==='yes'); } if(searchQuery.trim()){ const q=searchQuery.toLowerCase(); filtered=filtered.filter(s=>s.name.toLowerCase().includes(q)||s.address.toLowerCase().includes(q)||s.enhancedAmenities.some(a=>a.name.toLowerCase().includes(q))); } filtered.sort((a,b)=>(a.distance||999)-(b.distance||999)); return filtered; }
-        function updateUIcounters(){ const filtered=getFilteredStations(); document.getElementById('stationCountHeader').innerHTML = `${filtered.length} stations`; const chips=document.querySelectorAll('.chip'); if(stations.length){ chips[0].innerHTML=`All <span class="chip-count">${stations.length}</span>`; chips[1].innerHTML=`Fuel available <span class="chip-count">${stations.filter(s=>s.status==='available').length}</span>`; chips[2].innerHTML=`Petrol <span class="chip-count">${stations.filter(s=>s.fuel.petrol==='yes').length}</span>`; chips[3].innerHTML=`Diesel <span class="chip-count">${stations.filter(s=>s.fuel.diesel==='yes').length}</span>`; } }
-        
-        function renderMarkers(){ if(!map||!clusterGroup) return; clusterGroup.clearLayers(); getFilteredStations().forEach(s=>{ const color=s.status==='available'?'#16a34a':(s.status==='empty'?'#dc2626':'#3b82f6'); const icon=L.divIcon({ html:`<i class="fas fa-gas-pump" style="color:${color}; font-size:26px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>`, iconSize:[26,26], className:'fuel-marker' }); const marker=L.marker([s.lat,s.lon],{icon}).bindPopup(`<b>${s.name}</b><br>${s.status==='available'?'✅ fuel in stock':'⚠️ '+s.status}`); marker.on('click',()=>openStationModal(s.id)); clusterGroup.addLayer(marker); }); }
-        
-        async function loadStations(showToast=true){ if(!activeLocation) return; if(showToast) document.getElementById('nearMeBtn').innerHTML='<span class="spinner"></span> loading'; stations=await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm); updateDistances(); renderMarkers(); updateUIcounters(); if(showToast) document.getElementById('nearMeBtn').innerHTML='<i class="fas fa-location-arrow"></i> Near me'; }
-        
-        function toggleFavorite(id){ const s=stations.find(s=>s.id===id); if(s){ s.favorite=!s.favorite; if(s.favorite){ if(!favoriteIds.includes(id)) favoriteIds.push(id); } else favoriteIds=favoriteIds.filter(fid=>fid!==id); localStorage.setItem('fuelWatchFavs',JSON.stringify(favoriteIds)); renderMarkers(); updateUIcounters(); if(document.getElementById('stationModal').classList.contains('show')) openStationModal(id); } }
-        
-        function openStationModal(id){
-            const s = stations.find(s => s.id === id); if (!s) return;
-            const distance = s.distance ? s.distance.toFixed(1) : '?'; const eta = s.distance ? Math.round(s.distance / 40 * 60) : '?';
-            const fuelSummaryHtml = `<div class="fuel-summary"><div class="fuel-summary-item"><i class="fas fa-gas-pump ${s.fuel.petrol==='yes'?'available-check':(s.fuel.petrol==='no'?'unavailable-cross':'')}"></i> Petrol ${s.fuel.petrol==='yes'?'✓':(s.fuel.petrol==='no'?'✗':'?')}</div><div class="fuel-summary-item"><i class="fas fa-oil-can ${s.fuel.diesel==='yes'?'available-check':(s.fuel.diesel==='no'?'unavailable-cross':'')}"></i> Diesel ${s.fuel.diesel==='yes'?'✓':(s.fuel.diesel==='no'?'✗':'?')}</div></div>`;
-            const fuelRows = ['petrol','diesel','lpg','cng'].map(f => { const status = s.fuel[f]; const statusClass = status==='yes'?'available':(status==='no'?'unavailable':'unknown'); const statusText = status==='yes'?'Available':(status==='no'?'Unavailable':'Unknown'); const price = getFuelPrice(f, status); return `<div class="fuel-row"><div class="fuel-type"><i class="fas fa-gas-pump"></i> ${f.toUpperCase()}</div><div><span class="fuel-status-badge ${statusClass}">${statusText}</span></div><div class="fuel-price">${price}</div></div>`; }).join('');
-            const amenitiesHtml = s.enhancedAmenities.length ? `<div class="amenities-grid">${s.enhancedAmenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div>` : '<div>No extra services</div>';
-            const modalHtml = `<div class="station-modal-header"><i class="fas fa-gas-pump"></i><h2>${s.name}</h2></div><div><span class="station-road"><i class="fas fa-road"></i> ${s.address}</span></div><div><span class="distance-eta-badge"><i class="fas fa-route"></i> ${distance} km · <i class="far fa-clock"></i> ${eta} min</span></div>${fuelSummaryHtml}<div class="fuel-grid-compact">${fuelRows}</div><div class="amenities-section"><div class="amenities-title"><i class="fas fa-concierge-bell"></i> Amenities</div>${amenitiesHtml}</div><div class="action-buttons"><button class="action-btn navigate-btn" id="modalNav"><i class="fas fa-route"></i> Navigate</button><button class="action-btn fav-btn" id="modalFav"><i class="${s.favorite ? 'fas' : 'far'} fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button><button class="action-btn share-btn" id="modalShare"><i class="fas fa-share-alt"></i> Share</button></div><div class="price-note">Prices: ERB Zambia estimate · last sync: ${s.lastUpdated}</div>`;
+
+        function getFilteredStations() {
+            let filtered = stations.slice();
+            if (currentFilter === 'available') filtered = filtered.filter(s => s.status === 'available');
+            else if (currentFilter === 'petrol') filtered = filtered.filter(s => s.fuel.petrol === 'yes');
+            else if (currentFilter === 'diesel') filtered = filtered.filter(s => s.fuel.diesel === 'yes');
+            else if (currentFilter === 'cheapest') filtered.sort((a,b) => parseFloat(a.pricePetrol) - parseFloat(b.pricePetrol));
+            if (searchQuery.trim()) {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q));
+            }
+            filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
+            return filtered;
+        }
+
+        function renderMarkers() {
+            if (!clusterGroup) return;
+            clusterGroup.clearLayers();
+            getFilteredStations().forEach(s => {
+                let color = s.status === 'available' ? '#16a34a' : (s.status === 'low' ? '#f59e0b' : '#dc2626');
+                let icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:24px;"></i>`, iconSize: [24,24], className: 'fuel-marker' });
+                let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(`<b>${s.name}</b><br>${s.status} | Petrol: K${s.pricePetrol}<br>Queue: ${s.queue}<br><button class="action-btn navigate-btn" data-nav-id="${s.id}">Navigate</button> <button class="action-btn" data-report-id="${s.id}">Report</button>`);
+                marker.on('click', () => openStationModal(s.id));
+                clusterGroup.addLayer(marker);
+            });
+        }
+
+        async function loadStations() {
+            if (!activeLocation) return;
+            stations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
+            renderMarkers();
+            document.getElementById('stationCountHeader').innerHTML = `${getFilteredStations().length} stations`;
+            checkRefuelAlert();
+        }
+
+        function checkRefuelAlert() {
+            if (!activeVehicle || !actualUserLocation) return;
+            let rangeKm = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
+            let nearest = stations.sort((a,b) => a.distance - b.distance)[0];
+            if (nearest && nearest.distance > rangeKm * 0.2 && rangeKm < 50) {
+                document.getElementById('alertMessage').innerHTML = `⚠️ Your range is only ${rangeKm.toFixed(0)} km. Nearest station is ${nearest.distance.toFixed(1)} km away. Refuel soon!`;
+                document.getElementById('alertModal').classList.add('show');
+            }
+        }
+
+        function openStationModal(id) {
+            let s = stations.find(x => x.id === id);
+            if (!s) return;
+            let modalHtml = `<div><h3>${s.name}</h3><p>📍 ${s.address}</p><p>📏 ${s.distance.toFixed(1)} km</p><p>⛽ Petrol: K${s.pricePetrol} | Diesel: K${s.priceDiesel}</p><p>🚦 Queue: ${s.queue}</p><p>🛠️ Amenities: ${s.amenities.join(', ') || 'None'}</p><div class="flex-between"><button id="navFromModal" class="action-btn navigate-btn">Navigate</button><button id="favModalBtn" class="action-btn">${s.favorite ? '★ Saved' : '☆ Save'}</button><button id="reportModalBtn" class="action-btn">📢 Report</button></div></div>`;
             document.getElementById('modalContent').innerHTML = modalHtml;
-            document.getElementById('modalNav').onclick = () => { document.getElementById('stationModal').classList.remove('show'); startNavigation(s.lat, s.lon, s.name); };
-            document.getElementById('modalFav').onclick = () => toggleFavorite(s.id);
-            document.getElementById('modalShare').onclick = () => navigator.share?.({ title: s.name, text: `Check ${s.name} on FuelRadar` }) || alert('Share demo');
+            document.getElementById('navFromModal').onclick = () => { document.getElementById('stationModal').classList.remove('show'); startNavigation(s.lat, s.lon, s.name); };
+            document.getElementById('favModalBtn').onclick = () => toggleFavorite(s.id);
+            document.getElementById('reportModalBtn').onclick = () => { document.getElementById('stationModal').classList.remove('show'); openReportModal(s.id); };
             document.getElementById('stationModal').classList.add('show');
         }
-        
-        function startNavigation(destLat,destLon,name){ if(!actualUserLocation) { alert('Enable location for navigation'); return; } if(routingControl) map.removeControl(routingControl); routingControl=L.Routing.control({ waypoints:[L.latLng(actualUserLocation.lat,actualUserLocation.lng),L.latLng(destLat,destLon)], routeWhileDragging:false, fitSelectedRoutes:true, lineOptions:{styles:[{color:'#16a34a',weight:5}]} }).addTo(map); document.getElementById('clearRouteBtn').style.display='flex'; }
-        
-        async function reverseGeocodeRoad(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`); const data=await res.json(); const road=data.address?.road||data.address?.pedestrian||data.address?.suburb||'local road'; document.getElementById('roadLocation').innerHTML=road.substring(0,28); } catch(e){ document.getElementById('roadLocation').innerHTML=`approx road`; } }
-        async function updateCityName(lat,lng){ try{ const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`); const data=await res.json(); const city=data.address?.city||data.address?.town||data.address?.village||'Zambia'; document.getElementById('cityDisplay').innerHTML=city; await reverseGeocodeRoad(lat,lng); } catch(e){ document.getElementById('cityDisplay').innerHTML='Lusaka'; } }
-        
-        function setActiveLocation(lat, lng, isUser=true) { activeLocation = {lat, lng}; if(isUser) actualUserLocation = {lat, lng}; if(userMarker) map.removeLayer(userMarker); userMarker = L.circleMarker([lat, lng], {radius:6, color:'#16a34a', fillColor:'#16a34a', fillOpacity:0.9}).addTo(map).bindPopup('📍 Active center').openPopup(); map.setView([lat, lng], 14); updateCityName(lat, lng); loadStations(true); }
-        function locateAndFetch(){ if(!navigator.geolocation) return; navigator.geolocation.getCurrentPosition(async pos=>{ const {latitude:lat, longitude:lng}=pos.coords; setActiveLocation(lat, lng, true); }, err=>alert('Location error'),{enableHighAccuracy:true}); }
-        
-        function showFuelStationsList(){
-            const sorted = getFilteredStations();
-            const container = document.getElementById('fuelStationsList');
-            if(!sorted.length) container.innerHTML = '<p>No stations found</p>';
-            else{
-                container.innerHTML = sorted.map(s => {
-                    const distance = s.distance ? s.distance.toFixed(1) : '?';
-                    const eta = s.distance ? Math.round(s.distance / 40 * 60) : '?';
-                    const petrolOk = s.fuel.petrol === 'yes';
-                    const dieselOk = s.fuel.diesel === 'yes';
-                    return `<div class="fuel-station-card" data-id="${s.id}"><div class="card-row"><div class="card-left"><div class="station-icon-name"><i class="fas fa-gas-pump"></i><h3>${s.name}</h3></div><div class="station-road-address"><i class="fas fa-road"></i> ${s.address}</div><div class="distance-eta"><i class="fas fa-route"></i> ${distance} km · <i class="far fa-clock"></i> ${eta} min</div></div><div class="card-right"><div class="fuel-status-icons"><div class="fuel-status-icon"><span>Petrol</span> ${petrolOk ? '<i class="fas fa-check-circle check"></i>' : '<i class="fas fa-times-circle times"></i>'}</div><div class="fuel-status-icon"><span>Diesel</span> ${dieselOk ? '<i class="fas fa-check-circle check"></i>' : '<i class="fas fa-times-circle times"></i>'}</div></div></div></div><div class="navigate-center"><button class="nav-full-btn" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button></div></div>`;
-                }).join('');
-                container.querySelectorAll('.fuel-station-card').forEach(card => { card.addEventListener('click', (e) => { if(e.target.closest('.nav-full-btn')) return; const id = parseInt(card.dataset.id); openStationModal(id); }); });
-                container.querySelectorAll('.nav-full-btn').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); const id = parseInt(btn.dataset.navId); const st = stations.find(x => x.id === id); if(st && actualUserLocation){ document.getElementById('fuelStationsModal').classList.remove('show'); startNavigation(st.lat, st.lon, st.name); } else alert('location not ready'); }; });
-            }
+
+        function toggleFavorite(id) {
+            let s = stations.find(s => s.id === id);
+            if (s) { s.favorite = !s.favorite; if (s.favorite) favoriteIds.push(id); else favoriteIds = favoriteIds.filter(fid => fid !== id); localStorage.setItem('fuelWatchFavs', JSON.stringify(favoriteIds)); renderMarkers(); }
+        }
+
+        function startNavigation(destLat, destLon, name) {
+            if (!actualUserLocation) return alert('Enable location');
+            if (routingControl) map.removeControl(routingControl);
+            routingControl = L.Routing.control({ waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(destLat, destLon)], routeWhileDragging: false, lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] } }).addTo(map);
+            document.getElementById('clearRouteBtn').style.display = 'flex';
+        }
+
+        function showFuelStationsList() {
+            let sorted = getFilteredStations();
+            let container = document.getElementById('fuelStationsList');
+            container.innerHTML = sorted.map(s => `<div class="station-card"><div class="flex-between"><b>${s.name}</b> <span class="${s.status === 'available' ? 'price-highlight' : ''}">K${s.pricePetrol}</span></div><div class="small-text">${s.distance.toFixed(1)} km · Queue: ${s.queue}</div><button class="action-btn navigate-btn" data-nav-id="${s.id}">Navigate</button> <button class="action-btn" data-report-id="${s.id}">Report</button></div>`).join('');
+            document.querySelectorAll('[data-nav-id]').forEach(btn => btn.onclick = () => { let st = stations.find(x => x.id == btn.dataset.navId); if (st) startNavigation(st.lat, st.lon, st.name); });
+            document.querySelectorAll('[data-report-id]').forEach(btn => btn.onclick = () => openReportModal(parseInt(btn.dataset.reportId)));
             document.getElementById('fuelStationsModal').classList.add('show');
         }
-        
-        function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); }
-        
-        // --- Event Listeners ---
-        const sidebar=document.getElementById('sidebarOverlay'); 
-        document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open'); 
-        document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open'); 
-        sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
-        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(activeLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='vehicle') document.getElementById('vehicleModal').classList.add('show'); if(act==='settings') { let prem = confirm('Toggle Premium for offline caching?'); if(prem) setPremium(!isPremium); alert(`Premium: ${isPremium}`); } if(act==='logout') alert('Logged out (demo)'); }; });
-        
-        // Vehicle modal buttons
-        document.getElementById('addVehicleBtn').onclick = () => { document.getElementById('addVehicleForm').style.display = 'block'; };
-        document.getElementById('saveVehicleBtn').onclick = () => {
-            const name = document.getElementById('newVehicleName').value;
-            const tank = parseFloat(document.getElementById('newTankCapacity').value);
-            const cons = parseFloat(document.getElementById('newConsumption').value);
-            if(name && tank && cons) addVehicle(name, tank, cons);
-            document.getElementById('addVehicleForm').style.display = 'none';
-        };
-        document.getElementById('addLogBtn').onclick = () => { document.getElementById('addLogForm').style.display = 'block'; };
-        document.getElementById('submitLogBtn').onclick = () => {
-            if(!activeVehicle) return alert('Select a vehicle first');
-            const date = document.getElementById('logDate').value;
-            const liters = parseFloat(document.getElementById('logLiters').value);
-            const price = parseFloat(document.getElementById('logPricePerLiter').value);
-            const odo = parseFloat(document.getElementById('logOdometer').value);
-            if(date && liters && price && odo) addFuelLog(activeVehicle.id, date, liters, price, odo);
-            document.getElementById('addLogForm').style.display = 'none';
-        };
+
+        async function openReportModal(stationId) {
+            document.getElementById('reportModal').classList.add('show');
+            document.getElementById('submitReportBtn').onclick = async () => {
+                let type = document.getElementById('reportType').value;
+                let comment = document.getElementById('reportComment').value;
+                await db.userReports.add({ stationId, type, comment, timestamp: Date.now() });
+                alert('Report submitted!');
+                document.getElementById('reportModal').classList.remove('show');
+                loadStations();
+            };
+        }
+
+        function findCheapest() {
+            currentFilter = 'cheapest';
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            document.querySelector('.chip[data-filter="cheapest"]').classList.add('active');
+            renderMarkers();
+            showFuelStationsList();
+        }
+
+        function voiceSearch() {
+            if ('webkitSpeechRecognition' in window) {
+                let recognition = new webkitSpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.onresult = (e) => {
+                    let query = e.results[0][0].transcript;
+                    document.getElementById('searchInput').value = query;
+                    searchQuery = query;
+                    renderMarkers();
+                };
+                recognition.start();
+            } else alert('Voice search not supported');
+        }
+
+        // Map init
+        function initMap() {
+            map = L.map('map').setView([-13.133, 27.849], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+            clusterGroup = L.markerClusterGroup({ chunkedLoading: true });
+            map.addLayer(clusterGroup);
+        }
+
+        function setActiveLocation(lat, lng, isUser = true) {
+            activeLocation = { lat, lng };
+            if (isUser) actualUserLocation = { lat, lng };
+            if (userMarker) map.removeLayer(userMarker);
+            userMarker = L.circleMarker([lat, lng], { radius: 6, color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.9 }).addTo(map).bindPopup('You are here').openPopup();
+            map.setView([lat, lng], 14);
+            loadStations();
+        }
+
+        function locateAndFetch() {
+            if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => setActiveLocation(pos.coords.latitude, pos.coords.longitude, true), err => alert('Location error'));
+        }
+
+        // Event binding
+        document.getElementById('nearMeBtn').onclick = () => actualUserLocation ? setActiveLocation(actualUserLocation.lat, actualUserLocation.lng, true) : locateAndFetch();
+        document.getElementById('floatLocateBtn').onclick = () => activeLocation && map.setView([activeLocation.lat, activeLocation.lng], 15);
+        document.getElementById('floatRefreshBtn').onclick = () => loadStations();
+        document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; loadStations(); };
+        document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); };
+        document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); };
+        document.querySelectorAll('.chip').forEach(chip => chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); });
+        document.getElementById('cheapestFuelBtn').onclick = findCheapest;
+        document.getElementById('voiceSearchBtn').onclick = voiceSearch;
+        document.getElementById('floatingFuelBtn').onclick = showFuelStationsList;
+        document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
+        document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
+        document.getElementById('saveVehicleBtn').onclick = () => { let name = document.getElementById('newVehicleName').value, tank = parseFloat(document.getElementById('newTankCapacity').value), cons = parseFloat(document.getElementById('newConsumption').value); if (name && tank && cons) db.vehicles.add({ name, tankCapacity: tank, consumptionLper100km: cons, isActive: false }).then(() => loadVehicles()); document.getElementById('addVehicleForm').style.display = 'none'; };
+        document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
+        document.getElementById('submitLogBtn').onclick = () => { let date = document.getElementById('logDate').value, liters = parseFloat(document.getElementById('logLiters').value), price = parseFloat(document.getElementById('logPricePerLiter').value), odo = parseFloat(document.getElementById('logOdometer').value); if (activeVehicle && date && liters && price && odo) addFuelLog(activeVehicle.id, date, liters, price, odo); document.getElementById('addLogForm').style.display = 'none'; };
         document.getElementById('calcTripBtn').onclick = calculateTrip;
-        document.getElementById('closeVehicleModal').onclick = () => document.getElementById('vehicleModal').classList.remove('show');
         document.getElementById('activeVehicleDisplay').onclick = () => document.getElementById('vehicleModal').classList.add('show');
-        
-        // Original UI listeners
-        document.getElementById('nearMeBtn').onclick=()=>{ if(actualUserLocation) setActiveLocation(actualUserLocation.lat, actualUserLocation.lng, true); else locateAndFetch(); };
-        document.getElementById('floatLocateBtn').onclick=()=>{ if(activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
-        document.getElementById('floatRefreshBtn').onclick=()=>{ if(activeLocation) loadStations(true); };
-        document.getElementById('radiusSlider').oninput=(e)=>{ radiusKm=parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText=radiusKm+' km'; if(activeLocation) loadStations(false); };
-        document.getElementById('searchInput').oninput=(e)=>{ searchQuery=e.target.value; renderMarkers(); updateUIcounters(); };
-        document.getElementById('clearSearchBtn').onclick=()=>{ document.getElementById('searchInput').value=''; searchQuery=''; renderMarkers(); updateUIcounters(); };
-        document.querySelectorAll('.chip').forEach(chip=>{ chip.onclick=()=>{ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter=chip.dataset.filter; renderMarkers(); updateUIcounters(); }; });
-        document.getElementById('citySearchBtn').onclick=async()=>{ const q=document.getElementById('citySearchInput').value; if(!q) return; try{ const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q+', Zambia')}&limit=1`); const data=await res.json(); if(data.length){ const lat=parseFloat(data[0].lat), lng=parseFloat(data[0].lon); setActiveLocation(lat, lng, false); } else alert('City not found'); }catch(e){ alert('Geocoding error'); } };
-        document.getElementById('overlayMapBtn').onclick=()=>{ const wrap=document.getElementById('mapWrapper'); if(wrap.requestFullscreen) wrap.requestFullscreen(); else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); };
-        document.getElementById('clearRouteBtn').onclick=()=>{ if(routingControl){ map.removeControl(routingControl); routingControl=null; document.getElementById('clearRouteBtn').style.display='none'; } };
-        document.getElementById('floatingFuelBtn').onclick=showFuelStationsList;
-        document.getElementById('closeFuelStationsBtn').onclick=()=>document.getElementById('fuelStationsModal').classList.remove('show');
-        document.getElementById('closeModalBtn').onclick=()=>document.getElementById('stationModal').classList.remove('show');
-        document.getElementById('closeSearchModal').onclick=()=>document.getElementById('searchModal').classList.remove('show');
-        document.getElementById('closeFavModal').onclick=()=>document.getElementById('favModal').classList.remove('show');
-        document.getElementById('closeProfileModal').onclick=()=>document.getElementById('profileModal').classList.remove('show');
-        document.getElementById('openSearchModalBtn').onclick=()=>{ document.getElementById('searchModal').classList.add('show'); triggerSearchResults(); };
-        function triggerSearchResults(){ const val=document.getElementById('searchFuelInput').value; const filtered=stations.filter(s=>s.name.toLowerCase().includes(val.toLowerCase())||s.address.toLowerCase().includes(val.toLowerCase())||s.enhancedAmenities.some(a=>a.name.toLowerCase().includes(val.toLowerCase()))).slice(0,20); document.getElementById('searchResultsModal').innerHTML=filtered.map(s=>`<div class="station-card search-result-item" data-id="${s.id}"><div style="display:flex; justify-content:space-between;"><strong>${s.name}</strong> <span>${s.distance?.toFixed(1)} km</span></div><div>${s.address}</div><button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button></div>`).join(''); document.querySelectorAll('#searchResultsModal .station-card').forEach(c=>{ c.addEventListener('click',(e)=>{ if(e.target.closest('.nav-btn-sm')) return; const id=parseInt(c.dataset.id); openStationModal(id); document.getElementById('searchModal').classList.remove('show'); }); }); document.querySelectorAll('#searchResultsModal .nav-btn-sm').forEach(btn=>{ btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); else alert('location not ready'); }; }); }
-        document.getElementById('searchFuelInput').addEventListener('input', triggerSearchResults);
-        document.getElementById('showCreateForm').onclick=()=>{ document.getElementById('createAccountForm').style.display='block'; document.getElementById('loginForm').style.display='none'; };
-        document.getElementById('showLoginForm').onclick=()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('createAccountForm').style.display='none'; };
-        
-        initMap(); locateAndFetch();
+        document.getElementById('closeVehicleModal').onclick = () => document.getElementById('vehicleModal').classList.remove('show');
+        document.getElementById('closeReportModal').onclick = () => document.getElementById('reportModal').classList.remove('show');
+        document.getElementById('closeAlertModal').onclick = () => document.getElementById('alertModal').classList.remove('show');
+        document.getElementById('dismissAlertBtn').onclick = () => document.getElementById('alertModal').classList.remove('show');
+        document.getElementById('menuBtn').onclick = () => document.getElementById('sidebarOverlay').classList.add('open');
+        document.getElementById('closeSidebarBtn').onclick = () => document.getElementById('sidebarOverlay').classList.remove('open');
+        document.querySelectorAll('.sidebar-item').forEach(item => item.onclick = () => { let act = item.dataset.action; document.getElementById('sidebarOverlay').classList.remove('open'); if (act === 'search') document.getElementById('searchModal').classList.add('show'); if (act === 'refresh') loadStations(); if (act === 'fav') { let favs = stations.filter(s => favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML = favs.map(s => `<div>${s.name}</div>`).join(''); document.getElementById('favModal').classList.add('show'); } if (act === 'vehicle') document.getElementById('vehicleModal').classList.add('show'); if (act === 'profile') document.getElementById('profileModal').classList.add('show'); if (act === 'settings') setPremium(!isPremium); if (act === 'logout') alert('Logged out demo'); });
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('stationModal').classList.remove('show');
+        document.getElementById('closeSearchModal').onclick = () => document.getElementById('searchModal').classList.remove('show');
+        document.getElementById('closeFavModal').onclick = () => document.getElementById('favModal').classList.remove('show');
+        document.getElementById('closeProfileModal').onclick = () => document.getElementById('profileModal').classList.remove('show');
+        document.getElementById('closeFuelStationsBtn').onclick = () => document.getElementById('fuelStationsModal').classList.remove('show');
+        document.getElementById('overlayMapBtn').onclick = () => document.getElementById('mapWrapper').requestFullscreen?.();
+
+        initMap();
+        locateAndFetch();
         loadVehicles();
+        setInterval(() => { if (activeLocation) loadStations(); }, 60000);
     })();
     </script>
 </body>
