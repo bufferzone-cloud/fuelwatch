@@ -72,12 +72,11 @@
             transform: scale(0.96);
         }
 
-        /* Header */
+        /* Header - original layout */
         .header {
             padding: 14px 16px 8px;
             background: white;
             border-bottom: 1px solid #eef2f6;
-            backdrop-filter: blur(10px);
         }
         .header-top {
             display: flex;
@@ -166,7 +165,7 @@
         }
         .menu-btn:active { transform: scale(0.95); }
 
-        /* City & radius */
+        /* City search & radius - original */
         .city-search-row {
             display: flex;
             align-items: center;
@@ -349,7 +348,7 @@
             display: none;
         }
 
-        /* Floating pill */
+        /* Floating fuel pill */
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -372,7 +371,7 @@
         }
         .floating-fuel-pill:active { transform: translateX(-50%) scale(0.97); }
 
-        /* Modal styles */
+        /* Modal styles (popup forms) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -395,7 +394,7 @@
         .modal-content {
             background: white;
             width: 100%;
-            max-width: 480px;
+            max-width: 460px;
             border-radius: 36px;
             padding: 24px;
             max-height: 85vh;
@@ -479,6 +478,8 @@
             background: #16a34a;
             transition: width 0.05s linear;
         }
+
+        /* Sidebar */
         .sidebar-overlay {
             position: fixed;
             top:0; left:0;
@@ -519,6 +520,7 @@
             gap: 14px;
             font-weight: 500;
             cursor: pointer;
+            transition: 0.1s;
         }
         .sidebar-item i { width: 24px; color: #16a34a; }
         .sidebar-item:active { background: #f0fdf4; }
@@ -532,6 +534,7 @@
 </div>
 
 <div class="app-container">
+    <!-- Dashboard header (original) -->
     <div class="header">
         <div class="header-top">
             <div class="driver-left"><img src="driver.png" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
@@ -581,14 +584,14 @@
 
 <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
 
-<!-- Modals -->
+<!-- Popup Modals (all extra features) -->
 <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn">&times;</button><div id="modalContent"></div></div></div>
 <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal">&times;</button><h3>Search results</h3><input type="text" id="searchFuelInput" placeholder="Filter..."><div id="searchResultsModal"></div></div></div>
 <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal">&times;</button><h3><i class="fas fa-heart"></i> Favorites</h3><div id="favListModal"></div></div></div>
 <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal">&times;</button><div style="text-align:center;"><img src="logo.png" width="60"><h3>FuelRadar Zambia</h3><button id="showCreateForm" class="action-btn navigate-btn">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none;"><input placeholder="Name"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn">Register</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn">Login</button></div></div></div></div>
 <div class="modal-overlay" id="fuelStationsModal"><div class="modal-content"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><img src="driver.png" width="36"><h3>Nearby Stations</h3><img src="logo.png" width="36"></div><div id="fuelStationsList"></div><button class="modal-close" id="closeFuelStationsBtn">&times;</button></div></div>
 
-<!-- Garage Modal (separate) -->
+<!-- Garage Modal (vehicles + logs) -->
 <div class="modal-overlay" id="garageModal">
     <div class="modal-content">
         <button class="modal-close" id="closeGarageModal">&times;</button>
@@ -630,14 +633,16 @@
     </div>
 </div>
 
+<!-- Report Modal -->
 <div class="modal-overlay" id="reportModal"><div class="modal-content"><button class="modal-close" id="closeReportModal">&times;</button><h3>Report Station</h3><select id="reportType"><option>Fuel available</option><option>Out of fuel</option><option>Long queue</option><option>Price update</option></select><textarea id="reportComment" rows="2" placeholder="Comment..."></textarea><button id="submitReportBtn" class="action-btn navigate-btn">Submit</button></div></div>
 <div class="modal-overlay" id="alertModal"><div class="modal-content"><button class="modal-close" id="closeAlertModal">&times;</button><h3><i class="fas fa-bell"></i> Refuel Alert</h3><div id="alertMessage"></div><button id="dismissAlertBtn" class="action-btn navigate-btn">Dismiss</button></div></div>
 
+<!-- Sidebar -->
 <div id="sidebarOverlay" class="sidebar-overlay"><div class="sidebar-panel"><div class="sidebar-logo"><img src="logo.png"></div><div class="sidebar-header"><span>FuelRadar</span><button id="closeSidebarBtn">&times;</button></div><div class="sidebar-menu"><div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div><div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div><div class="sidebar-item" data-action="fav"><i class="fas fa-heart"></i> Favorites</div><div class="sidebar-item" data-action="garage"><i class="fas fa-car"></i> My Garage</div><div class="sidebar-item" data-action="calculator"><i class="fas fa-calculator"></i> Fuel Calculator</div><div class="sidebar-item" data-action="profile"><i class="fas fa-user"></i> Profile</div><div class="sidebar-item" data-action="settings"><i class="fas fa-cog"></i> Premium Offline</div><div class="sidebar-item" data-action="logout"><i class="fas fa-sign-out-alt"></i> Logout</div></div></div></div>
 
 <script>
 (function() {
-    // Loading
+    // Loading animation
     let prog = 0;
     const interval = setInterval(() => {
         prog += 2;
@@ -662,7 +667,7 @@
     let map, clusterGroup, routingControl = null, userMarker = null;
     let favoriteIds = JSON.parse(localStorage.getItem('fuelWatchFavs')) || [];
 
-    // Vehicle & logs
+    // --- Vehicle & Logs (popup forms) ---
     async function loadVehicles() {
         const vehicles = await db.vehicles.toArray();
         if (vehicles.length === 0) {
@@ -716,7 +721,7 @@
         document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
     }
 
-    // Map & stations
+    // --- Map & Station Functions (original) ---
     const haversine = (lat1,lng1,lat2,lng2) => { const R=6371; const dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); };
     async function fetchStations(lat, lon, rad) {
         const q = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
@@ -913,7 +918,7 @@
         map.addLayer(clusterGroup);
     }
 
-    // Event binding
+    // --- Event Listeners (original dashboard + sidebar actions) ---
     document.getElementById('nearMeBtn').onclick = () => actualUserLocation ? setActiveLocation(actualUserLocation.lat, actualUserLocation.lng, true) : locateAndFetch();
     document.getElementById('floatLocateBtn').onclick = () => activeLocation && map.setView([activeLocation.lat, activeLocation.lng], 15);
     document.getElementById('floatRefreshBtn').onclick = () => loadStations();
@@ -937,7 +942,7 @@
     };
     document.getElementById('overlayMapBtn').onclick = () => document.getElementById('mapWrapper').requestFullscreen?.();
 
-    // Garage & Calculator separate modals
+    // Garage & Calculator modals
     document.getElementById('activeVehicleDisplay').onclick = () => document.getElementById('garageModal').classList.add('show');
     document.getElementById('closeGarageModal').onclick = () => document.getElementById('garageModal').classList.remove('show');
     document.getElementById('closeCalculatorModal').onclick = () => document.getElementById('calculatorModal').classList.remove('show');
@@ -984,7 +989,7 @@
         };
     });
 
-    // Other modal closes
+    // Modal close handlers
     document.getElementById('closeModalBtn').onclick = () => document.getElementById('stationModal').classList.remove('show');
     document.getElementById('closeSearchModal').onclick = () => document.getElementById('searchModal').classList.remove('show');
     document.getElementById('closeFavModal').onclick = () => document.getElementById('favModal').classList.remove('show');
@@ -993,6 +998,8 @@
     document.getElementById('closeReportModal').onclick = () => document.getElementById('reportModal').classList.remove('show');
     document.getElementById('closeAlertModal').onclick = () => document.getElementById('alertModal').classList.remove('show');
     document.getElementById('dismissAlertBtn').onclick = () => document.getElementById('alertModal').classList.remove('show');
+
+    // Search modal logic
     document.getElementById('openSearchModalBtn').onclick = () => { document.getElementById('searchModal').classList.add('show'); triggerSearchResults(); };
     function triggerSearchResults() {
         const val = document.getElementById('searchFuelInput').value;
@@ -1004,6 +1011,7 @@
     document.getElementById('showCreateForm').onclick = () => { document.getElementById('createAccountForm').style.display = 'block'; document.getElementById('loginForm').style.display = 'none'; };
     document.getElementById('showLoginForm').onclick = () => { document.getElementById('loginForm').style.display = 'block'; document.getElementById('createAccountForm').style.display = 'none'; };
 
+    // Start
     initMap();
     locateAndFetch();
     loadVehicles();
