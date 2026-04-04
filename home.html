@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · Final Working Navigation</title>
+    <title>FuelRadar · Zambia · Fully Functional</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -567,6 +567,9 @@
             font-size: 14px;
         }
         hr { margin: 16px 0; }
+        .user-car-marker img {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
     </style>
 </head>
 <body>
@@ -816,7 +819,6 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
-        // Attach events to popup buttons when popup opens
         map.on('popupopen', function(e) {
             const popupNode = e.popup.getElement();
             if (popupNode) {
