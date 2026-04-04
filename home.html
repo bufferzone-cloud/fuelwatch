@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · Fully Functional</title>
+    <title>FuelRadar · Global · Fully Functional</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -17,6 +17,7 @@
     <!-- Dexie for IndexedDB -->
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
+        /* ---------- RESET & GLOBAL ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -46,6 +47,8 @@
             overflow: hidden;
             position: relative;
         }
+
+        /* ---------- HEADER (original) ---------- */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -127,6 +130,8 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* ---------- GREEN SUGGESTION (above radius) ---------- */
         .green-suggestion {
             background: #d1fae5;
             color: #065f46;
@@ -138,6 +143,8 @@
             text-align: center;
             border-left: 3px solid #10b981;
         }
+
+        /* ---------- RED SENTENCE (navigation feedback) ---------- */
         .warning-sentence {
             background: #fee2e2;
             color: #b91c1c;
@@ -150,6 +157,8 @@
             border-left: 3px solid #dc2626;
             transition: all 0.2s;
         }
+
+        /* ---------- RADIUS SLIDER ---------- */
         .radius-row {
             display: flex;
             align-items: center;
@@ -197,6 +206,8 @@
             min-width: 60px;
             text-align: center;
         }
+
+        /* ---------- SEARCH & FILTERS ---------- */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -222,8 +233,6 @@
             display: flex;
             justify-content: center;
             margin-top: 8px;
-            flex-direction: column;
-            gap: 8px;
         }
         .near-me-btn {
             background: #16a34a;
@@ -235,7 +244,6 @@
             font-size: 13px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 6px;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,80,0,0.2);
@@ -273,6 +281,8 @@
             margin-left: 5px;
             font-size: 10px;
         }
+
+        /* ---------- MAP ---------- */
         .map-wrapper {
             position: relative;
             flex: 1;
@@ -332,7 +342,8 @@
             cursor: pointer;
             z-index: 1000;
         }
-        /* Sidebar */
+
+        /* ---------- SIDEBAR ---------- */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -394,7 +405,8 @@
         }
         .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
         .sidebar-item:hover { background: #f0fdf4; }
-        /* Page overlays */
+
+        /* ---------- PAGE OVERLAYS (replace modals) ---------- */
         .page-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -426,7 +438,8 @@
             color: #16a34a;
         }
         .page-content { padding: 20px; flex: 1; }
-        /* Station cards */
+
+        /* ---------- STATION CARDS (rich with amenities) ---------- */
         .station-card {
             background: white;
             border-radius: 28px;
@@ -543,14 +556,17 @@
 </head>
 <body>
 <div class="app-container">
+    <!-- ORIGINAL DASHBOARD HEADER -->
     <div class="header">
         <div class="header-top">
             <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
             <div class="brand-center"><h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1><div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div></div>
             <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
         </div>
-        <div class="stats-row"><span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span><span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span><span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">Lusaka</span></span><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button></div>
+        <div class="stats-row"><span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span><span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span><span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">—</span></span><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button></div>
+        <!-- Green suggestion sentence -->
         <div class="green-suggestion" id="greenSuggestion"><i class="fas fa-gas-pump"></i> Loading nearby stations...</div>
+        <!-- Red sentence (navigation feedback) -->
         <div class="warning-sentence" id="warningSentence"><i class="fas fa-info-circle"></i> Tap a station → Navigate or Report.</div>
         <div class="radius-row"><span class="radius-label"><i class="fas fa-car"></i> radius</span><div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div><span class="radius-value" id="radiusDisplay">3 km</span></div>
     </div>
@@ -592,7 +608,7 @@
     </div>
 </div>
 
-<!-- PAGE OVERLAYS -->
+<!-- PAGE OVERLAYS (replace all pop-ups) -->
 <div id="garagePage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-car"></i> My Garage</h2><button class="close-page-btn" data-close="garagePage">&times;</button></div><div class="page-content"><div id="vehicleList"></div><button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button><div id="addVehicleForm" style="display:none;"><input type="text" id="newVehicleName" placeholder="Vehicle name"><input type="number" id="newTankCapacity" placeholder="Tank capacity (L)"><input type="number" id="newConsumption" placeholder="L/100km"><select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select><button id="saveVehicleBtn" class="full-width-btn">Save</button></div><hr><h4>Fuel Logs</h4><button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button><div id="addLogForm" style="display:none;"><input type="date" id="logDate"><input type="number" id="logLiters" placeholder="Liters"><input type="number" id="logPricePerLiter" placeholder="Price/L (K)"><input type="number" id="logOdometer" placeholder="Odometer (km)"><button id="submitLogBtn" class="full-width-btn">Save Log</button></div><div id="logsList"></div><div id="statsSummary" class="small-text mt-2"></div></div></div>
 
 <div id="calculatorPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div><div class="page-content"><div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div><div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div><div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div><div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div><div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div><button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button></div></div>
@@ -606,7 +622,11 @@
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
-    // ================================ DATABASE ================================
+    // =========================================================================
+    // FUEL RADAR - FULLY FUNCTIONAL GLOBAL VERSION
+    // =========================================================================
+
+    // ----------------------------- 1. Database setup -----------------------------
     const db = new Dexie('FuelRadarDB');
     db.version(1).stores({
         vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
@@ -615,7 +635,7 @@
         cachedStations: 'id, name, lat, lon, address, timestamp, pricePetrol, priceDiesel, status, fuelData, amenities'
     });
 
-    // ================================ GLOBAL STATE ================================
+    // ----------------------------- 2. Global state -----------------------------
     let stations = [];
     let activeLocation = null;
     let actualUserLocation = null;
@@ -630,7 +650,7 @@
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
     let watchId = null;
 
-    // ================================ HELPER FUNCTIONS ================================
+    // ----------------------------- 3. Helper functions -----------------------------
     async function updatePrices() {
         try {
             const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm'));
@@ -674,59 +694,52 @@
         return amenities;
     }
 
-    async function fetchStationsWithRetry(lat, lon, rad, retries = 2) {
+    async function fetchStations(lat, lon, rad) {
         const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
-        for (let i = 0; i <= retries; i++) {
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-                const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                let newStations = [];
-                for (let el of data.elements) {
-                    let name = el.tags?.name || el.tags?.brand || "Fuel station";
-                    let stationLat = el.lat || (el.center?.lat);
-                    let stationLon = el.lon || (el.center?.lon);
-                    if (!stationLat || !stationLon) continue;
-                    let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || 'local road';
-                    let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : (el.tags?.['fuel:petrol'] === 'no' ? 'no' : null);
-                    let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : (el.tags?.['fuel:diesel'] === 'no' ? 'no' : null);
-                    let fuelLPG = el.tags?.['fuel:lpg'] === 'yes' ? 'yes' : (el.tags?.['fuel:lpg'] === 'no' ? 'no' : null);
-                    let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : (fuelPetrol === 'no' && fuelDiesel === 'no') ? 'empty' : 'unknown';
-                    let amenities = extractAllAmenities(el.tags || {});
-                    let priceP = `K${(currentPrices.petrol + (Math.random()*1-0.5)).toFixed(2)}`;
-                    let priceD = `K${(currentPrices.diesel + (Math.random()*1-0.5)).toFixed(2)}`;
-                    newStations.push({
-                        id: el.id, name, address: addr, lat: stationLat, lon: stationLon,
-                        fuel: { petrol: fuelPetrol, diesel: fuelDiesel, lpg: fuelLPG },
-                        status, amenities, pricePetrol: priceP, priceDiesel: priceD,
-                        distance: haversine(lat, lon, stationLat, stationLon),
-                        favorite: favoriteIds.includes(el.id),
-                        tags: el.tags || {}
-                    });
-                }
-                await db.cachedStations.bulkPut(newStations.map(s => ({ ...s, timestamp: Date.now() })));
-                return newStations;
-            } catch(err) {
-                console.warn(`Attempt ${i+1} failed:`, err);
-                if (i === retries) {
-                    if (!navigator.onLine) {
-                        let cached = await db.cachedStations.toArray();
-                        let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
-                        if (valid.length) {
-                            showToast("Offline mode: showing cached stations");
-                            return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
-                        }
-                    }
-                    showToast("Failed to load stations. Check internet and try again.");
-                    return [];
-                }
-                await new Promise(r => setTimeout(r, 1000));
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            let newStations = [];
+            for (let el of data.elements) {
+                let name = el.tags?.name || el.tags?.brand || "Fuel station";
+                let stationLat = el.lat || (el.center?.lat);
+                let stationLon = el.lon || (el.center?.lon);
+                if (!stationLat || !stationLon) continue;
+                let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || 'local road';
+                let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : (el.tags?.['fuel:petrol'] === 'no' ? 'no' : null);
+                let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : (el.tags?.['fuel:diesel'] === 'no' ? 'no' : null);
+                let fuelLPG = el.tags?.['fuel:lpg'] === 'yes' ? 'yes' : (el.tags?.['fuel:lpg'] === 'no' ? 'no' : null);
+                let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : (fuelPetrol === 'no' && fuelDiesel === 'no') ? 'empty' : 'unknown';
+                let amenities = extractAllAmenities(el.tags || {});
+                let priceP = `K${(currentPrices.petrol + (Math.random()*1-0.5)).toFixed(2)}`;
+                let priceD = `K${(currentPrices.diesel + (Math.random()*1-0.5)).toFixed(2)}`;
+                newStations.push({
+                    id: el.id, name, address: addr, lat: stationLat, lon: stationLon,
+                    fuel: { petrol: fuelPetrol, diesel: fuelDiesel, lpg: fuelLPG },
+                    status, amenities, pricePetrol: priceP, priceDiesel: priceD,
+                    distance: haversine(lat, lon, stationLat, stationLon),
+                    favorite: favoriteIds.includes(el.id),
+                    tags: el.tags || {}
+                });
             }
+            await db.cachedStations.bulkPut(newStations.map(s => ({ ...s, timestamp: Date.now() })));
+            return newStations;
+        } catch(err) {
+            if (!navigator.onLine) {
+                let cached = await db.cachedStations.toArray();
+                let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
+                if (valid.length) {
+                    showToast("Offline mode: showing cached stations");
+                    return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
+                }
+            }
+            showToast("Failed to load stations. Check internet.");
+            return [];
         }
-        return [];
     }
 
     function getFilteredStations() {
@@ -775,12 +788,10 @@
         userMarker = L.marker([lat, lng], { icon: carIcon }).addTo(map).bindPopup('You are here');
     }
 
-    // Global function to attach navigation events (used by popups and dynamic lists)
-    function attachNavigationEventsToContainer(container) {
+    function attachNavigationEvents(container) {
         if (!container) return;
-        container.querySelectorAll('[data-nav-id]').forEach(btn => {
-            // Remove any previous listener to avoid duplicates
-            btn.removeEventListener('click', btn._navHandler);
+        container.querySelectorAll('.btn-nav[data-nav-id]').forEach(btn => {
+            if (btn._navHandler) btn.removeEventListener('click', btn._navHandler);
             const handler = (e) => {
                 e.stopPropagation();
                 const st = stations.find(x => x.id == btn.dataset.navId);
@@ -828,13 +839,12 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
-        // Attach events to popups when they open
         map.off('popupopen');
         map.on('popupopen', function(e) {
             const popupNode = e.popup.getElement();
             if (popupNode) {
-                attachNavigationEventsToContainer(popupNode);
-                popupNode.querySelectorAll('[data-report-id]').forEach(btn => {
+                attachNavigationEvents(popupNode);
+                popupNode.querySelectorAll('.btn-report[data-report-id]').forEach(btn => {
                     btn.onclick = (ev) => {
                         ev.stopPropagation();
                         openReportForStation(parseInt(btn.dataset.reportId));
@@ -882,7 +892,7 @@
                 </div>
             </div>
         `}).join('');
-        attachNavigationEventsToContainer(container);
+        attachNavigationEvents(container);
         container.querySelectorAll('[data-report-id]').forEach(btn => {
             btn.onclick = () => openReportForStation(parseInt(btn.dataset.reportId));
         });
@@ -893,7 +903,7 @@
 
     async function loadStationsAndRefresh(showMsg = true) {
         if (!activeLocation) return;
-        const newStations = await fetchStationsWithRetry(activeLocation.lat, activeLocation.lng, radiusKm);
+        const newStations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
         if (newStations.length) stations = newStations;
         renderMarkers();
         updateUICounters();
@@ -1003,13 +1013,14 @@
                     </div>
                 </div>
             `).join('');
-            attachNavigationEventsToContainer(container);
+            attachNavigationEvents(container);
             container.querySelectorAll('[data-fav-remove]').forEach(btn => {
                 btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favRemove));
             });
         }
     }
 
+    // ----------------------------- 4. Vehicle Management -----------------------------
     async function loadVehicles() {
         let vehicles = await db.vehicles.toArray();
         if (vehicles.length === 0) {
@@ -1072,6 +1083,7 @@
         document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
     }
 
+    // ----------------------------- 5. Page switching -----------------------------
     function openPage(pageId) {
         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
         document.getElementById(pageId).classList.add('show');
@@ -1084,8 +1096,9 @@
         document.getElementById(pageId).classList.remove('show');
     }
 
+    // ----------------------------- 6. Map & Location -----------------------------
     function initMap() {
-        map = L.map('map').setView([-13.133, 27.849], 6);
+        map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
@@ -1103,7 +1116,7 @@
             let data = await res.json();
             let road = data.address?.road || data.address?.suburb || 'local road';
             document.getElementById('roadLocation').innerHTML = road.substring(0,30);
-            let city = data.address?.city || data.address?.town || 'Zambia';
+            let city = data.address?.city || data.address?.town || 'World';
             document.getElementById('cityDisplay').innerHTML = city;
         } catch(e) {}
     }
@@ -1125,7 +1138,7 @@
         }
     }
 
-    // Event listeners
+    // ----------------------------- 7. Event Listeners -----------------------------
     document.getElementById('nearMeBtn').onclick = locateAndFetch;
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
@@ -1180,8 +1193,10 @@
     };
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
 
+    // Auto-refresh every 2 minutes
     setInterval(() => { if (activeLocation && navigator.onLine !== false) loadStationsAndRefresh(false); }, 120000);
 
+    // Start the app
     initMap();
     locateAndFetch();
     loadVehicles();
