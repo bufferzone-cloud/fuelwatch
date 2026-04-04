@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · Fully Functional</title>
+    <title>FuelRadar · Zambia · Ultimate Edition</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -17,7 +17,6 @@
     <!-- Dexie for IndexedDB -->
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
-        /* ---------- RESET & GLOBAL ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -47,8 +46,7 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* ---------- HEADER (original) ---------- */
+        /* Header */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -130,8 +128,7 @@
             align-items: center;
             justify-content: center;
         }
-
-        /* ---------- RED SENTENCE ABOVE RADIUS ---------- */
+        /* Red sentence above radius */
         .warning-sentence {
             background: #fee2e2;
             color: #b91c1c;
@@ -142,38 +139,9 @@
             margin-top: 8px;
             text-align: center;
             border-left: 3px solid #dc2626;
+            transition: all 0.2s;
         }
-
-        /* ---------- CITY SEARCH & RADIUS ---------- */
-        .city-search-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            background: #f0fdf4;
-            border-radius: 40px;
-            padding: 4px 4px 4px 14px;
-            border: 1px solid #bbf7d0;
-        }
-        .city-search-row i { color: #16a34a; }
-        .city-search-row input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 6px 0;
-            font-size: 13px;
-            outline: none;
-        }
-        .city-search-row button {
-            background: #16a34a;
-            border: none;
-            border-radius: 30px;
-            padding: 6px 14px;
-            color: white;
-            font-weight: 700;
-            font-size: 12px;
-            cursor: pointer;
-        }
+        /* Radius row */
         .radius-row {
             display: flex;
             align-items: center;
@@ -221,8 +189,7 @@
             min-width: 60px;
             text-align: center;
         }
-
-        /* ---------- SEARCH & FILTERS ---------- */
+        /* Search & filters */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -296,8 +263,7 @@
             margin-left: 5px;
             font-size: 10px;
         }
-
-        /* ---------- MAP ---------- */
+        /* Map */
         .map-wrapper {
             position: relative;
             flex: 1;
@@ -357,8 +323,7 @@
             cursor: pointer;
             z-index: 1000;
         }
-
-        /* ---------- SIDEBAR ---------- */
+        /* Sidebar */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -420,8 +385,7 @@
         }
         .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
         .sidebar-item:hover { background: #f0fdf4; }
-
-        /* ---------- PAGE OVERLAYS (replace modals) ---------- */
+        /* Page overlays */
         .page-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -453,8 +417,7 @@
             color: #16a34a;
         }
         .page-content { padding: 20px; flex: 1; }
-
-        /* ---------- ENHANCED STATION CARDS (with amenities) ---------- */
+        /* Station cards */
         .station-card {
             background: white;
             border-radius: 28px;
@@ -567,14 +530,10 @@
             font-size: 14px;
         }
         hr { margin: 16px 0; }
-        .user-car-marker img {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <!-- ORIGINAL DASHBOARD HEADER -->
     <div class="header">
         <div class="header-top">
             <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
@@ -582,8 +541,7 @@
             <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
         </div>
         <div class="stats-row"><span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span><span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span><span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">Lusaka</span></span><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button></div>
-        <div class="city-search-row"><i class="fas fa-search"></i><input type="text" id="citySearchInput" placeholder="Search city (e.g. Ndola)"><button id="citySearchBtn">Go</button></div>
-        <!-- RED SENTENCE ABOVE RADIUS -->
+        <!-- Red sentence (updated only on navigate) -->
         <div class="warning-sentence" id="warningSentence">
             <i class="fas fa-info-circle"></i> Tap a station → Navigate or Report. Your vehicle range is used for fuel calculation.
         </div>
@@ -627,7 +585,7 @@
     </div>
 </div>
 
-<!-- PAGE OVERLAYS (replace all pop-ups) -->
+<!-- PAGE OVERLAYS -->
 <div id="garagePage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-car"></i> My Garage</h2><button class="close-page-btn" data-close="garagePage">&times;</button></div><div class="page-content"><div id="vehicleList"></div><button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button><div id="addVehicleForm" style="display:none;"><input type="text" id="newVehicleName" placeholder="Vehicle name"><input type="number" id="newTankCapacity" placeholder="Tank capacity (L)"><input type="number" id="newConsumption" placeholder="L/100km"><select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select><button id="saveVehicleBtn" class="full-width-btn">Save</button></div><hr><h4>Fuel Logs</h4><button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button><div id="addLogForm" style="display:none;"><input type="date" id="logDate"><input type="number" id="logLiters" placeholder="Liters"><input type="number" id="logPricePerLiter" placeholder="Price/L (K)"><input type="number" id="logOdometer" placeholder="Odometer (km)"><button id="submitLogBtn" class="full-width-btn">Save Log</button></div><div id="logsList"></div><div id="statsSummary" class="small-text mt-2"></div></div></div>
 
 <div id="calculatorPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div><div class="page-content"><div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div><div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div><div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div><div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div><div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div><button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button></div></div>
@@ -636,7 +594,7 @@
 
 <div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Tyre pump, car wash, shop, ATM, etc. shown on each station card.</p></div></div></div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline (only when no internet).</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p></div></div></div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
@@ -689,15 +647,34 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    function extractAmenities(tags) {
+    // Extract ALL amenities from OSM tags (shops, ATMs, etc.)
+    function extractAllAmenities(tags) {
         let amenities = [];
+        // Fuel types
+        if (tags['fuel:petrol'] === 'yes') amenities.push({ icon: 'fa-gas-pump', name: 'Petrol available' });
+        if (tags['fuel:diesel'] === 'yes') amenities.push({ icon: 'fa-oil-can', name: 'Diesel available' });
+        if (tags['fuel:lpg'] === 'yes') amenities.push({ icon: 'fa-fire', name: 'LPG (cooking gas)' });
+        // Shops
         if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
+        // ATM
+        if (tags.atm === 'yes' || tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
+        if (tags.brand && tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: `ATM: ${tags.brand}` });
+        // Car wash
         if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
-        if (tags.atm === 'yes') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
+        // Tyre pump / compressed air
         if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
+        // Toilets
         if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
-        if (tags.pharmacy === 'yes') amenities.push({ icon: 'fa-capsules', name: 'Pharmacy' });
+        // Restaurant / fast food
+        if (tags.amenity === 'restaurant') amenities.push({ icon: 'fa-utensils', name: 'Restaurant' });
+        if (tags.amenity === 'fast_food') amenities.push({ icon: 'fa-hamburger', name: 'Fast food' });
+        // WiFi
         if (tags['internet_access'] === 'yes') amenities.push({ icon: 'fa-wifi', name: 'WiFi' });
+        // Pharmacy
+        if (tags.pharmacy === 'yes') amenities.push({ icon: 'fa-capsules', name: 'Pharmacy' });
+        // Parking
+        if (tags.parking === 'yes') amenities.push({ icon: 'fa-parking', name: 'Parking' });
+        // Default
         if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
         return amenities;
     }
@@ -706,6 +683,7 @@
         const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
         try {
             const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+            if (!response.ok) throw new Error('Network error');
             const data = await response.json();
             let newStations = [];
             for (let el of data.elements) {
@@ -713,28 +691,37 @@
                 let stationLat = el.lat || (el.center?.lat);
                 let stationLon = el.lon || (el.center?.lon);
                 if (!stationLat || !stationLon) continue;
-                let addr = el.tags?.['addr:street'] || 'local road';
+                let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || 'local road';
                 let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : (el.tags?.['fuel:petrol'] === 'no' ? 'no' : null);
                 let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : (el.tags?.['fuel:diesel'] === 'no' ? 'no' : null);
+                let fuelLPG = el.tags?.['fuel:lpg'] === 'yes' ? 'yes' : (el.tags?.['fuel:lpg'] === 'no' ? 'no' : null);
                 let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : (fuelPetrol === 'no' && fuelDiesel === 'no') ? 'empty' : 'unknown';
-                let amenities = extractAmenities(el.tags || {});
+                let amenities = extractAllAmenities(el.tags || {});
                 let priceP = `K${(currentPrices.petrol + (Math.random()*1-0.5)).toFixed(2)}`;
                 let priceD = `K${(currentPrices.diesel + (Math.random()*1-0.5)).toFixed(2)}`;
                 newStations.push({
                     id: el.id, name, address: addr, lat: stationLat, lon: stationLon,
-                    fuel: { petrol: fuelPetrol, diesel: fuelDiesel },
+                    fuel: { petrol: fuelPetrol, diesel: fuelDiesel, lpg: fuelLPG },
                     status, amenities, pricePetrol: priceP, priceDiesel: priceD,
                     distance: haversine(lat, lon, stationLat, stationLon),
-                    favorite: favoriteIds.includes(el.id)
+                    favorite: favoriteIds.includes(el.id),
+                    tags: el.tags || {}
                 });
             }
             await db.cachedStations.bulkPut(newStations.map(s => ({ ...s, timestamp: Date.now() })));
             return newStations;
         } catch(err) {
-            let cached = await db.cachedStations.toArray();
-            let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
-            if (valid.length) showToast("Offline mode: using cached stations");
-            return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
+            // Only go offline if fetch fails AND we are actually offline
+            if (!navigator.onLine) {
+                let cached = await db.cachedStations.toArray();
+                let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
+                if (valid.length) showToast("You are offline. Showing cached stations.");
+                return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
+            } else {
+                // If fetch fails but we are online, re-throw to show error
+                showToast("Network error. Please check your connection.");
+                return [];
+            }
         }
     }
 
@@ -796,21 +783,25 @@
             });
             const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
             const eta = s.distance ? calculateETA(s.distance) : '?';
+            // Build detailed amenities HTML
             const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
+            // Queue from reports (simulate)
+            const queueStatus = "Unknown"; // could be from db reports
             const popupContent = `
-                <div style="min-width:240px; max-width:260px;">
-                    <div style="font-weight:800; font-size:16px; margin-bottom:4px;">${s.name}</div>
-                    <div style="font-size:11px; color:#2d5a2d;">${s.address}</div>
-                    <div style="margin:6px 0; display:flex; gap:6px; flex-wrap:wrap;">
+                <div style="min-width:260px; max-width:300px;">
+                    <div style="font-weight:800; font-size:18px; margin-bottom:4px;">${s.name}</div>
+                    <div style="font-size:12px; color:#2d5a2d; margin-bottom:6px;">${s.address}</div>
+                    <div style="margin:6px 0; display:flex; gap:8px; flex-wrap:wrap;">
                         <span class="station-distance"><i class="fas fa-route"></i> ${distanceKm} km</span>
                         <span class="station-distance"><i class="far fa-clock"></i> ${eta}</span>
                     </div>
-                    <div style="margin:6px 0;">
+                    <div style="margin:8px 0;">
                         <span class="fuel-badge"><i class="fas fa-gas-pump"></i> Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
                         <span class="fuel-badge"><i class="fas fa-oil-can"></i> Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+                        <span class="fuel-badge"><i class="fas fa-fire"></i> LPG: ${s.fuel.lpg === 'yes' ? '✅' : (s.fuel.lpg === 'no' ? '❌' : '?')}</span>
                     </div>
-                    ${amenitiesHtml ? `<div class="amenities-list" style="margin:6px 0;">${amenitiesHtml}</div>` : ''}
-                    <div class="card-actions" style="margin-top:8px;">
+                    ${amenitiesHtml ? `<div class="amenities-list" style="margin:8px 0;">${amenitiesHtml}</div>` : ''}
+                    <div class="card-actions" style="margin-top:10px;">
                         <button class="btn-sm btn-nav" data-nav-id="${s.id}" style="background:#16a34a; color:white;">Navigate</button>
                         <button class="btn-sm btn-report" data-report-id="${s.id}" style="background:#fee2e2; color:#b91c1c;">Report</button>
                     </div>
@@ -862,6 +853,7 @@
                 <div>
                     <span class="fuel-badge"><i class="fas fa-gas-pump"></i> Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
                     <span class="fuel-badge"><i class="fas fa-oil-can"></i> Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+                    <span class="fuel-badge"><i class="fas fa-fire"></i> LPG: ${s.fuel.lpg === 'yes' ? '✅' : (s.fuel.lpg === 'no' ? '❌' : '?')}</span>
                 </div>
                 <div class="card-actions">
                     <button class="btn-sm btn-nav" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button>
@@ -882,13 +874,13 @@
     async function loadStationsAndRefresh(showMsg = true) {
         if (!activeLocation) return;
         let newStations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
-        stations = newStations;
+        if (newStations.length) stations = newStations;
         renderMarkers();
         updateUICounters();
         renderReportStationsList();
         renderFuelStationsList();
         updateFavPage();
-        if (showMsg) showToast("Stations updated");
+        if (showMsg && newStations.length) showToast("Stations updated");
     }
 
     function updateUICounters() {
@@ -1119,7 +1111,6 @@
     document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
     document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
     document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); }; });
-    document.getElementById('citySearchBtn').onclick = async () => { let q = document.getElementById('citySearchInput').value; if (!q) return; try { let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Zambia')}&limit=1`); let data = await res.json(); if (data.length) { let lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon); activeLocation = { lat, lng }; map.setView([lat, lng], 14); loadStationsAndRefresh(true); reverseGeocode(lat, lng); } else alert('City not found'); } catch(e) { alert('Geocoding error'); } };
     document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
     document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
     document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
