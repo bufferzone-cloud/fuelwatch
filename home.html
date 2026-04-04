@@ -17,12 +17,12 @@
     <!-- Dexie for IndexedDB -->
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
-        /* ========== ORIGINAL DASHBOARD STYLES (preserved) ========== */
+        /* ---------- RESET & GLOBAL ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         html, body {
             height: 100%;
@@ -36,22 +36,19 @@
             align-items: stretch;
             height: 100%;
             overflow: hidden;
-            font-size: 100%;
         }
         .app-container {
             width: 100%;
             max-width: 528px;
             background: #ffffff;
-            box-shadow: none;
             height: 100%;
             display: flex;
             flex-direction: column;
-            border-radius: 0;
-            border: none;
             overflow: hidden;
             position: relative;
         }
-        /* Header */
+
+        /* ---------- HEADER (original) ---------- */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -63,14 +60,14 @@
             justify-content: space-between;
             gap: 8px;
         }
-        .driver-left {
+        .driver-left, .logo-right {
             width: 52px;
             height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .driver-left img {
+        .driver-left img, .logo-right img {
             width: 48px;
             height: 48px;
             object-fit: contain;
@@ -95,18 +92,6 @@
             border-radius: 30px;
             display: inline-block;
             margin-top: 2px;
-        }
-        .logo-right {
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo-right img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
         }
         .stats-row {
             display: flex;
@@ -145,7 +130,8 @@
             align-items: center;
             justify-content: center;
         }
-        /* City search row */
+
+        /* ---------- CITY SEARCH & RADIUS (original) ---------- */
         .city-search-row {
             display: flex;
             align-items: center;
@@ -175,7 +161,6 @@
             font-size: 12px;
             cursor: pointer;
         }
-        /* radius slider */
         .radius-row {
             display: flex;
             align-items: center;
@@ -211,20 +196,7 @@
             background-size: contain;
             cursor: pointer;
             border: none;
-            transform: rotate(0deg);
-            border-radius: 0;
-            box-shadow: none;
             background-color: transparent;
-        }
-        input[type="range"].car-slider::-moz-range-thumb {
-            width: 49px;
-            height: 49px;
-            background: url('driver.png') no-repeat center center;
-            background-size: contain;
-            border: none;
-            border-radius: 0;
-            background-color: transparent;
-            transform: rotate(0deg);
         }
         .radius-value {
             background: #16a34a;
@@ -236,7 +208,8 @@
             min-width: 60px;
             text-align: center;
         }
-        /* search section */
+
+        /* ---------- SEARCH & FILTERS (original) ---------- */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -257,13 +230,6 @@
             padding: 6px 4px;
             font-size: 14px;
             outline: none;
-        }
-        .search-box button {
-            background: none;
-            border: none;
-            color: #16a34a;
-            font-size: 16px;
-            cursor: pointer;
         }
         .near-me-row {
             display: flex;
@@ -317,12 +283,12 @@
             margin-left: 5px;
             font-size: 10px;
         }
-        /* map wrapper */
+
+        /* ---------- MAP ---------- */
         .map-wrapper {
             position: relative;
             flex: 1;
             width: 100%;
-            border-radius: 0;
             overflow: hidden;
             background: #cbd5e1;
             min-height: 0;
@@ -354,7 +320,6 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.1s;
         }
         .float-btn.clear-route {
             color: #dc2626;
@@ -378,9 +343,9 @@
             box-shadow: 0 8px 18px rgba(0,100,0,0.4);
             cursor: pointer;
             z-index: 1000;
-            backdrop-filter: blur(2px);
         }
-        /* ========== SIDEBAR STYLES ========== */
+
+        /* ---------- SIDEBAR ---------- */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -443,7 +408,7 @@
         .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
         .sidebar-item:hover { background: #f0fdf4; }
 
-        /* ========== PAGE CONTAINER (replaces modals) ========== */
+        /* ---------- PAGE OVERLAYS (replace modals) ---------- */
         .page-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -454,9 +419,7 @@
             flex-direction: column;
             overflow-y: auto;
         }
-        .page-overlay.show {
-            display: flex;
-        }
+        .page-overlay.show { display: flex; }
         .page-header-bar {
             display: flex;
             align-items: center;
@@ -468,10 +431,7 @@
             top: 0;
             z-index: 10;
         }
-        .page-header-bar h2 {
-            font-size: 1.3rem;
-            font-weight: 800;
-        }
+        .page-header-bar h2 { font-size: 1.3rem; font-weight: 800; }
         .close-page-btn {
             background: none;
             border: none;
@@ -479,12 +439,9 @@
             cursor: pointer;
             color: #16a34a;
         }
-        .page-content {
-            padding: 20px;
-            flex: 1;
-        }
+        .page-content { padding: 20px; flex: 1; }
 
-        /* station cards (reused) */
+        /* ---------- REUSABLE COMPONENTS ---------- */
         .station-card {
             background: white;
             border-radius: 28px;
@@ -536,7 +493,6 @@
             cursor: pointer;
         }
         .btn-nav { background: #16a34a; color: white; }
-        .btn-report { background: #fee2e2; color: #b91c1c; }
         .full-width-btn {
             background: #16a34a;
             color: white;
@@ -553,11 +509,7 @@
             padding: 12px;
             margin-bottom: 12px;
         }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .small-text { font-size: 12px; color: #4b5563; }
         .mt-2 { margin-top: 12px; }
         .mb-2 { margin-bottom: 12px; }
@@ -589,7 +541,7 @@
 </head>
 <body>
 <div class="app-container">
-    <!-- ========== ORIGINAL DASHBOARD HEADER ========== -->
+    <!-- ORIGINAL DASHBOARD HEADER -->
     <div class="header">
         <div class="header-top">
             <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
@@ -602,7 +554,7 @@
     </div>
 
     <div class="search-section">
-        <div class="search-box"><i class="fas fa-search" style="color:#16a34a;"></i><input type="text" placeholder="Search station, amenity, or filling station..." id="searchInput"><button id="openSearchModalBtn"><i class="fas fa-list"></i></button><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i></div>
+        <div class="search-box"><i class="fas fa-search" style="color:#16a34a;"></i><input type="text" placeholder="Search station, amenity..." id="searchInput"><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i></div>
         <div class="near-me-row"><button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button></div>
     </div>
 
@@ -621,7 +573,7 @@
     <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
 </div>
 
-<!-- ========== SIDEBAR ========== -->
+<!-- SIDEBAR -->
 <div id="sidebarOverlay" class="sidebar-overlay">
     <div class="sidebar-panel">
         <div class="sidebar-logo"><img src="logo.png" alt="FuelRadar"></div>
@@ -638,74 +590,21 @@
     </div>
 </div>
 
-<!-- ========== PAGE OVERLAYS (replace modals) ========== -->
-<!-- Garage Page -->
-<div id="garagePage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-car"></i> My Garage</h2><button class="close-page-btn" data-close="garagePage">&times;</button></div>
-    <div class="page-content">
-        <div id="vehicleList"></div>
-        <button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button>
-        <div id="addVehicleForm" style="display:none; margin-top:12px;">
-            <input type="text" id="newVehicleName" placeholder="Vehicle name (e.g. Toyota Hilux)">
-            <input type="number" id="newTankCapacity" placeholder="Tank capacity (liters)">
-            <input type="number" id="newConsumption" placeholder="Consumption (L/100km)">
-            <select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select>
-            <button id="saveVehicleBtn" class="full-width-btn">Save Vehicle</button>
-        </div>
-        <hr>
-        <h4><i class="fas fa-file-alt"></i> Fuel Logs</h4>
-        <button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;"><i class="fas fa-plus"></i> Log Refuel</button>
-        <div id="addLogForm" style="display:none; margin-top:12px;">
-            <input type="date" id="logDate"><input type="number" id="logLiters" placeholder="Liters"><input type="number" id="logPricePerLiter" placeholder="Price per liter (K)"><input type="number" id="logOdometer" placeholder="Odometer (km)"><button id="submitLogBtn" class="full-width-btn">Save Log</button>
-        </div>
-        <div id="logsList"></div>
-        <div id="statsSummary" class="small-text mt-2"></div>
-    </div>
-</div>
+<!-- PAGE OVERLAYS (replace all pop-ups) -->
+<div id="garagePage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-car"></i> My Garage</h2><button class="close-page-btn" data-close="garagePage">&times;</button></div><div class="page-content"><div id="vehicleList"></div><button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button><div id="addVehicleForm" style="display:none;"><input type="text" id="newVehicleName" placeholder="Vehicle name"><input type="number" id="newTankCapacity" placeholder="Tank capacity (L)"><input type="number" id="newConsumption" placeholder="L/100km"><select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select><button id="saveVehicleBtn" class="full-width-btn">Save</button></div><hr><h4>Fuel Logs</h4><button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button><div id="addLogForm" style="display:none;"><input type="date" id="logDate"><input type="number" id="logLiters" placeholder="Liters"><input type="number" id="logPricePerLiter" placeholder="Price/L (K)"><input type="number" id="logOdometer" placeholder="Odometer (km)"><button id="submitLogBtn" class="full-width-btn">Save Log</button></div><div id="logsList"></div><div id="statsSummary" class="small-text mt-2"></div></div></div>
 
-<!-- Calculator Page -->
-<div id="calculatorPage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div>
-    <div class="page-content">
-        <div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div>
-        <div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div>
-        <div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div>
-        <div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div>
-        <div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div>
-        <button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button>
-    </div>
-</div>
+<div id="calculatorPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div><div class="page-content"><div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div><div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div><div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div><div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div><div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div><button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button></div></div>
 
-<!-- Report Page (stations with distance & dropdown) -->
-<div id="reportPage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-flag"></i> Report Station</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div>
-    <div class="page-content">
-        <p class="small-text">Select a station, choose report type, and submit to help the community.</p>
-        <div id="reportStationsList"></div>
-    </div>
-</div>
+<div id="reportPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-flag"></i> Report Station</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div><div class="page-content"><p class="small-text">Select a station, choose report type, submit.</p><div id="reportStationsList"></div></div></div>
 
-<!-- Favorites Page -->
-<div id="favoritesPage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorite Stations</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div>
-    <div class="page-content"><div id="favStationsList"></div></div>
-</div>
+<div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<!-- Help Page -->
-<div id="helpPage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div>
-    <div class="page-content">
-        <div class="help-section"><h4>📡 Offline capability</h4><p>Station data is cached every 2 minutes. Even without internet, previously loaded stations remain available.</p><h4>🚗 Smart navigation</h4><p>When you tap "Navigate", the app calculates exactly how many litres your active vehicle needs based on distance and consumption, and shows ETA.</p><h4>📝 Reporting</h4><p>Each station shows its distance. Use the dropdown to report fuel availability, queues, or price updates.</p><h4>💾 Garage & logs</h4><p>Manage multiple vehicles, track fuel logs, and see total spending.</p></div>
-    </div>
-</div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p></div></div></div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
-    // ==================================================================
-    // FUELRADAR - DASHBOARD + SIDEBAR PAGES (2100+ lines)
-    // ==================================================================
-    // Database setup
+    // ================================ DATABASE ================================
     const db = new Dexie('FuelRadarDB');
     db.version(1).stores({
         vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
@@ -714,7 +613,7 @@
         cachedStations: 'id, name, lat, lon, address, timestamp, pricePetrol, priceDiesel, status, fuelData, amenities'
     });
 
-    // Global variables
+    // ================================ GLOBAL STATE ================================
     let stations = [];
     let activeLocation = null;
     let actualUserLocation = null;
@@ -726,7 +625,7 @@
     let activeVehicle = null;
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
 
-    // Helper: fetch ERB prices
+    // ================================ HELPER FUNCTIONS ================================
     async function updatePrices() {
         try {
             const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm'));
@@ -750,7 +649,6 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // Fetch stations (online + offline cache)
     async function fetchStations(lat, lon, rad) {
         const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
         try {
@@ -769,7 +667,6 @@
                 let amenities = [];
                 if (el.tags?.shop) amenities.push(`Shop:${el.tags.shop}`);
                 if (el.tags?.car_wash === 'yes') amenities.push('Car wash');
-                if (el.tags?.atm === 'yes') amenities.push('ATM');
                 let priceP = `K${(currentPrices.petrol + (Math.random()*1-0.5)).toFixed(2)}`;
                 let priceD = `K${(currentPrices.diesel + (Math.random()*1-0.5)).toFixed(2)}`;
                 newStations.push({
@@ -799,7 +696,7 @@
         }
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
-            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) || (s.amenities && s.amenities.join(',').toLowerCase().includes(q)));
+            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q));
         }
         filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
         return filtered;
@@ -812,7 +709,6 @@
             let color = s.status === 'available' ? '#16a34a' : (s.status === 'empty' ? '#dc2626' : '#3b82f6');
             let icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`, iconSize: [28,28], className: 'custom-marker' });
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(`<b>${s.name}</b><br>${s.status}<br>${s.pricePetrol}<br><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button> <button class="btn-sm" data-report-id="${s.id}">Report</button>`);
-            marker.on('click', () => openStationDetailPage(s.id));
             clusterGroup.addLayer(marker);
         });
         setTimeout(() => {
@@ -823,13 +719,6 @@
                 btn.onclick = (e) => { e.stopPropagation(); openPage('reportPage'); setTimeout(() => scrollToReportStation(btn.dataset.reportId), 200); };
             });
         }, 80);
-    }
-
-    function openStationDetailPage(id) {
-        let s = stations.find(x => x.id == id);
-        if (!s) return;
-        // For simplicity, show a toast with details; original modal removed, but we can show a small page
-        showToast(`${s.name}\n${s.address}\n${s.distance?.toFixed(1)} km\nPetrol: ${s.fuel.petrol} Diesel: ${s.fuel.diesel}`);
     }
 
     async function loadStationsAndRefresh(showMsg = true) {
@@ -884,7 +773,7 @@
         setTimeout(() => toast.style.display = 'none', 5000);
     }
 
-    // Report Page: stations with distance and dropdown
+    // Report Page: stations with distance + dropdown
     async function renderReportStationsList() {
         let sorted = getFilteredStations();
         let container = document.getElementById('reportStationsList');
@@ -1020,7 +909,7 @@
         document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
     }
 
-    // Page switching (sidebar and close buttons)
+    // Page switching
     function openPage(pageId) {
         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
         document.getElementById(pageId).classList.add('show');
@@ -1057,79 +946,41 @@
 
     function locateAndFetch() {
         if (navigator.geolocation) {
-            navigator.geFetch() {
-        if (navigator.geolocation) {
-            navigator.geolocationolocation.getCurrentPosition(pos => {
+            navigator.geolocation.getCurrentPosition(pos => {
                 let { latitude, longitude } = pos.coords;
-                actual.getCurrentPosition(pos => {
-                let { latitude, longitude } = pos.coords;
-                actualUserLocation = { lat: latitude, lngUserLocation = { lat: latitude, lng: longitude };
-                activeLocation = {: longitude };
+                actualUserLocation = { lat: latitude, lng: longitude };
                 activeLocation = { lat: latitude, lng: longitude };
-                lat: latitude, lng: longitude };
-                map.setView([latitude, longitude], 14);
                 map.setView([latitude, longitude], 14);
                 loadStationsAndRefresh(true);
-                reverseGeocode(latitude, longitude);
-            }, () => showToast("Location denied loadStationsAndRefresh(true);
                 reverseGeocode(latitude, longitude);
             }, () => showToast("Location denied"));
         }
     }
 
-    // Event listeners (original dashboard"));
-        }
-    }
-
     // Event listeners (original dashboard)
-    document.getElementById('nearMeBtn').onclick = locateAndFetch)
     document.getElementById('nearMeBtn').onclick = locateAndFetch;
-    document.getElementById('float;
-    document.getElementByIdLocateBtn').onclick('floatLocateBtn'). = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocationonclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], .lng], 15);15); else locateAndFetch(); };
+    document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
-    document.getElementById('radius else locateAndFetch(); };
-    document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
-    document.getElementById('radiusSlider').oninput = (Slider').oninput = (e)e) => { radiusKm => { radiusKm = parse = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + 'Float(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) load km'; if (activeLocation) loadStationsAndRefresh(false); };
-    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderStationsAndRefresh(false); };
+    document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
     document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); };
     document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); };
-    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter =Markers(); updateUICounters(); };
-    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); };
-    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); current chip.datFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); }; });
-    document.getElementById('citySearchBtn').onaset.filter; renderMarkers(); updateUICounters(); }; });
-    document.getElementById('citySearchBtn').onclick =click = async () async () => { let q = document.getElementById('citySearchInput').value; if (! => { let q = document.getElementById('citySearchInput').value; if (!q) return; try { let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Zambia')}&limit=1`); let data = await res.json(); if (data.length) { let lat = parseFloat(data[0].lat), lng = parseFloat(dataq) return; try { let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Zambia')}&limit=1`); let data = await res.json(); if (data.length) { let lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon); setActiveLocation(lat, lng, false); } else alert('[0].lon); setActiveLocation(lat, lng, false); } else alert('City notCity not found'); found'); } catch(e) { alert('Geocoding error'); } };
-    function setActiveLocation(lat, lng, isUser) { activeLocation = { lat, l } catch(e) { alert('Geocoding error'); } };
-    function setActiveLocation(lat, lng, isUser) { activeLocation = { lat, lng }; if (ng }; if (isUser) actualUserLocationisUser) actualUserLocation = { lat, lng }; map.setView([lat, l = { lat, lng }; map.setView([lat, lng], 14); loadStationsAndRefresh(true); reverseGeocode(lat, lng);ng], 14); loadStationsAndRefresh(true); reverseGeocode(lat, lng); }
-    document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFull }
-    document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreenscreen();(); };
-    document.getElementById('clearRoute };
-    document.getElementById('clearRouteBtn').onclickBtn').onclick = () = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
-    document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderReportStationsList(); };
-
-    // Sidebar => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
+    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); }; });
+    document.getElementById('citySearchBtn').onclick = async () => { let q = document.getElementById('citySearchInput').value; if (!q) return; try { let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Zambia')}&limit=1`); let data = await res.json(); if (data.length) { let lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon); activeLocation = { lat, lng }; map.setView([lat, lng], 14); loadStationsAndRefresh(true); reverseGeocode(lat, lng); } else alert('City not found'); } catch(e) { alert('Geocoding error'); } };
+    document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
+    document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
     document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderReportStationsList(); };
 
     // Sidebar logic
-    const sidebar = document.getElementById('sidebar logic
     const sidebar = document.getElementById('sidebarOverlay');
-    document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
-    document.getElementById('closeSidebarBtn').onclick = () => sidebarOverlay');
     document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
     document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
     sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-    document.querySelectorAll('.sidebar-item')..classList.remove('open');
-    sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-    document.querySelectorAll('.sidebar-item').forEach(itemforEach(item => => {
+    document.querySelectorAll('.sidebar-item').forEach(item => {
         item.onclick = () => {
-        item.onclick = () {
-            let => {
             let page = item.dataset.page;
             sidebar.classList.remove('open');
             if (page === 'map') return;
-            if (page page = item.dataset.page;
-            sidebar.classList.remove('open');
-            if (page === 'map') return;
-            if (page === 'garage') { open === 'garage') { openPage('garagePage('garagePage'); renderVehicleList(); renderFuelPage'); renderVehicleList(); renderFuelLogsLogs(); }
+            if (page === 'garage') { openPage('garagePage'); renderVehicleList(); renderFuelLogs(); }
             if (page === 'calculator') { openPage('calculatorPage'); }
             if (page === 'report') { openPage('reportPage'); renderReportStationsList(); }
             if (page === 'favorites') { openPage('favoritesPage'); updateFavPage(); }
@@ -1139,40 +990,14 @@
 
     // Close buttons for pages
     document.querySelectorAll('.close-page-btn').forEach(btn => {
-        btn.onclick = () => {
-            let(); }
-            if (page === 'calculator') { openPage('calculatorPage'); }
-            if (page === 'report') { openPage('reportPage'); renderReportStationsList(); }
-            if (page === 'favorites') { openPage('favoritesPage'); updateFavPage(); }
-            if (page === 'help') { openPage('helpPage'); }
-        };
-    });
-
-    // Close buttons for pages
-    document.querySelectorAll('.close-page-btn').forEach(btn => {
-        btn.onclick = () => {
-            let pageId = btn.dataset.close;
-            closePage(page pageId = btn.dataset.close;
-            closePage(pageId);
-        };
+        btn.onclick = () => { let pageId = btn.dataset.close; closePage(pageId); };
     });
 
     // Garage buttons
-    document.getElementById('addId);
-        };
-    });
-
-    // Garage buttons
-    document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleBtn').onclick = () =>VehicleForm').style document.getElementById('addVehicleForm').style.display = 'block';
-    document.getElementById.display = 'block';
+    document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
     document.getElementById('saveVehicleBtn').onclick = async () => {
-        let name =('saveVehicleBtn').onclick = async () => {
-        let name = document.getElementById('newVehicleName document.getElementById('newVehicleName').value').value;
-        let;
-        let tank = parse tank = parseFloat(documentFloat(document.getElementById('newTankCapacity').value);
-        let cons = parseFloat(document.getElementById('newConsumption').value);
-        let fuel = document.getElementById('newFuelType').value;
-        if (name && tank && cons) await db.vehicles.add({ name, tankCapacity: tank, consumptionLper100km: cons, fuelType.getElementById('newTankCapacity').value);
+        let name = document.getElementById('newVehicleName').value;
+        let tank = parseFloat(document.getElementById('newTankCapacity').value);
         let cons = parseFloat(document.getElementById('newConsumption').value);
         let fuel = document.getElementById('newFuelType').value;
         if (name && tank && cons) await db.vehicles.add({ name, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, isActive: false });
@@ -1180,46 +1005,21 @@
         document.getElementById('addVehicleForm').style.display = 'none';
     };
     document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
-    document.getElementById: fuel, isActive: false });
-        loadVehicles();
-        document.getElementById('addVehicleForm').style.display = 'none';
-    };
-    document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
     document.getElementById('submitLogBtn').onclick = async () => {
-        if('submitLogBtn').onclick = async () => (!activeVehicle) return;
-        let date = document.getElementById('logDate'). {
         if (!activeVehicle) return;
         let date = document.getElementById('logDate').value;
-        let liters = parseFloatvalue;
         let liters = parseFloat(document.getElementById('logLiters').value);
-        let price = parseFloat(document.getElementById('logPrice(document.getElementById('logLiters').value);
         let price = parseFloat(document.getElementById('logPricePerLiter').value);
-        let oPerLiter').value);
-        let odo =do = parseFloat(document.getElementById('logOdom parseFloat(document.getElementById('logOdometer').value);
+        let odo = parseFloat(document.getElementById('logOdometer').value);
         if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
-        document.getElementById('addLogForm').styleeter').value);
-        if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
-        document.getElementById('addLogForm').style.display =.display = 'none 'none';
-   ';
+        document.getElementById('addLogForm').style.display = 'none';
     };
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
 
-    // };
-    document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
-
-    // Auto Auto-refresh every-ref 2 minutes
+    // Auto-refresh every 2 minutes
     setInterval(() => { if (activeLocation && navigator.onLine !== false) loadStationsAndRefresh(false); }, 120000);
 
-    //resh every 2 minutes
-    setInterval(() => { if (activeLocation && navigator.onLine !== false) loadStationsAndRefresh(false); }, 120000);
-
-    // Start app
-    initMap();
-    locateAndFetch();
-    loadVehicles();
-</script>
-</body>
-</ Start app
+    // Start
     initMap();
     locateAndFetch();
     loadVehicles();
