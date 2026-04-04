@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · Ultimate Edition</title>
+    <title>FuelRadar · Zambia · Fast & Optimized</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -128,7 +128,19 @@
             align-items: center;
             justify-content: center;
         }
-        /* Red sentence above radius */
+        /* Green suggestion sentence */
+        .green-suggestion {
+            background: #d1fae5;
+            color: #065f46;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 40px;
+            margin-top: 8px;
+            text-align: center;
+            border-left: 3px solid #10b981;
+        }
+        /* Red sentence (navigation feedback) */
         .warning-sentence {
             background: #fee2e2;
             color: #b91c1c;
@@ -141,7 +153,6 @@
             border-left: 3px solid #dc2626;
             transition: all 0.2s;
         }
-        /* Radius row */
         .radius-row {
             display: flex;
             align-items: center;
@@ -189,7 +200,6 @@
             min-width: 60px;
             text-align: center;
         }
-        /* Search & filters */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -215,6 +225,8 @@
             display: flex;
             justify-content: center;
             margin-top: 8px;
+            flex-direction: column;
+            gap: 8px;
         }
         .near-me-btn {
             background: #16a34a;
@@ -226,6 +238,7 @@
             font-size: 13px;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,80,0,0.2);
@@ -263,7 +276,6 @@
             margin-left: 5px;
             font-size: 10px;
         }
-        /* Map */
         .map-wrapper {
             position: relative;
             flex: 1;
@@ -541,16 +553,22 @@
             <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
         </div>
         <div class="stats-row"><span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span><span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span><span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">Lusaka</span></span><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button></div>
+        <!-- Green suggestion (updated when stations load) -->
+        <div class="green-suggestion" id="greenSuggestion">
+            <i class="fas fa-gas-pump"></i> Loading nearby stations...
+        </div>
         <!-- Red sentence (updated only on navigate) -->
         <div class="warning-sentence" id="warningSentence">
-            <i class="fas fa-info-circle"></i> Tap a station → Navigate or Report. Your vehicle range is used for fuel calculation.
+            <i class="fas fa-info-circle"></i> Tap a station → Navigate or Report.
         </div>
         <div class="radius-row"><span class="radius-label"><i class="fas fa-car"></i> radius</span><div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div><span class="radius-value" id="radiusDisplay">3 km</span></div>
     </div>
 
     <div class="search-section">
         <div class="search-box"><i class="fas fa-search" style="color:#16a34a;"></i><input type="text" placeholder="Search station, amenity..." id="searchInput"><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i></div>
-        <div class="near-me-row"><button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button></div>
+        <div class="near-me-row">
+            <button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
+        </div>
     </div>
 
     <div class="filter-section"><div class="filter-scroll" id="filterTabs"><button class="chip active" data-filter="all">All</button><button class="chip" data-filter="available">Fuel available</button><button class="chip" data-filter="petrol">Petrol</button><button class="chip" data-filter="diesel">Diesel</button></div></div>
@@ -594,7 +612,7 @@
 
 <div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline (only when no internet).</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p></div></div></div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline only when no internet.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p></div></div></div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
@@ -647,34 +665,22 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // Extract ALL amenities from OSM tags (shops, ATMs, etc.)
     function extractAllAmenities(tags) {
         let amenities = [];
-        // Fuel types
         if (tags['fuel:petrol'] === 'yes') amenities.push({ icon: 'fa-gas-pump', name: 'Petrol available' });
         if (tags['fuel:diesel'] === 'yes') amenities.push({ icon: 'fa-oil-can', name: 'Diesel available' });
         if (tags['fuel:lpg'] === 'yes') amenities.push({ icon: 'fa-fire', name: 'LPG (cooking gas)' });
-        // Shops
         if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
-        // ATM
         if (tags.atm === 'yes' || tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
         if (tags.brand && tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: `ATM: ${tags.brand}` });
-        // Car wash
         if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
-        // Tyre pump / compressed air
         if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
-        // Toilets
         if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
-        // Restaurant / fast food
         if (tags.amenity === 'restaurant') amenities.push({ icon: 'fa-utensils', name: 'Restaurant' });
         if (tags.amenity === 'fast_food') amenities.push({ icon: 'fa-hamburger', name: 'Fast food' });
-        // WiFi
         if (tags['internet_access'] === 'yes') amenities.push({ icon: 'fa-wifi', name: 'WiFi' });
-        // Pharmacy
         if (tags.pharmacy === 'yes') amenities.push({ icon: 'fa-capsules', name: 'Pharmacy' });
-        // Parking
         if (tags.parking === 'yes') amenities.push({ icon: 'fa-parking', name: 'Parking' });
-        // Default
         if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
         return amenities;
     }
@@ -711,15 +717,13 @@
             await db.cachedStations.bulkPut(newStations.map(s => ({ ...s, timestamp: Date.now() })));
             return newStations;
         } catch(err) {
-            // Only go offline if fetch fails AND we are actually offline
             if (!navigator.onLine) {
                 let cached = await db.cachedStations.toArray();
                 let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
-                if (valid.length) showToast("You are offline. Showing cached stations.");
+                if (valid.length) showToast("Offline mode: showing cached stations");
                 return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
             } else {
-                // If fetch fails but we are online, re-throw to show error
-                showToast("Network error. Please check your connection.");
+                showToast("Network error. Please check connection.");
                 return [];
             }
         }
@@ -750,6 +754,19 @@
         return `${hours} hr ${mins} min`;
     }
 
+    // Update green suggestion with two nearest stations
+    function updateGreenSuggestion() {
+        const filtered = getFilteredStations();
+        const nearest = filtered.slice(0, 2);
+        if (nearest.length === 0) {
+            document.getElementById('greenSuggestion').innerHTML = '<i class="fas fa-gas-pump"></i> No stations found nearby. Try increasing radius.';
+            return;
+        }
+        const names = nearest.map(s => s.name).join(' and ');
+        const html = `<i class="fas fa-star-of-life"></i> Nearby: ${names}. Tap a station for details.`;
+        document.getElementById('greenSuggestion').innerHTML = html;
+    }
+
     function updateUserMarker(lat, lng, heading) {
         if (userMarker) map.removeLayer(userMarker);
         const carIcon = L.divIcon({
@@ -774,7 +791,8 @@
     function renderMarkers() {
         if (!clusterGroup) return;
         clusterGroup.clearLayers();
-        getFilteredStations().forEach(s => {
+        const filtered = getFilteredStations();
+        filtered.forEach(s => {
             let color = s.status === 'available' ? '#16a34a' : (s.status === 'empty' ? '#dc2626' : '#3b82f6');
             let icon = L.divIcon({
                 html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));"></i>`,
@@ -783,10 +801,7 @@
             });
             const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
             const eta = s.distance ? calculateETA(s.distance) : '?';
-            // Build detailed amenities HTML
             const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-            // Queue from reports (simulate)
-            const queueStatus = "Unknown"; // could be from db reports
             const popupContent = `
                 <div style="min-width:260px; max-width:300px;">
                     <div style="font-weight:800; font-size:18px; margin-bottom:4px;">${s.name}</div>
@@ -880,6 +895,7 @@
         renderReportStationsList();
         renderFuelStationsList();
         updateFavPage();
+        updateGreenSuggestion();
         if (showMsg && newStations.length) showToast("Stations updated");
     }
 
@@ -964,6 +980,7 @@
             renderMarkers();
             renderFuelStationsList();
             updateFavPage();
+            updateGreenSuggestion();
         }
     }
 
@@ -1065,7 +1082,7 @@
     function initMap() {
         map = L.map('map').setView([-13.133, 27.849], 6);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-        clusterGroup = L.markerClusterGroup({ chunkedLoading: true });
+        clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
         map.on('moveend', async () => {
             let center = map.getCenter();
@@ -1108,9 +1125,9 @@
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
     document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
-    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
-    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
-    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); }; });
+    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
+    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
+    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); }; });
     document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
     document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
     document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
