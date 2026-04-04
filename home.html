@@ -131,6 +131,19 @@
             justify-content: center;
         }
 
+        /* ---------- RED SENTENCE ABOVE RADIUS ---------- */
+        .warning-sentence {
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 40px;
+            margin-top: 8px;
+            text-align: center;
+            border-left: 3px solid #dc2626;
+        }
+
         /* ---------- CITY SEARCH & RADIUS (original) ---------- */
         .city-search-row {
             display: flex;
@@ -554,6 +567,12 @@
             font-size: 14px;
         }
         hr { margin: 16px 0; }
+        .user-location-marker {
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -567,6 +586,10 @@
         </div>
         <div class="stats-row"><span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span><span><i class="fas fa-road"></i> <span id="roadLocation" class="road-badge">road: —</span></span><span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">Lusaka</span></span><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button></div>
         <div class="city-search-row"><i class="fas fa-search"></i><input type="text" id="citySearchInput" placeholder="Search city (e.g. Ndola)"><button id="citySearchBtn">Go</button></div>
+        <!-- RED SENTENCE ABOVE RADIUS -->
+        <div class="warning-sentence" id="warningSentence">
+            <i class="fas fa-info-circle"></i> Tap a station → Navigate or Report. Your vehicle range is used for fuel calculation.
+        </div>
         <div class="radius-row"><span class="radius-label"><i class="fas fa-car"></i> radius</span><div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div><span class="radius-value" id="radiusDisplay">3 km</span></div>
     </div>
 
@@ -638,6 +661,7 @@
     let searchQuery = '';
     let radiusKm = 3;
     let map, clusterGroup, routingControl = null;
+    let userMarker = null;
     let favoriteIds = JSON.parse(localStorage.getItem('fuelFavs')) || [];
     let activeVehicle = null;
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
@@ -742,11 +766,22 @@
                 iconSize: [28,28],
                 className: 'fuel-marker'
             });
-            let popupContent = `<b>${s.name}</b><br>${s.address}<br>${s.status}<br>Price: ${s.pricePetrol}<br>
-                <button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button>
-                <button class="btn-sm" data-report-id="${s.id}">Report</button>`;
+            let popupContent = `
+                <div style="min-width:200px;">
+                    <b>${s.name}</b><br>
+                    <small>${s.address}</small><br>
+                    <span class="station-distance" style="background:#eef2ff; padding:2px 8px; border-radius:20px;">${s.distance?.toFixed(1)} km</span><br>
+                    <div style="margin:6px 0;">
+                        <span class="fuel-badge">Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
+                        <span class="fuel-badge">Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+                    </div>
+                    <div class="card-actions" style="margin-top:8px;">
+                        <button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button>
+                        <button class="btn-sm btn-report" data-report-id="${s.id}">Report</button>
+                    </div>
+                </div>
+            `;
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
-            marker.on('click', () => {});
             clusterGroup.addLayer(marker);
         });
         setTimeout(() => {
@@ -754,15 +789,24 @@
                 btn.onclick = (e) => { e.stopPropagation(); let st = stations.find(x => x.id == btn.dataset.navId); if(st) startNavigationWithMessage(st); };
             });
             document.querySelectorAll('[data-report-id]').forEach(btn => {
-                btn.onclick = (e) => { e.stopPropagation(); openPage('reportPage'); setTimeout(() => scrollToReportStation(btn.dataset.reportId), 200); };
+                btn.onclick = (e) => { e.stopPropagation(); openReportForStation(parseInt(btn.dataset.reportId)); };
             });
         }, 80);
     }
 
-    // Enhanced station list for floating fuel pill
+    // Open report page and scroll to station
+    function openReportForStation(stationId) {
+        openPage('reportPage');
+        setTimeout(() => {
+            let el = document.getElementById(`reportStation_${stationId}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+
+    // Enhanced station list for floating fuel pill (original cards)
     function renderFuelStationsList() {
         let filtered = getFilteredStations();
-        let container = document.getElementById('reportStationsList'); // reuse report container for simplicity, but we'll show in a page
+        let container = document.getElementById('reportStationsList');
         if (!container) return;
         container.innerHTML = filtered.map(s => `
             <div class="station-card" id="fuelStationCard_${s.id}">
@@ -778,8 +822,8 @@
                 </div>
                 <div class="card-actions">
                     <button class="btn-sm btn-nav" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button>
-                    <button class="btn-sm" data-fav-id="${s.id}"><i class="fas fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button>
                     <button class="btn-sm btn-report" data-report-id="${s.id}"><i class="fas fa-flag"></i> Report</button>
+                    <button class="btn-sm" data-fav-id="${s.id}"><i class="fas fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button>
                 </div>
             </div>
         `).join('');
@@ -787,11 +831,11 @@
             let st = stations.find(x => x.id == btn.dataset.navId);
             if (st) btn.onclick = () => startNavigationWithMessage(st);
         });
+        document.querySelectorAll('#reportStationsList [data-report-id]').forEach(btn => {
+            btn.onclick = () => openReportForStation(parseInt(btn.dataset.reportId));
+        });
         document.querySelectorAll('#reportStationsList [data-fav-id]').forEach(btn => {
             btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favId));
-        });
-        document.querySelectorAll('#reportStationsList [data-report-id]').forEach(btn => {
-            btn.onclick = (e) => { e.stopPropagation(); openPage('reportPage'); setTimeout(() => scrollToReportStation(btn.dataset.reportId), 200); };
         });
     }
 
@@ -832,6 +876,8 @@
         let warning = stationHasFuel ? "" : " ⚠️ Station may not have this fuel!";
         let message = `🚗 ${activeVehicle.name} needs at least ${neededLitres.toFixed(1)}L of ${fuelTypeNeeded.toUpperCase()} to reach ${station.name} in ${etaText}.${warning}`;
         showToast(message);
+        // Update red sentence above radius
+        document.getElementById('warningSentence').innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
         if (routingControl) map.removeControl(routingControl);
         routingControl = L.Routing.control({
             waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat, station.lon)],
@@ -877,11 +923,6 @@
                 showToast(`Report for ${stations.find(x => x.id === sid)?.name} submitted!`);
             };
         });
-    }
-
-    function scrollToReportStation(stationId) {
-        let el = document.getElementById(`reportStation_${stationId}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
     // Favorites
@@ -998,7 +1039,7 @@
         document.getElementById(pageId).classList.remove('show');
     }
 
-    // Map initialization
+    // Map initialization with user location marker
     function initMap() {
         map = L.map('map').setView([-13.133, 27.849], 6);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
@@ -1030,6 +1071,15 @@
                 actualUserLocation = { lat: latitude, lng: longitude };
                 activeLocation = { lat: latitude, lng: longitude };
                 map.setView([latitude, longitude], 14);
+                // Add user marker
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.circleMarker([latitude, longitude], {
+                    radius: 8,
+                    fillColor: '#3b82f6',
+                    color: 'white',
+                    weight: 2,
+                    fillOpacity: 0.9
+                }).addTo(map).bindPopup('You are here').openPopup();
                 loadStationsAndRefresh(true);
                 reverseGeocode(latitude, longitude);
             }, () => showToast("Location denied"));
