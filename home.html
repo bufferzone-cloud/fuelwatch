@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Zambia · Final Version</title>
+    <title>FuelRadar · Zambia · Final Working Navigation</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -656,7 +656,7 @@
     let radiusKm = 3;
     let map, clusterGroup, routingControl = null;
     let userMarker = null;
-    let userHeading = 0; // heading in degrees
+    let userHeading = 0;
     let favoriteIds = JSON.parse(localStorage.getItem('fuelFavs')) || [];
     let activeVehicle = null;
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
@@ -686,7 +686,6 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // Extract amenities from OSM tags
     function extractAmenities(tags) {
         let amenities = [];
         if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
@@ -752,7 +751,6 @@
         return filtered;
     }
 
-    // Calculate ETA in minutes
     function calculateETA(distanceKm) {
         const avgSpeedKmh = 40;
         const minutes = Math.round((distanceKm / avgSpeedKmh) * 60);
@@ -762,7 +760,6 @@
         return `${hours} hr ${mins} min`;
     }
 
-    // Function to update user marker with rotation
     function updateUserMarker(lat, lng, heading) {
         if (userMarker) map.removeLayer(userMarker);
         const carIcon = L.divIcon({
@@ -771,6 +768,17 @@
             className: 'user-car-marker'
         });
         userMarker = L.marker([lat, lng], { icon: carIcon }).addTo(map).bindPopup('You are here');
+    }
+
+    function attachNavigationEventsToContainer(container) {
+        if (!container) return;
+        container.querySelectorAll('[data-nav-id]').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                let st = stations.find(x => x.id == btn.dataset.navId);
+                if (st) startNavigationWithMessage(st);
+            };
+        });
     }
 
     function renderMarkers() {
@@ -808,18 +816,21 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
-        // Event delegation for dynamically added buttons (using setTimeout to ensure DOM is ready)
-        setTimeout(() => {
-            document.querySelectorAll('[data-nav-id]').forEach(btn => {
-                btn.onclick = (e) => { e.stopPropagation(); let st = stations.find(x => x.id == btn.dataset.navId); if(st) startNavigationWithMessage(st); };
-            });
-            document.querySelectorAll('[data-report-id]').forEach(btn => {
-                btn.onclick = (e) => { e.stopPropagation(); openReportForStation(parseInt(btn.dataset.reportId)); };
-            });
-        }, 100);
+        // Attach events to popup buttons when popup opens
+        map.on('popupopen', function(e) {
+            const popupNode = e.popup.getElement();
+            if (popupNode) {
+                attachNavigationEventsToContainer(popupNode);
+                popupNode.querySelectorAll('[data-report-id]').forEach(btn => {
+                    btn.onclick = (ev) => {
+                        ev.stopPropagation();
+                        openReportForStation(parseInt(btn.dataset.reportId));
+                    };
+                });
+            }
+        });
     }
 
-    // Open report page and scroll to station
     function openReportForStation(stationId) {
         openPage('reportPage');
         setTimeout(() => {
@@ -828,7 +839,6 @@
         }, 300);
     }
 
-    // Enhanced station list for floating fuel pill
     function renderFuelStationsList() {
         let filtered = getFilteredStations();
         let container = document.getElementById('reportStationsList');
@@ -858,14 +868,11 @@
                 </div>
             </div>
         `}).join('');
-        document.querySelectorAll('#reportStationsList [data-nav-id]').forEach(btn => {
-            let st = stations.find(x => x.id == btn.dataset.navId);
-            if (st) btn.onclick = () => startNavigationWithMessage(st);
-        });
-        document.querySelectorAll('#reportStationsList [data-report-id]').forEach(btn => {
+        attachNavigationEventsToContainer(container);
+        container.querySelectorAll('[data-report-id]').forEach(btn => {
             btn.onclick = () => openReportForStation(parseInt(btn.dataset.reportId));
         });
-        document.querySelectorAll('#reportStationsList [data-fav-id]').forEach(btn => {
+        container.querySelectorAll('[data-fav-id]').forEach(btn => {
             btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favId));
         });
     }
@@ -894,7 +901,6 @@
         }
     }
 
-    // Smart navigation message
     function startNavigationWithMessage(station) {
         if (!actualUserLocation) { showToast("Enable location first"); return; }
         if (!activeVehicle) { showToast("No active vehicle. Go to Garage"); return; }
@@ -924,7 +930,6 @@
         setTimeout(() => toast.style.display = 'none', 5000);
     }
 
-    // Report Page: stations with distance + dropdown
     async function renderReportStationsList() {
         let sorted = getFilteredStations();
         let container = document.getElementById('reportStationsList');
@@ -955,7 +960,6 @@
         });
     }
 
-    // Favorites
     function toggleFavorite(id) {
         let s = stations.find(s => s.id === id);
         if (s) {
@@ -983,17 +987,13 @@
                     </div>
                 </div>
             `).join('');
-            document.querySelectorAll('#favStationsList [data-nav-id]').forEach(btn => {
-                let st = stations.find(x => x.id == btn.dataset.navId);
-                if (st) btn.onclick = () => startNavigationWithMessage(st);
-            });
-            document.querySelectorAll('#favStationsList [data-fav-remove]').forEach(btn => {
+            attachNavigationEventsToContainer(container);
+            container.querySelectorAll('[data-fav-remove]').forEach(btn => {
                 btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favRemove));
             });
         }
     }
 
-    // Vehicle Management
     async function loadVehicles() {
         let vehicles = await db.vehicles.toArray();
         if (vehicles.length === 0) {
@@ -1056,7 +1056,6 @@
         document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
     }
 
-    // Page switching
     function openPage(pageId) {
         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
         document.getElementById(pageId).classList.add('show');
@@ -1069,7 +1068,6 @@
         document.getElementById(pageId).classList.remove('show');
     }
 
-    // Map initialization
     function initMap() {
         map = L.map('map').setView([-13.133, 27.849], 6);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
@@ -1111,7 +1109,7 @@
         }
     }
 
-    // Event listeners (original dashboard)
+    // Event listeners
     document.getElementById('nearMeBtn').onclick = locateAndFetch;
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
@@ -1124,7 +1122,6 @@
     document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
     document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
 
-    // Sidebar logic
     const sidebar = document.getElementById('sidebarOverlay');
     document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
     document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
@@ -1142,12 +1139,10 @@
         };
     });
 
-    // Close buttons for pages
     document.querySelectorAll('.close-page-btn').forEach(btn => {
         btn.onclick = () => { let pageId = btn.dataset.close; closePage(pageId); };
     });
 
-    // Garage buttons
     document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
     document.getElementById('saveVehicleBtn').onclick = async () => {
         let name = document.getElementById('newVehicleName').value;
@@ -1170,10 +1165,8 @@
     };
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
 
-    // Auto-refresh every 2 minutes
     setInterval(() => { if (activeLocation && navigator.onLine !== false) loadStationsAndRefresh(false); }, 120000);
 
-    // Start
     initMap();
     locateAndFetch();
     loadVehicles();
