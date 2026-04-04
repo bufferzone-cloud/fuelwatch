@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-    <title>FuelRadar · Global · Fully Functional</title>
+    <title>FuelRadar · Global · Final</title>
     <!-- Leaflet, routing, marker cluster -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Dexie for IndexedDB -->
+    <!-- Dexie for IndexedDB (vehicles, logs, reports only) -->
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
         /* ---------- RESET & GLOBAL ---------- */
@@ -48,7 +48,7 @@
             position: relative;
         }
 
-        /* ---------- HEADER (original) ---------- */
+        /* ---------- HEADER ---------- */
         .header {
             padding: 10px 16px 6px 16px;
             background: #ffffff;
@@ -131,7 +131,7 @@
             justify-content: center;
         }
 
-        /* ---------- GREEN SUGGESTION (above radius) ---------- */
+        /* ---------- GREEN SUGGESTION ---------- */
         .green-suggestion {
             background: #d1fae5;
             color: #065f46;
@@ -602,7 +602,7 @@
             <div class="sidebar-item" data-page="calculator"><i class="fas fa-calculator"></i> Fuel Calculator</div>
             <div class="sidebar-item" data-page="report"><i class="fas fa-flag"></i> Report Station</div>
             <div class="sidebar-item" data-page="favorites"><i class="fas fa-heart"></i> Favorites</div>
-            <div class="sidebar-item" data-page="help"><i class="fas fa-question-circle"></i> Help & Offline</div>
+            <div class="sidebar-item" data-page="help"><i class="fas fa-question-circle"></i> Help</div>
             <div class="sidebar-item" data-page="map"><i class="fas fa-map-marked-alt"></i> Back to Map</div>
         </div>
     </div>
@@ -617,22 +617,21 @@
 
 <div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline only when no internet.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p></div></div></div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p></div></div></div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
     // =========================================================================
-    // FUEL RADAR - FULLY FUNCTIONAL GLOBAL VERSION
+    // FUEL RADAR - FINAL VERSION (NO OFFLINE MODE)
     // =========================================================================
 
-    // ----------------------------- 1. Database setup -----------------------------
+    // ----------------------------- 1. Database setup (vehicles, logs, reports only) -----------------------------
     const db = new Dexie('FuelRadarDB');
     db.version(1).stores({
         vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
         fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer',
-        userReports: '++id, stationId, type, comment, timestamp',
-        cachedStations: 'id, name, lat, lon, address, timestamp, pricePetrol, priceDiesel, status, fuelData, amenities'
+        userReports: '++id, stationId, type, comment, timestamp'
     });
 
     // ----------------------------- 2. Global state -----------------------------
@@ -722,21 +721,11 @@
                     fuel: { petrol: fuelPetrol, diesel: fuelDiesel, lpg: fuelLPG },
                     status, amenities, pricePetrol: priceP, priceDiesel: priceD,
                     distance: haversine(lat, lon, stationLat, stationLon),
-                    favorite: favoriteIds.includes(el.id),
-                    tags: el.tags || {}
+                    favorite: favoriteIds.includes(el.id)
                 });
             }
-            await db.cachedStations.bulkPut(newStations.map(s => ({ ...s, timestamp: Date.now() })));
             return newStations;
         } catch(err) {
-            if (!navigator.onLine) {
-                let cached = await db.cachedStations.toArray();
-                let valid = cached.filter(c => (Date.now() - c.timestamp) < 86400000);
-                if (valid.length) {
-                    showToast("Offline mode: showing cached stations");
-                    return valid.map(c => ({ ...c, distance: haversine(lat, lon, c.lat, c.lon) }));
-                }
-            }
             showToast("Failed to load stations. Check internet.");
             return [];
         }
@@ -1194,7 +1183,7 @@
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
 
     // Auto-refresh every 2 minutes
-    setInterval(() => { if (activeLocation && navigator.onLine !== false) loadStationsAndRefresh(false); }, 120000);
+    setInterval(() => { if (activeLocation) loadStationsAndRefresh(false); }, 120000);
 
     // Start the app
     initMap();
@@ -1203,3 +1192,4 @@
 </script>
 </body>
 </html>
+
