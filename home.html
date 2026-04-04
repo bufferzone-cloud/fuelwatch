@@ -144,7 +144,7 @@
             border-left: 3px solid #dc2626;
         }
 
-        /* ---------- CITY SEARCH & RADIUS (original) ---------- */
+        /* ---------- CITY SEARCH & RADIUS ---------- */
         .city-search-row {
             display: flex;
             align-items: center;
@@ -222,7 +222,7 @@
             text-align: center;
         }
 
-        /* ---------- SEARCH & FILTERS (original) ---------- */
+        /* ---------- SEARCH & FILTERS ---------- */
         .search-section {
             padding: 6px 16px 6px 16px;
             background: white;
@@ -756,6 +756,16 @@
         return filtered;
     }
 
+    // Calculate ETA in minutes
+    function calculateETA(distanceKm) {
+        const avgSpeedKmh = 40;
+        const minutes = Math.round((distanceKm / avgSpeedKmh) * 60);
+        if (minutes < 60) return `${minutes} min`;
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours} hr ${mins} min`;
+    }
+
     function renderMarkers() {
         if (!clusterGroup) return;
         clusterGroup.clearLayers();
@@ -766,18 +776,26 @@
                 iconSize: [28,28],
                 className: 'fuel-marker'
             });
-            let popupContent = `
-                <div style="min-width:200px;">
-                    <b>${s.name}</b><br>
-                    <small>${s.address}</small><br>
-                    <span class="station-distance" style="background:#eef2ff; padding:2px 8px; border-radius:20px;">${s.distance?.toFixed(1)} km</span><br>
-                    <div style="margin:6px 0;">
-                        <span class="fuel-badge">Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
-                        <span class="fuel-badge">Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+            // Rich popup with name, distance, ETA, fuel, amenities, navigate & report
+            const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
+            const eta = s.distance ? calculateETA(s.distance) : '?';
+            const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
+            const popupContent = `
+                <div style="min-width:240px; max-width:260px;">
+                    <div style="font-weight:800; font-size:16px; margin-bottom:4px;">${s.name}</div>
+                    <div style="font-size:11px; color:#2d5a2d;">${s.address}</div>
+                    <div style="margin:6px 0; display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="station-distance"><i class="fas fa-route"></i> ${distanceKm} km</span>
+                        <span class="station-distance"><i class="far fa-clock"></i> ${eta}</span>
                     </div>
+                    <div style="margin:6px 0;">
+                        <span class="fuel-badge"><i class="fas fa-gas-pump"></i> Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
+                        <span class="fuel-badge"><i class="fas fa-oil-can"></i> Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+                    </div>
+                    ${amenitiesHtml ? `<div class="amenities-list" style="margin:6px 0;">${amenitiesHtml}</div>` : ''}
                     <div class="card-actions" style="margin-top:8px;">
-                        <button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button>
-                        <button class="btn-sm btn-report" data-report-id="${s.id}">Report</button>
+                        <button class="btn-sm btn-nav" data-nav-id="${s.id}" style="background:#16a34a; color:white;">Navigate</button>
+                        <button class="btn-sm btn-report" data-report-id="${s.id}" style="background:#fee2e2; color:#b91c1c;">Report</button>
                     </div>
                 </div>
             `;
@@ -808,11 +826,17 @@
         let filtered = getFilteredStations();
         let container = document.getElementById('reportStationsList');
         if (!container) return;
-        container.innerHTML = filtered.map(s => `
+        container.innerHTML = filtered.map(s => {
+            const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
+            const eta = s.distance ? calculateETA(s.distance) : '?';
+            return `
             <div class="station-card" id="fuelStationCard_${s.id}">
                 <div class="station-name">${s.name} ${s.favorite ? '❤️' : ''}</div>
                 <div class="station-address"><i class="fas fa-road"></i> ${s.address}</div>
-                <div class="station-distance"><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km away</div>
+                <div style="margin:6px 0; display:flex; gap:6px; flex-wrap:wrap;">
+                    <span class="station-distance"><i class="fas fa-route"></i> ${distanceKm} km</span>
+                    <span class="station-distance"><i class="far fa-clock"></i> ${eta}</span>
+                </div>
                 <div class="amenities-list">
                     ${s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}
                 </div>
@@ -826,7 +850,7 @@
                     <button class="btn-sm" data-fav-id="${s.id}"><i class="fas fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
         document.querySelectorAll('#reportStationsList [data-nav-id]').forEach(btn => {
             let st = stations.find(x => x.id == btn.dataset.navId);
             if (st) btn.onclick = () => startNavigationWithMessage(st);
@@ -876,7 +900,6 @@
         let warning = stationHasFuel ? "" : " ⚠️ Station may not have this fuel!";
         let message = `🚗 ${activeVehicle.name} needs at least ${neededLitres.toFixed(1)}L of ${fuelTypeNeeded.toUpperCase()} to reach ${station.name} in ${etaText}.${warning}`;
         showToast(message);
-        // Update red sentence above radius
         document.getElementById('warningSentence').innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
         if (routingControl) map.removeControl(routingControl);
         routingControl = L.Routing.control({
@@ -1071,7 +1094,6 @@
                 actualUserLocation = { lat: latitude, lng: longitude };
                 activeLocation = { lat: latitude, lng: longitude };
                 map.setView([latitude, longitude], 14);
-                // Add user marker
                 if (userMarker) map.removeLayer(userMarker);
                 userMarker = L.circleMarker([latitude, longitude], {
                     radius: 8,
