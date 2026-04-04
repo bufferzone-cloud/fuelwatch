@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Dexie for IndexedDB -->
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <style>
         * {
             margin: 0;
@@ -696,6 +698,12 @@
         .navigate-btn { background: #16a34a; color: white; }
         .fav-btn { background: #fee2e2; color: #b91c1c; }
         .share-btn { background: #f3f4f6; color: #374151; }
+        .offline-badge { background: #ff9800; color: white; border-radius: 20px; padding: 2px 8px; font-size: 10px; margin-left: 8px; }
+        .vehicle-card, .log-entry { background: #f9fafb; border-radius: 20px; padding: 12px; margin-bottom: 10px; border-left: 4px solid #16a34a; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mt-2 { margin-top: 8px; }
+        .mb-2 { margin-bottom: 8px; }
+        .small-text { font-size: 12px; color: #4b5563; }
     </style>
 </head>
 <body>
@@ -737,13 +745,13 @@
 
     <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
 
-    <!-- Modals -->
+    <!-- Modals (original + new) -->
     <div class="modal-overlay" id="stationModal"><div class="modal-content"><button class="modal-close" id="closeModalBtn">&times;</button><div id="modalContent"></div></div></div>
     <div class="modal-overlay" id="searchModal"><div class="modal-content"><button class="modal-close" id="closeSearchModal">&times;</button><h3><i class="fas fa-search"></i> Search results</h3><input type="text" id="searchFuelInput" placeholder="Filter results..." style="width:100%; padding:10px; border-radius:40px; border:1px solid #16a34a; margin-bottom:12px;"><div id="searchResultsModal" style="max-height:300px; overflow-y:auto;"></div></div></div>
     <div class="modal-overlay" id="favModal"><div class="modal-content"><button class="modal-close" id="closeFavModal">&times;</button><h3><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h3><div id="favListModal"></div></div></div>
     <div class="modal-overlay" id="profileModal"><div class="modal-content"><button class="modal-close" id="closeProfileModal">&times;</button><div style="text-align:center;"><img src="logo.png" style="width:60px; border-radius:50%;"><h3>FuelRadar Zambia</h3><p>Demo profile</p><button id="showCreateForm" class="action-btn" style="background:#16a34a; color:white;">Create account</button><button id="showLoginForm" class="action-btn">Log in</button><div id="createAccountForm" style="display:none;"><input placeholder="Full name"><input placeholder="Phone"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Register (demo)</button></div><div id="loginForm" style="display:none;"><input placeholder="Email"><input type="password" placeholder="Password"><button class="action-btn navigate-btn" style="width:100%;">Login demo</button></div></div></div></div>
     
-    <!-- Enhanced fuel stations modal with custom header and redesigned cards -->
+    <!-- Enhanced fuel stations modal -->
     <div class="modal-overlay" id="fuelStationsModal">
         <div class="modal-content" style="padding: 20px 16px;">
             <div class="fuel-modal-header">
@@ -756,11 +764,50 @@
         </div>
     </div>
 
-    <div id="sidebarOverlay" class="sidebar-overlay"><div class="sidebar-panel"><div class="sidebar-logo"><img src="logo.png" alt="FuelRadar"></div><div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div><div class="sidebar-menu"><div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div><div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div><div class="sidebar-item" data-action="fav"><i class="fas fa-heart"></i> Favorites</div><div class="sidebar-item" data-action="profile"><i class="fas fa-user"></i> Profile</div><div class="sidebar-item" data-action="settings"><i class="fas fa-cog"></i> Settings</div><div class="sidebar-item" data-action="logout"><i class="fas fa-sign-out-alt"></i> Logout</div></div></div></div>
+    <!-- NEW: Vehicle & Fuel Logs Modal -->
+    <div class="modal-overlay" id="vehicleModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeVehicleModal">&times;</button>
+            <h3><i class="fas fa-car"></i> My Garage</h3>
+            <div id="vehicleListContainer"></div>
+            <hr class="mt-2 mb-2">
+            <button id="addVehicleBtn" class="action-btn navigate-btn" style="width:100%;"><i class="fas fa-plus"></i> Add Vehicle</button>
+            <div id="addVehicleForm" style="display:none; margin-top:12px;">
+                <input type="text" id="newVehicleName" placeholder="Vehicle name (e.g. Toyota Hilux)" class="mb-2" style="width:100%; padding:10px; border-radius:30px; border:1px solid #ccc;">
+                <input type="number" id="newTankCapacity" placeholder="Tank capacity (liters)" class="mb-2" style="width:100%; padding:10px; border-radius:30px; border:1px solid #ccc;">
+                <input type="number" id="newConsumption" placeholder="Consumption (L/100km)" class="mb-2" style="width:100%; padding:10px; border-radius:30px; border:1px solid #ccc;">
+                <button id="saveVehicleBtn" class="action-btn navigate-btn">Save Vehicle</button>
+            </div>
+            <hr class="mt-2 mb-2">
+            <h4><i class="fas fa-tachometer-alt"></i> Fuel Calculator</h4>
+            <div id="calculatorPanel">
+                <div class="small-text">Active vehicle: <span id="activeVehicleName">—</span></div>
+                <div class="flex-between mt-2"><span>Range (km):</span><strong id="rangeEstimate">—</strong></div>
+                <div class="flex-between"><span>Trip distance (km):</span><input type="number" id="tripDistance" placeholder="km" style="width:100px;"></div>
+                <div class="flex-between"><span>Trip cost (est):</span><strong id="tripCost">—</strong></div>
+                <div class="flex-between"><span>Fuel needed:</span><strong id="fuelNeeded">—</strong></div>
+                <button id="calcTripBtn" class="action-btn navigate-btn mt-2">Calculate</button>
+            </div>
+            <hr class="mt-2 mb-2">
+            <h4><i class="fas fa-file-alt"></i> Fuel Logs</h4>
+            <button id="addLogBtn" class="action-btn" style="background:#16a34a; color:white; width:100%;"><i class="fas fa-plus"></i> Log Refuel</button>
+            <div id="addLogForm" style="display:none; margin-top:12px;">
+                <input type="date" id="logDate" class="mb-2" style="width:100%; padding:8px; border-radius:30px;">
+                <input type="number" id="logLiters" placeholder="Liters" class="mb-2" style="width:100%; padding:8px; border-radius:30px;">
+                <input type="number" id="logPricePerLiter" placeholder="Price per liter (K)" class="mb-2" style="width:100%; padding:8px; border-radius:30px;">
+                <input type="number" id="logOdometer" placeholder="Odometer (km)" class="mb-2" style="width:100%; padding:8px; border-radius:30px;">
+                <button id="submitLogBtn" class="action-btn navigate-btn">Save Log</button>
+            </div>
+            <div id="logsList" style="max-height:200px; overflow-y:auto; margin-top:12px;"></div>
+            <div id="statsSummary" class="small-text mt-2"></div>
+        </div>
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"><div class="sidebar-panel"><div class="sidebar-logo"><img src="logo.png" alt="FuelRadar"></div><div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div><div class="sidebar-menu"><div class="sidebar-item" data-action="search"><i class="fas fa-search"></i> Search</div><div class="sidebar-item" data-action="refresh"><i class="fas fa-sync-alt"></i> Refresh</div><div class="sidebar-item" data-action="fav"><i class="fas fa-heart"></i> Favorites</div><div class="sidebar-item" data-action="vehicle"><i class="fas fa-car"></i> My Vehicles</div><div class="sidebar-item" data-action="profile"><i class="fas fa-user"></i> Profile</div><div class="sidebar-item" data-action="settings"><i class="fas fa-cog"></i> Settings</div><div class="sidebar-item" data-action="logout"><i class="fas fa-sign-out-alt"></i> Logout</div></div></div></div>
 
     <script>
     (function() {
-        // loading animation
+        // --- loading animation (original) ---
         let prog = 0;
         const interval = setInterval(() => {
             prog += 2;
@@ -769,7 +816,161 @@
             document.getElementById('loadingPercent').innerText = prog + '%';
         }, 50);
         
-        // FUEL PRICES
+        // --- Offline DB (IndexedDB) ---
+        const db = new Dexie('FuelRadarDB');
+        db.version(1).stores({
+            vehicles: '++id, name, tankCapacity, consumptionLper100km, isActive',
+            fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer, consumptionCalculated, costPerKm',
+            cachedStations: 'id, name, lat, lon, address, timestamp'
+        });
+        
+        let currentUserId = 1; // single user for demo
+        let activeVehicle = null;
+        let isPremium = localStorage.getItem('isPremium') === 'true';
+        
+        // Helper: set premium for demo (can be toggled in settings)
+        function setPremium(status) { isPremium = status; localStorage.setItem('isPremium', status); }
+        // For demo, user can become premium via settings sidebar (simulate)
+        
+        // --- Vehicle functions ---
+        async function loadVehicles() {
+            const vehicles = await db.vehicles.toArray();
+            if (vehicles.length === 0) {
+                // default vehicle
+                const defaultVehicle = { name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, isActive: true };
+                await db.vehicles.add(defaultVehicle);
+                activeVehicle = defaultVehicle;
+                activeVehicle.id = (await db.vehicles.toArray())[0].id;
+            } else {
+                activeVehicle = vehicles.find(v => v.isActive) || vehicles[0];
+                if (!activeVehicle.isActive) { activeVehicle.isActive = true; await db.vehicles.update(activeVehicle.id, { isActive: true }); }
+            }
+            renderVehicleList();
+            updateCalculatorUI();
+            renderFuelLogs();
+        }
+        
+        async function renderVehicleList() {
+            const vehicles = await db.vehicles.toArray();
+            const container = document.getElementById('vehicleListContainer');
+            if (!container) return;
+            container.innerHTML = vehicles.map(v => `
+                <div class="vehicle-card" data-id="${v.id}">
+                    <div class="flex-between">
+                        <strong><i class="fas fa-car"></i> ${v.name}</strong>
+                        ${v.isActive ? '<span class="offline-badge">ACTIVE</span>' : ''}
+                    </div>
+                    <div class="small-text">Tank: ${v.tankCapacity}L | Consumption: ${v.consumptionLper100km} L/100km</div>
+                    <div class="flex-between mt-2">
+                        <button class="action-btn" style="background:#eef2ff;" data-setactive="${v.id}">Set Active</button>
+                        <button class="action-btn" style="background:#fee2e2;" data-delvehicle="${v.id}">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            // attach events
+            document.querySelectorAll('[data-setactive]').forEach(btn => {
+                btn.onclick = async () => { const id = parseInt(btn.dataset.setactive); await db.vehicles.toCollection().modify({ isActive: 0 }); await db.vehicles.update(id, { isActive: true }); loadVehicles(); };
+            });
+            document.querySelectorAll('[data-delvehicle]').forEach(btn => {
+                btn.onclick = async () => { const id = parseInt(btn.dataset.delvehicle); await db.vehicles.delete(id); loadVehicles(); };
+            });
+        }
+        
+        async function addVehicle(name, tankCapacity, consumption) {
+            await db.vehicles.add({ name, tankCapacity, consumptionLper100km: consumption, isActive: false });
+            loadVehicles();
+        }
+        
+        // Fuel logs
+        async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) {
+            const totalCost = liters * pricePerLiter;
+            const logs = await db.fuelLogs.where('vehicleId').equals(vehicleId).toArray();
+            let consumptionCalculated = null, costPerKm = null;
+            if (logs.length > 0) {
+                const lastLog = logs.sort((a,b) => b.odometer - a.odometer)[0];
+                if (lastLog.odometer && odometer > lastLog.odometer) {
+                    const distKm = odometer - lastLog.odometer;
+                    if (distKm > 0) consumptionCalculated = (liters / distKm) * 100;
+                    costPerKm = totalCost / distKm;
+                }
+            }
+            await db.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer, consumptionCalculated, costPerKm });
+            renderFuelLogs();
+        }
+        
+        async function renderFuelLogs() {
+            if (!activeVehicle) return;
+            const logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).reverse().toArray();
+            const container = document.getElementById('logsList');
+            if (!container) return;
+            container.innerHTML = logs.map(l => `<div class="log-entry">${l.date} | ${l.liters}L @ K${l.pricePerLiter} | Total K${l.totalCost.toFixed(2)} | Odo ${l.odometer}km ${l.consumptionCalculated ? `| Real: ${l.consumptionCalculated.toFixed(1)}L/100km` : ''}</div>`).join('');
+            // stats
+            if (logs.length) {
+                const totalSpent = logs.reduce((s,l) => s + l.totalCost, 0);
+                const totalLiters = logs.reduce((s,l) => s + l.liters, 0);
+                const lastMonth = new Date(); lastMonth.setMonth(lastMonth.getMonth()-1);
+                const monthlyLogs = logs.filter(l => new Date(l.date) >= lastMonth);
+                const monthlySpend = monthlyLogs.reduce((s,l) => s + l.totalCost, 0);
+                const distanceMonthly = monthlyLogs.length ? (monthlyLogs[0].odometer - (monthlyLogs[monthlyLogs.length-1]?.odometer || 0)) : 0;
+                document.getElementById('statsSummary').innerHTML = `Total spent: K${totalSpent.toFixed(2)} | Total L: ${totalLiters.toFixed(1)} | Monthly: K${monthlySpend.toFixed(2)} | Monthly km: ${Math.abs(distanceMonthly)}`;
+            } else { if(document.getElementById('statsSummary')) document.getElementById('statsSummary').innerHTML = 'No logs yet'; }
+        }
+        
+        function updateCalculatorUI() {
+            if (activeVehicle) {
+                document.getElementById('activeVehicleName').innerText = activeVehicle.name;
+                const range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
+                document.getElementById('rangeEstimate').innerText = range.toFixed(1) + ' km';
+            }
+        }
+        
+        function calculateTrip() {
+            if (!activeVehicle) return;
+            const distance = parseFloat(document.getElementById('tripDistance').value);
+            if (isNaN(distance)) return;
+            const fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
+            const cost = fuelNeeded * (currentPrices.petrol ? parseFloat(currentPrices.petrol.replace('K','')) : 28);
+            document.getElementById('fuelNeeded').innerText = fuelNeeded.toFixed(1) + ' L';
+            document.getElementById('tripCost').innerText = 'K' + cost.toFixed(2);
+        }
+        
+        // --- Cache stations for offline (premium feature) ---
+        async function cacheStations(stationsArray) {
+            if (!isPremium) return;
+            const timestamp = Date.now();
+            for (let s of stationsArray) {
+                await db.cachedStations.put({ id: s.id, name: s.name, lat: s.lat, lon: s.lon, address: s.address, timestamp });
+            }
+        }
+        
+        async function getCachedStations() {
+            if (!isPremium) return [];
+            const cached = await db.cachedStations.toArray();
+            // expire after 1 day
+            const now = Date.now();
+            return cached.filter(c => (now - c.timestamp) < 86400000);
+        }
+        
+        // Override fetchStations to use cache when offline
+        const originalFetchStations = window.fetchStations;
+        window.fetchStations = async function(lat, lon, rad) {
+            try {
+                const response = await originalFetchStations(lat, lon, rad);
+                if (isPremium && response && response.length) await cacheStations(response);
+                return response;
+            } catch(e) {
+                if (isPremium) {
+                    const cached = await getCachedStations();
+                    if (cached.length) {
+                        document.getElementById('roadLocation').innerHTML += ' <span class="offline-badge">offline data</span>';
+                        return cached.map(c => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, address: c.address, tags: {}, fuel: { petrol: 'unknown', diesel: 'unknown' }, enhancedAmenities: [], status: 'unknown', lastUpdated: 'cached' }));
+                    }
+                }
+                return [];
+            }
+        };
+        
+        // --- Original code variables & functions (preserved) ---
         let currentPrices = { petrol: 'K28.50', diesel: 'K26.80', lpg: 'K15.00', cng: 'K12.50' };
         async function fetchFuelPricesFromERB() {
             try {
@@ -866,7 +1067,6 @@
         
         function locateAndFetch(){ if(!navigator.geolocation) return; navigator.geolocation.getCurrentPosition(async pos=>{ const {latitude:lat, longitude:lng}=pos.coords; setActiveLocation(lat, lng, true); }, err=>alert('Location error'),{enableHighAccuracy:true}); }
         
-        // Enhanced fuel stations modal with custom cards
         function showFuelStationsList(){
             const sorted = getFilteredStations();
             const container = document.getElementById('fuelStationsList');
@@ -901,7 +1101,6 @@
                         </div>
                     `;
                 }).join('');
-                // attach click handlers
                 container.querySelectorAll('.fuel-station-card').forEach(card => {
                     card.addEventListener('click', (e) => {
                         if(e.target.closest('.nav-full-btn')) return;
@@ -926,11 +1125,36 @@
         
         function initMap(){ map=L.map('map').setView([-13.133,27.849],6); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map); clusterGroup=L.markerClusterGroup({chunkedLoading:true}); map.addLayer(clusterGroup); }
         
-        // sidebar
-        const sidebar=document.getElementById('sidebarOverlay'); document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open'); document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open'); sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
-        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(activeLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='settings') alert('⚙️ Settings demo'); if(act==='logout') alert('Logged out (demo)'); }; });
+        // --- Event handlers (original + new) ---
+        const sidebar=document.getElementById('sidebarOverlay'); 
+        document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open'); 
+        document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open'); 
+        sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
+        document.querySelectorAll('.sidebar-item').forEach(item=>{ item.onclick=()=>{ const act=item.dataset.action; sidebar.classList.remove('open'); if(act==='search') document.getElementById('searchModal').classList.add('show'); if(act==='refresh'){ if(activeLocation) loadStations(true); else locateAndFetch(); } if(act==='fav'){ document.getElementById('favModal').classList.add('show'); const favStations=stations.filter(s=>favoriteIds.includes(s.id)); document.getElementById('favListModal').innerHTML=favStations.length?favStations.map(s=>`<div class="station-card" data-id="${s.id}"><strong>${s.name}</strong> ${s.distance?.toFixed(1)}km <button class="nav-btn-sm" data-nav-id="${s.id}">Navigate</button><button class="action-btn" style="background:#fee2e2; margin-left:8px;" data-id="${s.id}">remove</button></div>`).join(''):'<p>No favorites</p>'; document.querySelectorAll('#favListModal .station-card').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('button')) openStationModal(parseInt(c.dataset.id)); })); document.querySelectorAll('#favListModal .nav-btn-sm').forEach(btn=>btn.onclick=e=>{ e.stopPropagation(); const id=parseInt(btn.dataset.navId); const st=stations.find(x=>x.id===id); if(st&&actualUserLocation) startNavigation(st.lat,st.lon,st.name); }); document.querySelectorAll('#favListModal .action-btn').forEach(btn=>btn.onclick=()=>toggleFavorite(parseInt(btn.dataset.id))); } if(act==='profile') document.getElementById('profileModal').classList.add('show'); if(act==='vehicle') document.getElementById('vehicleModal').classList.add('show'); if(act==='settings') { let prem = confirm('Toggle Premium for offline caching?'); if(prem) setPremium(!isPremium); alert(`Premium: ${isPremium}`); } if(act==='logout') alert('Logged out (demo)'); }; });
         
-        // Event listeners
+        // Vehicle modal buttons
+        document.getElementById('addVehicleBtn').onclick = () => { document.getElementById('addVehicleForm').style.display = 'block'; };
+        document.getElementById('saveVehicleBtn').onclick = () => {
+            const name = document.getElementById('newVehicleName').value;
+            const tank = parseFloat(document.getElementById('newTankCapacity').value);
+            const cons = parseFloat(document.getElementById('newConsumption').value);
+            if(name && tank && cons) addVehicle(name, tank, cons);
+            document.getElementById('addVehicleForm').style.display = 'none';
+        };
+        document.getElementById('addLogBtn').onclick = () => { document.getElementById('addLogForm').style.display = 'block'; };
+        document.getElementById('submitLogBtn').onclick = () => {
+            if(!activeVehicle) return alert('Select a vehicle first');
+            const date = document.getElementById('logDate').value;
+            const liters = parseFloat(document.getElementById('logLiters').value);
+            const price = parseFloat(document.getElementById('logPricePerLiter').value);
+            const odo = parseFloat(document.getElementById('logOdometer').value);
+            if(date && liters && price && odo) addFuelLog(activeVehicle.id, date, liters, price, odo);
+            document.getElementById('addLogForm').style.display = 'none';
+        };
+        document.getElementById('calcTripBtn').onclick = calculateTrip;
+        document.getElementById('closeVehicleModal').onclick = () => document.getElementById('vehicleModal').classList.remove('show');
+        
+        // Original event listeners
         document.getElementById('nearMeBtn').onclick=()=>{ if(actualUserLocation) setActiveLocation(actualUserLocation.lat, actualUserLocation.lng, true); else locateAndFetch(); };
         document.getElementById('floatLocateBtn').onclick=()=>{ if(activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
         document.getElementById('floatRefreshBtn').onclick=()=>{ if(activeLocation) loadStations(true); };
@@ -954,6 +1178,7 @@
         document.getElementById('showLoginForm').onclick=()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('createAccountForm').style.display='none'; };
         
         initMap(); locateAndFetch();
+        loadVehicles();
     })();
     </script>
 </body>
