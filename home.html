@@ -441,7 +441,7 @@
         }
         .page-content { padding: 20px; flex: 1; }
 
-        /* ---------- REUSABLE COMPONENTS ---------- */
+        /* ---------- ENHANCED STATION CARDS (with amenities) ---------- */
         .station-card {
             background: white;
             border-radius: 28px;
@@ -477,6 +477,22 @@
             border-radius: 20px;
             margin-right: 6px;
         }
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .amenity-badge {
+            background: #f3f4f6;
+            border-radius: 40px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
         .card-actions {
             display: flex;
             gap: 10px;
@@ -493,6 +509,7 @@
             cursor: pointer;
         }
         .btn-nav { background: #16a34a; color: white; }
+        .btn-report { background: #fee2e2; color: #b91c1c; }
         .full-width-btn {
             background: #16a34a;
             color: white;
@@ -599,7 +616,7 @@
 
 <div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p></div></div></div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help & Offline</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>📡 Offline capability</h4><p>Station data cached every 2 min. Works offline.</p><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs.</p><h4>🔧 Amenities</h4><p>Tyre pump, car wash, shop, ATM, etc. shown on each station card.</p></div></div></div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
@@ -649,6 +666,20 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
+    // Extract amenities from OSM tags
+    function extractAmenities(tags) {
+        let amenities = [];
+        if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
+        if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
+        if (tags.atm === 'yes') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
+        if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
+        if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
+        if (tags.pharmacy === 'yes') amenities.push({ icon: 'fa-capsules', name: 'Pharmacy' });
+        if (tags['internet_access'] === 'yes') amenities.push({ icon: 'fa-wifi', name: 'WiFi' });
+        if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
+        return amenities;
+    }
+
     async function fetchStations(lat, lon, rad) {
         const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
         try {
@@ -664,9 +695,7 @@
                 let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : (el.tags?.['fuel:petrol'] === 'no' ? 'no' : null);
                 let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : (el.tags?.['fuel:diesel'] === 'no' ? 'no' : null);
                 let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : (fuelPetrol === 'no' && fuelDiesel === 'no') ? 'empty' : 'unknown';
-                let amenities = [];
-                if (el.tags?.shop) amenities.push(`Shop:${el.tags.shop}`);
-                if (el.tags?.car_wash === 'yes') amenities.push('Car wash');
+                let amenities = extractAmenities(el.tags || {});
                 let priceP = `K${(currentPrices.petrol + (Math.random()*1-0.5)).toFixed(2)}`;
                 let priceD = `K${(currentPrices.diesel + (Math.random()*1-0.5)).toFixed(2)}`;
                 newStations.push({
@@ -696,7 +725,8 @@
         }
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
-            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q));
+            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) ||
+                (s.amenities && s.amenities.some(a => a.name.toLowerCase().includes(q))));
         }
         filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
         return filtered;
@@ -707,8 +737,16 @@
         clusterGroup.clearLayers();
         getFilteredStations().forEach(s => {
             let color = s.status === 'available' ? '#16a34a' : (s.status === 'empty' ? '#dc2626' : '#3b82f6');
-            let icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`, iconSize: [28,28], className: 'custom-marker' });
-            let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(`<b>${s.name}</b><br>${s.status}<br>${s.pricePetrol}<br><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button> <button class="btn-sm" data-report-id="${s.id}">Report</button>`);
+            let icon = L.divIcon({
+                html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));"></i>`,
+                iconSize: [28,28],
+                className: 'fuel-marker'
+            });
+            let popupContent = `<b>${s.name}</b><br>${s.address}<br>${s.status}<br>Price: ${s.pricePetrol}<br>
+                <button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button>
+                <button class="btn-sm" data-report-id="${s.id}">Report</button>`;
+            let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
+            marker.on('click', () => {});
             clusterGroup.addLayer(marker);
         });
         setTimeout(() => {
@@ -721,6 +759,42 @@
         }, 80);
     }
 
+    // Enhanced station list for floating fuel pill
+    function renderFuelStationsList() {
+        let filtered = getFilteredStations();
+        let container = document.getElementById('reportStationsList'); // reuse report container for simplicity, but we'll show in a page
+        if (!container) return;
+        container.innerHTML = filtered.map(s => `
+            <div class="station-card" id="fuelStationCard_${s.id}">
+                <div class="station-name">${s.name} ${s.favorite ? '❤️' : ''}</div>
+                <div class="station-address"><i class="fas fa-road"></i> ${s.address}</div>
+                <div class="station-distance"><i class="fas fa-route"></i> ${s.distance?.toFixed(1)} km away</div>
+                <div class="amenities-list">
+                    ${s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}
+                </div>
+                <div>
+                    <span class="fuel-badge"><i class="fas fa-gas-pump"></i> Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
+                    <span class="fuel-badge"><i class="fas fa-oil-can"></i> Diesel: ${s.fuel.diesel === 'yes' ? '✅' : (s.fuel.diesel === 'no' ? '❌' : '?')}</span>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-sm btn-nav" data-nav-id="${s.id}"><i class="fas fa-route"></i> Navigate</button>
+                    <button class="btn-sm" data-fav-id="${s.id}"><i class="fas fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button>
+                    <button class="btn-sm btn-report" data-report-id="${s.id}"><i class="fas fa-flag"></i> Report</button>
+                </div>
+            </div>
+        `).join('');
+        document.querySelectorAll('#reportStationsList [data-nav-id]').forEach(btn => {
+            let st = stations.find(x => x.id == btn.dataset.navId);
+            if (st) btn.onclick = () => startNavigationWithMessage(st);
+        });
+        document.querySelectorAll('#reportStationsList [data-fav-id]').forEach(btn => {
+            btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favId));
+        });
+        document.querySelectorAll('#reportStationsList [data-report-id]').forEach(btn => {
+            btn.onclick = (e) => { e.stopPropagation(); openPage('reportPage'); setTimeout(() => scrollToReportStation(btn.dataset.reportId), 200); };
+        });
+    }
+
     async function loadStationsAndRefresh(showMsg = true) {
         if (!activeLocation) return;
         let newStations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
@@ -728,6 +802,7 @@
         renderMarkers();
         updateUICounters();
         renderReportStationsList();
+        renderFuelStationsList();
         updateFavPage();
         if (showMsg) showToast("Stations updated");
     }
@@ -818,6 +893,7 @@
             else favoriteIds = favoriteIds.filter(f => f !== id);
             localStorage.setItem('fuelFavs', JSON.stringify(favoriteIds));
             renderMarkers();
+            renderFuelStationsList();
             updateFavPage();
         }
     }
@@ -913,6 +989,9 @@
     function openPage(pageId) {
         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
         document.getElementById(pageId).classList.add('show');
+        if (pageId === 'reportPage') renderReportStationsList();
+        if (pageId === 'favoritesPage') updateFavPage();
+        if (pageId === 'garagePage') { renderVehicleList(); renderFuelLogs(); }
     }
 
     function closePage(pageId) {
@@ -962,13 +1041,13 @@
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
     document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
-    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); };
-    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); };
-    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); }; });
+    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
+    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); };
+    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); }; });
     document.getElementById('citySearchBtn').onclick = async () => { let q = document.getElementById('citySearchInput').value; if (!q) return; try { let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ', Zambia')}&limit=1`); let data = await res.json(); if (data.length) { let lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon); activeLocation = { lat, lng }; map.setView([lat, lng], 14); loadStationsAndRefresh(true); reverseGeocode(lat, lng); } else alert('City not found'); } catch(e) { alert('Geocoding error'); } };
     document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
     document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; } };
-    document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderReportStationsList(); };
+    document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
 
     // Sidebar logic
     const sidebar = document.getElementById('sidebarOverlay');
@@ -980,11 +1059,11 @@
             let page = item.dataset.page;
             sidebar.classList.remove('open');
             if (page === 'map') return;
-            if (page === 'garage') { openPage('garagePage'); renderVehicleList(); renderFuelLogs(); }
-            if (page === 'calculator') { openPage('calculatorPage'); }
-            if (page === 'report') { openPage('reportPage'); renderReportStationsList(); }
-            if (page === 'favorites') { openPage('favoritesPage'); updateFavPage(); }
-            if (page === 'help') { openPage('helpPage'); }
+            if (page === 'garage') openPage('garagePage');
+            else if (page === 'calculator') openPage('calculatorPage');
+            else if (page === 'report') openPage('reportPage');
+            else if (page === 'favorites') openPage('favoritesPage');
+            else if (page === 'help') openPage('helpPage');
         };
     });
 
