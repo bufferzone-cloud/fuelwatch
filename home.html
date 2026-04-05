@@ -442,7 +442,9 @@
             flex-direction: column;
             padding: 20px 0;
         }
-        body.dark .sidebar-panel { background: #1e1e1e; }
+        body.dark .sidebar-panel {
+            background: #1e1e1e;
+        }
         .sidebar-overlay.open .sidebar-panel { right: 0; }
         .sidebar-logo {
             text-align: center;
@@ -482,7 +484,10 @@
             justify-content: space-between;
             align-items: center;
         }
-        .sidebar-menu { flex: 1; padding: 16px 0; }
+        .sidebar-menu {
+            flex: 1;
+            padding: 16px 0;
+        }
         .sidebar-item {
             padding: 12px 24px;
             display: flex;
@@ -493,23 +498,37 @@
             color: #1e3a1e;
             cursor: pointer;
         }
-        body.dark .sidebar-item { color: #86efac; }
-        .sidebar-item i { width: 24px; font-size: 18px; color: #16a34a; }
-        .sidebar-item:hover { background: #f0fdf4; }
+        body.dark .sidebar-item {
+            color: #86efac;
+        }
+        .sidebar-item i {
+            width: 24px;
+            font-size: 18px;
+            color: #16a34a;
+        }
+        .sidebar-item:hover {
+            background: #f0fdf4;
+        }
 
         /* Page Overlays */
         .page-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: white;
             z-index: 2000;
             display: none;
             flex-direction: column;
             overflow-y: auto;
         }
-        body.dark .page-overlay { background: #1e1e1e; }
-        .page-overlay.show { display: flex; }
+        body.dark .page-overlay {
+            background: #1e1e1e;
+        }
+        .page-overlay.show {
+            display: flex;
+        }
         .page-header-bar {
             display: flex;
             align-items: center;
@@ -525,7 +544,10 @@
             background: #1e1e1e;
             border-bottom-color: #2c2c2c;
         }
-        .page-header-bar h2 { font-size: 1.3rem; font-weight: 800; }
+        .page-header-bar h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
         .close-page-btn {
             background: none;
             border: none;
@@ -533,10 +555,13 @@
             cursor: pointer;
             color: #16a34a;
         }
-        .page-content { padding: 20px; flex: 1; }
+        .page-content {
+            padding: 20px;
+            flex: 1;
+        }
 
         /* Cards */
-        .station-card, .garage-card, .log-item, .trip-history-item, .recent-station-item, .fun-stop-card {
+        .station-card, .garage-card, .log-item, .trip-history-item, .recent-station-item {
             background: #f8fafc;
             border-radius: 24px;
             padding: 14px;
@@ -544,12 +569,21 @@
             border: 1px solid #eaf4ea;
         }
         body.dark .station-card, body.dark .garage-card, body.dark .log-item,
-        body.dark .trip-history-item, body.dark .recent-station-item, body.dark .fun-stop-card {
+        body.dark .trip-history-item, body.dark .recent-station-item {
             background: #2c2c2c;
             border-color: #4ade80;
         }
-        .station-name { font-weight: 800; font-size: 18px; display: flex; justify-content: space-between; }
-        .station-address { font-size: 12px; color: #2d5a2d; margin: 4px 0; }
+        .station-name {
+            font-weight: 800;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .station-address {
+            font-size: 12px;
+            color: #2d5a2d;
+            margin: 4px 0;
+        }
         .station-distance {
             font-size: 12px;
             background: #eef2ff;
@@ -566,7 +600,12 @@
             border-radius: 20px;
             margin-right: 6px;
         }
-        .amenities-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+        .amenities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0;
+        }
         .amenity-badge {
             background: #f3f4f6;
             border-radius: 40px;
@@ -577,7 +616,12 @@
             align-items: center;
             gap: 6px;
         }
-        .card-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
         .btn-sm {
             background: #f0fdf4;
             border: none;
@@ -587,8 +631,14 @@
             font-size: 12px;
             cursor: pointer;
         }
-        .btn-nav { background: #16a34a; color: white; }
-        .btn-report { background: #fee2e2; color: #b91c1c; }
+        .btn-nav {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-report {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
         .full-width-btn {
             background: #16a34a;
             color: white;
@@ -599,10 +649,21 @@
             width: 100%;
             margin-bottom: 10px;
         }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .small-text { font-size: 12px; color: #4b5563; }
-        .mt-2 { margin-top: 12px; }
-        .mb-2 { margin-bottom: 12px; }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .small-text {
+            font-size: 12px;
+            color: #4b5563;
+        }
+        .mt-2 {
+            margin-top: 12px;
+        }
+        .mb-2 {
+            margin-bottom: 12px;
+        }
         .message-toast {
             position: fixed;
             bottom: 80px;
@@ -631,33 +692,63 @@
             border-color: #4ade80;
             color: white;
         }
-        hr { margin: 16px 0; }
+        hr {
+            margin: 16px 0;
+        }
 
-        /* Trip Planner specific styles */
-        .driver-image-large {
-            text-align: center;
-            margin-bottom: 16px;
+        /* Trip Planner Steps */
+        .step-container {
+            margin-bottom: 20px;
         }
-        .driver-image-large img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-        }
-        .trip-info-card {
-            background: white;
-            border-radius: 28px;
-            padding: 16px;
-            margin: 12px 0;
-            border: 1px solid #16a34a;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        body.dark .trip-info-card {
-            background: #2c2c2c;
-        }
-        .trip-info-card h3 {
-            text-align: center;
-            color: #1e3a8a;
+        .step-header {
+            font-size: 18px;
+            font-weight: 700;
             margin-bottom: 12px;
+            color: #16a34a;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active-step {
+            display: block;
+        }
+        .step-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .step-buttons button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .step-prev {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .step-next {
+            background: #16a34a;
+            color: white;
+        }
+        .plain-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        body.dark .plain-card {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        .plain-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .place-suggestions {
             background: white;
@@ -690,27 +781,38 @@
             font-weight: bold;
             color: #dc2626;
         }
-        .along-station-item, .fun-stop-item {
-            background: #f0fdf4;
+        .station-select-item, .place-select-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 20px;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 8px;
             cursor: pointer;
-            border: 1px solid #16a34a30;
+            transition: all 0.2s;
         }
-        body.dark .along-station-item, body.dark .fun-stop-item {
-            background: #2c2c2c;
-            border: 1px solid #4ade80;
+        body.dark .station-select-item, body.dark .place-select-item {
+            background: #374151;
+            border-color: #4ade80;
         }
-        .along-station-item:hover, .fun-stop-item:hover {
+        .station-select-item:hover, .place-select-item:hover {
+            background: #eef5e8;
+            border-color: #16a34a;
+        }
+        .station-select-item.selected, .place-select-item.selected {
             background: #d1fae5;
+            border-color: #16a34a;
         }
-        .fun-stop-card {
-            background: #fff7ed;
-            border-color: #f59e0b;
+        .safety-tips {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            margin-top: 12px;
         }
-        .trip-history-item {
-            background: #f8fafc;
+        body.dark .safety-tips {
+            background: #78350f;
+            color: #fef3c7;
         }
     </style>
 </head>
@@ -874,44 +976,20 @@
         <button class="close-page-btn" data-close="calculatorPage">&times;</button>
     </div>
     <div class="page-content">
-        <div class="driver-image-large">
-            <img src="driver.png" alt="car" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+        <div class="driver-image-large" style="text-align:center; margin-bottom:16px;">
+            <img src="driver.png" style="width:80px; height:80px; object-fit:contain;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
         </div>
         <div class="garage-card" style="margin-bottom:20px;">
-            <div class="flex-between">
-                <span>Active vehicle:</span>
-                <strong id="activeVehicleNameCalc">—</strong>
-            </div>
-            <div class="flex-between">
-                <span>Fuel type:</span>
-                <span id="activeFuelTypeCalc">-</span>
-            </div>
-            <div class="flex-between">
-                <span>⛽ Range (full tank):</span>
-                <strong id="rangeCalc">— km</strong>
-            </div>
-            <div class="flex-between">
-                <span>📊 Consumption:</span>
-                <span id="consumptionDisplay">— L/100km</span>
-            </div>
+            <div class="flex-between"><span>Active vehicle:</span><strong id="activeVehicleNameCalc">—</strong></div>
+            <div class="flex-between"><span>Fuel type:</span><span id="activeFuelTypeCalc">-</span></div>
+            <div class="flex-between"><span>⛽ Range (full tank):</span><strong id="rangeCalc">— km</strong></div>
+            <div class="flex-between"><span>📊 Consumption:</span><span id="consumptionDisplay">— L/100km</span></div>
         </div>
-        <div class="trip-info-card">
-            <div class="flex-between">
-                <span><i class="fas fa-road"></i> Trip distance (km):</span>
-                <input type="number" id="tripDistanceCalc" placeholder="Enter km" style="width: 60%; margin-top:0;">
-            </div>
-            <div class="flex-between mt-2">
-                <span><i class="fas fa-tint"></i> Fuel needed:</span>
-                <strong id="fuelNeededCalc" style="color:#16a34a;">— L</strong>
-            </div>
-            <div class="flex-between">
-                <span><i class="fas fa-money-bill-wave"></i> Estimated cost:</span>
-                <strong id="tripCostCalc" style="color:#dc2626;">— K</strong>
-            </div>
-            <div class="flex-between">
-                <span><i class="fas fa-clock"></i> ETA (40 km/h avg):</span>
-                <strong id="etaCalc" style="color:#16a34a;">—</strong>
-            </div>
+        <div class="plain-card">
+            <div class="flex-between"><span>Trip distance (km):</span><input type="number" id="tripDistanceCalc" placeholder="Enter km" style="width:60%; margin-top:0;"></div>
+            <div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc" style="color:#16a34a;">— L</strong></div>
+            <div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc" style="color:#dc2626;">— K</strong></div>
+            <div class="flex-between"><span>ETA (40 km/h avg):</span><strong id="etaCalc" style="color:#16a34a;">—</strong></div>
         </div>
         <button id="calcTripBtnCalc" class="full-width-btn">Calculate</button>
         <div class="small-text mt-2" style="text-align:center;">
@@ -920,24 +998,45 @@
     </div>
 </div>
 
+<!-- Trip Planner (Multi-step) -->
 <div id="tripPlannerPage" class="page-overlay">
     <div class="page-header-bar">
         <h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2>
         <button class="close-page-btn" data-close="tripPlannerPage">&times;</button>
     </div>
     <div class="page-content">
-        <div class="driver-image-large">
-            <img src="driver.png" alt="car" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+        <div class="step-container">
+            <!-- Step 1: Destination -->
+            <div id="step1" class="step-content active-step">
+                <div class="step-header">📍 Step 1: Where are you going?</div>
+                <input type="text" id="destSearch" placeholder="Search destination...">
+                <div id="destSuggestions" class="place-suggestions"></div>
+                <div id="step1Info" class="small-text mt-2"></div>
+            </div>
+            <!-- Step 2: Select Fuel Station -->
+            <div id="step2" class="step-content">
+                <div class="step-header">⛽ Step 2: Choose a fuel station for <span id="carNameStep2">your car</span></div>
+                <div id="stationListStep2"></div>
+            </div>
+            <!-- Step 3: Suggested Places -->
+            <div id="step3" class="step-content">
+                <div class="step-header">🎯 Step 3: Pick a fun stop (optional)</div>
+                <div id="funPlacesStep3"></div>
+                <button id="skipFunStop" class="btn-sm" style="background:#e5e7eb; margin-top:10px;">Skip</button>
+            </div>
+            <!-- Step 4: Summary Cards -->
+            <div id="step4" class="step-content">
+                <div class="step-header">📋 Step 4: Trip Summary</div>
+                <div id="summaryCards"></div>
+                <div id="safetyTips" class="safety-tips"></div>
+                <button id="drawRouteBtn" class="full-width-btn">Draw Route on Map</button>
+            </div>
+            <!-- Navigation Buttons -->
+            <div class="step-buttons">
+                <button id="prevStep" class="step-prev" style="display:none;">← Back</button>
+                <button id="nextStep" class="step-next">Next →</button>
+            </div>
         </div>
-        <label>Starting point:</label>
-        <input type="text" id="startPoint" placeholder="Your location" readonly>
-        <label>Destination:</label>
-        <input type="text" id="destSearch" placeholder="Search for a destination...">
-        <div id="destSuggestions" class="place-suggestions"></div>
-        <div id="tripInfo" style="display: none;" class="trip-info-card"></div>
-        <div id="stationsAlong" style="margin-top: 12px;"></div>
-        <div id="funStops" style="margin-top: 12px;"></div>
-        <button id="planRouteBtn" class="full-width-btn" style="display: none;">Draw Route with Selected Station</button>
     </div>
 </div>
 
@@ -1022,15 +1121,9 @@
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
-    // ======================== FUELRADAR ULTIMATE (STABLE) ========================
-    // - Map stops reloading (no auto-refresh interval)
-    // - Pulsing markers for 3 seconds with caption "Stations near you"
-    // - Navigation sentence updates correctly
-    // - Trip planner with driver.png, editable start, styled cards, fun stops
-    // - Fuel calculator redesigned with large driver image
-    // - Help & About page
-    // - Sidebar shows driver.png next to vehicle name
-    // - Trip history styled as cards
+    // ======================== FUELRADAR ULTIMATE (STABLE MAP + MULTI-STEP TRIP PLANNER) ========================
+    // Map: no auto-reload on moveend; stations load once on init, manual refresh, or radius change.
+    // Trip Planner: 4-step wizard with destination search, station selection (10+), fun places, summary cards, safety tips.
 
     // -------------------- 1. Database --------------------
     const db = new Dexie('FuelRadarDB');
@@ -1056,13 +1149,16 @@
     let activeVehicle = null;
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
     let watchId = null;
-    let moveEndTimeout = null;
     let chartInstance = null;
+    let stationsLoaded = false;  // prevent repeated loads
+
+    // Trip planner variables
     let destCoordinates = null;
-    let selectedAlongStation = null;
-    let selectedFunStop = null;
-    let pulseTimeout = null;
-    let pulseMarkers = [];
+    let destName = '';
+    let selectedStation = null;
+    let selectedFunPlace = null;
+    let currentStep = 1;
+    let stationsAlongRoute = [];
 
     // -------------------- 3. Helper Functions --------------------
     function showToast(msg, isError = false) {
@@ -1151,10 +1247,12 @@
             }
             return newStations;
         } catch(err) {
-            showToast("Failed to load stations. Check internet.", true);
-            return [];
+            // Only show error if stations were never loaded before
+            if (!stationsLoaded) showToast("Failed to load stations. Check internet.", true);
+            return stations.length ? stations : [];
         } finally {
             showLoading(false);
+            stationsLoaded = true;
         }
     }
 
@@ -1197,38 +1295,6 @@
         }
         const names = nearest.map(s => s.name).join(', ');
         document.getElementById('greenSuggestion').innerHTML = `<i class="fas fa-star-of-life"></i> Stations near you: ${names}`;
-        
-        // Pulsing for 3 seconds only
-        if (pulseTimeout) clearTimeout(pulseTimeout);
-        if (pulseMarkers.length) {
-            pulseMarkers.forEach(m => {
-                let originalColor = m.options.icon.options.html.match(/color:#([0-9a-f]{6})/)?.[1] || '16a34a';
-                m.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#${originalColor}; font-size:28px;"></i>`, iconSize: [28,28], className: 'fuel-marker' }));
-            });
-            pulseMarkers = [];
-        }
-        // Find the 3 nearest markers and pulse them
-        if (clusterGroup) {
-            let markerList = [];
-            clusterGroup.eachLayer(layer => {
-                let latlng = layer.getLatLng();
-                let dist = haversine(activeLocation.lat, activeLocation.lng, latlng.lat, latlng.lng);
-                markerList.push({ layer, dist });
-            });
-            markerList.sort((a,b) => a.dist - b.dist);
-            let top3 = markerList.slice(0,3);
-            top3.forEach(item => {
-                let layer = item.layer;
-                layer.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:32px; animation: pulse 0.8s infinite; filter:drop-shadow(0 0 6px #16a34a);"></i>`, iconSize: [32,32], className: 'fuel-marker' }));
-                pulseMarkers.push(layer);
-            });
-            pulseTimeout = setTimeout(() => {
-                pulseMarkers.forEach(m => {
-                    m.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px;"></i>`, iconSize: [28,28], className: 'fuel-marker' }));
-                });
-                pulseMarkers = [];
-            }, 3000);
-        }
     }
 
     function updateUserMarker(lat, lng, heading) {
@@ -1320,7 +1386,7 @@
         renderFuelStationsList();
         updateFavPage();
         updateGreenSuggestion();
-        if (showMsg && newStations.length) showToast(`${newStations.length} stations loaded`);
+        if (showMsg && newStations.length && !stationsLoaded) showToast(`${newStations.length} stations loaded`);
     }
 
     function updateUICounters() {
@@ -1358,7 +1424,6 @@
             lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
         }).addTo(map);
         document.getElementById('clearRouteBtn').style.display = 'flex';
-        // Save to recent stations
         db.recentStations.add({ stationId: station.id, name: station.name, lat: station.lat, lon: station.lon, timestamp: Date.now() });
     }
 
@@ -1458,7 +1523,7 @@
     }
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
 
-    // Trip Planner with improved UI
+    // -------------------- Trip Planner Multi-Step --------------------
     let destSearchTimeout = null;
     document.getElementById('destSearch').addEventListener('input', function() {
         clearTimeout(destSearchTimeout);
@@ -1479,51 +1544,13 @@
                     div.innerHTML = `<span><i class="fas fa-location-dot"></i> ${place.display_name}</span><span class="place-suggestion-distance">${distance} km</span>`;
                     div.onclick = () => {
                         destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
+                        destName = place.display_name;
                         document.getElementById('destSearch').value = place.display_name;
                         suggestionsDiv.style.display = 'none';
-                        if (actualUserLocation && activeVehicle) {
-                            const dist = haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon);
-                            const fuelNeeded = (dist / 100) * activeVehicle.consumptionLper100km;
-                            const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
-                            document.getElementById('tripInfo').innerHTML = `
-                                <h3 style="color:#1e3a8a;">${activeVehicle.name}</h3>
-                                <div class="flex-between"><span><i class="fas fa-tint" style="color:#16a34a;"></i> Fuel needed:</span><span>${fuelNeeded.toFixed(1)} L</span></div>
-                                <div class="flex-between"><span><i class="fas fa-money-bill-wave" style="color:#dc2626;"></i> Est. cost:</span><span>K${cost.toFixed(2)}</span></div>
-                                <div class="flex-between"><span><i class="fas fa-clock" style="color:#16a34a;"></i> ETA:</span><span>${calculateETA(dist)}</span></div>
-                                <div class="flex-between"><span><i class="fas fa-road" style="color:#1e3a8a;"></i> Distance:</span><span><strong>${dist.toFixed(1)} km</strong></span></div>
-                            `;
-                            document.getElementById('tripInfo').style.display = 'block';
-                            // Find stations along route
-                            const start = actualUserLocation;
-                            const end = destCoordinates;
-                            const alongStations = stations.filter(s => {
-                                const d1 = haversine(start.lat, start.lng, s.lat, s.lon);
-                                const d2 = haversine(s.lat, s.lon, end.lat, end.lon);
-                                const total = haversine(start.lat, start.lng, end.lat, end.lon);
-                                const crossTrack = Math.abs(d1 + d2 - total);
-                                return crossTrack < 2 && d1 < dist && d2 < dist;
-                            }).sort((a,b) => a.distance - b.distance);
-                            const stationsDiv = document.getElementById('stationsAlong');
-                            if (alongStations.length === 0) stationsDiv.innerHTML = '<p>No fuel stations along this route.</p>';
-                            else stationsDiv.innerHTML = '<h4>⛽ Select a station along the way:</h4>' + alongStations.map(s => `
-                                <div class="along-station-item" data-station-id="${s.id}">
-                                    <div class="flex-between"><strong>${s.name}</strong><span>${s.distance.toFixed(1)} km</span></div>
-                                    <div class="small-text">${s.address}</div>
-                                    <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
-                                    <div class="amenities-list">${s.amenities.slice(0,2).map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div>
-                                </div>
-                            `).join('');
-                            document.querySelectorAll('.along-station-item').forEach(el => {
-                                el.onclick = () => {
-                                    document.querySelectorAll('.along-station-item').forEach(item => item.style.background = '#f0fdf4');
-                                    el.style.background = '#d1fae5';
-                                    selectedAlongStation = stations.find(st => st.id == el.dataset.stationId);
-                                    document.getElementById('planRouteBtn').style.display = 'block';
-                                };
-                            });
-                            // Fun stops
-                            fetchFunStops(destCoordinates.lat, destCoordinates.lon);
-                        } else showToast("Location or vehicle not ready", true);
+                        document.getElementById('step1Info').innerHTML = `✅ Destination set: ${destName}`;
+                        // Enable next step
+                        document.getElementById('nextStep').disabled = false;
+                        document.getElementById('nextStep').style.opacity = '1';
                     };
                     suggestionsDiv.appendChild(div);
                 });
@@ -1532,56 +1559,197 @@
         }, 500);
     });
 
-    async function fetchFunStops(lat, lon) {
-        const query = `[out:json];(node["amenity"="restaurant"](around:5000,${lat},${lon});node["tourism"="attraction"](around:5000,${lat},${lon});node["leisure"="park"](around:5000,${lat},${lon}););out body;`;
+    // Step navigation
+    function showStep(step) {
+        document.querySelectorAll('.step-content').forEach((el, idx) => {
+            el.classList.remove('active-step');
+            if (idx + 1 === step) el.classList.add('active-step');
+        });
+        const prevBtn = document.getElementById('prevStep');
+        const nextBtn = document.getElementById('nextStep');
+        prevBtn.style.display = step === 1 ? 'none' : 'block';
+        if (step === 4) {
+            nextBtn.style.display = 'none';
+            generateSummaryCards();
+        } else {
+            nextBtn.style.display = 'block';
+            nextBtn.innerText = step === 3 ? 'Review Trip' : 'Next →';
+        }
+        currentStep = step;
+    }
+
+    document.getElementById('nextStep').onclick = async () => {
+        if (currentStep === 1) {
+            if (!destCoordinates) { showToast("Please select a destination first", true); return; }
+            // Load stations along route
+            await loadStationsAlongRoute();
+            showStep(2);
+        } else if (currentStep === 2) {
+            if (!selectedStation) { showToast("Please select a fuel station", true); return; }
+            await loadFunPlaces();
+            showStep(3);
+        } else if (currentStep === 3) {
+            showStep(4);
+        }
+    };
+
+    document.getElementById('prevStep').onclick = () => {
+        if (currentStep > 1) showStep(currentStep - 1);
+    };
+
+    async function loadStationsAlongRoute() {
+        if (!actualUserLocation || !destCoordinates) return;
+        const start = actualUserLocation;
+        const end = destCoordinates;
+        const distTotal = haversine(start.lat, start.lng, end.lat, end.lon);
+        let along = stations.filter(s => {
+            const d1 = haversine(start.lat, start.lng, s.lat, s.lon);
+            const d2 = haversine(s.lat, s.lon, end.lat, end.lon);
+            const crossTrack = Math.abs(d1 + d2 - distTotal);
+            return crossTrack < 2 && d1 < distTotal && d2 < distTotal;
+        }).sort((a,b) => a.distance - b.distance);
+        // Take at least 10, or all if fewer
+        stationsAlongRoute = along.slice(0, Math.max(10, along.length));
+        const container = document.getElementById('stationListStep2');
+        if (stationsAlongRoute.length === 0) {
+            container.innerHTML = '<p>No fuel stations found along this route. Please try a different destination.</p>';
+            document.getElementById('nextStep').disabled = true;
+            return;
+        }
+        document.getElementById('carNameStep2').innerText = activeVehicle ? activeVehicle.name : 'your car';
+        container.innerHTML = stationsAlongRoute.map(s => `
+            <div class="station-select-item" data-station-id="${s.id}">
+                <div class="flex-between"><strong>${s.name}</strong><span>${s.distance.toFixed(1)} km from start</span></div>
+                <div class="small-text">${s.address}</div>
+                <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
+                <div class="amenities-list">${s.amenities.slice(0,2).map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div>
+            </div>
+        `).join('');
+        container.querySelectorAll('.station-select-item').forEach(el => {
+            el.onclick = () => {
+                container.querySelectorAll('.station-select-item').forEach(item => item.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedStation = stations.find(s => s.id == parseInt(el.dataset.stationId));
+                document.getElementById('nextStep').disabled = false;
+            };
+        });
+    }
+
+    async function loadFunPlaces() {
+        if (!destCoordinates) return;
+        const lat = destCoordinates.lat;
+        const lon = destCoordinates.lon;
+        const queries = [
+            `node["amenity"="restaurant"](around:10000,${lat},${lon});`,
+            `node["tourism"="attraction"](around:10000,${lat},${lon});`,
+            `node["shop"="mall"](around:10000,${lat},${lon});`,
+            `node["tourism"="zoo"](around:10000,${lat},${lon});`,
+            `node["landuse"="farm"](around:10000,${lat},${lon});`,
+            `node["waterway"="river"](around:10000,${lat},${lon});`
+        ];
+        const query = `[out:json];(${queries.join('')});out body;`;
         try {
             const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
             const data = await res.json();
-            const places = data.elements.slice(0, 5).map(el => ({ name: el.tags?.name || 'Unknown', lat: el.lat, lon: el.lon, type: el.tags?.amenity || el.tags?.tourism || 'place' }));
-            const container = document.getElementById('funStops');
-            if (places.length === 0) container.innerHTML = '<p>No fun stops nearby.</p>';
-            else container.innerHTML = '<h4>🎯 Suggested fun stops (click to add):</h4>' + places.map(p => `
-                <div class="fun-stop-item" data-lat="${p.lat}" data-lon="${p.lon}" data-name="${p.name}">
-                    <i class="fas fa-${p.type === 'restaurant' ? 'utensils' : 'tree'}"></i> <strong>${p.name}</strong> (${p.type})
+            let places = data.elements.slice(0, 15).map(el => ({
+                name: el.tags?.name || 'Unknown place',
+                lat: el.lat, lon: el.lon,
+                type: el.tags?.amenity || el.tags?.tourism || el.tags?.shop || el.tags?.landuse || 'place'
+            }));
+            // Remove duplicates
+            places = places.filter((p, i, self) => self.findIndex(p2 => p2.name === p.name) === i);
+            const container = document.getElementById('funPlacesStep3');
+            if (places.length === 0) {
+                container.innerHTML = '<p>No interesting places found nearby. You can skip this step.</p>';
+                return;
+            }
+            container.innerHTML = places.map(p => `
+                <div class="place-select-item" data-lat="${p.lat}" data-lon="${p.lon}" data-name="${p.name}">
+                    <div class="flex-between"><strong>${p.name}</strong><span>${p.type}</span></div>
+                    <div class="small-text">📍 ${haversine(destCoordinates.lat, destCoordinates.lon, p.lat, p.lon).toFixed(1)} km from destination</div>
                 </div>
             `).join('');
-            document.querySelectorAll('.fun-stop-item').forEach(el => {
+            container.querySelectorAll('.place-select-item').forEach(el => {
                 el.onclick = () => {
-                    document.querySelectorAll('.fun-stop-item').forEach(item => item.style.background = '#f0fdf4');
-                    el.style.background = '#fed7aa';
-                    selectedFunStop = { name: el.dataset.name, lat: parseFloat(el.dataset.lat), lon: parseFloat(el.dataset.lon) };
-                    showToast(`Fun stop "${selectedFunStop.name}" selected. It will be added to your route.`);
+                    container.querySelectorAll('.place-select-item').forEach(item => item.classList.remove('selected'));
+                    el.classList.add('selected');
+                    selectedFunPlace = {
+                        name: el.dataset.name,
+                        lat: parseFloat(el.dataset.lat),
+                        lon: parseFloat(el.dataset.lon)
+                    };
                 };
             });
         } catch(e) { console.warn(e); }
     }
 
-    document.getElementById('planRouteBtn').onclick = async () => {
-        if (!actualUserLocation || !destCoordinates || !selectedAlongStation) {
-            showToast("Missing start, destination or station", true);
+    document.getElementById('skipFunStop').onclick = () => {
+        selectedFunPlace = null;
+        showStep(4);
+    };
+
+    function generateSummaryCards() {
+        if (!actualUserLocation || !destCoordinates || !selectedStation) return;
+        const distTotal = haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon);
+        const fuelNeeded = (distTotal / 100) * activeVehicle.consumptionLper100km;
+        const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+        const eta = calculateETA(distTotal);
+        const container = document.getElementById('summaryCards');
+        container.innerHTML = `
+            <div class="plain-card">
+                <div class="flex-between"><strong>Trip Details</strong></div>
+                <div class="flex-between mt-2"><span>Distance:</span><strong>${distTotal.toFixed(1)} km</strong></div>
+                <div class="flex-between"><span>Fuel needed:</span><strong>${fuelNeeded.toFixed(1)} L</strong></div>
+                <div class="flex-between"><span>Est. cost:</span><strong>K${cost.toFixed(2)}</strong></div>
+                <div class="flex-between"><span>ETA:</span><strong>${eta}</strong></div>
+            </div>
+            <div class="plain-card">
+                <div class="flex-between"><strong>Fuel Station: ${selectedStation.name}</strong></div>
+                <div class="small-text mt-2">${selectedStation.address}</div>
+                <div><span class="fuel-badge">${selectedStation.pricePetrol}</span><span class="fuel-badge">${selectedStation.priceDiesel}</span></div>
+                <div class="amenities-list">${selectedStation.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div>
+            </div>
+            <div class="plain-card">
+                <div class="flex-between"><strong>${selectedFunPlace ? 'Fun Stop: ' + selectedFunPlace.name : 'No fun stop selected'}</strong></div>
+                ${selectedFunPlace ? `<div class="small-text">📍 ${haversine(destCoordinates.lat, destCoordinates.lon, selectedFunPlace.lat, selectedFunPlace.lon).toFixed(1)} km from destination</div>` : '<div class="small-text">You can skip and go directly.</div>'}
+            </div>
+        `;
+        document.getElementById('safetyTips').innerHTML = `
+            <strong>🛡️ Pre-trip checklist:</strong><br>
+            • Check tyre pressure and tread depth<br>
+            • Engine oil level & coolant<br>
+            • Windshield washer fluid<br>
+            • Lights and signals<br>
+            • Keep emergency numbers handy<br>
+            • Obey traffic rules and speed limits
+        `;
+    }
+
+    document.getElementById('drawRouteBtn').onclick = async () => {
+        if (!actualUserLocation || !destCoordinates || !selectedStation) {
+            showToast("Missing trip data", true);
             return;
         }
         if (routingControl) {
-            if (routingControl.route1) map.removeControl(routingControl.route1);
-            if (routingControl.route2) map.removeControl(routingControl.route2);
+            if (routingControl.routes) routingControl.routes.forEach(route => map.removeControl(route));
+            routingControl = null;
         }
         let waypoints = [L.latLng(actualUserLocation.lat, actualUserLocation.lng)];
-        if (selectedFunStop) {
-            waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
+        if (selectedFunPlace) {
+            waypoints.push(L.latLng(selectedFunPlace.lat, selectedFunPlace.lon));
         }
-        waypoints.push(L.latLng(selectedAlongStation.lat, selectedAlongStation.lon));
+        waypoints.push(L.latLng(selectedStation.lat, selectedStation.lon));
         waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
         
         if (window.tripMarkers) window.tripMarkers.forEach(m => map.removeLayer(m));
         window.tripMarkers = [];
-        window.tripMarkers.push(L.marker(waypoints[0], { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:green;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Start'));
-        if (selectedFunStop) {
-            window.tripMarkers.push(L.marker(waypoints[1], { icon: L.divIcon({ html: '<i class="fas fa-coffee" style="font-size:24px; color:#f59e0b;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedFunStop.name));
+        window.tripMarkers.push(L.marker(waypoints[0], { icon: L.divIcon({ html: '<div style="background:green; width:12px; height:12px; border-radius:50%;"></div>', iconSize: [12,12] }) }).addTo(map).bindPopup('Start'));
+        if (selectedFunPlace) {
+            window.tripMarkers.push(L.marker(waypoints[1], { icon: L.divIcon({ html: '<div style="background:#f59e0b; width:12px; height:12px; border-radius:50%;"></div>', iconSize: [12,12] }) }).addTo(map).bindPopup(selectedFunPlace.name));
         }
-        window.tripMarkers.push(L.marker(waypoints[waypoints.length-2], { icon: L.divIcon({ html: '<i class="fas fa-gas-pump" style="font-size:24px; color:blue;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedAlongStation.name));
-        window.tripMarkers.push(L.marker(waypoints[waypoints.length-1], { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:red;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Destination'));
+        window.tripMarkers.push(L.marker(waypoints[waypoints.length-2], { icon: L.divIcon({ html: '<div style="background:blue; width:12px; height:12px; border-radius:50%;"></div>', iconSize: [12,12] }) }).addTo(map).bindPopup(selectedStation.name));
+        window.tripMarkers.push(L.marker(waypoints[waypoints.length-1], { icon: L.divIcon({ html: '<div style="background:red; width:12px; height:12px; border-radius:50%;"></div>', iconSize: [12,12] }) }).addTo(map).bindPopup('Destination'));
         
-        // Create routing with multiple segments
         let routes = [];
         for (let i = 0; i < waypoints.length - 1; i++) {
             let color = (i === waypoints.length-2) ? 'red' : 'green';
@@ -1599,8 +1767,8 @@
         showToast("Route drawn with your selected stops");
         // Save to history
         await db.tripHistory.add({
-            destination: document.getElementById('destSearch').value,
-            stationName: selectedAlongStation.name,
+            destination: destName,
+            stationName: selectedStation.name,
             date: new Date().toISOString(),
             distance: haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon).toFixed(1),
             fuelNeeded: ((haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon)/100)*activeVehicle.consumptionLper100km).toFixed(1)
@@ -1662,28 +1830,28 @@
         if (pageId === 'garagePage') { renderVehicleList(); renderFuelLogs(); }
         if (pageId === 'historyPage') loadHistory();
         if (pageId === 'recentPage') loadRecentStations();
-        if (pageId === 'tripPlannerPage' && actualUserLocation) {
-            document.getElementById('startPoint').value = `${document.getElementById('roadLocation').innerText}, ${document.getElementById('cityDisplay').innerText}`;
+        if (pageId === 'tripPlannerPage') {
+            // Reset trip planner state
+            currentStep = 1;
+            showStep(1);
+            destCoordinates = null;
+            selectedStation = null;
+            selectedFunPlace = null;
+            document.getElementById('destSearch').value = '';
+            document.getElementById('step1Info').innerHTML = '';
+            document.getElementById('nextStep').disabled = false;
+            document.getElementById('nextStep').style.opacity = '1';
         }
     }
     function closePage(pageId) { document.getElementById(pageId).classList.remove('show'); }
 
-    // Map & Location
+    // Map & Location (stable: no auto-reload on moveend)
     function initMap() {
         map = L.map('map').setView([0,0],2);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
-        // Debounced moveend to prevent excessive reloads
-        map.on('moveend', () => {
-            if (moveEndTimeout) clearTimeout(moveEndTimeout);
-            moveEndTimeout = setTimeout(async () => {
-                let center = map.getCenter();
-                activeLocation = { lat: center.lat, lng: center.lng };
-                await loadStationsAndRefresh(false);
-                reverseGeocode(center.lat, center.lng);
-            }, 500);
-        });
+        // No automatic reload on moveend - only manual refresh or radius change
     }
     async function reverseGeocode(lat, lng) {
         try {
@@ -1693,9 +1861,6 @@
             document.getElementById('roadLocation').innerHTML = road.substring(0,30);
             let city = data.address?.city || data.address?.town || 'World';
             document.getElementById('cityDisplay').innerHTML = city;
-            if (document.getElementById('startPoint')) {
-                document.getElementById('startPoint').value = `${road}, ${city}`;
-            }
         } catch(e) {}
     }
     function locateAndFetch() {
@@ -1709,7 +1874,8 @@
                 const direction = (heading !== null && !isNaN(heading)) ? heading : userHeading;
                 updateUserMarker(latitude, longitude, direction);
                 userHeading = direction;
-                loadStationsAndRefresh(true);
+                // Load stations only once on initial location
+                if (!stationsLoaded) loadStationsAndRefresh(true);
                 reverseGeocode(latitude, longitude);
             }, err => showToast("Location error: " + err.message, true), { enableHighAccuracy: true });
         }
@@ -1788,7 +1954,7 @@
         if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
         document.getElementById('addLogForm').style.display = 'none';
     };
-    // No auto-refresh interval - map stays stable
+    // No auto-refresh interval
     initMap();
     locateAndFetch();
     loadVehicles();
