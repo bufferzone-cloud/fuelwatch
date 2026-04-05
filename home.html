@@ -84,6 +84,11 @@
             align-items: center;
             justify-content: center;
         }
+        .driver-left img, .logo-right img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
         .brand-center {
             flex: 1;
             text-align: center;
@@ -214,8 +219,8 @@
         }
         input[type="range"].car-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 49px;
-            height: 49px;
+            width: 32px;
+            height: 32px;
             background: url('driver.png') no-repeat center center;
             background-size: contain;
             cursor: pointer;
@@ -441,8 +446,14 @@
             background: #1e1e1e;
         }
         .sidebar-overlay.open .sidebar-panel { right: 0; }
-        .sidebar-logo { text-align: center; padding: 20px 0 10px 0; }
-        .sidebar-logo img { width: 100px; height: 100px; object-fit: contain; }
+        .sidebar-logo {
+            text-align: center;
+            padding: 20px 0 10px 0;
+        }
+        .sidebar-logo i {
+            font-size: 64px;
+            color: #16a34a;
+        }
         .sidebar-vehicle-name {
             text-align: center;
             font-size: 13px;
@@ -642,6 +653,11 @@
             cursor: pointer;
             color: #16a34a;
         }
+        /* Fix for car marker */
+        .user-car-marker {
+            background: transparent;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -649,9 +665,16 @@
     <!-- Header -->
     <div class="header">
         <div class="header-top">
-            <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-            <div class="brand-center"><h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1><div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div></div>
-            <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
+            <div class="driver-left">
+                <img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            </div>
+            <div class="brand-center">
+                <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1>
+                <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
+            </div>
+            <div class="logo-right">
+                <i class="fas fa-gas-pump" style="font-size: 40px; color: #16a34a;"></i>
+            </div>
         </div>
         <div class="stats-row">
             <span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span>
@@ -720,7 +743,9 @@
 <!-- Sidebar -->
 <div id="sidebarOverlay" class="sidebar-overlay">
     <div class="sidebar-panel">
-        <div class="sidebar-logo"><img src="logo.png" alt="FuelRadar"></div>
+        <div class="sidebar-logo">
+            <i class="fas fa-gas-pump"></i>
+        </div>
         <div class="sidebar-vehicle-name" id="sidebarVehicleName">🚗 Vehicle: My Car</div>
         <div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div>
         <div class="sidebar-menu">
@@ -754,17 +779,17 @@
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
-    // ======================== FUELRADAR ULTIMATE ========================
-    // All improvements: caching, debouncing, dark mode, trip planner, price comparison,
-    // amenity filters, sort, route info panel, loading spinner, community prices, export.
+    // ======================== FUELRADAR ULTIMATE (NO OFFLINE CACHING) ========================
+    // All improvements: debouncing, dark mode, trip planner, price comparison,
+    // amenity filters, sort, route info panel, loading spinner, export, charts.
+    // Removed stationCache and any offline persistence beyond Dexie vehicles/logs/reports.
 
     // -------------------- 1. Database --------------------
     const db = new Dexie('FuelRadarDB');
     db.version(2).stores({
         vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
         fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer',
-        userReports: '++id, stationId, type, comment, timestamp, priceReport',
-        stationCache: 'id, name, lat, lon, address, fuel, amenities, pricePetrol, priceDiesel, timestamp'
+        userReports: '++id, stationId, type, comment, timestamp, priceReport'
     });
 
     // -------------------- 2. Global State --------------------
@@ -781,7 +806,6 @@
     let activeVehicle = null;
     let currentPrices = { petrol: 28.50, diesel: 26.80 };
     let watchId = null;
-    let debounceTimeout = null;
     let moveEndTimeout = null;
     let chartInstance = null;
 
@@ -836,15 +860,7 @@
         return amenities;
     }
 
-    async function fetchStationsWithCache(lat, lon, rad) {
-        const cacheKey = `${lat.toFixed(2)},${lon.toFixed(2)},${rad}`;
-        const cached = await db.stationCache.where('id').above(0).toArray();
-        const now = Date.now();
-        const validCache = cached.filter(s => (now - s.timestamp) < 30 * 60 * 1000);
-        if (validCache.length > 0 && validCache[0].lat && Math.abs(validCache[0].lat - lat) < 0.1) {
-            console.log("Using cached stations");
-            return validCache.map(s => ({ ...s, distance: haversine(lat, lon, s.lat, s.lon) }));
-        }
+    async function fetchStations(lat, lon, rad) {
         showLoading(true);
         const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
         try {
@@ -868,16 +884,13 @@
                 let amenities = extractAllAmenities(el.tags || {});
                 let priceP = `K${(currentPrices.petrol + (Math.random()*2-1)).toFixed(2)}`;
                 let priceD = `K${(currentPrices.diesel + (Math.random()*2-1)).toFixed(2)}`;
-                let stationObj = {
+                newStations.push({
                     id: el.id, name, address: addr, lat: stationLat, lon: stationLon,
                     fuel: { petrol: fuelPetrol, diesel: fuelDiesel, lpg: fuelLPG },
                     status, amenities, pricePetrol: priceP, priceDiesel: priceD,
                     distance: haversine(lat, lon, stationLat, stationLon),
-                    favorite: favoriteIds.includes(el.id),
-                    timestamp: Date.now()
-                };
-                newStations.push(stationObj);
-                await db.stationCache.put(stationObj);
+                    favorite: favoriteIds.includes(el.id)
+                });
             }
             return newStations;
         } catch(err) {
@@ -936,8 +949,9 @@
 
     function updateUserMarker(lat, lng, heading) {
         if (userMarker) map.removeLayer(userMarker);
+        // Original car icon using driver.png
         const carIcon = L.divIcon({
-            html: `<div style="transform: rotate(${heading}deg); transition: transform 0.2s;"><i class="fas fa-car" style="font-size:40px; color:#16a34a; text-shadow: 0 0 2px white;"></i></div>`,
+            html: `<img src="driver.png" style="width:40px; height:40px; transform: rotate(${heading}deg); transition: transform 0.2s;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />`,
             iconSize: [40, 40],
             className: 'user-car-marker'
         });
@@ -979,7 +993,7 @@
                     <div style="margin:6px 0; display:flex; gap:8px; flex-wrap:wrap;">
                         <span class="station-distance"><i class="fas fa-route"></i> ${distanceKm} km</span>
                         <span class="station-distance"><i class="far fa-clock"></i> ${eta}</span>
-                        <span class="station-distance"><i class="fas fa-gas-pump"></i> ${s.pricePetrol} / ${s.priceDiesel}</span>
+                        <span class="station-distance"><i class="fas fa-tag"></i> ${s.pricePetrol} / ${s.priceDiesel}</span>
                     </div>
                     <div style="margin:8px 0;">
                         <span class="fuel-badge"><i class="fas fa-gas-pump"></i> Petrol: ${s.fuel.petrol === 'yes' ? '✅' : (s.fuel.petrol === 'no' ? '❌' : '?')}</span>
@@ -995,6 +1009,7 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
+        // Prevent map twitching by not reopening popups on cluster click
         map.off('popupopen');
         map.on('popupopen', function(e) {
             const popupNode = e.popup.getElement();
@@ -1050,7 +1065,7 @@
 
     async function loadStationsAndRefresh(showMsg = true) {
         if (!activeLocation) return;
-        const newStations = await fetchStationsWithCache(activeLocation.lat, activeLocation.lng, radiusKm);
+        const newStations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
         if (newStations.length) stations = newStations;
         renderMarkers();
         updateUICounters();
@@ -1309,6 +1324,7 @@
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
+        // Debounced moveend to prevent twitching
         map.on('moveend', () => {
             if (moveEndTimeout) clearTimeout(moveEndTimeout);
             moveEndTimeout = setTimeout(async () => {
@@ -1348,7 +1364,7 @@
         }
     }
 
-    // -------------------- 7. Event Listeners with Debounce --------------------
+    // -------------------- 7. Event Listeners --------------------
     document.getElementById('nearMeBtn').onclick = locateAndFetch;
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
