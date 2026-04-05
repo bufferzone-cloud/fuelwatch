@@ -20,13 +20,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <style>
+        /* ---------- GLOBAL & DARK MODE ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
-        html, body { height: 100%; margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body {
             background: #ffffff;
             display: flex;
@@ -51,7 +56,9 @@
             position: relative;
             transition: background 0.3s;
         }
-        body.dark .app-container { background: #1e1e1e; }
+        body.dark .app-container {
+            background: #1e1e1e;
+        }
 
         /* Header */
         .header {
@@ -60,7 +67,10 @@
             border-bottom: 1px solid rgba(0,80,0,0.1);
             transition: background 0.3s;
         }
-        body.dark .header { background: #1e1e1e; border-bottom-color: #2c2c2c; }
+        body.dark .header {
+            background: #1e1e1e;
+            border-bottom-color: #2c2c2c;
+        }
         .header-top {
             display: flex;
             align-items: center;
@@ -83,7 +93,11 @@
             flex: 1;
             text-align: center;
         }
-        .brand-center h1 { font-size: 18px; font-weight: 800; margin: 0; }
+        .brand-center h1 {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 0;
+        }
         .fuel-green { color: #16a34a; }
         .radar-red { color: #dc2626; }
         .slogan {
@@ -96,7 +110,10 @@
             display: inline-block;
             margin-top: 2px;
         }
-        body.dark .slogan { background: #2c2c2c; color: #4ade80; }
+        body.dark .slogan {
+            background: #2c2c2c;
+            color: #4ade80;
+        }
         .stats-row {
             display: flex;
             align-items: center;
@@ -108,7 +125,9 @@
             border-radius: 40px;
             margin-top: 8px;
         }
-        body.dark .stats-row { background: #2c2c2c; }
+        body.dark .stats-row {
+            background: #2c2c2c;
+        }
         .road-badge, .city-badge-sm {
             background: #eef2ff;
             border-radius: 30px;
@@ -117,7 +136,10 @@
             font-weight: 600;
             color: #1e3a8a;
         }
-        body.dark .road-badge, body.dark .city-badge-sm { background: #374151; color: #93c5fd; }
+        body.dark .road-badge, body.dark .city-badge-sm {
+            background: #374151;
+            color: #93c5fd;
+        }
         .menu-btn {
             background: #f0fdf4;
             border: none;
@@ -131,7 +153,10 @@
             align-items: center;
             justify-content: center;
         }
-        body.dark .menu-btn { background: #2c2c2c; color: #4ade80; }
+        body.dark .menu-btn {
+            background: #2c2c2c;
+            color: #4ade80;
+        }
 
         /* Green & Warning Sentences */
         .green-suggestion, .warning-sentence {
@@ -143,10 +168,24 @@
             text-align: center;
             transition: all 0.2s;
         }
-        .green-suggestion { background: #d1fae5; color: #065f46; border-left: 3px solid #10b981; }
-        .warning-sentence { background: #fee2e2; color: #b91c1c; border-left: 3px solid #dc2626; }
-        body.dark .green-suggestion { background: #064e3b; color: #a7f3d0; }
-        body.dark .warning-sentence { background: #7f1d1d; color: #fecaca; }
+        .green-suggestion {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #10b981;
+        }
+        .warning-sentence {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-left: 3px solid #dc2626;
+        }
+        body.dark .green-suggestion {
+            background: #064e3b;
+            color: #a7f3d0;
+        }
+        body.dark .warning-sentence {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
 
         /* Radius Slider */
         .radius-row {
@@ -156,9 +195,20 @@
             margin-top: 8px;
             padding: 4px 0;
         }
-        .radius-label { font-size: 12px; font-weight: 600; color: #2c5e2c; }
-        body.dark .radius-label { color: #86efac; }
-        .slider-container { flex: 1; position: relative; display: flex; align-items: center; }
+        .radius-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #2c5e2c;
+        }
+        body.dark .radius-label {
+            color: #86efac;
+        }
+        .slider-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
         input[type="range"].car-slider {
             flex: 1;
             height: 6px;
@@ -189,8 +239,13 @@
         }
 
         /* Search & Filters */
-        .search-section, .filter-section { padding: 6px 16px; background: white; }
-        body.dark .search-section, body.dark .filter-section { background: #1e1e1e; }
+        .search-section, .filter-section {
+            padding: 6px 16px;
+            background: white;
+        }
+        body.dark .search-section, body.dark .filter-section {
+            background: #1e1e1e;
+        }
         .search-box {
             display: flex;
             align-items: center;
@@ -200,10 +255,26 @@
             border: 1px solid rgba(0,150,0,0.25);
             gap: 8px;
         }
-        body.dark .search-box { background: #2c2c2c; border-color: #4ade80; }
-        .search-box input { flex: 1; border: none; background: transparent; padding: 6px 4px; font-size: 14px; outline: none; }
-        body.dark .search-box input { color: white; }
-        .near-me-row { display: flex; justify-content: center; margin-top: 8px; }
+        body.dark .search-box {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 6px 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        body.dark .search-box input {
+            color: white;
+        }
+        .near-me-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
         .near-me-btn {
             background: #16a34a;
             border: none;
@@ -235,13 +306,38 @@
             cursor: pointer;
             white-space: nowrap;
         }
-        body.dark .chip { background: #2c2c2c; color: #86efac; border-color: #4ade80; }
-        .chip.active { background: #16a34a; color: white; border-color: #14532d; }
-        .chip-count { background: rgba(0,0,0,0.1); border-radius: 20px; padding: 2px 6px; margin-left: 5px; font-size: 10px; }
+        body.dark .chip {
+            background: #2c2c2c;
+            color: #86efac;
+            border-color: #4ade80;
+        }
+        .chip.active {
+            background: #16a34a;
+            color: white;
+            border-color: #14532d;
+        }
+        .chip-count {
+            background: rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            font-size: 10px;
+        }
 
         /* Map */
-        .map-wrapper { position: relative; flex: 1; width: 100%; overflow: hidden; background: #cbd5e1; min-height: 0; }
-        #map { height: 100%; width: 100%; background: #cbd5e1; }
+        .map-wrapper {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            overflow: hidden;
+            background: #cbd5e1;
+            min-height: 0;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            background: #cbd5e1;
+        }
         .map-floating-buttons {
             position: absolute;
             bottom: 14px;
@@ -265,7 +361,10 @@
             justify-content: center;
             cursor: pointer;
         }
-        .float-btn.clear-route { color: #dc2626; display: none; }
+        .float-btn.clear-route {
+            color: #dc2626;
+            display: none;
+        }
         .floating-fuel-pill {
             position: fixed;
             bottom: 20px;
@@ -312,7 +411,10 @@
             display: none;
             font-size: 12px;
         }
-        body.dark .route-info-panel { background: #2c2c2c; color: white; }
+        body.dark .route-info-panel {
+            background: #2c2c2c;
+            color: white;
+        }
 
         /* Sidebar */
         .sidebar-overlay {
@@ -342,8 +444,15 @@
         }
         body.dark .sidebar-panel { background: #1e1e1e; }
         .sidebar-overlay.open .sidebar-panel { right: 0; }
-        .sidebar-logo { text-align: center; padding: 20px 0 10px 0; }
-        .sidebar-logo img { width: 80px; height: 80px; object-fit: contain; }
+        .sidebar-logo {
+            text-align: center;
+            padding: 20px 0 10px 0;
+        }
+        .sidebar-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
         .sidebar-vehicle-name {
             text-align: center;
             font-size: 13px;
@@ -353,6 +462,15 @@
             padding: 8px;
             border-radius: 40px;
             color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .sidebar-vehicle-name img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
         }
         .sidebar-header {
             padding: 12px 20px;
@@ -403,13 +521,22 @@
             top: 0;
             z-index: 10;
         }
-        body.dark .page-header-bar { background: #1e1e1e; border-bottom-color: #2c2c2c; }
+        body.dark .page-header-bar {
+            background: #1e1e1e;
+            border-bottom-color: #2c2c2c;
+        }
         .page-header-bar h2 { font-size: 1.3rem; font-weight: 800; }
-        .close-page-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #16a34a; }
+        .close-page-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #16a34a;
+        }
         .page-content { padding: 20px; flex: 1; }
 
         /* Cards */
-        .station-card, .garage-card, .log-item, .trip-history-item, .recent-station-item {
+        .station-card, .garage-card, .log-item, .trip-history-item, .recent-station-item, .fun-stop-card {
             background: #f8fafc;
             border-radius: 24px;
             padding: 14px;
@@ -417,7 +544,7 @@
             border: 1px solid #eaf4ea;
         }
         body.dark .station-card, body.dark .garage-card, body.dark .log-item,
-        body.dark .trip-history-item, body.dark .recent-station-item {
+        body.dark .trip-history-item, body.dark .recent-station-item, body.dark .fun-stop-card {
             background: #2c2c2c;
             border-color: #4ade80;
         }
@@ -499,10 +626,39 @@
             margin-top: 6px;
             font-size: 14px;
         }
-        body.dark input, body.dark select, body.dark textarea { background: #2c2c2c; border-color: #4ade80; color: white; }
+        body.dark input, body.dark select, body.dark textarea {
+            background: #2c2c2c;
+            border-color: #4ade80;
+            color: white;
+        }
         hr { margin: 16px 0; }
 
-        /* Trip Planner specific */
+        /* Trip Planner specific styles */
+        .driver-image-large {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .driver-image-large img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        .trip-info-card {
+            background: white;
+            border-radius: 28px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid #16a34a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        body.dark .trip-info-card {
+            background: #2c2c2c;
+        }
+        .trip-info-card h3 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 12px;
+        }
         .place-suggestions {
             background: white;
             border-radius: 20px;
@@ -512,49 +668,67 @@
             border: 1px solid #ddd;
             display: none;
         }
-        body.dark .place-suggestions { background: #2c2c2c; border-color: #4ade80; }
+        body.dark .place-suggestions {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
         .place-suggestion-item {
             padding: 8px 12px;
             cursor: pointer;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #e0f0e0;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
         }
-        body.dark .place-suggestion-item { border-bottom-color: #444; }
-        .place-suggestion-item:hover { background: #eef5e8; }
-        .along-station-item {
+        body.dark .place-suggestion-item {
+            border-bottom-color: #4ade80;
+        }
+        .place-suggestion-item:hover {
+            background: #eef5e8;
+        }
+        .place-suggestion-distance {
+            font-weight: bold;
+            color: #dc2626;
+        }
+        .along-station-item, .fun-stop-item {
             background: #f0fdf4;
             border-radius: 20px;
             padding: 10px;
             margin-bottom: 8px;
             cursor: pointer;
+            border: 1px solid #16a34a30;
         }
-        body.dark .along-station-item { background: #2c2c2c; border: 1px solid #4ade80; }
-        .fun-place-item {
+        body.dark .along-station-item, body.dark .fun-stop-item {
+            background: #2c2c2c;
+            border: 1px solid #4ade80;
+        }
+        .along-station-item:hover, .fun-stop-item:hover {
+            background: #d1fae5;
+        }
+        .fun-stop-card {
             background: #fff7ed;
-            border-radius: 20px;
-            padding: 10px;
-            margin-bottom: 8px;
-            cursor: pointer;
+            border-color: #f59e0b;
         }
-        body.dark .fun-place-item { background: #2c2c2c; border: 1px solid #f59e0b; }
-        .trip-info-card {
-            background: linear-gradient(135deg, #16a34a20, #14532d20);
-            border-radius: 28px;
-            padding: 16px;
-            margin: 12px 0;
+        .trip-history-item {
+            background: #f8fafc;
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <!-- Header (same as original but with menu button) -->
+    <!-- Header -->
     <div class="header">
         <div class="header-top">
-            <div class="driver-left"><img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-            <div class="brand-center"><h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1><div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div></div>
-            <div class="logo-right"><img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
+            <div class="driver-left">
+                <img src="driver.png" alt="driver" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            </div>
+            <div class="brand-center">
+                <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1>
+                <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
+            </div>
+            <div class="logo-right">
+                <img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            </div>
         </div>
         <div class="stats-row">
             <span><i class="fas fa-map-marker-alt"></i> <span id="stationCountHeader">0 stations</span></span>
@@ -562,18 +736,31 @@
             <span><i class="fas fa-city"></i> <span id="cityDisplay" class="city-badge-sm">—</span></span>
             <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
         </div>
-        <div class="green-suggestion" id="greenSuggestion"><i class="fas fa-gas-pump"></i> Loading nearby stations...</div>
-        <div class="warning-sentence" id="warningSentence"><i class="fas fa-info-circle"></i> Tap a station → Navigate or Report.</div>
+        <div class="green-suggestion" id="greenSuggestion">
+            <i class="fas fa-gas-pump"></i> Loading nearby stations...
+        </div>
+        <div class="warning-sentence" id="warningSentence">
+            <i class="fas fa-info-circle"></i> Tap a station → Navigate or Report.
+        </div>
         <div class="radius-row">
             <span class="radius-label"><i class="fas fa-car"></i> radius</span>
-            <div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div>
+            <div class="slider-container">
+                <input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider">
+            </div>
             <span class="radius-value" id="radiusDisplay">3 km</span>
         </div>
     </div>
 
+    <!-- Search & Filters -->
     <div class="search-section">
-        <div class="search-box"><i class="fas fa-search" style="color:#16a34a;"></i><input type="text" placeholder="Search station, amenity..." id="searchInput"><i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i></div>
-        <div class="near-me-row"><button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button></div>
+        <div class="search-box">
+            <i class="fas fa-search" style="color:#16a34a;"></i>
+            <input type="text" placeholder="Search station, amenity..." id="searchInput">
+            <i class="fas fa-times clear-search" id="clearSearchBtn" style="cursor:pointer; color:#dc2626;"></i>
+        </div>
+        <div class="near-me-row">
+            <button class="near-me-btn" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
+        </div>
     </div>
 
     <div class="filter-section">
@@ -586,9 +773,17 @@
             <button class="chip" data-filter="amenity_atm">🏧 ATM</button>
             <button class="chip" data-filter="amenity_carwash">🚗 Car wash</button>
         </div>
-        <div style="display: flex; gap: 8px; margin-top: 8px;"><select id="sortSelect" class="sort-dropdown" style="flex:1; padding: 6px; border-radius: 30px;"><option value="distance">Sort by distance</option><option value="price_petrol">Sort by petrol price</option><option value="price_diesel">Sort by diesel price</option><option value="name">Sort by name</option></select></div>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <select id="sortSelect" style="flex:1; padding: 6px; border-radius: 30px;">
+                <option value="distance">Sort by distance</option>
+                <option value="price_petrol">Sort by petrol price</option>
+                <option value="price_diesel">Sort by diesel price</option>
+                <option value="name">Sort by name</option>
+            </select>
+        </div>
     </div>
 
+    <!-- Map Area -->
     <div class="map-wrapper" id="mapWrapper">
         <div id="map"></div>
         <div class="map-floating-buttons">
@@ -597,19 +792,31 @@
             <button class="float-btn refresh" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
             <button class="float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
         </div>
-        <div class="loading-overlay" id="loadingOverlay"><i class="fas fa-spinner fa-pulse"></i> Loading stations...</div>
+        <div class="loading-overlay" id="loadingOverlay">
+            <i class="fas fa-spinner fa-pulse"></i> Loading stations...
+        </div>
         <div class="route-info-panel" id="routeInfoPanel"></div>
     </div>
 
-    <button class="floating-fuel-pill" id="floatingFuelBtn"><i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i></button>
+    <button class="floating-fuel-pill" id="floatingFuelBtn">
+        <i class="fas fa-gas-pump"></i> Fuel stations <i class="fas fa-chevron-up"></i>
+    </button>
 </div>
 
 <!-- Sidebar -->
 <div id="sidebarOverlay" class="sidebar-overlay">
     <div class="sidebar-panel">
-        <div class="sidebar-logo"><img src="logo.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';"></div>
-        <div class="sidebar-vehicle-name" id="sidebarVehicleName">🚗 Vehicle: My Car</div>
-        <div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div>
+        <div class="sidebar-logo">
+            <img src="logo.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+        </div>
+        <div class="sidebar-vehicle-name" id="sidebarVehicleName">
+            <img src="driver.png" alt="car" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+            <span id="sidebarVehicleNameText">My Car</span>
+        </div>
+        <div class="sidebar-header">
+            <span>⚡ FuelRadar</span>
+            <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button>
+        </div>
         <div class="sidebar-menu">
             <div class="sidebar-item" data-page="garage"><i class="fas fa-car"></i> My Garage</div>
             <div class="sidebar-item" data-page="calculator"><i class="fas fa-calculator"></i> Fuel Calculator</div>
@@ -618,7 +825,7 @@
             <div class="sidebar-item" data-page="favorites"><i class="fas fa-heart"></i> Favorites</div>
             <div class="sidebar-item" data-page="history"><i class="fas fa-history"></i> Trip History</div>
             <div class="sidebar-item" data-page="recent"><i class="fas fa-clock"></i> Recent Stations</div>
-            <div class="sidebar-item" data-page="help"><i class="fas fa-question-circle"></i> Help</div>
+            <div class="sidebar-item" data-page="help"><i class="fas fa-question-circle"></i> Help & About</div>
             <div class="sidebar-item" data-page="export"><i class="fas fa-download"></i> Export Data</div>
             <div class="sidebar-item" id="darkModeSidebar"><i class="fas fa-moon"></i> Dark Mode</div>
             <div class="sidebar-item" data-page="map"><i class="fas fa-map-marked-alt"></i> Back to Map</div>
@@ -627,40 +834,208 @@
 </div>
 
 <!-- Page Overlays -->
-<div id="garagePage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-car"></i> My Garage</h2><button class="close-page-btn" data-close="garagePage">&times;</button></div><div class="page-content"><div id="vehicleList"></div><button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button><div id="addVehicleForm" style="display:none;"><input type="text" id="newVehicleName" placeholder="Vehicle name"><input type="number" id="newTankCapacity" placeholder="Tank capacity (L)"><input type="number" id="newConsumption" placeholder="L/100km"><select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select><button id="saveVehicleBtn" class="full-width-btn">Save</button></div><hr><h4>Fuel Logs</h4><button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button><div id="addLogForm" style="display:none;"><input type="date" id="logDate"><input type="number" id="logLiters" placeholder="Liters"><input type="number" id="logPricePerLiter" placeholder="Price/L (K)"><input type="number" id="logOdometer" placeholder="Odometer (km)"><button id="submitLogBtn" class="full-width-btn">Save Log</button></div><div id="logsList"></div><div id="statsSummary" class="small-text mt-2"></div><canvas id="fuelTrendChart" width="300" height="150" style="margin-top:16px;"></canvas></div></div>
+<div id="garagePage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-car"></i> My Garage</h2>
+        <button class="close-page-btn" data-close="garagePage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div id="vehicleList"></div>
+        <button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button>
+        <div id="addVehicleForm" style="display:none;">
+            <input type="text" id="newVehicleName" placeholder="Vehicle name">
+            <input type="number" id="newTankCapacity" placeholder="Tank capacity (L)">
+            <input type="number" id="newConsumption" placeholder="L/100km">
+            <select id="newFuelType">
+                <option value="petrol">Petrol</option>
+                <option value="diesel">Diesel</option>
+            </select>
+            <button id="saveVehicleBtn" class="full-width-btn">Save</button>
+        </div>
+        <hr>
+        <h4>Fuel Logs</h4>
+        <button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button>
+        <div id="addLogForm" style="display:none;">
+            <input type="date" id="logDate">
+            <input type="number" id="logLiters" placeholder="Liters">
+            <input type="number" id="logPricePerLiter" placeholder="Price/L (K)">
+            <input type="number" id="logOdometer" placeholder="Odometer (km)">
+            <button id="submitLogBtn" class="full-width-btn">Save Log</button>
+        </div>
+        <div id="logsList"></div>
+        <div id="statsSummary" class="small-text mt-2"></div>
+        <canvas id="fuelTrendChart" width="300" height="150" style="margin-top:16px;"></canvas>
+    </div>
+</div>
 
-<div id="calculatorPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div><div class="page-content"><div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div><div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div><div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div><div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div><div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div><button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button></div></div>
+<div id="calculatorPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-calculator"></i> Fuel Calculator</h2>
+        <button class="close-page-btn" data-close="calculatorPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div class="driver-image-large">
+            <img src="driver.png" alt="car" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+        </div>
+        <div class="garage-card" style="margin-bottom:20px;">
+            <div class="flex-between">
+                <span>Active vehicle:</span>
+                <strong id="activeVehicleNameCalc">—</strong>
+            </div>
+            <div class="flex-between">
+                <span>Fuel type:</span>
+                <span id="activeFuelTypeCalc">-</span>
+            </div>
+            <div class="flex-between">
+                <span>⛽ Range (full tank):</span>
+                <strong id="rangeCalc">— km</strong>
+            </div>
+            <div class="flex-between">
+                <span>📊 Consumption:</span>
+                <span id="consumptionDisplay">— L/100km</span>
+            </div>
+        </div>
+        <div class="trip-info-card">
+            <div class="flex-between">
+                <span><i class="fas fa-road"></i> Trip distance (km):</span>
+                <input type="number" id="tripDistanceCalc" placeholder="Enter km" style="width: 60%; margin-top:0;">
+            </div>
+            <div class="flex-between mt-2">
+                <span><i class="fas fa-tint"></i> Fuel needed:</span>
+                <strong id="fuelNeededCalc" style="color:#16a34a;">— L</strong>
+            </div>
+            <div class="flex-between">
+                <span><i class="fas fa-money-bill-wave"></i> Estimated cost:</span>
+                <strong id="tripCostCalc" style="color:#dc2626;">— K</strong>
+            </div>
+            <div class="flex-between">
+                <span><i class="fas fa-clock"></i> ETA (40 km/h avg):</span>
+                <strong id="etaCalc" style="color:#16a34a;">—</strong>
+            </div>
+        </div>
+        <button id="calcTripBtnCalc" class="full-width-btn">Calculate</button>
+        <div class="small-text mt-2" style="text-align:center;">
+            <i class="fas fa-info-circle"></i> Based on current fuel prices (petrol: K<span id="petrolPriceDisplay">28.50</span>, diesel: K<span id="dieselPriceDisplay">26.80</span>)
+        </div>
+    </div>
+</div>
 
 <div id="tripPlannerPage" class="page-overlay">
-    <div class="page-header-bar"><h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2><button class="close-page-btn" data-close="tripPlannerPage">&times;</button></div>
+    <div class="page-header-bar">
+        <h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2>
+        <button class="close-page-btn" data-close="tripPlannerPage">&times;</button>
+    </div>
     <div class="page-content">
-        <div class="trip-info-card" id="currentLocationInfo">
-            <i class="fas fa-location-dot"></i> <span id="currentRoad">Detecting...</span>, <span id="currentCity">...</span>
+        <div class="driver-image-large">
+            <img src="driver.png" alt="car" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
         </div>
-        <label>Search Destination:</label>
-        <input type="text" id="destSearch" placeholder="e.g., restaurant, park, city...">
+        <label>Starting point:</label>
+        <input type="text" id="startPoint" placeholder="Your location" readonly>
+        <label>Destination:</label>
+        <input type="text" id="destSearch" placeholder="Search for a destination...">
         <div id="destSuggestions" class="place-suggestions"></div>
         <div id="tripInfo" style="display: none;" class="trip-info-card"></div>
         <div id="stationsAlong" style="margin-top: 12px;"></div>
-        <div id="funPlaces" style="margin-top: 12px;"></div>
+        <div id="funStops" style="margin-top: 12px;"></div>
         <button id="planRouteBtn" class="full-width-btn" style="display: none;">Draw Route with Selected Station</button>
     </div>
 </div>
 
-<div id="reportPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-flag"></i> Report Station</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div><div class="page-content"><div id="reportStationsList"></div></div></div>
-<div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
-<div id="historyPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-history"></i> Trip History</h2><button class="close-page-btn" data-close="historyPage">&times;</button></div><div class="page-content"><div id="historyList"></div><button id="clearHistoryBtn" class="full-width-btn">Clear History</button></div></div>
-<div id="recentPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-clock"></i> Recent Stations</h2><button class="close-page-btn" data-close="recentPage">&times;</button></div><div class="page-content"><div id="recentStationsList"></div><button id="clearRecentBtn" class="full-width-btn">Clear Recent</button></div></div>
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs, view consumption trends.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p><h4>🗺️ Trip Planner</h4><p>Search destination → see fuel needed & stations along the way → pick station → map shows three points.</p><h4>🎯 Fun Places</h4><p>Restaurants, game parks, and attractions near your destination.</p></div></div></div>
-<div id="exportPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-download"></i> Export Data</h2><button class="close-page-btn" data-close="exportPage">&times;</button></div><div class="page-content"><button id="exportLogsBtn" class="full-width-btn">Export Fuel Logs (CSV)</button><button id="exportFavsBtn" class="full-width-btn">Export Favorites (JSON)</button><button id="exportReportsBtn" class="full-width-btn">Export Reports (JSON)</button><button id="exportHistoryBtn" class="full-width-btn">Export Trip History</button></div></div>
+<div id="reportPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-flag"></i> Report Station</h2>
+        <button class="close-page-btn" data-close="reportPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <p class="small-text">Select a station, choose report type, submit.</p>
+        <div id="reportStationsList"></div>
+    </div>
+</div>
+
+<div id="favoritesPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-heart"></i> Favorites</h2>
+        <button class="close-page-btn" data-close="favoritesPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div id="favStationsList"></div>
+    </div>
+</div>
+
+<div id="historyPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-history"></i> Trip History</h2>
+        <button class="close-page-btn" data-close="historyPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div id="historyList"></div>
+        <button id="clearHistoryBtn" class="full-width-btn">Clear History</button>
+    </div>
+</div>
+
+<div id="recentPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-clock"></i> Recent Stations</h2>
+        <button class="close-page-btn" data-close="recentPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div id="recentStationsList"></div>
+        <button id="clearRecentBtn" class="full-width-btn">Clear Recent</button>
+    </div>
+</div>
+
+<div id="helpPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-question-circle"></i> Help & About</h2>
+        <button class="close-page-btn" data-close="helpPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <div class="help-section">
+            <h4>📖 Manual</h4>
+            <p>1. <strong>Find stations:</strong> Use the map or search. Tap a station to navigate or report.</p>
+            <p>2. <strong>Garage:</strong> Add your vehicles, track fuel logs, see consumption trends.</p>
+            <p>3. <strong>Trip Planner:</strong> Enter destination, select a fuel station along the route, add fun stops, then draw route on map.</p>
+            <p>4. <strong>Reports:</strong> Submit station status (fuel available, price updates, etc.) to help the community.</p>
+            <p>5. <strong>Favorites & History:</strong> Save stations and review past trips.</p>
+            <p>6. <strong>Dark mode:</strong> Toggle in sidebar.</p>
+            <hr>
+            <h4>🚀 About FuelRadar</h4>
+            <p>FuelRadar is your ultimate fuel companion – helping you find the cheapest and nearest fuel stations, plan trips with fuel cost estimates, and share real-time station reports. Built with ❤️ for drivers everywhere.</p>
+            <p><i class="fas fa-gas-pump"></i> Version 3.0 | Always online | No data cached</p>
+        </div>
+    </div>
+</div>
+
+<div id="exportPage" class="page-overlay">
+    <div class="page-header-bar">
+        <h2><i class="fas fa-download"></i> Export Data</h2>
+        <button class="close-page-btn" data-close="exportPage">&times;</button>
+    </div>
+    <div class="page-content">
+        <button id="exportLogsBtn" class="full-width-btn">Export Fuel Logs (CSV)</button>
+        <button id="exportFavsBtn" class="full-width-btn">Export Favorites (JSON)</button>
+        <button id="exportReportsBtn" class="full-width-btn">Export Reports (JSON)</button>
+        <button id="exportHistoryBtn" class="full-width-btn">Export Trip History (JSON)</button>
+    </div>
+</div>
 
 <div id="dynamicToast" class="message-toast"></div>
 
 <script>
+    // ======================== FUELRADAR ULTIMATE (STABLE) ========================
+    // - Map stops reloading (no auto-refresh interval)
+    // - Pulsing markers for 3 seconds with caption "Stations near you"
+    // - Navigation sentence updates correctly
+    // - Trip planner with driver.png, editable start, styled cards, fun stops
+    // - Fuel calculator redesigned with large driver image
+    // - Help & About page
+    // - Sidebar shows driver.png next to vehicle name
+    // - Trip history styled as cards
+
     // -------------------- 1. Database --------------------
     const db = new Dexie('FuelRadarDB');
     db.version(3).stores({
-        vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive, image',
+        vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
         fuelLogs: '++id, vehicleId, date, liters, pricePerLiter, totalCost, odometer',
         userReports: '++id, stationId, type, comment, timestamp, priceReport',
         tripHistory: '++id, destination, stationName, date, distance, fuelNeeded',
@@ -685,9 +1060,11 @@
     let chartInstance = null;
     let destCoordinates = null;
     let selectedAlongStation = null;
-    let userCountry = null;
+    let selectedFunStop = null;
+    let pulseTimeout = null;
+    let pulseMarkers = [];
 
-    // Helper functions
+    // -------------------- 3. Helper Functions --------------------
     function showToast(msg, isError = false) {
         let toast = document.getElementById('dynamicToast');
         toast.innerText = msg;
@@ -695,11 +1072,50 @@
         toast.style.display = 'block';
         setTimeout(() => toast.style.display = 'none', 4000);
     }
-    function showLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
-    async function updatePrices() { /* same as before */ try { const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm')); if (res.ok) { const data = await res.json(); const html = data.contents; let pMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i); if (pMatch) currentPrices.petrol = parseFloat(pMatch[1]); let dMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i); if (dMatch) currentPrices.diesel = parseFloat(dMatch[1]); } } catch(e) {} }
+
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    async function updatePrices() {
+        try {
+            const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.erb.org.zm'));
+            if (res.ok) {
+                const data = await res.json();
+                const html = data.contents;
+                let pMatch = html.match(/Petrol[^0-9]*([0-9]+\.[0-9]+)/i);
+                if (pMatch) currentPrices.petrol = parseFloat(pMatch[1]);
+                let dMatch = html.match(/Diesel[^0-9]*([0-9]+\.[0-9]+)/i);
+                if (dMatch) currentPrices.diesel = parseFloat(dMatch[1]);
+                document.getElementById('petrolPriceDisplay').innerText = currentPrices.petrol;
+                document.getElementById('dieselPriceDisplay').innerText = currentPrices.diesel;
+            }
+        } catch(e) {}
+    }
     updatePrices();
-    function haversine(lat1, lng1, lat2, lng2) { const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLng = (lng2-lng1)*Math.PI/180; const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2; return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
-    function extractAllAmenities(tags) { /* same */ let amenities = []; if (tags['fuel:petrol']==='yes') amenities.push({icon:'fa-gas-pump',name:'Petrol available'}); if (tags['fuel:diesel']==='yes') amenities.push({icon:'fa-oil-can',name:'Diesel available'}); if (tags['fuel:lpg']==='yes') amenities.push({icon:'fa-fire',name:'LPG'}); if (tags.shop) amenities.push({icon:'fa-store',name:`Shop: ${tags.shop}`}); if (tags.atm==='yes'||tags.amenity==='atm') amenities.push({icon:'fa-money-bill-wave',name:'ATM'}); if (tags.car_wash==='yes') amenities.push({icon:'fa-car-wash',name:'Car wash'}); if (tags['compressed_air']==='yes'||tags.tyre_pump==='yes') amenities.push({icon:'fa-fill-drip',name:'Tyre pump'}); if (tags.toilets==='yes') amenities.push({icon:'fa-restroom',name:'Toilets'}); if (tags.opening_hours) amenities.push({icon:'fa-clock',name:`Open: ${tags.opening_hours.substring(0,20)}`}); if (amenities.length===0) amenities.push({icon:'fa-gas-pump',name:'Fuel station'}); return amenities; }
+
+    function haversine(lat1, lng1, lat2, lng2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    function extractAllAmenities(tags) {
+        let amenities = [];
+        if (tags['fuel:petrol'] === 'yes') amenities.push({ icon: 'fa-gas-pump', name: 'Petrol available' });
+        if (tags['fuel:diesel'] === 'yes') amenities.push({ icon: 'fa-oil-can', name: 'Diesel available' });
+        if (tags['fuel:lpg'] === 'yes') amenities.push({ icon: 'fa-fire', name: 'LPG' });
+        if (tags.shop) amenities.push({ icon: 'fa-store', name: `Shop: ${tags.shop}` });
+        if (tags.atm === 'yes' || tags.amenity === 'atm') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
+        if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
+        if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
+        if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
+        if (tags.opening_hours) amenities.push({ icon: 'fa-clock', name: `Open: ${tags.opening_hours.substring(0,20)}` });
+        if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel station' });
+        return amenities;
+    }
 
     async function fetchStations(lat, lon, rad) {
         showLoading(true);
@@ -734,7 +1150,12 @@
                 });
             }
             return newStations;
-        } catch(err) { showToast("Failed to load stations. Check internet.", true); return []; } finally { showLoading(false); }
+        } catch(err) {
+            showToast("Failed to load stations. Check internet.", true);
+            return [];
+        } finally {
+            showLoading(false);
+        }
     }
 
     function getFilteredStations() {
@@ -750,7 +1171,8 @@
         }
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
-            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) || s.amenities.some(a => a.name.toLowerCase().includes(q)));
+            filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) ||
+                s.amenities.some(a => a.name.toLowerCase().includes(q)));
         }
         const sortBy = document.getElementById('sortSelect').value;
         if (sortBy === 'distance') filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
@@ -760,37 +1182,62 @@
         return filtered;
     }
 
-    function calculateETA(distanceKm) { const minutes = Math.round((distanceKm / 40) * 60); if (minutes < 60) return `${minutes} min`; return `${Math.floor(minutes/60)} hr ${minutes%60} min`; }
+    function calculateETA(distanceKm) {
+        const minutes = Math.round((distanceKm / 40) * 60);
+        if (minutes < 60) return `${minutes} min`;
+        return `${Math.floor(minutes/60)} hr ${minutes%60} min`;
+    }
 
     function updateGreenSuggestion() {
         const filtered = getFilteredStations();
         const nearest = filtered.slice(0, 3);
-        if (nearest.length === 0) { document.getElementById('greenSuggestion').innerHTML = '<i class="fas fa-gas-pump"></i> No stations found. Try increasing radius.'; return; }
+        if (nearest.length === 0) {
+            document.getElementById('greenSuggestion').innerHTML = '<i class="fas fa-gas-pump"></i> No stations found. Try increasing radius.';
+            return;
+        }
         const names = nearest.map(s => s.name).join(', ');
-        document.getElementById('greenSuggestion').innerHTML = `<i class="fas fa-star-of-life"></i> Nearby: ${names}. Tap a station.`;
-        // Pulsing markers: nearest 3
-        if (clusterGroup) {
-            clusterGroup.eachLayer(layer => {
-                const latlng = layer.getLatLng();
-                const dist = haversine(activeLocation.lat, activeLocation.lng, latlng.lat, latlng.lng);
-                const isNear = nearest.some(s => haversine(s.lat, s.lon, latlng.lat, latlng.lng) < 0.1);
-                if (isNear) {
-                    layer.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:32px; animation: pulse 1s infinite; filter:drop-shadow(0 0 4px #16a34a);"></i>`, iconSize: [32,32], className: 'fuel-marker' }));
-                } else {
-                    let color = layer.options.icon.options.html.includes('#16a34a') ? '#16a34a' : (layer.options.icon.options.html.includes('#dc2626') ? '#dc2626' : '#3b82f6');
-                    layer.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`, iconSize: [28,28], className: 'fuel-marker' }));
-                }
+        document.getElementById('greenSuggestion').innerHTML = `<i class="fas fa-star-of-life"></i> Stations near you: ${names}`;
+        
+        // Pulsing for 3 seconds only
+        if (pulseTimeout) clearTimeout(pulseTimeout);
+        if (pulseMarkers.length) {
+            pulseMarkers.forEach(m => {
+                let originalColor = m.options.icon.options.html.match(/color:#([0-9a-f]{6})/)?.[1] || '16a34a';
+                m.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#${originalColor}; font-size:28px;"></i>`, iconSize: [28,28], className: 'fuel-marker' }));
             });
+            pulseMarkers = [];
+        }
+        // Find the 3 nearest markers and pulse them
+        if (clusterGroup) {
+            let markerList = [];
+            clusterGroup.eachLayer(layer => {
+                let latlng = layer.getLatLng();
+                let dist = haversine(activeLocation.lat, activeLocation.lng, latlng.lat, latlng.lng);
+                markerList.push({ layer, dist });
+            });
+            markerList.sort((a,b) => a.dist - b.dist);
+            let top3 = markerList.slice(0,3);
+            top3.forEach(item => {
+                let layer = item.layer;
+                layer.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:32px; animation: pulse 0.8s infinite; filter:drop-shadow(0 0 6px #16a34a);"></i>`, iconSize: [32,32], className: 'fuel-marker' }));
+                pulseMarkers.push(layer);
+            });
+            pulseTimeout = setTimeout(() => {
+                pulseMarkers.forEach(m => {
+                    m.setIcon(L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px;"></i>`, iconSize: [28,28], className: 'fuel-marker' }));
+                });
+                pulseMarkers = [];
+            }, 3000);
         }
     }
-    // Add keyframes for pulse
-    const style = document.createElement('style');
-    style.textContent = `@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } } .fuel-marker i { transition: all 0.2s; }`;
-    document.head.appendChild(style);
 
     function updateUserMarker(lat, lng, heading) {
         if (userMarker) map.removeLayer(userMarker);
-        const carIcon = L.divIcon({ html: `<img src="driver.png" style="width:44px; height:44px; transform: rotate(${heading}deg); transition: transform 0.2s; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />`, iconSize: [44,44], className: 'user-car-marker' });
+        const carIcon = L.divIcon({
+            html: `<img src="driver.png" style="width:44px; height:44px; transform: rotate(${heading}deg); transition: transform 0.2s; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />`,
+            iconSize: [44,44],
+            className: 'user-car-marker'
+        });
         userMarker = L.marker([lat, lng], { icon: carIcon }).addTo(map).bindPopup('You are here');
     }
 
@@ -798,8 +1245,13 @@
         if (!container) return;
         container.querySelectorAll('.btn-nav[data-nav-id]').forEach(btn => {
             if (btn._navHandler) btn.removeEventListener('click', btn._navHandler);
-            const handler = (e) => { e.stopPropagation(); const st = stations.find(x => x.id == btn.dataset.navId); if (st) startNavigationWithMessage(st); };
-            btn._navHandler = handler; btn.addEventListener('click', handler);
+            const handler = (e) => {
+                e.stopPropagation();
+                const st = stations.find(x => x.id == btn.dataset.navId);
+                if (st) startNavigationWithMessage(st);
+            };
+            btn._navHandler = handler;
+            btn.addEventListener('click', handler);
         });
     }
 
@@ -809,7 +1261,11 @@
         const filtered = getFilteredStations();
         filtered.forEach(s => {
             let color = s.status === 'available' ? '#16a34a' : (s.status === 'empty' ? '#dc2626' : '#3b82f6');
-            let icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));"></i>`, iconSize: [28,28], className: 'fuel-marker' });
+            let icon = L.divIcon({
+                html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));"></i>`,
+                iconSize: [28,28],
+                className: 'fuel-marker'
+            });
             const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
             const eta = s.distance ? calculateETA(s.distance) : '?';
             const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
@@ -818,10 +1274,27 @@
             clusterGroup.addLayer(marker);
         });
         map.off('popupopen');
-        map.on('popupopen', e => { const node = e.popup.getElement(); if(node) { attachNavigationEvents(node); node.querySelectorAll('.btn-report[data-report-id]').forEach(btn => { btn.onclick = (ev) => { ev.stopPropagation(); openReportForStation(parseInt(btn.dataset.reportId)); }; }); } });
+        map.on('popupopen', e => {
+            const node = e.popup.getElement();
+            if(node) {
+                attachNavigationEvents(node);
+                node.querySelectorAll('.btn-report[data-report-id]').forEach(btn => {
+                    btn.onclick = (ev) => {
+                        ev.stopPropagation();
+                        openReportForStation(parseInt(btn.dataset.reportId));
+                    };
+                });
+            }
+        });
     }
 
-    function openReportForStation(stationId) { openPage('reportPage'); setTimeout(() => { let el = document.getElementById(`reportStation_${stationId}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 300); }
+    function openReportForStation(stationId) {
+        openPage('reportPage');
+        setTimeout(() => {
+            let el = document.getElementById(`reportStation_${stationId}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
 
     function renderFuelStationsList() {
         let filtered = getFilteredStations();
@@ -829,8 +1302,12 @@
         if (!container) return;
         container.innerHTML = filtered.map(s => `<div class="station-card"><div class="station-name">${s.name} ${s.favorite ? '❤️' : ''}</div><div class="station-address">${s.address}</div><div><span class="station-distance">${s.distance?.toFixed(1)} km</span> <span class="station-distance">${calculateETA(s.distance)}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div><div class="amenities-list">${s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button><button class="btn-sm" data-fav-id="${s.id}"><i class="fas fa-heart"></i> ${s.favorite ? 'Saved' : 'Save'}</button></div></div>`).join('');
         attachNavigationEvents(container);
-        container.querySelectorAll('[data-report-id]').forEach(btn => { btn.onclick = () => openReportForStation(parseInt(btn.dataset.reportId)); });
-        container.querySelectorAll('[data-fav-id]').forEach(btn => { btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favId)); });
+        container.querySelectorAll('[data-report-id]').forEach(btn => {
+            btn.onclick = () => openReportForStation(parseInt(btn.dataset.reportId));
+        });
+        container.querySelectorAll('[data-fav-id]').forEach(btn => {
+            btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favId));
+        });
     }
 
     async function loadStationsAndRefresh(showMsg = true) {
@@ -875,7 +1352,11 @@
         panel.style.display = 'block';
         setTimeout(() => panel.style.display = 'none', 8000);
         if (routingControl) map.removeControl(routingControl);
-        routingControl = L.Routing.control({ waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat, station.lon)], routeWhileDragging: false, lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] } }).addTo(map);
+        routingControl = L.Routing.control({
+            waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat, station.lon)],
+            routeWhileDragging: false,
+            lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
+        }).addTo(map);
         document.getElementById('clearRouteBtn').style.display = 'flex';
         // Save to recent stations
         db.recentStations.add({ stationId: station.id, name: station.name, lat: station.lat, lon: station.lon, timestamp: Date.now() });
@@ -886,14 +1367,24 @@
         let container = document.getElementById('reportStationsList');
         if (!container) return;
         container.innerHTML = sorted.map(s => `<div class="station-card" id="reportStation_${s.id}"><div class="station-name">${s.name}</div><div class="station-address">${s.address}</div><div class="station-distance">📍 ${s.distance?.toFixed(1)} km away</div><select id="reportType_${s.id}"><option value="Fuel available">✅ Fuel available</option><option value="Out of fuel">⛔ Out of fuel</option><option value="Long queue">🚶 Long queue</option><option value="Price update">💰 Price update</option></select><input type="text" id="reportPrice_${s.id}" placeholder="New price (optional)"><textarea id="reportComment_${s.id}" placeholder="Optional comment" rows="1"></textarea><button class="btn-sm btn-nav" data-submit-report="${s.id}">📢 Submit report</button></div>`).join('');
-        document.querySelectorAll('[data-submit-report]').forEach(btn => { btn.onclick = async () => { let sid = parseInt(btn.dataset.submitReport); let type = document.getElementById(`reportType_${sid}`).value; let comment = document.getElementById(`reportComment_${sid}`).value; let priceReport = document.getElementById(`reportPrice_${sid}`).value; await db.userReports.add({ stationId: sid, type, comment, timestamp: Date.now(), priceReport }); showToast(`Report submitted!`); }; });
+        document.querySelectorAll('[data-submit-report]').forEach(btn => {
+            btn.onclick = async () => {
+                let sid = parseInt(btn.dataset.submitReport);
+                let type = document.getElementById(`reportType_${sid}`).value;
+                let comment = document.getElementById(`reportComment_${sid}`).value;
+                let priceReport = document.getElementById(`reportPrice_${sid}`).value;
+                await db.userReports.add({ stationId: sid, type, comment, timestamp: Date.now(), priceReport });
+                showToast(`Report submitted!`);
+            };
+        });
     }
 
     function toggleFavorite(id) {
         let s = stations.find(s => s.id === id);
         if (s) {
             s.favorite = !s.favorite;
-            if (s.favorite) { if (!favoriteIds.includes(id)) favoriteIds.push(id); } else favoriteIds = favoriteIds.filter(f => f !== id);
+            if (s.favorite) { if (!favoriteIds.includes(id)) favoriteIds.push(id); }
+            else favoriteIds = favoriteIds.filter(f => f !== id);
             localStorage.setItem('fuelFavs', JSON.stringify(favoriteIds));
             renderMarkers(); renderFuelStationsList(); updateFavPage(); updateGreenSuggestion();
         }
@@ -910,16 +1401,23 @@
     // Vehicle & Garage
     async function loadVehicles() {
         let vehicles = await db.vehicles.toArray();
-        if (vehicles.length === 0) { await db.vehicles.add({ name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, fuelType: 'petrol', isActive: true }); activeVehicle = (await db.vehicles.toArray())[0]; }
-        else { activeVehicle = vehicles.find(v => v.isActive) || vehicles[0]; if (!activeVehicle.isActive) { activeVehicle.isActive = true; await db.vehicles.update(activeVehicle.id, { isActive: true }); } }
+        if (vehicles.length === 0) {
+            await db.vehicles.add({ name: 'My Car', tankCapacity: 50, consumptionLper100km: 8.5, fuelType: 'petrol', isActive: true });
+            activeVehicle = (await db.vehicles.toArray())[0];
+        } else {
+            activeVehicle = vehicles.find(v => v.isActive) || vehicles[0];
+            if (!activeVehicle.isActive) { activeVehicle.isActive = true; await db.vehicles.update(activeVehicle.id, { isActive: true }); }
+        }
         renderVehicleList();
-        document.getElementById('sidebarVehicleName').innerHTML = `🚗 ${activeVehicle.name}`;
+        document.getElementById('sidebarVehicleNameText').innerText = activeVehicle.name;
         document.getElementById('activeVehicleNameCalc').innerText = activeVehicle.name;
         document.getElementById('activeFuelTypeCalc').innerText = activeVehicle.fuelType;
         let range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
         document.getElementById('rangeCalc').innerText = range.toFixed(1) + ' km';
+        document.getElementById('consumptionDisplay').innerText = activeVehicle.consumptionLper100km + ' L/100km';
         renderFuelLogs();
     }
+
     async function renderVehicleList() {
         let vehicles = await db.vehicles.toArray();
         let container = document.getElementById('vehicleList');
@@ -927,7 +1425,13 @@
         document.querySelectorAll('[data-setactive]').forEach(btn => btn.onclick = async () => { await db.vehicles.toCollection().modify({ isActive: 0 }); await db.vehicles.update(parseInt(btn.dataset.setactive), { isActive: true }); loadVehicles(); });
         document.querySelectorAll('[data-delvehicle]').forEach(btn => btn.onclick = async () => { await db.vehicles.delete(parseInt(btn.dataset.delvehicle)); loadVehicles(); });
     }
-    async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) { let totalCost = liters * pricePerLiter; await db.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer }); renderFuelLogs(); }
+
+    async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) {
+        let totalCost = liters * pricePerLiter;
+        await db.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer });
+        renderFuelLogs();
+    }
+
     async function renderFuelLogs() {
         if (!activeVehicle) return;
         let logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).reverse().toArray();
@@ -939,9 +1443,22 @@
         if (chartInstance) chartInstance.destroy();
         chartInstance = new Chart(ctx, { type: 'line', data: { labels: logs.slice(0,10).reverse().map(l => l.date), datasets: [{ label: 'Liters refueled', data: logs.slice(0,10).reverse().map(l => l.liters), borderColor: '#16a34a' }] } });
     }
-    function calculateTrip() { if (!activeVehicle) return; let distance = parseFloat(document.getElementById('tripDistanceCalc').value); if (isNaN(distance)) return; let fuelNeeded = (distance/100)*activeVehicle.consumptionLper100km; let pricePerLiter = (activeVehicle.fuelType==='petrol'?currentPrices.petrol:currentPrices.diesel); let cost = fuelNeeded*pricePerLiter; document.getElementById('fuelNeededCalc').innerText = fuelNeeded.toFixed(1)+' L'; document.getElementById('tripCostCalc').innerText = 'K'+cost.toFixed(2); }
 
-    // Trip Planner with country bias and fun places
+    function calculateTrip() {
+        if (!activeVehicle) return;
+        let distance = parseFloat(document.getElementById('tripDistanceCalc').value);
+        if (isNaN(distance)) return;
+        let fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
+        let pricePerLiter = (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+        let cost = fuelNeeded * pricePerLiter;
+        let eta = calculateETA(distance);
+        document.getElementById('fuelNeededCalc').innerText = fuelNeeded.toFixed(1) + ' L';
+        document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
+        document.getElementById('etaCalc').innerText = eta;
+    }
+    document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
+
+    // Trip Planner with improved UI
     let destSearchTimeout = null;
     document.getElementById('destSearch').addEventListener('input', function() {
         clearTimeout(destSearchTimeout);
@@ -950,7 +1467,6 @@
         destSearchTimeout = setTimeout(async () => {
             try {
                 let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
-                if (userCountry) url += `&countrycodes=${userCountry.toLowerCase()}`;
                 const res = await fetch(url);
                 const data = await res.json();
                 const suggestionsDiv = document.getElementById('destSuggestions');
@@ -960,7 +1476,7 @@
                     const div = document.createElement('div');
                     div.className = 'place-suggestion-item';
                     const distance = actualUserLocation ? haversine(actualUserLocation.lat, actualUserLocation.lng, parseFloat(place.lat), parseFloat(place.lon)).toFixed(1) : '?';
-                    div.innerHTML = `<i class="fas fa-location-dot"></i> <strong>${place.display_name}</strong> <span style="margin-left:auto;">${distance} km</span>`;
+                    div.innerHTML = `<span><i class="fas fa-location-dot"></i> ${place.display_name}</span><span class="place-suggestion-distance">${distance} km</span>`;
                     div.onclick = () => {
                         destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
                         document.getElementById('destSearch').value = place.display_name;
@@ -969,7 +1485,13 @@
                             const dist = haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon);
                             const fuelNeeded = (dist / 100) * activeVehicle.consumptionLper100km;
                             const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
-                            document.getElementById('tripInfo').innerHTML = `<div class="flex-between"><span>🚗 ${activeVehicle.name}</span><span>📏 ${dist.toFixed(1)} km</span></div><div class="flex-between"><span>⛽ Fuel needed:</span><span>${fuelNeeded.toFixed(1)} L</span></div><div class="flex-between"><span>💰 Est. cost:</span><span>K${cost.toFixed(2)}</span></div><div class="flex-between"><span>🕒 ETA:</span><span>${calculateETA(dist)}</span></div>`;
+                            document.getElementById('tripInfo').innerHTML = `
+                                <h3 style="color:#1e3a8a;">${activeVehicle.name}</h3>
+                                <div class="flex-between"><span><i class="fas fa-tint" style="color:#16a34a;"></i> Fuel needed:</span><span>${fuelNeeded.toFixed(1)} L</span></div>
+                                <div class="flex-between"><span><i class="fas fa-money-bill-wave" style="color:#dc2626;"></i> Est. cost:</span><span>K${cost.toFixed(2)}</span></div>
+                                <div class="flex-between"><span><i class="fas fa-clock" style="color:#16a34a;"></i> ETA:</span><span>${calculateETA(dist)}</span></div>
+                                <div class="flex-between"><span><i class="fas fa-road" style="color:#1e3a8a;"></i> Distance:</span><span><strong>${dist.toFixed(1)} km</strong></span></div>
+                            `;
                             document.getElementById('tripInfo').style.display = 'block';
                             // Find stations along route
                             const start = actualUserLocation;
@@ -983,10 +1505,24 @@
                             }).sort((a,b) => a.distance - b.distance);
                             const stationsDiv = document.getElementById('stationsAlong');
                             if (alongStations.length === 0) stationsDiv.innerHTML = '<p>No fuel stations along this route.</p>';
-                            else stationsDiv.innerHTML = '<h4>⛽ Select a station along the way:</h4>' + alongStations.map(s => `<div class="along-station-item" data-station-id="${s.id}"><strong>${s.name}</strong><br>📍 ${s.distance.toFixed(1)} km from start<br>${s.pricePetrol}/${s.priceDiesel}<br>${s.amenities.map(a=>a.name).slice(0,2).join(', ')}</div>`).join('');
-                            document.querySelectorAll('.along-station-item').forEach(el => { el.onclick = () => { document.querySelectorAll('.along-station-item').forEach(item => item.style.background = '#f0fdf4'); el.style.background = '#d1fae5'; selectedAlongStation = stations.find(st => st.id == el.dataset.stationId); document.getElementById('planRouteBtn').style.display = 'block'; }; });
-                            // Fetch fun places (restaurants, game parks) near destination
-                            fetchFunPlaces(destCoordinates.lat, destCoordinates.lon);
+                            else stationsDiv.innerHTML = '<h4>⛽ Select a station along the way:</h4>' + alongStations.map(s => `
+                                <div class="along-station-item" data-station-id="${s.id}">
+                                    <div class="flex-between"><strong>${s.name}</strong><span>${s.distance.toFixed(1)} km</span></div>
+                                    <div class="small-text">${s.address}</div>
+                                    <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
+                                    <div class="amenities-list">${s.amenities.slice(0,2).map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('')}</div>
+                                </div>
+                            `).join('');
+                            document.querySelectorAll('.along-station-item').forEach(el => {
+                                el.onclick = () => {
+                                    document.querySelectorAll('.along-station-item').forEach(item => item.style.background = '#f0fdf4');
+                                    el.style.background = '#d1fae5';
+                                    selectedAlongStation = stations.find(st => st.id == el.dataset.stationId);
+                                    document.getElementById('planRouteBtn').style.display = 'block';
+                                };
+                            });
+                            // Fun stops
+                            fetchFunStops(destCoordinates.lat, destCoordinates.lon);
                         } else showToast("Location or vehicle not ready", true);
                     };
                     suggestionsDiv.appendChild(div);
@@ -996,98 +1532,263 @@
         }, 500);
     });
 
-    async function fetchFunPlaces(lat, lon) {
+    async function fetchFunStops(lat, lon) {
         const query = `[out:json];(node["amenity"="restaurant"](around:5000,${lat},${lon});node["tourism"="attraction"](around:5000,${lat},${lon});node["leisure"="park"](around:5000,${lat},${lon}););out body;`;
         try {
             const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
             const data = await res.json();
             const places = data.elements.slice(0, 5).map(el => ({ name: el.tags?.name || 'Unknown', lat: el.lat, lon: el.lon, type: el.tags?.amenity || el.tags?.tourism || 'place' }));
-            const container = document.getElementById('funPlaces');
-            if (places.length === 0) container.innerHTML = '<p>No fun places found nearby.</p>';
-            else container.innerHTML = '<h4>🎯 Fun places near destination:</h4>' + places.map(p => `<div class="fun-place-item" data-lat="${p.lat}" data-lon="${p.lon}"><i class="fas fa-${p.type === 'restaurant' ? 'utensils' : 'tree'}"></i> <strong>${p.name}</strong> (${p.type})<br>📍 Click to add as stop</div>`).join('');
-            document.querySelectorAll('.fun-place-item').forEach(el => { el.onclick = () => { const lat = parseFloat(el.dataset.lat); const lon = parseFloat(el.dataset.lon); destCoordinates = { lat, lon }; document.getElementById('destSearch').value = el.innerText.split('\n')[0]; document.getElementById('tripInfo').innerHTML = `<div class="flex-between"><span>🚗 ${activeVehicle.name}</span><span>📏 New destination set</span></div>`; document.getElementById('tripInfo').style.display = 'block'; fetchFunPlaces(lat, lon); }; });
+            const container = document.getElementById('funStops');
+            if (places.length === 0) container.innerHTML = '<p>No fun stops nearby.</p>';
+            else container.innerHTML = '<h4>🎯 Suggested fun stops (click to add):</h4>' + places.map(p => `
+                <div class="fun-stop-item" data-lat="${p.lat}" data-lon="${p.lon}" data-name="${p.name}">
+                    <i class="fas fa-${p.type === 'restaurant' ? 'utensils' : 'tree'}"></i> <strong>${p.name}</strong> (${p.type})
+                </div>
+            `).join('');
+            document.querySelectorAll('.fun-stop-item').forEach(el => {
+                el.onclick = () => {
+                    document.querySelectorAll('.fun-stop-item').forEach(item => item.style.background = '#f0fdf4');
+                    el.style.background = '#fed7aa';
+                    selectedFunStop = { name: el.dataset.name, lat: parseFloat(el.dataset.lat), lon: parseFloat(el.dataset.lon) };
+                    showToast(`Fun stop "${selectedFunStop.name}" selected. It will be added to your route.`);
+                };
+            });
         } catch(e) { console.warn(e); }
     }
 
     document.getElementById('planRouteBtn').onclick = async () => {
-        if (!actualUserLocation || !destCoordinates || !selectedAlongStation) { showToast("Missing start, destination or station", true); return; }
-        if (routingControl) { if (routingControl.route1) map.removeControl(routingControl.route1); if (routingControl.route2) map.removeControl(routingControl.route2); }
-        const startLatLng = L.latLng(actualUserLocation.lat, actualUserLocation.lng);
-        const stationLatLng = L.latLng(selectedAlongStation.lat, selectedAlongStation.lon);
-        const destLatLng = L.latLng(destCoordinates.lat, destCoordinates.lon);
+        if (!actualUserLocation || !destCoordinates || !selectedAlongStation) {
+            showToast("Missing start, destination or station", true);
+            return;
+        }
+        if (routingControl) {
+            if (routingControl.route1) map.removeControl(routingControl.route1);
+            if (routingControl.route2) map.removeControl(routingControl.route2);
+        }
+        let waypoints = [L.latLng(actualUserLocation.lat, actualUserLocation.lng)];
+        if (selectedFunStop) {
+            waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
+        }
+        waypoints.push(L.latLng(selectedAlongStation.lat, selectedAlongStation.lon));
+        waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
+        
         if (window.tripMarkers) window.tripMarkers.forEach(m => map.removeLayer(m));
         window.tripMarkers = [];
-        window.tripMarkers.push(L.marker(startLatLng, { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:green;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Start'));
-        window.tripMarkers.push(L.marker(stationLatLng, { icon: L.divIcon({ html: '<i class="fas fa-gas-pump" style="font-size:24px; color:blue;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedAlongStation.name));
-        window.tripMarkers.push(L.marker(destLatLng, { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:red;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Destination'));
-        const route1 = L.Routing.control({ waypoints: [startLatLng, stationLatLng], routeWhileDragging: false, lineOptions: { styles: [{ color: 'green', weight: 5 }] }, show: false }).addTo(map);
-        const route2 = L.Routing.control({ waypoints: [stationLatLng, destLatLng], routeWhileDragging: false, lineOptions: { styles: [{ color: 'red', weight: 5 }] }, show: false }).addTo(map);
-        routingControl = { route1, route2 };
+        window.tripMarkers.push(L.marker(waypoints[0], { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:green;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Start'));
+        if (selectedFunStop) {
+            window.tripMarkers.push(L.marker(waypoints[1], { icon: L.divIcon({ html: '<i class="fas fa-coffee" style="font-size:24px; color:#f59e0b;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedFunStop.name));
+        }
+        window.tripMarkers.push(L.marker(waypoints[waypoints.length-2], { icon: L.divIcon({ html: '<i class="fas fa-gas-pump" style="font-size:24px; color:blue;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedAlongStation.name));
+        window.tripMarkers.push(L.marker(waypoints[waypoints.length-1], { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:red;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Destination'));
+        
+        // Create routing with multiple segments
+        let routes = [];
+        for (let i = 0; i < waypoints.length - 1; i++) {
+            let color = (i === waypoints.length-2) ? 'red' : 'green';
+            let route = L.Routing.control({
+                waypoints: [waypoints[i], waypoints[i+1]],
+                routeWhileDragging: false,
+                lineOptions: { styles: [{ color: color, weight: 5 }] },
+                show: false
+            }).addTo(map);
+            routes.push(route);
+        }
+        routingControl = { routes };
         document.getElementById('clearRouteBtn').style.display = 'flex';
-        map.fitBounds([startLatLng, destLatLng]);
-        showToast("Route drawn: Green = to station, Red = to destination");
+        map.fitBounds(waypoints);
+        showToast("Route drawn with your selected stops");
         // Save to history
-        await db.tripHistory.add({ destination: document.getElementById('destSearch').value, stationName: selectedAlongStation.name, date: new Date().toISOString(), distance: haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon).toFixed(1), fuelNeeded: ((haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon)/100)*activeVehicle.consumptionLper100km).toFixed(1) });
+        await db.tripHistory.add({
+            destination: document.getElementById('destSearch').value,
+            stationName: selectedAlongStation.name,
+            date: new Date().toISOString(),
+            distance: haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon).toFixed(1),
+            fuelNeeded: ((haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon)/100)*activeVehicle.consumptionLper100km).toFixed(1)
+        });
         closePage('tripPlannerPage');
     };
 
     // History & Recent
-    async function loadHistory() { let history = await db.tripHistory.reverse().toArray(); document.getElementById('historyList').innerHTML = history.map(h => `<div class="trip-history-item">${h.date.slice(0,10)} → ${h.destination}<br>Station: ${h.stationName} | ${h.distance} km | ${h.fuelNeeded} L</div>`).join(''); }
+    async function loadHistory() {
+        let history = await db.tripHistory.reverse().toArray();
+        let container = document.getElementById('historyList');
+        if (container) container.innerHTML = history.map(h => `<div class="trip-history-item"><div class="flex-between"><strong>${h.destination}</strong><span>${new Date(h.date).toLocaleDateString()}</span></div><div>⛽ Station: ${h.stationName}</div><div>📏 ${h.distance} km · ⛽ ${h.fuelNeeded} L</div></div>`).join('');
+    }
     document.getElementById('clearHistoryBtn').onclick = async () => { await db.tripHistory.clear(); loadHistory(); showToast("History cleared"); };
-    async function loadRecentStations() { let recent = await db.recentStations.reverse().limit(20).toArray(); let container = document.getElementById('recentStationsList'); if (container) container.innerHTML = recent.map(r => `<div class="recent-station-item"><strong>${r.name}</strong><br>${new Date(r.timestamp).toLocaleString()}<button class="btn-sm btn-nav" data-recent-nav="${r.stationId}">Navigate</button></div>`).join(''); container.querySelectorAll('[data-recent-nav]').forEach(btn => { btn.onclick = () => { let st = stations.find(s => s.id == btn.dataset.recentNav); if(st) startNavigationWithMessage(st); }; }); }
+    async function loadRecentStations() {
+        let recent = await db.recentStations.reverse().limit(20).toArray();
+        let container = document.getElementById('recentStationsList');
+        if (container) container.innerHTML = recent.map(r => `<div class="recent-station-item"><div class="flex-between"><strong>${r.name}</strong><span>${new Date(r.timestamp).toLocaleString()}</span></div><button class="btn-sm btn-nav" data-recent-nav="${r.stationId}">Navigate</button></div>`).join('');
+        container.querySelectorAll('[data-recent-nav]').forEach(btn => { btn.onclick = () => { let st = stations.find(s => s.id == btn.dataset.recentNav); if(st) startNavigationWithMessage(st); }; });
+    }
     document.getElementById('clearRecentBtn').onclick = async () => { await db.recentStations.clear(); loadRecentStations(); showToast("Recent cleared"); };
 
     // Export
-    document.getElementById('exportLogsBtn').onclick = async () => { let logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).toArray(); let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n"+logs.map(l=>`${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n"); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="fuel_logs.csv"; a.click(); };
-    document.getElementById('exportFavsBtn').onclick = () => { let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(favoriteIds)],{type:"application/json"})); a.download="favorites.json"; a.click(); };
-    document.getElementById('exportReportsBtn').onclick = async () => { let reports=await db.userReports.toArray(); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(reports)],{type:"application/json"})); a.download="reports.json"; a.click(); };
-    document.getElementById('exportHistoryBtn').onclick = async () => { let hist=await db.tripHistory.toArray(); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(hist)],{type:"application/json"})); a.download="trip_history.json"; a.click(); };
+    document.getElementById('exportLogsBtn').onclick = async () => {
+        let logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).toArray();
+        let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+        a.download = "fuel_logs.csv";
+        a.click();
+    };
+    document.getElementById('exportFavsBtn').onclick = () => {
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(favoriteIds)], {type: "application/json"}));
+        a.download = "favorites.json";
+        a.click();
+    };
+    document.getElementById('exportReportsBtn').onclick = async () => {
+        let reports = await db.userReports.toArray();
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(reports)], {type: "application/json"}));
+        a.download = "reports.json";
+        a.click();
+    };
+    document.getElementById('exportHistoryBtn').onclick = async () => {
+        let hist = await db.tripHistory.toArray();
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(hist)], {type: "application/json"}));
+        a.download = "trip_history.json";
+        a.click();
+    };
 
     // Page switching
-    function openPage(pageId) { document.querySelectorAll('.page-overlay').forEach(p=>p.classList.remove('show')); document.getElementById(pageId).classList.add('show'); if(pageId==='reportPage') renderReportStationsList(); if(pageId==='favoritesPage') updateFavPage(); if(pageId==='garagePage') { renderVehicleList(); renderFuelLogs(); } if(pageId==='historyPage') loadHistory(); if(pageId==='recentPage') loadRecentStations(); }
+    function openPage(pageId) {
+        document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
+        document.getElementById(pageId).classList.add('show');
+        if (pageId === 'reportPage') renderReportStationsList();
+        if (pageId === 'favoritesPage') updateFavPage();
+        if (pageId === 'garagePage') { renderVehicleList(); renderFuelLogs(); }
+        if (pageId === 'historyPage') loadHistory();
+        if (pageId === 'recentPage') loadRecentStations();
+        if (pageId === 'tripPlannerPage' && actualUserLocation) {
+            document.getElementById('startPoint').value = `${document.getElementById('roadLocation').innerText}, ${document.getElementById('cityDisplay').innerText}`;
+        }
+    }
     function closePage(pageId) { document.getElementById(pageId).classList.remove('show'); }
 
     // Map & Location
     function initMap() {
         map = L.map('map').setView([0,0],2);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
-        map.on('moveend', () => { if(moveEndTimeout) clearTimeout(moveEndTimeout); moveEndTimeout = setTimeout(async () => { let center=map.getCenter(); activeLocation={lat:center.lat, lng:center.lng}; await loadStationsAndRefresh(false); reverseGeocode(center.lat,center.lng); },500); });
+        // Debounced moveend to prevent excessive reloads
+        map.on('moveend', () => {
+            if (moveEndTimeout) clearTimeout(moveEndTimeout);
+            moveEndTimeout = setTimeout(async () => {
+                let center = map.getCenter();
+                activeLocation = { lat: center.lat, lng: center.lng };
+                await loadStationsAndRefresh(false);
+                reverseGeocode(center.lat, center.lng);
+            }, 500);
+        });
     }
-    async function reverseGeocode(lat,lng) {
-        try { let res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`); let data=await res.json(); let road=data.address?.road||data.address?.suburb||'local road'; document.getElementById('roadLocation').innerHTML=road.substring(0,30); let city=data.address?.city||data.address?.town||'World'; document.getElementById('cityDisplay').innerHTML=city; document.getElementById('currentRoad').innerText=road; document.getElementById('currentCity').innerText=city; userCountry=data.address?.country_code?.toUpperCase()||null; } catch(e){} }
+    async function reverseGeocode(lat, lng) {
+        try {
+            let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+            let data = await res.json();
+            let road = data.address?.road || data.address?.suburb || 'local road';
+            document.getElementById('roadLocation').innerHTML = road.substring(0,30);
+            let city = data.address?.city || data.address?.town || 'World';
+            document.getElementById('cityDisplay').innerHTML = city;
+            if (document.getElementById('startPoint')) {
+                document.getElementById('startPoint').value = `${road}, ${city}`;
+            }
+        } catch(e) {}
+    }
     function locateAndFetch() {
-        if(navigator.geolocation) { if(watchId) navigator.geolocation.clearWatch(watchId); watchId=navigator.geolocation.watchPosition(pos=>{ let{latitude,longitude,heading}=pos.coords; actualUserLocation={lat:latitude,lng:longitude}; activeLocation={lat:latitude,lng:longitude}; map.setView([latitude,longitude],14); const direction=(heading!==null&&!isNaN(heading))?heading:userHeading; updateUserMarker(latitude,longitude,direction); userHeading=direction; loadStationsAndRefresh(true); reverseGeocode(latitude,longitude); }, err=>showToast("Location error: "+err.message,true), {enableHighAccuracy:true}); }
+        if (navigator.geolocation) {
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+            watchId = navigator.geolocation.watchPosition(pos => {
+                let { latitude, longitude, heading } = pos.coords;
+                actualUserLocation = { lat: latitude, lng: longitude };
+                activeLocation = { lat: latitude, lng: longitude };
+                map.setView([latitude, longitude], 14);
+                const direction = (heading !== null && !isNaN(heading)) ? heading : userHeading;
+                updateUserMarker(latitude, longitude, direction);
+                userHeading = direction;
+                loadStationsAndRefresh(true);
+                reverseGeocode(latitude, longitude);
+            }, err => showToast("Location error: " + err.message, true), { enableHighAccuracy: true });
+        }
     }
 
     // Event Listeners
-    document.getElementById('nearMeBtn').onclick=locateAndFetch;
-    document.getElementById('floatLocateBtn').onclick=()=>{ if(activeLocation) map.setView([activeLocation.lat,activeLocation.lng],15); else locateAndFetch(); };
-    document.getElementById('floatRefreshBtn').onclick=()=>{ if(activeLocation) loadStationsAndRefresh(true); };
-    document.getElementById('radiusSlider').oninput=(e)=>{ radiusKm=parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText=radiusKm+' km'; if(activeLocation) loadStationsAndRefresh(false); };
-    document.getElementById('searchInput').oninput=(e)=>{ searchQuery=e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
-    document.getElementById('clearSearchBtn').onclick=()=>{ document.getElementById('searchInput').value=''; searchQuery=''; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
-    document.querySelectorAll('.chip').forEach(chip=>{ chip.onclick=()=>{ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter=chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); }; });
-    document.getElementById('overlayMapBtn').onclick=()=>{ let wrap=document.getElementById('mapWrapper'); if(wrap.requestFullscreen) wrap.requestFullscreen(); };
-    document.getElementById('clearRouteBtn').onclick=()=>{ if(routingControl){ if(routingControl.route1) map.removeControl(routingControl.route1); if(routingControl.route2) map.removeControl(routingControl.route2); routingControl=null; } if(window.tripMarkers) window.tripMarkers.forEach(m=>map.removeLayer(m)); document.getElementById('clearRouteBtn').style.display='none'; document.getElementById('routeInfoPanel').style.display='none'; };
-    document.getElementById('floatingFuelBtn').onclick=()=>{ openPage('reportPage'); renderFuelStationsList(); };
-    document.getElementById('sortSelect').onchange=()=>{ renderMarkers(); renderFuelStationsList(); updateGreenSuggestion(); };
+    document.getElementById('nearMeBtn').onclick = locateAndFetch;
+    document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
+    document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
+    document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
+    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
+    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
+    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); }; });
+    document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
+    document.getElementById('clearRouteBtn').onclick = () => {
+        if (routingControl) {
+            if (routingControl.routes) routingControl.routes.forEach(route => map.removeControl(route));
+            routingControl = null;
+        }
+        if (window.tripMarkers) window.tripMarkers.forEach(m => map.removeLayer(m));
+        document.getElementById('clearRouteBtn').style.display = 'none';
+        document.getElementById('routeInfoPanel').style.display = 'none';
+    };
+    document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
+    document.getElementById('sortSelect').onchange = () => { renderMarkers(); renderFuelStationsList(); updateGreenSuggestion(); };
+
     // Dark mode in sidebar
-    document.getElementById('darkModeSidebar').onclick=()=>{ document.body.classList.toggle('dark'); const icon=document.getElementById('darkModeSidebar').querySelector('i'); icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun'); sidebar.classList.remove('open'); };
+    document.getElementById('darkModeSidebar').onclick = () => {
+        document.body.classList.toggle('dark');
+        const icon = document.getElementById('darkModeSidebar').querySelector('i');
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+        sidebar.classList.remove('open');
+    };
+
     // Sidebar
-    const sidebar=document.getElementById('sidebarOverlay');
-    document.getElementById('menuBtn').onclick=()=>sidebar.classList.add('open');
-    document.getElementById('closeSidebarBtn').onclick=()=>sidebar.classList.remove('open');
-    sidebar.addEventListener('click',e=>{ if(e.target===sidebar) sidebar.classList.remove('open'); });
-    document.querySelectorAll('.sidebar-item').forEach(item=>{ if(item.id==='darkModeSidebar') return; item.onclick=()=>{ let page=item.dataset.page; sidebar.classList.remove('open'); if(page==='map') return; if(page==='garage') openPage('garagePage'); else if(page==='calculator') openPage('calculatorPage'); else if(page==='tripPlanner') openPage('tripPlannerPage'); else if(page==='report') openPage('reportPage'); else if(page==='favorites') openPage('favoritesPage'); else if(page==='history') openPage('historyPage'); else if(page==='recent') openPage('recentPage'); else if(page==='help') openPage('helpPage'); else if(page==='export') openPage('exportPage'); }; });
-    document.querySelectorAll('.close-page-btn').forEach(btn=>{ btn.onclick=()=>{ let pageId=btn.dataset.close; closePage(pageId); }; });
-    document.getElementById('addVehicleBtn').onclick=()=>document.getElementById('addVehicleForm').style.display='block';
-    document.getElementById('saveVehicleBtn').onclick=async()=>{ let name=document.getElementById('newVehicleName').value; let tank=parseFloat(document.getElementById('newTankCapacity').value); let cons=parseFloat(document.getElementById('newConsumption').value); let fuel=document.getElementById('newFuelType').value; if(name&&tank&&cons) await db.vehicles.add({name, tankCapacity:tank, consumptionLper100km:cons, fuelType:fuel, isActive:false}); loadVehicles(); document.getElementById('addVehicleForm').style.display='none'; };
-    document.getElementById('addLogBtn').onclick=()=>document.getElementById('addLogForm').style.display='block';
-    document.getElementById('submitLogBtn').onclick=async()=>{ if(!activeVehicle) return; let date=document.getElementById('logDate').value; let liters=parseFloat(document.getElementById('logLiters').value); let price=parseFloat(document.getElementById('logPricePerLiter').value); let odo=parseFloat(document.getElementById('logOdometer').value); if(date&&liters&&price) await addFuelLog(activeVehicle.id,date,liters,price,odo); document.getElementById('addLogForm').style.display='none'; };
-    document.getElementById('calcTripBtnCalc').onclick=calculateTrip;
-    // No auto-refresh interval to keep map stable
+    const sidebar = document.getElementById('sidebarOverlay');
+    document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
+    document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
+    sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        if (item.id === 'darkModeSidebar') return;
+        item.onclick = () => {
+            let page = item.dataset.page;
+            sidebar.classList.remove('open');
+            if (page === 'map') return;
+            if (page === 'garage') openPage('garagePage');
+            else if (page === 'calculator') openPage('calculatorPage');
+            else if (page === 'tripPlanner') openPage('tripPlannerPage');
+            else if (page === 'report') openPage('reportPage');
+            else if (page === 'favorites') openPage('favoritesPage');
+            else if (page === 'history') openPage('historyPage');
+            else if (page === 'recent') openPage('recentPage');
+            else if (page === 'help') openPage('helpPage');
+            else if (page === 'export') openPage('exportPage');
+        };
+    });
+    document.querySelectorAll('.close-page-btn').forEach(btn => { btn.onclick = () => { let pageId = btn.dataset.close; closePage(pageId); }; });
+    document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
+    document.getElementById('saveVehicleBtn').onclick = async () => {
+        let name = document.getElementById('newVehicleName').value;
+        let tank = parseFloat(document.getElementById('newTankCapacity').value);
+        let cons = parseFloat(document.getElementById('newConsumption').value);
+        let fuel = document.getElementById('newFuelType').value;
+        if (name && tank && cons) await db.vehicles.add({ name, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, isActive: false });
+        loadVehicles();
+        document.getElementById('addVehicleForm').style.display = 'none';
+    };
+    document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
+    document.getElementById('submitLogBtn').onclick = async () => {
+        if (!activeVehicle) return;
+        let date = document.getElementById('logDate').value;
+        let liters = parseFloat(document.getElementById('logLiters').value);
+        let price = parseFloat(document.getElementById('logPricePerLiter').value);
+        let odo = parseFloat(document.getElementById('logOdometer').value);
+        if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
+        document.getElementById('addLogForm').style.display = 'none';
+    };
+    // No auto-refresh interval - map stays stable
     initMap();
     locateAndFetch();
     loadVehicles();
