@@ -450,9 +450,10 @@
             text-align: center;
             padding: 20px 0 10px 0;
         }
-        .sidebar-logo i {
-            font-size: 64px;
-            color: #16a34a;
+        .sidebar-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
         }
         .sidebar-vehicle-name {
             text-align: center;
@@ -653,10 +654,53 @@
             cursor: pointer;
             color: #16a34a;
         }
-        /* Fix for car marker */
-        .user-car-marker {
-            background: transparent;
-            border: none;
+
+        /* Trip Planner specific styles */
+        .place-suggestions {
+            background: white;
+            border-radius: 20px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        body.dark .place-suggestions {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        .place-suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        body.dark .place-suggestion-item {
+            border-bottom-color: #444;
+        }
+        .place-suggestion-item:hover {
+            background: #eef5e8;
+        }
+        .along-station-item {
+            background: #f0fdf4;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        body.dark .along-station-item {
+            background: #2c2c2c;
+            border: 1px solid #4ade80;
+        }
+        .sort-dropdown {
+            background: white;
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        body.dark .sort-dropdown {
+            background: #2c2c2c;
+            color: white;
         }
     </style>
 </head>
@@ -673,7 +717,7 @@
                 <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
             </div>
             <div class="logo-right">
-                <i class="fas fa-gas-pump" style="font-size: 40px; color: #16a34a;"></i>
+                <img src="logo.png" alt="logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
             </div>
         </div>
         <div class="stats-row">
@@ -714,8 +758,8 @@
             <button class="chip" data-filter="amenity_atm">🏧 ATM</button>
             <button class="chip" data-filter="amenity_carwash">🚗 Car wash</button>
         </div>
-        <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <select id="sortSelect" style="flex:1;">
+        <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+            <select id="sortSelect" class="sort-dropdown" style="flex:1;">
                 <option value="distance">Sort by distance</option>
                 <option value="price_petrol">Sort by petrol price (lowest)</option>
                 <option value="price_diesel">Sort by diesel price (lowest)</option>
@@ -744,7 +788,7 @@
 <div id="sidebarOverlay" class="sidebar-overlay">
     <div class="sidebar-panel">
         <div class="sidebar-logo">
-            <i class="fas fa-gas-pump"></i>
+            <img src="logo.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
         </div>
         <div class="sidebar-vehicle-name" id="sidebarVehicleName">🚗 Vehicle: My Car</div>
         <div class="sidebar-header"><span>⚡ FuelRadar</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button></div>
@@ -766,13 +810,23 @@
 
 <div id="calculatorPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div><div class="page-content"><div class="garage-card">Active vehicle: <strong id="activeVehicleNameCalc">—</strong> (<span id="activeFuelTypeCalc">-</span>)</div><div class="flex-between"><span>⛽ Range (full tank):</span> <strong id="rangeCalc">— km</strong></div><div class="mt-2"><label>Trip distance (km):</label><input type="number" id="tripDistanceCalc" placeholder="Enter km"></div><div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc">— L</strong></div><div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc">— K</strong></div><button id="calcTripBtnCalc" class="full-width-btn mt-2">Calculate</button></div></div>
 
-<div id="tripPlannerPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2><button class="close-page-btn" data-close="tripPlannerPage">&times;</button></div><div class="page-content"><label>Start location (lat,lng):</label><input type="text" id="tripStart" placeholder="e.g., -12.123,28.456"><label>Destination (lat,lng):</label><input type="text" id="tripEnd" placeholder="e.g., -12.345,28.567"><label>Via station (optional):</label><select id="tripStationSelect"></select><button id="planTripBtn" class="full-width-btn">Plan & Navigate</button><div id="tripResult"></div></div></div>
+<div id="tripPlannerPage" class="page-overlay">
+    <div class="page-header-bar"><h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2><button class="close-page-btn" data-close="tripPlannerPage">&times;</button></div>
+    <div class="page-content">
+        <label>Destination:</label>
+        <input type="text" id="destSearch" placeholder="Search for a destination...">
+        <div id="destSuggestions" class="place-suggestions"></div>
+        <div id="tripInfo" style="margin-top: 12px; background: #eef5e8; border-radius: 20px; padding: 10px; display: none;"></div>
+        <div id="stationsAlong" style="margin-top: 12px;"></div>
+        <button id="planRouteBtn" class="full-width-btn" style="display: none;">Draw Route with Selected Station</button>
+    </div>
+</div>
 
 <div id="reportPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-flag"></i> Report Station</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div><div class="page-content"><p class="small-text">Select a station, choose report type, submit.</p><div id="reportStationsList"></div></div></div>
 
 <div id="favoritesPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-heart" style="color:#dc2626;"></i> Favorites</h2><button class="close-page-btn" data-close="favoritesPage">&times;</button></div><div class="page-content"><div id="favStationsList"></div></div></div>
 
-<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs, view consumption trends.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p><h4>🌙 Dark mode</h4><p>Toggle via moon icon in header.</p></div></div></div>
+<div id="helpPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div><div class="page-content"><div class="help-section"><h4>🚗 Smart navigation</h4><p>Shows exact litres needed & ETA based on your active vehicle.</p><h4>📝 Reporting</h4><p>Each station shows distance + dropdown.</p><h4>💾 Garage & logs</h4><p>Manage vehicles, track fuel logs, view consumption trends.</p><h4>🔧 Amenities</h4><p>Shops, ATMs, tyre pump, car wash, toilets, LPG, etc.</p><h4>🌙 Dark mode</h4><p>Toggle via moon icon in header.</p><h4>🗺️ Trip Planner</h4><p>Search destination → see fuel needed & stations along the way → pick station → map shows three points.</p></div></div></div>
 
 <div id="exportPage" class="page-overlay"><div class="page-header-bar"><h2><i class="fas fa-download"></i> Export Data</h2><button class="close-page-btn" data-close="exportPage">&times;</button></div><div class="page-content"><button id="exportLogsBtn" class="full-width-btn">Export Fuel Logs (CSV)</button><button id="exportFavsBtn" class="full-width-btn">Export Favorites (JSON)</button><button id="exportReportsBtn" class="full-width-btn">Export Reports (JSON)</button></div></div>
 
@@ -780,11 +834,10 @@
 
 <script>
     // ======================== FUELRADAR ULTIMATE (NO OFFLINE CACHING) ========================
-    // All improvements: debouncing, dark mode, trip planner, price comparison,
-    // amenity filters, sort, route info panel, loading spinner, export, charts.
-    // Removed stationCache and any offline persistence beyond Dexie vehicles/logs/reports.
+    // All original features + enhanced trip planner with place search and three-point route.
+    // No station caching, no auto-refresh interval.
 
-    // -------------------- 1. Database --------------------
+    // -------------------- 1. Database (only for vehicles, logs, reports) --------------------
     const db = new Dexie('FuelRadarDB');
     db.version(2).stores({
         vehicles: '++id, name, tankCapacity, consumptionLper100km, fuelType, isActive',
@@ -808,6 +861,9 @@
     let watchId = null;
     let moveEndTimeout = null;
     let chartInstance = null;
+    let destCoordinates = null;
+    let selectedAlongStation = null;
+    let tripStartPoint = null;
 
     // -------------------- 3. Helper Functions --------------------
     function showToast(msg, isError = false) {
@@ -903,7 +959,6 @@
 
     function getFilteredStations() {
         let filtered = stations.slice();
-        // Filter by amenity if needed
         if (currentFilter.startsWith('amenity_')) {
             const amenityMap = { amenity_shop: 'Shop', amenity_atm: 'ATM', amenity_carwash: 'Car wash' };
             const target = amenityMap[currentFilter];
@@ -918,7 +973,6 @@
             filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || s.address.toLowerCase().includes(q) ||
                 s.amenities.some(a => a.name.toLowerCase().includes(q)));
         }
-        // Sorting
         const sortBy = document.getElementById('sortSelect').value;
         if (sortBy === 'distance') filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
         else if (sortBy === 'price_petrol') filtered.sort((a,b) => parseFloat(a.pricePetrol.slice(1)) - parseFloat(b.pricePetrol.slice(1)));
@@ -949,7 +1003,6 @@
 
     function updateUserMarker(lat, lng, heading) {
         if (userMarker) map.removeLayer(userMarker);
-        // Original car icon using driver.png
         const carIcon = L.divIcon({
             html: `<img src="driver.png" style="width:40px; height:40px; transform: rotate(${heading}deg); transition: transform 0.2s;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />`,
             iconSize: [40, 40],
@@ -1009,7 +1062,6 @@
             let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
             clusterGroup.addLayer(marker);
         });
-        // Prevent map twitching by not reopening popups on cluster click
         map.off('popupopen');
         map.on('popupopen', function(e) {
             const popupNode = e.popup.getElement();
@@ -1101,7 +1153,6 @@
         let message = `🚗 ${activeVehicle.name} needs ${neededLitres.toFixed(1)}L of ${fuelTypeNeeded.toUpperCase()} to reach ${station.name} in ${etaText}.${warning}`;
         showToast(message);
         document.getElementById('warningSentence').innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
-        // Route info panel
         const panel = document.getElementById('routeInfoPanel');
         panel.innerHTML = `<strong>🚗 Route to ${station.name}</strong><br>Distance: ${distanceKm.toFixed(1)} km | ETA: ${etaText}<br>Fuel needed: ${neededLitres.toFixed(1)} L`;
         panel.style.display = 'block';
@@ -1232,7 +1283,6 @@
         if (container) container.innerHTML = logs.map(l => `<div class="log-item">${l.date} | ${l.liters}L @ K${l.pricePerLiter} | total K${l.totalCost.toFixed(2)} | odo ${l.odometer}km</div>`).join('');
         let totalSpent = logs.reduce((s,l) => s + l.totalCost, 0);
         document.getElementById('statsSummary').innerHTML = `💰 Total spent: K${totalSpent.toFixed(2)} | Last: ${logs[0]?.date || '—'}`;
-        // Chart
         const ctx = document.getElementById('fuelTrendChart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
         const chartData = logs.slice(0,10).reverse().map(l => l.liters);
@@ -1253,32 +1303,133 @@
         document.getElementById('tripCostCalc').innerText = 'K' + cost.toFixed(2);
     }
 
-    // Trip Planner
-    function updateTripStationSelect() {
-        let select = document.getElementById('tripStationSelect');
-        select.innerHTML = '<option value="">Direct (no stop)</option>' + stations.map(s => `<option value="${s.id}">${s.name} (${s.distance?.toFixed(1)} km)</option>`).join('');
-    }
-    document.getElementById('planTripBtn').onclick = async () => {
-        let start = document.getElementById('tripStart').value.split(',');
-        let end = document.getElementById('tripEnd').value.split(',');
-        let stationId = document.getElementById('tripStationSelect').value;
-        if (start.length !== 2 || end.length !== 2) { showToast("Enter valid lat,lng", true); return; }
-        let startLat = parseFloat(start[0]), startLng = parseFloat(start[1]);
-        let endLat = parseFloat(end[0]), endLng = parseFloat(end[1]);
-        let totalDist = haversine(startLat, startLng, endLat, endLng);
-        if (stationId) {
-            let station = stations.find(s => s.id == stationId);
-            if (station) {
-                let dist1 = haversine(startLat, startLng, station.lat, station.lon);
-                let dist2 = haversine(station.lat, station.lon, endLat, endLng);
-                totalDist = dist1 + dist2;
-            }
+    // -------------------- 5. Trip Planner with Place Search --------------------
+    let destSearchTimeout = null;
+    document.getElementById('destSearch').addEventListener('input', function() {
+        clearTimeout(destSearchTimeout);
+        const query = this.value.trim();
+        if (query.length < 3) {
+            document.getElementById('destSuggestions').style.display = 'none';
+            return;
         }
-        let fuelNeeded = (totalDist / 100) * activeVehicle.consumptionLper100km;
-        document.getElementById('tripResult').innerHTML = `<strong>Total trip distance:</strong> ${totalDist.toFixed(1)} km<br><strong>Fuel needed:</strong> ${fuelNeeded.toFixed(1)} L<br><strong>Est. cost:</strong> K${(fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel)).toFixed(2)}`;
+        destSearchTimeout = setTimeout(async () => {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`);
+                const data = await res.json();
+                const suggestionsDiv = document.getElementById('destSuggestions');
+                suggestionsDiv.innerHTML = '';
+                if (data.length === 0) {
+                    suggestionsDiv.style.display = 'none';
+                    return;
+                }
+                data.forEach(place => {
+                    const div = document.createElement('div');
+                    div.className = 'place-suggestion-item';
+                    div.textContent = place.display_name;
+                    div.onclick = () => {
+                        destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
+                        document.getElementById('destSearch').value = place.display_name;
+                        suggestionsDiv.style.display = 'none';
+                        // Show trip info
+                        if (actualUserLocation && activeVehicle) {
+                            const dist = haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon);
+                            const fuelNeeded = (dist / 100) * activeVehicle.consumptionLper100km;
+                            const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+                            document.getElementById('tripInfo').innerHTML = `
+                                <strong>🚗 ${activeVehicle.name}</strong><br>
+                                📍 Distance: ${dist.toFixed(1)} km<br>
+                                ⛽ Fuel needed: ${fuelNeeded.toFixed(1)} L<br>
+                                💰 Est. cost: K${cost.toFixed(2)}<br>
+                                🛣️ ETA: ${calculateETA(dist)}
+                            `;
+                            document.getElementById('tripInfo').style.display = 'block';
+                            // Find stations along the route (within 2km of the line)
+                            const start = actualUserLocation;
+                            const end = destCoordinates;
+                            const alongStations = stations.filter(s => {
+                                const d1 = haversine(start.lat, start.lng, s.lat, s.lon);
+                                const d2 = haversine(s.lat, s.lon, end.lat, end.lon);
+                                const total = haversine(start.lat, start.lng, end.lat, end.lon);
+                                // station within 2km of the straight line
+                                const crossTrack = Math.abs(d1 + d2 - total);
+                                return crossTrack < 2 && d1 < dist && d2 < dist;
+                            }).sort((a,b) => a.distance - b.distance);
+                            const stationsDiv = document.getElementById('stationsAlong');
+                            if (alongStations.length === 0) {
+                                stationsDiv.innerHTML = '<p>No fuel stations found along this route.</p>';
+                                document.getElementById('planRouteBtn').style.display = 'none';
+                            } else {
+                                stationsDiv.innerHTML = '<h4>⛽ Select a station along the way:</h4>' + alongStations.map(s => `
+                                    <div class="along-station-item" data-station-id="${s.id}">
+                                        <strong>${s.name}</strong><br>
+                                        📍 ${s.distance.toFixed(1)} km from start<br>
+                                        🚗 ${s.address}
+                                    </div>
+                                `).join('');
+                                document.querySelectorAll('.along-station-item').forEach(el => {
+                                    el.onclick = () => {
+                                        document.querySelectorAll('.along-station-item').forEach(item => item.style.background = '#f0fdf4');
+                                        el.style.background = '#d1fae5';
+                                        selectedAlongStation = stations.find(st => st.id == el.dataset.stationId);
+                                        document.getElementById('planRouteBtn').style.display = 'block';
+                                    };
+                                });
+                            }
+                        } else {
+                            showToast("Location or vehicle not ready", true);
+                        }
+                    };
+                    suggestionsDiv.appendChild(div);
+                });
+                suggestionsDiv.style.display = 'block';
+            } catch(e) {
+                console.warn(e);
+            }
+        }, 500);
+    });
+
+    document.getElementById('planRouteBtn').onclick = () => {
+        if (!actualUserLocation || !destCoordinates || !selectedAlongStation) {
+            showToast("Missing start, destination or station", true);
+            return;
+        }
+        // Clear existing route
+        if (routingControl) map.removeControl(routingControl);
+        // Draw three points: start (green marker), station (blue marker?), destination (red marker)
+        // We'll add markers and two separate route lines: start->station (green), station->destination (red)
+        const startLatLng = L.latLng(actualUserLocation.lat, actualUserLocation.lng);
+        const stationLatLng = L.latLng(selectedAlongStation.lat, selectedAlongStation.lon);
+        const destLatLng = L.latLng(destCoordinates.lat, destCoordinates.lon);
+        
+        // Clear previous custom markers
+        if (window.tripMarkers) window.tripMarkers.forEach(m => map.removeLayer(m));
+        window.tripMarkers = [];
+        window.tripMarkers.push(L.marker(startLatLng, { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:green;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Start'));
+        window.tripMarkers.push(L.marker(stationLatLng, { icon: L.divIcon({ html: '<i class="fas fa-gas-pump" style="font-size:24px; color:blue;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup(selectedAlongStation.name));
+        window.tripMarkers.push(L.marker(destLatLng, { icon: L.divIcon({ html: '<i class="fas fa-flag-checkered" style="font-size:24px; color:red;"></i>', iconSize: [24,24] }) }).addTo(map).bindPopup('Destination'));
+        
+        // Route 1: start -> station (green)
+        const route1 = L.Routing.control({
+            waypoints: [startLatLng, stationLatLng],
+            routeWhileDragging: false,
+            lineOptions: { styles: [{ color: 'green', weight: 5 }] },
+            show: false
+        }).addTo(map);
+        // Route 2: station -> destination (red)
+        const route2 = L.Routing.control({
+            waypoints: [stationLatLng, destLatLng],
+            routeWhileDragging: false,
+            lineOptions: { styles: [{ color: 'red', weight: 5 }] },
+            show: false
+        }).addTo(map);
+        routingControl = { route1, route2 }; // store to clear later
+        document.getElementById('clearRouteBtn').style.display = 'flex';
+        map.fitBounds([startLatLng, destLatLng]);
+        showToast("Route drawn: Green = to station, Red = to destination");
+        closePage('tripPlannerPage');
     };
 
-    // Export
+    // -------------------- 6. Export --------------------
     document.getElementById('exportLogsBtn').onclick = async () => {
         let logs = await db.fuelLogs.where('vehicleId').equals(activeVehicle.id).toArray();
         let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
@@ -1304,27 +1455,25 @@
         a.click();
     };
 
-    // -------------------- 5. Page Switching --------------------
+    // -------------------- 7. Page Switching --------------------
     function openPage(pageId) {
         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
         document.getElementById(pageId).classList.add('show');
         if (pageId === 'reportPage') renderReportStationsList();
         if (pageId === 'favoritesPage') updateFavPage();
         if (pageId === 'garagePage') { renderVehicleList(); renderFuelLogs(); }
-        if (pageId === 'tripPlannerPage') updateTripStationSelect();
     }
 
     function closePage(pageId) {
         document.getElementById(pageId).classList.remove('show');
     }
 
-    // -------------------- 6. Map & Location --------------------
+    // -------------------- 8. Map & Location --------------------
     function initMap() {
         map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         clusterGroup = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 50 });
         map.addLayer(clusterGroup);
-        // Debounced moveend to prevent twitching
         map.on('moveend', () => {
             if (moveEndTimeout) clearTimeout(moveEndTimeout);
             moveEndTimeout = setTimeout(async () => {
@@ -1364,7 +1513,7 @@
         }
     }
 
-    // -------------------- 7. Event Listeners --------------------
+    // -------------------- 9. Event Listeners --------------------
     document.getElementById('nearMeBtn').onclick = locateAndFetch;
     document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
     document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
@@ -1373,7 +1522,16 @@
     document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); };
     document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); renderFuelStationsList(); updateGreenSuggestion(); }; });
     document.getElementById('overlayMapBtn').onclick = () => { let wrap = document.getElementById('mapWrapper'); if (wrap.requestFullscreen) wrap.requestFullscreen(); };
-    document.getElementById('clearRouteBtn').onclick = () => { if (routingControl) { map.removeControl(routingControl); routingControl = null; document.getElementById('clearRouteBtn').style.display = 'none'; document.getElementById('routeInfoPanel').style.display = 'none'; } };
+    document.getElementById('clearRouteBtn').onclick = () => { 
+        if (routingControl) {
+            if (routingControl.route1) map.removeControl(routingControl.route1);
+            if (routingControl.route2) map.removeControl(routingControl.route2);
+            routingControl = null;
+        }
+        if (window.tripMarkers) window.tripMarkers.forEach(m => map.removeLayer(m));
+        document.getElementById('clearRouteBtn').style.display = 'none';
+        document.getElementById('routeInfoPanel').style.display = 'none';
+    };
     document.getElementById('floatingFuelBtn').onclick = () => { openPage('reportPage'); renderFuelStationsList(); };
     document.getElementById('sortSelect').onchange = () => { renderMarkers(); renderFuelStationsList(); updateGreenSuggestion(); };
 
@@ -1430,9 +1588,6 @@
         document.getElementById('addLogForm').style.display = 'none';
     };
     document.getElementById('calcTripBtnCalc').onclick = calculateTrip;
-
-    // Auto-refresh every 2 min
-    setInterval(() => { if (activeLocation) loadStationsAndRefresh(false); }, 120000);
 
     // Start the app
     initMap();
