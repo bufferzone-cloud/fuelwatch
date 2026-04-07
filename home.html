@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes, viewport-fit=cover">
     <title>FuelRadar · Ultimate · Full Feature + Auth</title>
-
+    
     <!-- Leaflet & Plugins -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -13,11 +13,11 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
+    
     <!-- Font Awesome & Charts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
+    
     <!-- Firebase (compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -25,9 +25,9 @@
 
     <!-- Cloudinary Upload Widget -->
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-
+    
     <style>
-        /* ========== RESET & GLOBAL (exactly as original) ========== */
+        /* ---------- RESET & GLOBAL (original) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -53,7 +53,7 @@
             color: #e0e0e0;
         }
 
-        /* ---------- AUTH SCREENS (new) ---------- */
+        /* ---------- AUTH CONTAINER (NEW) ---------- */
         #auth-container {
             width: 100%;
             max-width: 528px;
@@ -828,9 +828,6 @@
         hr { margin: 16px 0; }
         .driver-image-large { text-align: center; margin-bottom: 16px; }
         .driver-image-large img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; }
-        .car-images { display: flex; gap: 10px; margin: 10px 0; }
-        .car-thumb { width: 70px; height: 70px; border-radius: 16px; object-fit: cover; border: 2px solid #16a34a; }
-        .active-badge { background: #16a34a; color: white; padding: 2px 10px; border-radius: 30px; font-size: 12px; }
 
         /* Search Results (original) */
         .search-results-list {
@@ -987,6 +984,27 @@
             margin-left: 20px;
             margin-bottom: 12px;
         }
+
+        /* Car photo upload additions */
+        .car-images {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .car-thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 2px solid #16a34a;
+        }
+        .active-badge {
+            background: #16a34a;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -1127,8 +1145,7 @@
         </div>
     </div>
 
-    <!-- ==================== ALL PAGE OVERLAYS (ORIGINAL) ==================== -->
-    <!-- Search Page -->
+    <!-- Search Page Overlay -->
     <div id="searchPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-search"></i> Search Stations</h2><button class="close-page-btn" data-close="searchPage">&times;</button></div>
         <div class="page-content">
