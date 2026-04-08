@@ -1233,6 +1233,7 @@
         let stationsLoaded = false;
         let currentRouteInstructions = [];
         let currentRoutingControl = null;
+        let initialLocationSet = false;
 
         // Trip planner state
         let destCoordinates = null;
@@ -1719,10 +1720,14 @@
                     let { latitude, longitude, heading } = pos.coords;
                     actualUserLocation = { lat: latitude, lng: longitude };
                     activeLocation = { lat: latitude, lng: longitude };
-                    map.setView([latitude, longitude], 14);
                     updateUserMarker(latitude, longitude, heading || userHeading);
                     if (!stationsLoaded) loadStationsAndRefresh(true);
                     reverseGeocode(latitude, longitude);
+                    // Only set view on first location
+                    if (!initialLocationSet) {
+                        map.setView([latitude, longitude], 14);
+                        initialLocationSet = true;
+                    }
                 }, err => showToast("Location error: " + err.message, true), { enableHighAccuracy: true });
             }
         }
