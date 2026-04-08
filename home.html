@@ -164,6 +164,16 @@
             color: #065f46;
             white-space: nowrap;
         }
+        .welcome-country {
+            background: #eef5e8;
+            border-radius: 40px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #065f46;
+            border: 1px solid #bbf7d0;
+        }
         .profile-pic-upload {
             display: flex;
             align-items: center;
@@ -816,6 +826,16 @@
         .driver-image-large { text-align: center; margin-bottom: 16px; }
         .driver-image-large img { width: 100px; height: 100px; object-fit: contain; }
         hr { margin: 16px 0; }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(22,163,74,0.3);
+            border-radius: 50%;
+            border-top-color: #16a34a;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -838,10 +858,16 @@
             <p style="text-align:center; margin-top:16px; font-size:13px;"><a href="#" id="forgotPassword">Forgot password?</a></p>
         </div>
         <div id="registerForm" class="auth-form hide">
+            <div id="countryDetectionMessage" style="text-align:center; margin-bottom:16px;">
+                <span class="loading-spinner"></span> Detecting your country...
+            </div>
+            <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
+                <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
+            </div>
             <input type="text" id="regName" class="pill-input" placeholder="Full name">
             <input type="email" id="regEmail" class="pill-input" placeholder="Email">
             <div class="phone-row">
-                <span class="country-code-box" id="detectedCountryCode">+1</span>
+                <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
                 <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;">
             </div>
             <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)">
@@ -854,7 +880,7 @@
     </div>
 </div>
 
-<!-- MAIN APP CONTAINER -->
+<!-- MAIN APP CONTAINER (hidden until auth) -->
 <div class="app-container" id="mainAppContainer" style="display:none;">
     <!-- Header -->
     <div class="header">
@@ -1204,6 +1230,8 @@
         let userCountryCode = 'US';
         let userPhoneCode = '+1';
         let userCurrency = 'USD';
+        let userCountryName = 'United States';
+        let userCountryFlag = '🇺🇸';
         let tempProfilePicUrl = '';
 
         // UI Elements
@@ -1223,21 +1251,55 @@
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
 
+        // Country detection with flag
         async function detectUserCountry() {
+            const msgDiv = document.getElementById('countryDetectionMessage');
+            const welcomeBox = document.getElementById('welcomeCountryBox');
+            const flagSpan = document.getElementById('welcomeFlag');
+            const nameSpan = document.getElementById('detectedCountryName');
+            const codeBox = document.getElementById('detectedCountryCodeBox');
+            
+            msgDiv.style.display = 'block';
+            welcomeBox.style.display = 'none';
+            
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
                 userCountryCode = data.country_code || 'US';
                 userPhoneCode = data.country_calling_code || '+1';
                 userCurrency = data.currency || 'USD';
-                document.getElementById('detectedCountryCode').innerText = userPhoneCode;
+                userCountryName = data.country_name || 'United States';
+                
+                // Get flag emoji from country code
+                userCountryFlag = getFlagEmoji(userCountryCode);
+                
+                // Update UI
+                codeBox.innerHTML = `${userCountryFlag} ${userPhoneCode}`;
+                flagSpan.innerHTML = userCountryFlag;
+                nameSpan.innerText = userCountryName;
+                
                 await fetchFuelPricesForCountry(userCountryCode);
+                
+                msgDiv.style.display = 'none';
+                welcomeBox.style.display = 'block';
             } catch (e) {
                 console.warn('Country detection failed');
-                document.getElementById('detectedCountryCode').innerText = '+1';
+                codeBox.innerHTML = `🇺🇸 +1`;
+                flagSpan.innerHTML = `🇺🇸`;
+                nameSpan.innerText = 'United States';
                 currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' };
+                msgDiv.style.display = 'none';
+                welcomeBox.style.display = 'block';
             }
             updatePriceDisplay();
+        }
+
+        function getFlagEmoji(countryCode) {
+            const codePoints = countryCode
+                .toUpperCase()
+                .split('')
+                .map(char => 127397 + char.charCodeAt());
+            return String.fromCodePoint(...codePoints);
         }
 
         async function fetchFuelPricesForCountry(countryCode) {
@@ -1267,6 +1329,9 @@
             const fuelPriceSpan = document.getElementById('fuelPriceInfo');
             if (fuelPriceSpan) fuelPriceSpan.innerText = info;
         }
+
+        // Start detection when page loads
+        detectUserCountry();
 
         function haversine(lat1, lng1, lat2, lng2) {
             const R = 6371;
@@ -1812,7 +1877,6 @@
                 document.getElementById('profilePhone').value = userProfile.phone || '';
                 authOverlay.style.display = 'none';
                 mainApp.style.display = 'flex';
-                await detectUserCountry();
                 loadUserVehicles();
                 initMap();
                 locateAndFetch();
