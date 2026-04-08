@@ -212,7 +212,23 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #14532d;
             margin-top: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+        .auth-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        .auth-btn.loading .spinner { display: inline-block; }
+        .auth-btn.loading span { opacity: 0.7; }
 
         /* ---------- HEADER & MAIN UI ---------- */
         .header {
@@ -854,7 +870,7 @@
         <div id="loginForm" class="auth-form">
             <input type="email" id="loginEmail" class="pill-input" placeholder="Email">
             <input type="password" id="loginPassword" class="pill-input" placeholder="Password">
-            <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+            <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
             <p style="text-align:center; margin-top:16px; font-size:13px;"><a href="#" id="forgotPassword">Forgot password?</a></p>
         </div>
         <div id="registerForm" class="auth-form hide">
@@ -875,12 +891,12 @@
                 <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
                 <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
             </div>
-            <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> Create Account</button>
+            <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
         </div>
     </div>
 </div>
 
-<!-- MAIN APP CONTAINER (hidden until auth) -->
+<!-- MAIN APP CONTAINER -->
 <div class="app-container" id="mainAppContainer" style="display:none;">
     <!-- Header -->
     <div class="header">
@@ -1032,7 +1048,7 @@
                 <div class="upload-box" id="addBackUpload"><i class="fas fa-car-side"></i> Back</div>
                 <div class="upload-box" id="addSideUpload"><i class="fas fa-caravan"></i> Side</div>
             </div>
-            <button id="saveVehicleBtn" class="full-width-btn">Save Vehicle</button>
+            <button id="saveVehicleBtn" class="full-width-btn"><span>Save Vehicle</span> <span class="spinner" style="display:none;"></span></button>
         </div>
         <hr><h4>Fuel Logs</h4>
         <button id="addLogBtn" class="full-width-btn" style="background:#3b82f6;">Log Refuel</button>
@@ -1251,6 +1267,16 @@
             document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
 
+        function setButtonLoading(btn, loading) {
+            if (loading) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
         // Country detection with flag
         async function detectUserCountry() {
             const msgDiv = document.getElementById('countryDetectionMessage');
@@ -1270,10 +1296,8 @@
                 userCurrency = data.currency || 'USD';
                 userCountryName = data.country_name || 'United States';
                 
-                // Get flag emoji from country code
                 userCountryFlag = getFlagEmoji(userCountryCode);
                 
-                // Update UI
                 codeBox.innerHTML = `${userCountryFlag} ${userPhoneCode}`;
                 flagSpan.innerHTML = userCountryFlag;
                 nameSpan.innerText = userCountryName;
@@ -1861,6 +1885,7 @@
             if (pageId === 'historyPage') loadHistory();
             if (pageId === 'recentPage') loadRecentStations();
             if (pageId === 'tripPlannerPage') resetTripPlanner();
+            if (pageId === 'map') { /* just close sidebar and show map */ }
         }
         function closePage(pageId) { document.getElementById(pageId).classList.remove('show'); }
 
@@ -1914,12 +1939,18 @@
             }).open();
         };
 
-        document.getElementById('registerBtn').onclick = async () => {
+        document.getElementById('registerBtn').onclick = async function(e) {
+            const btn = this;
+            setButtonLoading(btn, true);
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value;
-            if (!name || !email || !password) return showToast('Fill required fields', true);
+            if (!name || !email || !password) {
+                showToast('Fill required fields', true);
+                setButtonLoading(btn, false);
+                return;
+            }
             try {
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const uid = cred.user.uid;
@@ -1929,13 +1960,19 @@
                     createdAt: Date.now()
                 });
                 authOverlay.style.display = 'none';
-            } catch(e) { showToast(e.message, true); }
+            } catch(e) { 
+                showToast(e.message, true); 
+                setButtonLoading(btn, false);
+            }
         };
 
-        document.getElementById('loginBtn').onclick = () => {
+        document.getElementById('loginBtn').onclick = function(e) {
+            const btn = this;
+            setButtonLoading(btn, true);
             const email = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPassword').value;
-            auth.signInWithEmailAndPassword(email, pass).catch(e => showToast(e.message, true));
+            auth.signInWithEmailAndPassword(email, pass)
+                .catch(e => { showToast(e.message, true); setButtonLoading(btn, false); });
         };
 
         document.getElementById('logoutSidebar').onclick = () => auth.signOut();
@@ -1970,7 +2007,14 @@
         document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddBack = result.info.secure_url; }).open();
         document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddSide = result.info.secure_url; }).open();
 
-        document.getElementById('saveVehicleBtn').onclick = async () => {
+        document.getElementById('saveVehicleBtn').onclick = async function() {
+            const btn = this;
+            const spinner = btn.querySelector('.spinner');
+            const span = btn.querySelector('span');
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            span.style.opacity = '0.7';
+            
             const name = document.getElementById('newVehicleName').value;
             const license = document.getElementById('newLicensePlate').value;
             const tank = parseFloat(document.getElementById('newTankCapacity').value);
@@ -1984,6 +2028,9 @@
                 document.getElementById('addVehicleForm').style.display = 'none';
                 tempAddFront = tempAddBack = tempAddSide = '';
             }
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            span.style.opacity = '1';
         };
 
         document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
@@ -2034,6 +2081,7 @@
         document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
         document.getElementById('overlayMapBtn').onclick = () => { document.getElementById('mapWrapper').requestFullscreen?.(); };
 
+        // Sidebar
         const sidebar = document.getElementById('sidebarOverlay');
         document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
         document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
@@ -2041,8 +2089,18 @@
         document.querySelectorAll('.sidebar-item').forEach(item => {
             if (item.id === 'darkModeSidebar') {
                 item.onclick = () => { document.body.classList.toggle('dark'); sidebar.classList.remove('open'); };
+            } else if (item.id === 'logoutSidebar') {
+                // handled separately
             } else if (item.dataset.page) {
-                item.onclick = () => { openPage(item.dataset.page); sidebar.classList.remove('open'); };
+                item.onclick = () => { 
+                    const page = item.dataset.page;
+                    if (page === 'map') {
+                        sidebar.classList.remove('open');
+                    } else {
+                        openPage(page); 
+                        sidebar.classList.remove('open');
+                    }
+                };
             }
         });
         document.querySelectorAll('.close-page-btn').forEach(btn => { btn.onclick = () => closePage(btn.dataset.close); });
@@ -2056,6 +2114,7 @@
             container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
         });
 
+        // Trip Planner navigation
         document.getElementById('nextStep').onclick = async () => {
             if (currentStep === 1) { if (!destCoordinates) { showToast("Select destination", true); return; } await loadStationsAlongRoute(); showStep(2); }
             else if (currentStep === 2) { if (!selectedStation) { showToast("Select station", true); return; } await loadFunPlaces(); showStep(3); }
