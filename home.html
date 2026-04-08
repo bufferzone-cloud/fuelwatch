@@ -1723,7 +1723,6 @@
                     updateUserMarker(latitude, longitude, heading || userHeading);
                     if (!stationsLoaded) loadStationsAndRefresh(true);
                     reverseGeocode(latitude, longitude);
-                    // Only set view on first location
                     if (!initialLocationSet) {
                         map.setView([latitude, longitude], 14);
                         initialLocationSet = true;
@@ -1884,13 +1883,10 @@
 
         // ---------- PAGE NAVIGATION ----------
         function openPage(pageId) {
-            // Hide all page overlays
             document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
-            // Show the selected page
             const pageEl = document.getElementById(pageId);
             if (pageEl) {
                 pageEl.classList.add('show');
-                // Additional actions for specific pages
                 if (pageId === 'reportPage') renderReportStationsList();
                 if (pageId === 'favoritesPage') updateFavPage();
                 if (pageId === 'garagePage') { renderVehicleList(); renderFuelLogs(); }
@@ -1898,7 +1894,6 @@
                 if (pageId === 'recentPage') loadRecentStations();
                 if (pageId === 'tripPlannerPage') resetTripPlanner();
             }
-            // Close sidebar if open
             document.getElementById('sidebarOverlay').classList.remove('open');
         }
         function closePage(pageId) { 
