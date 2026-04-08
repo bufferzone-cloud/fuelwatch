@@ -2110,6 +2110,8 @@
         document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
         document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
         sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
+        
+        // FIX: Append "Page" to the page name to match overlay IDs
         document.querySelectorAll('.sidebar-item').forEach(item => {
             if (item.id === 'darkModeSidebar') {
                 item.onclick = () => { document.body.classList.toggle('dark'); sidebar.classList.remove('open'); };
@@ -2123,12 +2125,13 @@
                         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
                         sidebar.classList.remove('open');
                     } else {
-                        openPage(page); 
+                        openPage(page + 'Page');   // <--- FIX: add 'Page' suffix
                         sidebar.classList.remove('open');
                     }
                 };
             }
         });
+
         document.querySelectorAll('.close-page-btn').forEach(btn => { btn.onclick = () => closePage(btn.dataset.close); });
         document.getElementById('floatingFuelBtn').onclick = () => openPage('reportPage');
         document.getElementById('searchBoxTrigger').onclick = () => openPage('searchPage');
