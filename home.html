@@ -1611,6 +1611,14 @@
             activeVehicle = vehicles.find(v => v.isActive) || vehicles[0];
             if (activeVehicle) updateActiveVehicleUI();
             renderVehicleList();
+            
+            // If no vehicles, automatically open garage page and show add vehicle form
+            if (vehicles.length === 0) {
+                openPage('garagePage');
+                document.getElementById('addVehicleForm').style.display = 'block';
+                showToast('Welcome! Please add your first vehicle.');
+            }
+            return vehicles;
         }
 
         function updateActiveVehicleUI() {
@@ -1913,7 +1921,7 @@
                 document.getElementById('profilePhone').value = userProfile.phone || '';
                 authOverlay.style.display = 'none';
                 mainApp.style.display = 'flex';
-                loadUserVehicles();
+                await loadUserVehicles(); // This will auto-open garage if no vehicles
                 initMap();
                 locateAndFetch();
             } else {
@@ -2032,12 +2040,17 @@
             const cons = parseFloat(document.getElementById('newConsumption').value);
             const fuel = document.getElementById('newFuelType').value;
             if (name && tank && cons) {
-                const vehicleData = { name, licensePlate: license, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, images: { front: tempAddFront, back: tempAddBack, side: tempAddSide }, isActive: false, ownerId: currentUser.uid };
+                const vehicleData = { name, licensePlate: license, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, images: { front: tempAddFront, back: tempAddBack, side: tempAddSide }, isActive: true, ownerId: currentUser.uid };
                 await rtdb.ref('vehicles/' + currentUser.uid).push(vehicleData);
                 await localDB.vehicles.add(vehicleData);
-                loadUserVehicles();
+                activeVehicle = vehicleData;
+                updateActiveVehicleUI();
+                renderVehicleList();
                 document.getElementById('addVehicleForm').style.display = 'none';
                 tempAddFront = tempAddBack = tempAddSide = '';
+                showToast('Vehicle saved!');
+                // Close garage page and return to map
+                closePage('garagePage');
             }
             btn.disabled = false;
             spinner.style.display = 'none';
@@ -2107,7 +2120,6 @@
                     e.preventDefault();
                     const page = item.dataset.page;
                     if (page === 'map') {
-                        // Just close sidebar and any overlays
                         document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
                         sidebar.classList.remove('open');
                     } else {
