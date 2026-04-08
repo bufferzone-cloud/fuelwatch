@@ -150,8 +150,9 @@
         .phone-row {
             display: flex;
             gap: 8px;
+            align-items: center;
         }
-        .country-code-display {
+        .country-code-box {
             background: #eef5e8;
             border: 1.5px solid #16a34a;
             border-radius: 60px;
@@ -161,6 +162,33 @@
             text-align: center;
             font-weight: 600;
             color: #065f46;
+            white-space: nowrap;
+        }
+        .profile-pic-upload {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .profile-pic-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #16a34a;
+            object-fit: cover;
+            background: #f0fdf4;
+        }
+        .upload-pic-btn {
+            background: #f0fdf4;
+            border: 1.5px dashed #16a34a;
+            border-radius: 40px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #16a34a;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
         }
         .auth-btn {
             background: #16a34a;
@@ -174,35 +202,6 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #14532d;
             margin-top: 10px;
-        }
-        .vehicle-upload-row {
-            display: flex;
-            gap: 12px;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        .upload-box {
-            flex: 1;
-            aspect-ratio: 1/1;
-            border: 2px dashed #16a34a;
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #f0fdf4;
-            cursor: pointer;
-            background-size: cover;
-            background-position: center;
-            color: #065f46;
-            font-weight: 600;
-            font-size: 12px;
-            position: relative;
-        }
-        .upload-box span {
-            background: rgba(255,255,255,0.7);
-            padding: 4px 8px;
-            border-radius: 30px;
         }
 
         /* ---------- HEADER & MAIN UI ---------- */
@@ -833,28 +832,23 @@
             <div class="auth-tab" data-tab="register">Register</div>
         </div>
         <div id="loginForm" class="auth-form">
-            <input type="email" id="loginEmail" class="pill-input" placeholder="Email" value="">
+            <input type="email" id="loginEmail" class="pill-input" placeholder="Email">
             <input type="password" id="loginPassword" class="pill-input" placeholder="Password">
             <button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
-            <p style="text-align:center; margin-top:16px; font-size:13px;">
-                <a href="#" id="forgotPassword">Forgot password?</a>
-            </p>
+            <p style="text-align:center; margin-top:16px; font-size:13px;"><a href="#" id="forgotPassword">Forgot password?</a></p>
         </div>
         <div id="registerForm" class="auth-form hide">
             <input type="text" id="regName" class="pill-input" placeholder="Full name">
             <input type="email" id="regEmail" class="pill-input" placeholder="Email">
             <div class="phone-row">
-                <span class="country-code-display" id="detectedCountryCode">+1</span>
-                <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2;">
+                <span class="country-code-box" id="detectedCountryCode">+1</span>
+                <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;">
             </div>
             <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)">
-            <div class="vehicle-upload-row">
-                <div class="upload-box" id="uploadFrontBtn"><i class="fas fa-car"></i> <span>Front</span></div>
-                <div class="upload-box" id="uploadBackBtn"><i class="fas fa-car-side"></i> <span>Back</span></div>
-                <div class="upload-box" id="uploadSideBtn"><i class="fas fa-caravan"></i> <span>Side</span></div>
+            <div class="profile-pic-upload">
+                <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+                <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
             </div>
-            <input type="text" id="regLicensePlate" class="pill-input" placeholder="License plate (optional)">
-            <input type="text" id="regCarModel" class="pill-input" placeholder="Car model / name">
             <button class="auth-btn" id="registerBtn"><i class="fas fa-user-plus"></i> Create Account</button>
         </div>
     </div>
@@ -982,7 +976,7 @@
         <div class="settings-field"><label>Email</label><input id="profileEmail" class="pill-input" disabled></div>
         <div class="settings-field"><label>Phone</label><input id="profilePhone" class="pill-input"></div>
         <button id="updateProfileBtn" class="auth-btn">Update Profile</button>
-        <button id="changePhotoBtn" class="upload-btn" style="margin-top:12px; width:100%;">Change profile picture</button>
+        <button id="changePhotoBtn" class="upload-pic-btn" style="margin-top:12px; width:100%;">Change profile picture</button>
     </div>
 </div>
 
@@ -1007,7 +1001,7 @@
             <input type="number" id="newTankCapacity" placeholder="Tank capacity (L)">
             <input type="number" id="newConsumption" placeholder="L/100km">
             <select id="newFuelType"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select>
-            <div class="vehicle-upload-row">
+            <div class="vehicle-upload-row" style="display: flex; gap: 12px; margin: 16px 0;">
                 <div class="upload-box" id="addFrontUpload"><i class="fas fa-car"></i> Front</div>
                 <div class="upload-box" id="addBackUpload"><i class="fas fa-car-side"></i> Back</div>
                 <div class="upload-box" id="addSideUpload"><i class="fas fa-caravan"></i> Side</div>
@@ -1162,7 +1156,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const rtdb = firebase.database();
-        const storage = firebase.storage();
 
         // ---------- CLOUDINARY CONFIG ----------
         const CLOUD_NAME = 'dd3lcymrk';
@@ -1211,6 +1204,7 @@
         let userCountryCode = 'US';
         let userPhoneCode = '+1';
         let userCurrency = 'USD';
+        let tempProfilePicUrl = '';
 
         // UI Elements
         const authOverlay = document.getElementById('authOverlay');
@@ -1272,10 +1266,6 @@
             const info = `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}/${currentPrices.diesel.toFixed(2)}`;
             const fuelPriceSpan = document.getElementById('fuelPriceInfo');
             if (fuelPriceSpan) fuelPriceSpan.innerText = info;
-            const petrolSpan = document.getElementById('petrolPriceDisplay');
-            const dieselSpan = document.getElementById('dieselPriceDisplay');
-            if (petrolSpan) petrolSpan.innerText = currentPrices.petrol.toFixed(2);
-            if (dieselSpan) dieselSpan.innerText = currentPrices.diesel.toFixed(2);
         }
 
         function haversine(lat1, lng1, lat2, lng2) {
@@ -1843,39 +1833,37 @@
             });
         });
 
-        let tempFront='', tempBack='', tempSide='';
-        document.getElementById('uploadFrontBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'] }, (error, result) => { if (!error && result.event === 'success') { tempFront = result.info.secure_url; document.getElementById('uploadFrontBtn').style.backgroundImage = `url(${tempFront})`; } }).open();
-        document.getElementById('uploadBackBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempBack = result.info.secure_url; }).open();
-        document.getElementById('uploadSideBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempSide = result.info.secure_url; }).open();
-
-        let tempAddFront='', tempAddBack='', tempAddSide='';
-        document.getElementById('addFrontUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddFront = result.info.secure_url; }).open();
-        document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddBack = result.info.secure_url; }).open();
-        document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddSide = result.info.secure_url; }).open();
+        // Profile pic upload for registration
+        document.getElementById('regProfilePicBtn').onclick = () => {
+            cloudinary.createUploadWidget({
+                cloudName: CLOUD_NAME,
+                uploadPreset: UPLOAD_PRESET,
+                sources: ['local', 'camera'],
+                cropping: true,
+                croppingAspectRatio: 1,
+                folder: 'profiles'
+            }, (error, result) => {
+                if (!error && result.event === 'success') {
+                    tempProfilePicUrl = result.info.secure_url;
+                    document.getElementById('regProfilePicPreview').src = tempProfilePicUrl;
+                }
+            }).open();
+        };
 
         document.getElementById('registerBtn').onclick = async () => {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value;
-            const license = document.getElementById('regLicensePlate').value;
-            const model = document.getElementById('regCarModel').value;
             if (!name || !email || !password) return showToast('Fill required fields', true);
             try {
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const uid = cred.user.uid;
                 const fullPhone = userPhoneCode + phone;
                 await rtdb.ref('users/' + uid).set({
-                    name, email, phone: fullPhone, photoURL: '', country: userCountryCode, currency: userCurrency,
+                    name, email, phone: fullPhone, photoURL: tempProfilePicUrl || '', country: userCountryCode, currency: userCurrency,
                     createdAt: Date.now()
                 });
-                if (model) {
-                    const vehicleRef = rtdb.ref('vehicles/' + uid).push();
-                    await vehicleRef.set({
-                        name: model, licensePlate: license, tankCapacity: 50, consumptionLper100km: 8.5, fuelType: 'petrol',
-                        images: { front: tempFront, back: tempBack, side: tempSide }, isActive: true, ownerId: uid
-                    });
-                }
                 authOverlay.style.display = 'none';
             } catch(e) { showToast(e.message, true); }
         };
@@ -1894,14 +1882,29 @@
             await rtdb.ref('users/'+currentUser.uid).update({ name, phone });
             showToast('Profile updated');
         };
-        document.getElementById('changePhotoBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, folder: 'profiles' }, async (error, result) => {
-            if (!error && result.event === 'success') {
-                const url = result.info.secure_url;
-                await rtdb.ref('users/'+currentUser.uid).update({ photoURL: url });
-                document.getElementById('userProfilePicHeader').src = url;
-                document.getElementById('profilePicLarge').src = url;
-            }
-        }).open();
+        document.getElementById('changePhotoBtn').onclick = () => {
+            cloudinary.createUploadWidget({
+                cloudName: CLOUD_NAME,
+                uploadPreset: UPLOAD_PRESET,
+                sources: ['local', 'camera'],
+                cropping: true,
+                croppingAspectRatio: 1,
+                folder: 'profiles'
+            }, async (error, result) => {
+                if (!error && result.event === 'success') {
+                    const url = result.info.secure_url;
+                    await rtdb.ref('users/'+currentUser.uid).update({ photoURL: url });
+                    document.getElementById('userProfilePicHeader').src = url;
+                    document.getElementById('profilePicLarge').src = url;
+                }
+            }).open();
+        };
+
+        // Vehicle addition in garage
+        let tempAddFront='', tempAddBack='', tempAddSide='';
+        document.getElementById('addFrontUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddFront = result.info.secure_url; }).open();
+        document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddBack = result.info.secure_url; }).open();
+        document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddSide = result.info.secure_url; }).open();
 
         document.getElementById('saveVehicleBtn').onclick = async () => {
             const name = document.getElementById('newVehicleName').value;
@@ -1915,6 +1918,7 @@
                 await localDB.vehicles.add(vehicleData);
                 loadUserVehicles();
                 document.getElementById('addVehicleForm').style.display = 'none';
+                tempAddFront = tempAddBack = tempAddSide = '';
             }
         };
 
@@ -2039,6 +2043,13 @@
             }, 500);
         });
 
+        // Export functions
+        function downloadBlob(content, fileName, mimeType) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([content], { type: mimeType }));
+            a.download = fileName;
+            a.click();
+        }
         document.getElementById('exportLogsBtn').onclick = async () => {
             let logs = await localDB.fuelLogs.where('vehicleId').equals(activeVehicle?.id).toArray();
             let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
@@ -2047,12 +2058,6 @@
         document.getElementById('exportFavsBtn').onclick = () => downloadBlob(JSON.stringify(favoriteIds), 'favorites.json', 'application/json');
         document.getElementById('exportReportsBtn').onclick = async () => { let reports = await localDB.userReports.toArray(); downloadBlob(JSON.stringify(reports), 'reports.json', 'application/json'); };
         document.getElementById('exportHistoryBtn').onclick = async () => { let hist = await localDB.tripHistory.toArray(); downloadBlob(JSON.stringify(hist), 'trip_history.json', 'application/json'); };
-        function downloadBlob(content, fileName, mimeType) {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([content], { type: mimeType }));
-            a.download = fileName;
-            a.click();
-        }
 
         document.getElementById('clearHistoryBtn').onclick = async () => { await localDB.tripHistory.clear(); loadHistory(); showToast("History cleared"); };
         document.getElementById('clearRecentBtn').onclick = async () => { await localDB.recentStations.clear(); loadRecentStations(); showToast("Recent cleared"); };
