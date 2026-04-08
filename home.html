@@ -2103,10 +2103,17 @@
             } else if (item.id === 'logoutSidebar') {
                 // handled separately
             } else if (item.dataset.page) {
-                item.onclick = () => { 
+                item.onclick = (e) => { 
+                    e.preventDefault();
                     const page = item.dataset.page;
-                    openPage(page); 
-                    sidebar.classList.remove('open');
+                    if (page === 'map') {
+                        // Just close sidebar and any overlays
+                        document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
+                        sidebar.classList.remove('open');
+                    } else {
+                        openPage(page); 
+                        sidebar.classList.remove('open');
+                    }
                 };
             }
         });
