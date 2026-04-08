@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1300,6 +1299,8 @@
             if (tags.shop) amenities.push({ icon: 'fa-store', name: 'Shop' });
             if (tags.atm === 'yes') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
             if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
+            if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
+            if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
             if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel' });
             return amenities;
         }
@@ -1645,7 +1646,7 @@
             }
         }
 
-        // ---------- TRIP PLANNER (full implementation) ----------
+        // ---------- TRIP PLANNER ----------
         function resetTripPlanner() {
             currentStep = 1;
             showStep(1);
@@ -1831,8 +1832,7 @@
             }
         });
 
-        // ---------- EVENT LISTENERS (all original) ----------
-        // Tabs
+        // ---------- EVENT LISTENERS ----------
         document.querySelectorAll('.auth-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -1843,7 +1843,6 @@
             });
         });
 
-        // Register uploads
         let tempFront='', tempBack='', tempSide='';
         document.getElementById('uploadFrontBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'] }, (error, result) => { if (!error && result.event === 'success') { tempFront = result.info.secure_url; document.getElementById('uploadFrontBtn').style.backgroundImage = `url(${tempFront})`; } }).open();
         document.getElementById('uploadBackBtn').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempBack = result.info.secure_url; }).open();
@@ -1854,7 +1853,6 @@
         document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddBack = result.info.secure_url; }).open();
         document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (error, result) => { if (!error && result.event === 'success') tempAddSide = result.info.secure_url; }).open();
 
-        // Register
         document.getElementById('registerBtn').onclick = async () => {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -1932,7 +1930,6 @@
             document.getElementById('addLogForm').style.display = 'none';
         };
 
-        // Radius, filters, search, etc.
         document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
         document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateUICounters(); updateGreenSuggestion(); }; });
         document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateUICounters(); updateGreenSuggestion(); };
@@ -1969,7 +1966,6 @@
         document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
         document.getElementById('overlayMapBtn').onclick = () => { document.getElementById('mapWrapper').requestFullscreen?.(); };
 
-        // Sidebar
         const sidebar = document.getElementById('sidebarOverlay');
         document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
         document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
@@ -1992,7 +1988,6 @@
             container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
         });
 
-        // Trip planner navigation
         document.getElementById('nextStep').onclick = async () => {
             if (currentStep === 1) { if (!destCoordinates) { showToast("Select destination", true); return; } await loadStationsAlongRoute(); showStep(2); }
             else if (currentStep === 2) { if (!selectedStation) { showToast("Select station", true); return; } await loadFunPlaces(); showStep(3); }
@@ -2044,7 +2039,6 @@
             }, 500);
         });
 
-        // Export buttons
         document.getElementById('exportLogsBtn').onclick = async () => {
             let logs = await localDB.fuelLogs.where('vehicleId').equals(activeVehicle?.id).toArray();
             let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
@@ -2074,8 +2068,6 @@
             document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
             document.getElementById('etaCalc').innerText = eta;
         };
-
-        // Start the app
     })();
 </script>
 </body>
