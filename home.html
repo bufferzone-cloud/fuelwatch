@@ -764,14 +764,6 @@
       border-radius: 30px;
       margin: 6px 0;
     }
-    .distance-red {
-      color: #dc2626;
-      font-weight: 700;
-      background: #fee2e2;
-      padding: 2px 10px;
-      border-radius: 30px;
-      display: inline-block;
-    }
     .fuel-badge {
       display: inline-block;
       font-size: 12px;
@@ -914,9 +906,7 @@
       border-left: 6px solid #16a34a;
     }
     body.dark .floating-card { background: #2c2c2c; }
-    .fun-card {
-      border-left-color: #3b82f6;
-    }
+    .fun-card { border-left-color: #3b82f6; }
     .selected-card {
       border: 2px solid #16a34a;
       background: #f0fdf4;
@@ -935,53 +925,6 @@
       text-align: center;
       padding: 20px;
       color: #16a34a;
-    }
-
-    /* Destination suggestion cards */
-    .dest-suggestion-card {
-      background: white;
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      border-left: 6px solid #16a34a;
-      cursor: pointer;
-    }
-    body.dark .dest-suggestion-card { background: #2c2c2c; }
-
-    /* Settings */
-    .settings-option {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      border-bottom: 1px solid #e2efe2;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 50px;
-      height: 24px;
-      background: #ccc;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .toggle-switch.active {
-      background: #16a34a;
-    }
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
-      transition: 0.3s;
-    }
-    .toggle-switch.active::after {
-      left: 28px;
     }
 
     /* Other */
@@ -1170,7 +1113,6 @@
       <div class="sidebar-item" data-page="help"><i class="fas fa-question-circle"></i> Help & About</div>
       <div class="sidebar-item" data-page="export"><i class="fas fa-download"></i> Export Data</div>
       <div class="sidebar-item" id="darkModeSidebar"><i class="fas fa-moon"></i> Dark Mode</div>
-      <div class="sidebar-item" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
       <div class="sidebar-item" data-page="map"><i class="fas fa-map-marked-alt"></i> Back to Map</div>
       <div class="sidebar-item" id="logoutSidebar"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
@@ -1336,7 +1278,7 @@
       <hr>
       <h4 style="color:#16a34a;">🚀 About FuelRadar</h4>
       <p>FuelRadar is your ultimate fuel companion – designed by drivers for drivers. We combine live fuel station data from OpenStreetMap, intelligent route planning with fuel cost estimation, and community reports.</p>
-      <p><i class="fas fa-gas-pump"></i> <strong>Version 3.2</strong> | Built with ❤️ for the driving community.</p>
+      <p><i class="fas fa-gas-pump"></i> <strong>Version 3.1</strong> | Built with ❤️ for the driving community.</p>
     </div>
   </div>
 </div>
@@ -1349,21 +1291,6 @@
     <button id="exportFavsBtn" class="full-width-btn">Export Favorites (JSON)</button>
     <button id="exportReportsBtn" class="full-width-btn">Export Reports (JSON)</button>
     <button id="exportHistoryBtn" class="full-width-btn">Export Trip History (JSON)</button>
-  </div>
-</div>
-
-<!-- Settings Page -->
-<div id="settingsPage" class="page-overlay">
-  <div class="page-header-bar"><h2><i class="fas fa-cog"></i> Settings</h2><button class="close-page-btn" data-close="settingsPage">&times;</button></div>
-  <div class="page-content">
-    <div class="settings-option">
-      <span><i class="fas fa-ruler"></i> Distance unit</span>
-      <div style="display:flex; gap:10px;">
-        <button id="unitKmBtn" class="btn-sm" style="background:#16a34a; color:white;">Kilometers</button>
-        <button id="unitMilesBtn" class="btn-sm">Miles</button>
-      </div>
-    </div>
-    <p class="small-text mt-2">All distances will be shown in the selected unit.</p>
   </div>
 </div>
 
@@ -1439,26 +1366,9 @@
     let userCountryFlag = '🇺🇸';
     let tempProfilePicUrl = '';
 
-    // Units: 'km' or 'mi'
-    let distanceUnit = localStorage.getItem('fuelUnit') || 'km';
-
     // UI Elements
     const authOverlay = document.getElementById('authOverlay');
     const mainApp = document.getElementById('mainAppContainer');
-
-    // ---------- UNIT CONVERSION ----------
-    function formatDistance(km) {
-      if (distanceUnit === 'mi') {
-        const miles = km * 0.621371;
-        return miles.toFixed(1) + ' mi';
-      }
-      return km.toFixed(1) + ' km';
-    }
-    function getUnitLabel() { return distanceUnit === 'mi' ? 'mi' : 'km'; }
-    function updateUnitDisplay() {
-      document.getElementById('radiusDisplay').innerText = radiusKm + ' ' + (distanceUnit === 'mi' ? 'mi' : 'km');
-      document.querySelectorAll('.unit-label').forEach(el => el.innerText = getUnitLabel());
-    }
 
     // ---------- HELPER FUNCTIONS ----------
     function showToast(msg, isError = false) {
@@ -1681,7 +1591,7 @@
         const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
         const eta = s.distance ? calculateETA(s.distance) : '?';
         const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-        const popupContent = `<div style="min-width:260px;"><div style="font-weight:800;">${s.name}</div><div>${s.address}</div><div><span class="station-distance">${formatDistance(s.distance)}</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div><div>${amenitiesHtml}</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div></div>`;
+        const popupContent = `<div style="min-width:260px;"><div style="font-weight:800;">${s.name}</div><div>${s.address}</div><div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div><div>${amenitiesHtml}</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div></div>`;
         let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
         clusterGroup.addLayer(marker);
       });
@@ -1762,7 +1672,7 @@
         <div class="station-card" id="reportStation_${s.id}">
           <div class="station-name">${s.name}</div>
           <div class="station-address">${s.address}</div>
-          <div class="station-distance">📍 ${formatDistance(s.distance)} away</div>
+          <div class="station-distance">📍 ${s.distance?.toFixed(1)} km away</div>
           <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
           <div class="amenities-list">${amenitiesHtml}</div>
           <select id="reportType_${s.id}">
@@ -1802,7 +1712,7 @@
     function updateFavPage() {
       let favStations = stations.filter(s => favoriteIds.includes(s.id));
       let container = document.getElementById('favStationsList');
-      if (container) container.innerHTML = favStations.map(s => `<div class="station-card"><div class="station-name">${s.name}</div><div class="station-distance">📍 ${formatDistance(s.distance)}</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm" data-fav-remove="${s.id}">Remove</button></div></div>`).join('');
+      if (container) container.innerHTML = favStations.map(s => `<div class="station-card"><div class="station-name">${s.name}</div><div class="station-distance">📍 ${s.distance?.toFixed(1)} km</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm" data-fav-remove="${s.id}">Remove</button></div></div>`).join('');
       container.querySelectorAll('[data-fav-remove]').forEach(btn => { btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favRemove)); });
     }
 
@@ -1834,7 +1744,7 @@
       document.getElementById('activeVehicleNameCalc').innerText = activeVehicle.name;
       document.getElementById('activeFuelTypeCalc').innerText = activeVehicle.fuelType;
       const range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
-      document.getElementById('rangeCalc').innerText = range.toFixed(1) + ' ' + getUnitLabel();
+      document.getElementById('rangeCalc').innerText = range.toFixed(1) + ' km';
       document.getElementById('consumptionDisplay').innerText = activeVehicle.consumptionLper100km + ' L/100km';
     }
 
@@ -2000,7 +1910,7 @@
             let amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
             return `
             <div class="floating-card station-select-item" data-station-id="${s.id}">
-              <div class="flex-between"><strong>${s.name}</strong><span class="station-distance">${formatDistance(s.distance)} from start</span></div>
+              <div class="flex-between"><strong>${s.name}</strong><span class="station-distance">${s.distance.toFixed(1)} km from start</span></div>
               <div class="small-text">${s.address}</div>
               <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
               <div class="amenities-list">${amenitiesHtml}</div>
@@ -2012,6 +1922,7 @@
               el.classList.add('selected-card');
               selectedStation = stations.find(s => s.id == parseInt(el.dataset.stationId));
               document.getElementById('nextStep').disabled = false;
+              // Scroll to Next button and pulse
               const nextBtn = document.getElementById('nextStep');
               nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
               nextBtn.classList.add('pulse-animation');
@@ -2034,9 +1945,10 @@
         const start = actualUserLocation;
         const end = destCoordinates;
         const distTotal = haversine(start.lat, start.lng, end.lat, end.lon);
+        // Fetch various POIs near the route
         const midLat = (start.lat + end.lat) / 2;
-        const midLon = (start.lng + end.lng) / 2;
-        const radius = distTotal * 1000 * 0.8;
+        const midLon = (start.lng + end.lon) / 2;
+        const radius = distTotal * 1000 * 0.8; // search around route corridor
         const queries = [
           `node["amenity"="restaurant"](around:${radius},${midLat},${midLon});`,
           `node["tourism"="attraction"](around:${radius},${midLat},${midLon});`,
@@ -2058,6 +1970,7 @@
           type: el.tags?.amenity || el.tags?.tourism || el.tags?.historic || el.tags?.shop || 'place',
           description: el.tags?.description || ''
         }));
+        // Filter places that are reasonably along the route (cross-track distance < 5km)
         places = places.filter(p => {
           const d1 = haversine(start.lat, start.lng, p.lat, p.lon);
           const d2 = haversine(p.lat, p.lon, end.lat, end.lon);
@@ -2068,16 +1981,14 @@
         if (places.length === 0) {
           container.innerHTML = '<p>No fun stops found along your route. You can skip this step.</p>';
         } else {
-          container.innerHTML = places.map(p => {
-            const distToDest = haversine(end.lat, end.lon, p.lat, p.lon);
-            return `
+          container.innerHTML = places.map(p => `
             <div class="floating-card fun-card" data-lat="${p.lat}" data-lon="${p.lon}" data-name="${p.name}" data-type="${p.type}">
               <div class="flex-between"><strong>${p.name}</strong><span class="badge">${p.type}</span></div>
-              <div class="small-text"><span class="distance-red">📍 ${formatDistance(distToDest)} from destination</span></div>
+              <div class="small-text">📍 ${haversine(end.lat, end.lon, p.lat, p.lon).toFixed(1)} km from destination</div>
               ${p.description ? `<div class="small-text">${p.description.substring(0,60)}...</div>` : ''}
               <button class="btn-sm add-fun-btn" style="margin-top:8px;">Add to trip</button>
             </div>
-          `}).join('');
+          `).join('');
           document.querySelectorAll('.fun-card').forEach(card => {
             const btn = card.querySelector('.add-fun-btn');
             btn.onclick = (e) => {
@@ -2112,7 +2023,7 @@
         <div class="plain-card">
           <div class="flex-between"><strong>🚗 Trip Details</strong></div>
           <div class="flex-between mt-2"><span>📍 Destination:</span><strong>${destName.substring(0,40)}</strong></div>
-          <div class="flex-between"><span>📏 Total Distance:</span><strong>${formatDistance(distTotal)}</strong></div>
+          <div class="flex-between"><span>📏 Total Distance:</span><strong>${distTotal.toFixed(1)} km</strong></div>
           <div class="flex-between"><span>⛽ Fuel needed:</span><strong>${fuelNeeded.toFixed(1)} L</strong></div>
           <div class="flex-between"><span>💰 Est. cost:</span><strong>${currentPrices.currency} ${cost.toFixed(2)}</strong></div>
           <div class="flex-between"><span>⏱️ ETA:</span><strong>${eta}</strong></div>
@@ -2149,10 +2060,6 @@
         if (pageId === 'historyPage') loadHistory();
         if (pageId === 'recentPage') loadRecentStations();
         if (pageId === 'tripPlannerPage') resetTripPlanner();
-        if (pageId === 'settingsPage') {
-          document.getElementById('unitKmBtn').style.background = distanceUnit === 'km' ? '#16a34a' : '#e5e7eb';
-          document.getElementById('unitMilesBtn').style.background = distanceUnit === 'mi' ? '#16a34a' : '#e5e7eb';
-        }
       }
       document.getElementById('sidebarOverlay').classList.remove('open');
     }
@@ -2303,7 +2210,7 @@
       document.getElementById('addLogForm').style.display = 'none';
     };
 
-    document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' ' + getUnitLabel(); if (activeLocation) loadStationsAndRefresh(false); };
+    document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
     document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateCounters(); updateGreenSuggestion(); }; });
     document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateCounters(); updateGreenSuggestion(); };
     document.getElementById('sortSelect').onchange = () => { renderMarkers(); updateGreenSuggestion(); };
@@ -2314,7 +2221,7 @@
       showLoading(false);
       if (nearby.length === 0) { showToast("No stations found nearby."); return; }
       let popupContent = `<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>`;
-      nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${formatDistance(s.distance)} | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation(${s.id})">Navigate</button></div>`; });
+      nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation(${s.id})">Navigate</button></div>`; });
       popupContent += `</div>`;
       L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent).openOn(map);
       window.navigateToStation = (id) => { const station = stations.find(s => s.id === id); if (station) startNavigationWithMessage(station); map.closePopup(); };
@@ -2370,33 +2277,9 @@
       const query = e.target.value.toLowerCase();
       const results = stations.filter(s => s.name.toLowerCase().includes(query) || s.address.toLowerCase().includes(query));
       const container = document.getElementById('globalSearchResults');
-      container.innerHTML = results.map(s => `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name}</strong><br>${s.address}<br>📍 ${formatDistance(s.distance)}</div>`).join('');
+      container.innerHTML = results.map(s => `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name}</strong><br>${s.address}<br>📍 ${s.distance?.toFixed(1)} km</div>`).join('');
       container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
     });
-
-    // Settings: unit toggle
-    document.getElementById('unitKmBtn').onclick = () => {
-      distanceUnit = 'km';
-      localStorage.setItem('fuelUnit', 'km');
-      document.getElementById('unitKmBtn').style.background = '#16a34a';
-      document.getElementById('unitMilesBtn').style.background = '#e5e7eb';
-      updateUnitDisplay();
-      renderMarkers();
-      renderReportStationsList();
-      if (activeVehicle) updateActiveVehicleUI();
-      showToast('Unit set to kilometers');
-    };
-    document.getElementById('unitMilesBtn').onclick = () => {
-      distanceUnit = 'mi';
-      localStorage.setItem('fuelUnit', 'mi');
-      document.getElementById('unitMilesBtn').style.background = '#16a34a';
-      document.getElementById('unitKmBtn').style.background = '#e5e7eb';
-      updateUnitDisplay();
-      renderMarkers();
-      renderReportStationsList();
-      if (activeVehicle) updateActiveVehicleUI();
-      showToast('Unit set to miles');
-    };
 
     // Trip Planner navigation
     document.getElementById('nextStep').onclick = async () => {
@@ -2420,6 +2303,7 @@
         waypoints.push(L.latLng(selectedStation.lat, selectedStation.lon));
         selectedFunPlaces.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
         waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
+        // Color-coded segments
         const allPoints = [actualUserLocation, selectedStation, ...selectedFunPlaces, destCoordinates];
         for (let i = 0; i < allPoints.length - 1; i++) {
           const start = allPoints[i];
@@ -2460,12 +2344,9 @@
         if (data.length === 0) { suggestionsDiv.style.display = 'none'; return; }
         data.forEach(place => {
           const div = document.createElement('div');
-          div.className = 'dest-suggestion-card';
-          const distance = actualUserLocation ? haversine(actualUserLocation.lat, actualUserLocation.lng, parseFloat(place.lat), parseFloat(place.lon)) : 0;
-          div.innerHTML = `
-            <div class="flex-between"><strong>${place.display_name.split(',')[0]}</strong><span class="distance-red">${formatDistance(distance)}</span></div>
-            <div class="small-text">${place.display_name}</div>
-          `;
+          div.className = 'place-suggestion-item';
+          const distance = actualUserLocation ? haversine(actualUserLocation.lat, actualUserLocation.lng, parseFloat(place.lat), parseFloat(place.lon)).toFixed(1) : '?';
+          div.innerHTML = `<span><i class="fas fa-location-dot"></i> ${place.display_name}</span><span class="place-suggestion-distance">${distance} km</span>`;
           div.onclick = () => {
             destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
             destName = place.display_name;
@@ -2509,9 +2390,6 @@
       document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
       document.getElementById('etaCalc').innerText = eta;
     };
-
-    // Initialize unit display
-    updateUnitDisplay();
   })();
 </script>
 </body>
