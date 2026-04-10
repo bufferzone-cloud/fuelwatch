@@ -34,11 +34,6 @@
       scroll-behavior: smooth;
     }
     
-    body.dark {
-      background: #121212;
-      color: #e0e0e0;
-    }
-    
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -57,10 +52,6 @@
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-    
-    body.dark .navbar {
-      background: rgba(30,30,30,0.95);
     }
     
     .logo-area {
@@ -98,10 +89,6 @@
       text-decoration: none;
       color: #1e293b;
       transition: color 0.2s;
-    }
-    
-    body.dark .nav-links a {
-      color: #e2e8f0;
     }
     
     .nav-links a:hover {
@@ -188,10 +175,6 @@
       display: flex;
       flex-direction: column;
       padding: 20px 0;
-    }
-    
-    body.dark .sidebar-panel {
-      background: #1e1e1e;
     }
     
     .sidebar-overlay.open .sidebar-panel {
@@ -360,10 +343,6 @@
       margin: 0 auto 40px;
       font-size: 16px;
     }
-    
-    body.dark .section-subtitle {
-      color: #a0aec0;
-    }
 
     /* 3x3 Grid */
     .card-grid {
@@ -381,11 +360,6 @@
       text-align: center;
       border: 1.5px solid #dc2626;
       transition: all 0.3s;
-    }
-    
-    body.dark .feature-card {
-      background: #1e1e1e;
-      border-color: #4ade80;
     }
     
     .feature-card:hover {
@@ -538,10 +512,6 @@
       transition: transform 0.3s;
     }
     
-    body.dark .benefit-card {
-      background: #1e1e1e;
-    }
-    
     .benefit-card:hover {
       transform: translateY(-6px);
     }
@@ -590,11 +560,6 @@
       gap: 40px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.05);
       border: 1px solid #e2e8f0;
-    }
-    
-    body.dark .tech-section {
-      background: #1e1e1e;
-      border-color: #2c2c2c;
     }
     
     .tech-content {
@@ -655,17 +620,20 @@
       100% { transform: translateY(0); }
     }
 
-    /* Partners Dropdown */
+    /* Partners Dropdown + PULSING */
     .partner-dropdown-section {
       background: #f8fafc;
       border-radius: 40px;
       margin-top: 30px;
       border: 1px solid #e2efe2;
       overflow: hidden;
+      animation: pulseBorder 2s infinite;
     }
     
-    body.dark .partner-dropdown-section {
-      background: #1e1e1e;
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.3); }
+      70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
     }
     
     .partner-dropdown-header {
@@ -678,10 +646,6 @@
       align-items: center;
       cursor: pointer;
       background: #f0fdf4;
-    }
-    
-    body.dark .partner-dropdown-header {
-      background: #1e2a1e;
     }
     
     .partner-dropdown-content {
@@ -710,10 +674,6 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.04);
       border: 1px solid #e2efe2;
       text-align: center;
-    }
-    
-    body.dark .partner-card {
-      background: #1e1e1e;
     }
     
     .partner-card h4 {
@@ -753,19 +713,19 @@
       border-radius: 24px;
     }
 
-    /* Contact improved */
-    .contact-card {
-      background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);
+    /* Contact improved — hero style with smaller phone */
+    .contact-hero-card {
+      background: linear-gradient(135deg, #0a0a0a 0%, #064e3b 100%);
       border-radius: 40px;
-      padding: 50px 40px;
+      padding: 40px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.05);
+      align-items: center;
+      gap: 30px;
+      color: white;
     }
     
-    body.dark .contact-card {
-      background: #1e2a1e;
+    .contact-info {
+      flex: 2;
     }
     
     .contact-info h2 {
@@ -776,7 +736,7 @@
     .phone-large {
       font-size: 32px;
       font-weight: 800;
-      color: #16a34a;
+      color: #4ade80;
       margin: 20px 0;
     }
     
@@ -795,8 +755,8 @@
     
     .contact-method i {
       font-size: 24px;
-      color: #16a34a;
-      background: white;
+      color: #4ade80;
+      background: rgba(255,255,255,0.15);
       padding: 10px;
       border-radius: 50%;
     }
@@ -808,12 +768,12 @@
     }
     
     .social-links a {
-      color: #16a34a;
+      color: #4ade80;
       font-size: 24px;
     }
     
     .contact-form {
-      flex: 1;
+      flex: 1.5;
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -825,6 +785,28 @@
       border-radius: 60px;
       border: 2px solid #bbf7d0;
       font-size: 15px;
+    }
+    
+    .small-phone-mockup {
+      flex: 0 0 200px;
+      background: #111;
+      border-radius: 28px;
+      padding: 8px;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+      border: 2px solid #333;
+    }
+    
+    .small-phone-screen {
+      background: #f0fdf4;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 380px;
+    }
+    
+    .small-phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* Modal */
@@ -861,6 +843,24 @@
       color: #16a34a;
     }
 
+    /* Rating popup form */
+    .rating-popup {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+    }
+    
+    .star-rating i {
+      font-size: 24px;
+      color: #ccc;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+    
+    .star-rating i.active {
+      color: #fbbf24;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -886,11 +886,6 @@
       align-items: center;
       gap: 6px;
       border: 1.5px solid #bbf7d0;
-    }
-    
-    body.dark .selector-pill {
-      background: #2c2c2c;
-      border-color: #4ade80;
     }
     
     .selector-pill select {
@@ -927,12 +922,6 @@
       border: 1px solid #bbf7d0;
       cursor: pointer;
       white-space: nowrap;
-      position: relative;
-    }
-    
-    body.dark .chip {
-      background: #2c2c2c;
-      border-color: #4ade80;
     }
     
     .chip.active {
@@ -961,10 +950,6 @@
       margin: 40px 0;
     }
     
-    body.dark .planner-card {
-      background: #1e1e1e;
-    }
-    
     .step-container {
       margin-bottom: 24px;
     }
@@ -985,11 +970,6 @@
       border: 1.5px solid #bbf7d0;
     }
     
-    body.dark .search-pill {
-      background: #2c2c2c;
-      border-color: #4ade80;
-    }
-    
     .search-pill input {
       flex: 1;
       border: none;
@@ -1005,20 +985,53 @@
       border-radius: 20px;
       margin-top: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-height: 250px;
+      overflow-y: auto;
     }
     
     .suggestion-item {
       padding: 12px 16px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #e2efe2;
       cursor: pointer;
       font-size: 14px;
+      color: #16a34a;
     }
     
     .suggestion-item:hover {
       background: #f0fdf4;
     }
     
-    .station-list-item {
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+    }
+    
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #16a34a;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .station-list-item,
+    .fun-stop-item {
       background: white;
       border-radius: 20px;
       padding: 14px;
@@ -1027,70 +1040,59 @@
       cursor: pointer;
     }
     
-    .station-list-item.selected {
+    .station-list-item.selected,
+    .fun-stop-item.selected {
       border: 2px solid #16a34a;
       background: #f0fdf4;
     }
-    
-    .fun-stop-item {
-      background: white;
-      border-radius: 40px;
-      padding: 8px 16px;
-      margin-bottom: 6px;
-      border: 1px solid #e2efe2;
-      cursor: pointer;
-    }
-    
-    .fun-stop-item.selected {
-      background: #e0f2e0;
-      border-color: #16a34a;
-    }
-    
+
     .popup-content {
       min-width: 250px;
     }
     
-    .stars i {
-      color: #fbbf24;
-    }
-
     .amenity-badge {
       background: #f3f4f6;
       border-radius: 40px;
       padding: 4px 10px;
       font-size: 11px;
-      font-weight: 600;
       display: inline-block;
       margin-right: 6px;
-      margin-bottom: 4px;
     }
     
-    .rating-stars {
-      display: flex;
-      gap: 4px;
-      margin: 8px 0;
-    }
-    
-    .rating-stars i {
-      color: #fbbf24;
-      cursor: pointer;
-    }
-
     /* Responsive */
     @media (max-width: 900px) {
-      .hero { flex-direction: column; }
-      .phone-mockup { flex: 0 0 auto; width: 260px; }
-      .benefits-grid { grid-template-columns: 1fr; }
-      .tech-section { flex-direction: column; }
-      .form-grid { grid-template-columns: 1fr; }
+      .hero {
+        flex-direction: column;
+      }
+      .phone-mockup {
+        flex: 0 0 auto;
+        width: 260px;
+      }
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+      .tech-section {
+        flex-direction: column;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .contact-hero-card {
+        flex-direction: column;
+      }
     }
     
     @media (max-width: 768px) {
-      .navbar { flex-wrap: wrap; }
-      .nav-links, .nav-buttons { display: none; }
-      .menu-toggle { display: block; }
-      .car-bg-content { flex-direction: column; }
-      .card-grid { gap: 12px; }
+      .navbar {
+        flex-wrap: wrap;
+      }
+      .nav-links,
+      .nav-buttons {
+        display: none;
+      }
+      .menu-toggle {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -1112,9 +1114,9 @@
     <a href="#contact">Contact</a>
   </div>
   <div class="nav-buttons">
-    <button class="btn-outline" id="darkToggle"><i class="fas fa-moon"></i> Dark</button>
     <button class="btn-primary" id="openCalcBtn"><i class="fas fa-calculator"></i> Calculator</button>
     <button class="btn-primary" id="openPlannerBtn"><i class="fas fa-route"></i> Trip Planner</button>
+    <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-outline"><i class="fas fa-download"></i> Get App</a>
   </div>
   <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 </nav>
@@ -1147,6 +1149,7 @@
       <div class="hero-buttons">
         <button class="btn-primary" onclick="document.getElementById('mapSection').scrollIntoView({behavior:'smooth'})">Find Stations</button>
         <button class="btn-outline" id="heroPartnerBtn">Partner with Us</button>
+        <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-primary" style="background:#4ade80;">Get the App</a>
       </div>
       <div class="feature-icons">
         <div class="feature-item"><i class="fas fa-globe"></i> 190+ Countries</div>
@@ -1173,7 +1176,7 @@
       <div class="feature-card"><i class="fas fa-filter"></i><h3>Fuel Filters</h3><p>Petrol, diesel, shops, ATM – filter easily.</p></div>
       <div class="feature-card"><i class="fas fa-route"></i><h3>Trip Planner</h3><p>Plan routes with fuel stops & fun places.</p></div>
       <div class="feature-card"><i class="fas fa-chart-line"></i><h3>Price Comparison</h3><p>Compare petrol/diesel prices instantly.</p></div>
-      <div class="feature-card"><i class="fas fa-star"></i><h3>Ratings & Comments</h3><p>Rate stations and read community feedback.</p></div>
+      <div class="feature-card"><i class="fas fa-star"></i><h3>Ratings & Reports</h3><p>Rate stations and report live conditions.</p></div>
       <div class="feature-card"><i class="fas fa-flag"></i><h3>Community Reports</h3><p>Report availability, queues, or prices.</p></div>
       <div class="feature-card"><i class="fas fa-heart"></i><h3>Favorites</h3><p>Save your go‑to stations.</p></div>
       <div class="feature-card"><i class="fas fa-calculator"></i><h3>Fuel Calculator</h3><p>Estimate cost and fuel needed for trips.</p></div>
@@ -1219,7 +1222,6 @@
       <button class="btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
     </div>
     
-    <!-- Filter chips with counts -->
     <div class="filter-scroll" id="filterBar">
       <span class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></span>
       <span class="chip" data-filter="petrol">Petrol <span class="count-badge" id="countPetrol">0</span></span>
@@ -1237,7 +1239,7 @@
   </div>
 </section>
 
-<!-- Car at gas station (Drivers & Stations) -->
+<!-- Car at gas station -->
 <section>
   <div class="container car-bg-section">
     <div class="car-bg-content">
@@ -1271,17 +1273,17 @@
       <div class="benefit-card">
         <h3><i class="fas fa-car-side"></i> Never Get Stranded</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-map-pin"></i> <div><strong>Real-time availability</strong>Know which stations have fuel before you leave.</div></li>
-          <li><i class="fas fa-route"></i> <div><strong>Smart route planning</strong>Find the best fuel stops along your journey.</div></li>
-          <li><i class="fas fa-chart-bar"></i> <div><strong>Price comparison</strong>Save money by comparing prices across stations.</div></li>
+          <li><i class="fas fa-map-pin"></i><div><strong>Real-time availability</strong>Know which stations have fuel.</div></li>
+          <li><i class="fas fa-route"></i><div><strong>Smart route planning</strong>Find the best fuel stops.</div></li>
+          <li><i class="fas fa-chart-bar"></i><div><strong>Price comparison</strong>Save money.</div></li>
         </ul>
       </div>
       <div class="benefit-card">
         <h3><i class="fas fa-mobile-alt"></i> All-in-One App</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-gas-pump"></i> <div><strong>Fuel logs & garage</strong>Track consumption and maintenance.</div></li>
-          <li><i class="fas fa-users"></i> <div><strong>Community reports</strong>Get live updates from other drivers.</div></li>
-          <li><i class="fas fa-bell"></i> <div><strong>Favorite stations</strong>Quick access to your trusted spots.</div></li>
+          <li><i class="fas fa-gas-pump"></i><div><strong>Fuel logs & garage</strong>Track consumption.</div></li>
+          <li><i class="fas fa-users"></i><div><strong>Community reports</strong>Live updates.</div></li>
+          <li><i class="fas fa-bell"></i><div><strong>Favorite stations</strong>Quick access.</div></li>
         </ul>
       </div>
     </div>
@@ -1296,17 +1298,17 @@
       <div class="benefit-card">
         <h3><i class="fas fa-chart-line"></i> Increased Visibility</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-eye"></i> <div><strong>Real-time dashboard</strong>Update fuel availability and prices instantly.</div></li>
-          <li><i class="fas fa-map-marked-alt"></i> <div><strong>Appear in searches</strong>Drivers find you when they need fuel.</div></li>
-          <li><i class="fas fa-star"></i> <div><strong>Customer trust</strong>Verified status builds loyalty.</div></li>
+          <li><i class="fas fa-eye"></i><div><strong>Real-time dashboard</strong>Update fuel availability.</div></li>
+          <li><i class="fas fa-map-marked-alt"></i><div><strong>Appear in searches</strong>Drivers find you.</div></li>
+          <li><i class="fas fa-star"></i><div><strong>Customer trust</strong>Verified status.</div></li>
         </ul>
       </div>
       <div class="benefit-card">
         <h3><i class="fas fa-hand-holding-usd"></i> Business Growth</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-users"></i> <div><strong>Attract more customers</strong>Reach drivers actively looking for fuel.</div></li>
-          <li><i class="fas fa-chart-pie"></i> <div><strong>Analytics & insights</strong>Understand demand patterns.</div></li>
-          <li><i class="fas fa-ad"></i> <div><strong>Promote offers</strong>Highlight discounts and specials.</div></li>
+          <li><i class="fas fa-users"></i><div><strong>Attract customers</strong>Reach active drivers.</div></li>
+          <li><i class="fas fa-chart-pie"></i><div><strong>Analytics & insights</strong>Understand demand.</div></li>
+          <li><i class="fas fa-ad"></i><div><strong>Promote offers</strong>Highlight discounts.</div></li>
         </ul>
       </div>
     </div>
@@ -1337,7 +1339,6 @@
   <div class="container">
     <h2 class="section-title">Plan a Fun Trip</h2>
     <div class="planner-card">
-      <!-- Step 1: User location -->
       <div class="step-container">
         <div class="step-header"><i class="fas fa-map-pin"></i> Your location</div>
         <div class="search-pill">
@@ -1348,7 +1349,6 @@
         <p id="locationDetails" style="margin-top:8px;"></p>
       </div>
       
-      <!-- Step 2: Destination search -->
       <div class="step-container">
         <div class="step-header"><i class="fas fa-flag-checkered"></i> Where to?</div>
         <div class="search-pill">
@@ -1357,46 +1357,37 @@
           <button class="btn-primary" id="searchDestBtn">Search</button>
         </div>
         <div id="destSuggestions" class="suggestions"></div>
-        <p id="selectedDestDisplay" class="text-small" style="margin-top:8px;"></p>
+        <p id="selectedDestDisplay" style="margin-top:8px;"></p>
       </div>
       
-      <!-- Step 3: Station selection -->
       <div id="stationSelectionContainer" style="display:none;">
-        <div class="step-container">
-          <div class="step-header"><i class="fas fa-gas-pump"></i> <span id="stationLoadingMsg">Locating five nearest fuel stations near you...</span></div>
-          <div id="stationListContainer"></div>
-        </div>
+        <div class="step-header"><i class="fas fa-gas-pump"></i> <span id="stationLoadingMsg">Locating five nearest fuel stations...</span></div>
+        <div id="stationListContainer"></div>
       </div>
       
-      <!-- Step 4: Fun stops -->
       <div id="funStopsContainer" style="display:none;">
-        <div class="step-container">
-          <div class="step-header"><i class="fas fa-camera"></i> <span id="funLoadingMsg">Locating fun stops along the journey...</span></div>
-          <div id="funStopsList"></div>
-        </div>
+        <div class="step-header"><i class="fas fa-camera"></i> <span id="funLoadingMsg">Locating fun stops...</span></div>
+        <div id="funStopsList"></div>
       </div>
       
-      <!-- Step 5: Vehicle details & route -->
       <div id="tripOptionsContainer" style="display:none;">
-        <div class="step-container">
-          <div class="step-header"><i class="fas fa-car"></i> Vehicle details</div>
-          <div style="display:grid; gap:12px;">
-            <input type="number" id="tankCapacity" placeholder="Tank capacity (L)" value="50" style="padding:12px; border-radius:40px; border:1.5px solid #bbf7d0;">
-            <input type="number" id="fuelConsumption" placeholder="Consumption (L/100km)" value="7.5" style="padding:12px; border-radius:40px; border:1.5px solid #bbf7d0;">
-            <select id="fuelTypeSelect" style="padding:12px; border-radius:40px; border:1.5px solid #bbf7d0;">
-              <option value="petrol">Petrol</option>
-              <option value="diesel">Diesel</option>
-            </select>
-            <button class="btn-primary" id="calculateAndDrawRoute">Calculate & Draw Route</button>
-          </div>
-          <div id="tripSummary" class="text-small" style="margin-top:16px;"></div>
+        <div class="step-header"><i class="fas fa-car"></i> Vehicle details</div>
+        <div style="display:grid; gap:12px;">
+          <input type="number" id="tankCapacity" placeholder="Tank capacity (L)" value="50">
+          <input type="number" id="fuelConsumption" placeholder="Consumption (L/100km)" value="7.5">
+          <select id="fuelTypeSelect">
+            <option value="petrol">Petrol</option>
+            <option value="diesel">Diesel</option>
+          </select>
+          <button class="btn-primary" id="calculateAndDrawRoute">Calculate & Draw Route</button>
         </div>
+        <div id="tripSummary" style="margin-top:16px;"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Partners Dropdown -->
+<!-- Partners Dropdown (Pulsing) -->
 <section id="partners">
   <div class="container">
     <h2 class="section-title">Our Partners</h2>
@@ -1406,8 +1397,8 @@
         <h4>BUFFER ZONE</h4>
         <p>Graphics & Tech Solutions</p>
       </div>
-      <div style="flex:1;">
-        <p>Join the network of trusted fuel stations and service providers.</p>
+      <div>
+        <p>Join the network of trusted fuel stations.</p>
         <button class="btn-primary" id="partnerFormBtn">Apply to Become a Partner</button>
       </div>
     </div>
@@ -1419,23 +1410,32 @@
       <div class="partner-dropdown-content">
         <form onsubmit="alert('Application submitted!'); return false;">
           <div class="form-grid">
-            <div class="form-group"><label>Business / Station Name *</label><input type="text" required></div>
-            <div class="form-group"><label>Contact Person *</label><input type="text" required></div>
-            <div class="form-group"><label>Email Address *</label><input type="email" required></div>
-            <div class="form-group"><label>Phone Number *</label><input type="tel" required></div>
+            <div class="form-group"><label>Business Name *</label><input required></div>
+            <div class="form-group"><label>Contact Person *</label><input required></div>
+            <div class="form-group"><label>Email *</label><input type="email" required></div>
+            <div class="form-group"><label>Phone *</label><input type="tel" required></div>
           </div>
-          <div class="form-group"><label>Business Type *</label><select required><option value="">Select...</option><option>Fuel Station</option><option>Service Provider</option><option>Other</option></select></div>
-          <div class="form-group"><label>Tell us about your business</label><textarea rows="3"></textarea></div>
-          <button type="submit" class="btn-primary" style="padding:14px 36px;">Submit Application</button>
+          <div class="form-group">
+            <label>Business Type *</label>
+            <select required>
+              <option>Fuel Station</option>
+              <option>Service Provider</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tell us about your business</label>
+            <textarea rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Submit Application</button>
         </form>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Contact improved -->
+<!-- Contact improved: hero style with smaller phone -->
 <section id="contact">
-  <div class="container contact-card">
+  <div class="container contact-hero-card">
     <div class="contact-info">
       <h2>📞 Contact us</h2>
       <p>We're here to help 24/7</p>
@@ -1457,21 +1457,24 @@
       <textarea rows="3" placeholder="Your message"></textarea>
       <button class="btn-primary" style="width:fit-content;">Send Message</button>
     </div>
+    <div class="small-phone-mockup">
+      <div class="small-phone-screen">
+        <img src="app.jpeg" alt="FuelRadar contact" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
+      </div>
+    </div>
   </div>
 </section>
 
-<footer>
-  <p>© 2026 FuelRadar. All rights reserved. · Built for the World</p>
-</footer>
+<footer>© 2026 FuelRadar. All rights reserved. · Built for the World</footer>
 
-<!-- Partner Modal (for quick partner) -->
+<!-- Partner Modal -->
 <div id="partnerModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" onclick="closePartnerModal()">&times;</span>
     <h2 style="color:#16a34a;">Partner Application</h2>
     <form onsubmit="alert('Submitted!'); closePartnerModal(); return false;">
-      <div style="margin-bottom:16px;"><input type="text" placeholder="Business Name" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
-      <div style="margin-bottom:16px;"><input type="email" placeholder="Email" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
+      <input type="text" placeholder="Business Name" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
+      <input type="email" placeholder="Email" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
       <button type="submit" class="btn-primary" style="width:100%;">Submit</button>
     </form>
   </div>
@@ -1482,6 +1485,9 @@
   <div class="modal-content">
     <span class="close-modal" onclick="closeCalcModal()">&times;</span>
     <h2 style="color:#16a34a;">Fuel Calculator</h2>
+    <div style="margin-bottom: 16px;">
+      <label>Using currency: <strong id="calcCurrencyDisplay">USD ($)</strong></label>
+    </div>
     <input type="number" id="calcDist" placeholder="Distance (km)" value="100" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
     <input type="number" id="calcCons" placeholder="Consumption (L/100km)" value="7.0" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
     <input type="number" id="calcPrice" placeholder="Price per liter" value="1.50" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:20px;">
@@ -1490,13 +1496,34 @@
   </div>
 </div>
 
+<!-- Rating & Report Popup Modal -->
+<div id="ratingReportModal" class="modal">
+  <div class="modal-content rating-popup">
+    <span class="close-modal" onclick="closeRatingModal()">&times;</span>
+    <h3 id="stationNameTitle">Station Name</h3>
+    <div class="star-rating" id="starRatingWidget">
+      <i class="far fa-star" data-value="1"></i>
+      <i class="far fa-star" data-value="2"></i>
+      <i class="far fa-star" data-value="3"></i>
+      <i class="far fa-star" data-value="4"></i>
+      <i class="far fa-star" data-value="5"></i>
+    </div>
+    <div style="margin:16px 0;">
+      <label><input type="checkbox" id="reportAvailable"> Fuel available</label>
+      <label style="margin-left:12px;"><input type="checkbox" id="reportQueue"> Long queue</label>
+      <label style="margin-left:12px;"><input type="checkbox" id="reportPrice"> Price update</label>
+      <label style="margin-left:12px;"><input type="checkbox" id="reportStore"> Convenience store</label>
+    </div>
+    <textarea id="reportComment" placeholder="Add a comment..." rows="2" style="width:100%; border-radius:20px; padding:10px;"></textarea>
+    <button class="btn-primary" id="submitRatingReport" style="margin-top:16px;">Submit</button>
+  </div>
+</div>
+
 <script>
   (function(){
     "use strict";
     
-    // ---------- DARK MODE & SIDEBAR ----------
-    const darkToggle = document.getElementById('darkToggle');
-    darkToggle.addEventListener('click', () => document.body.classList.toggle('dark'));
+    // ---------- SIDEBAR ----------
     const sidebar = document.getElementById('sidebarOverlay');
     document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.add('open'));
     document.getElementById('closeSidebarBtn').addEventListener('click', () => sidebar.classList.remove('open'));
@@ -1504,9 +1531,7 @@
     
     // ---------- PARTNER DROPDOWN ----------
     const partnerDropdown = document.getElementById('partnerDropdown');
-    partnerDropdown.querySelector('.partner-dropdown-header').addEventListener('click', () => {
-      partnerDropdown.classList.toggle('open');
-    });
+    partnerDropdown.querySelector('.partner-dropdown-header').addEventListener('click', () => partnerDropdown.classList.toggle('open'));
     
     // ---------- MODALS ----------
     const partnerModal = document.getElementById('partnerModal');
@@ -1518,15 +1543,70 @@
     
     const calcModal = document.getElementById('calcModal');
     window.closeCalcModal = () => calcModal.style.display = 'none';
-    document.getElementById('openCalcBtn').onclick = () => calcModal.style.display = 'flex';
+    document.getElementById('openCalcBtn').onclick = () => {
+      updateCalcCurrencyDisplay();
+      calcModal.style.display = 'flex';
+    };
+    
+    // Update calculator currency display based on selected country
+    function updateCalcCurrencyDisplay() {
+      const displayEl = document.getElementById('calcCurrencyDisplay');
+      if (displayEl) {
+        displayEl.innerText = `${countryCurrency} (${currencySymbol})`;
+      }
+    }
+    
     document.getElementById('runCalc').onclick = () => {
       const d = +document.getElementById('calcDist').value || 0;
       const c = +document.getElementById('calcCons').value || 0;
       const p = +document.getElementById('calcPrice').value || 0;
-      const fuel = (d/100)*c;
-      const cost = fuel*p;
-      document.getElementById('calcResult').innerText = `Fuel: ${fuel.toFixed(1)} L · Cost: $${cost.toFixed(2)}`;
+      const fuel = (d / 100) * c;
+      const cost = fuel * p;
+      document.getElementById('calcResult').innerText = `Fuel needed: ${fuel.toFixed(1)} L · Estimated cost: ${currencySymbol}${cost.toFixed(2)}`;
     };
+    
+    // Rating modal
+    const ratingModal = document.getElementById('ratingReportModal');
+    let currentStationForRating = null;
+    window.closeRatingModal = () => ratingModal.style.display = 'none';
+    
+    function openRatingModal(station) {
+      currentStationForRating = station;
+      document.getElementById('stationNameTitle').innerText = station.name;
+      document.querySelectorAll('#starRatingWidget i').forEach(s => s.className = 'far fa-star');
+      ratingModal.style.display = 'flex';
+    }
+    
+    document.querySelectorAll('#starRatingWidget i').forEach((star, idx) => {
+      star.addEventListener('click', () => {
+        const val = idx + 1;
+        document.querySelectorAll('#starRatingWidget i').forEach((s, i) => {
+          s.className = i < val ? 'fas fa-star' : 'far fa-star';
+        });
+      });
+    });
+    
+    document.getElementById('submitRatingReport').addEventListener('click', () => {
+      if (!currentStationForRating) return;
+      const stars = document.querySelectorAll('#starRatingWidget i.fas').length;
+      const report = {
+        available: document.getElementById('reportAvailable').checked,
+        queue: document.getElementById('reportQueue').checked,
+        price: document.getElementById('reportPrice').checked,
+        store: document.getElementById('reportStore').checked,
+        comment: document.getElementById('reportComment').value
+      };
+      if (stars > 0) {
+        const ratings = JSON.parse(localStorage.getItem(`ratings_${currentStationForRating.id}`) || '[]');
+        ratings.push(stars);
+        localStorage.setItem(`ratings_${currentStationForRating.id}`, JSON.stringify(ratings));
+      }
+      const reports = JSON.parse(localStorage.getItem(`reports_${currentStationForRating.id}`) || '[]');
+      reports.push({...report, date: new Date().toISOString()});
+      localStorage.setItem(`reports_${currentStationForRating.id}`, JSON.stringify(reports));
+      alert('Thank you! Rating & report submitted.');
+      closeRatingModal();
+    });
     
     // ---------- MAP & GLOBAL STATE ----------
     let map, markerCluster, routingControl = null;
@@ -1535,6 +1615,15 @@
     let userCoords = null, destCoords = null, selectedStation = null, funStops = [];
     let selectedFunStop = null;
     let destName = '';
+    
+    const countryPriceBase = {
+      US: {petrol: 0.95, diesel: 1.05},
+      GB: {petrol: 1.45, diesel: 1.55},
+      ZM: {petrol: 24.5, diesel: 23.0},
+      ZA: {petrol: 23.0, diesel: 22.0},
+      NG: {petrol: 650, diesel: 700},
+      IN: {petrol: 106, diesel: 94}
+    };
     
     function initMap() {
       map = L.map('mapContainer').setView([20, 0], 2);
@@ -1555,12 +1644,9 @@
       fabDiv.style.bottom = '16px';
       fabDiv.style.right = '16px';
       fabDiv.style.zIndex = '900';
-      fabDiv.style.display = 'flex';
-      fabDiv.style.flexDirection = 'column';
-      fabDiv.style.gap = '8px';
       fabDiv.innerHTML = `
-        <button class="btn-icon" id="locateBtn" style="background:white; border-radius:50%; width:44px; height:44px; box-shadow:0 4px 12px rgba(0,0,0,0.2);"><i class="fas fa-crosshairs"></i></button>
-        <button class="btn-icon" id="refreshMapBtn" style="background:white; border-radius:50%; width:44px; height:44px; box-shadow:0 4px 12px rgba(0,0,0,0.2);"><i class="fas fa-arrows-rotate"></i></button>
+        <button class="btn-icon" id="locateBtn" style="background:white; border-radius:50%; width:44px; height:44px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer; margin-right:8px;"><i class="fas fa-crosshairs"></i></button>
+        <button class="btn-icon" id="refreshMapBtn" style="background:white; border-radius:50%; width:44px; height:44px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer;"><i class="fas fa-arrows-rotate"></i></button>
       `;
       container.appendChild(fabDiv);
       document.getElementById('locateBtn').addEventListener('click', () => {
@@ -1569,13 +1655,12 @@
       document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
     }
     
-    // ---------- COUNTRY & REGION LOADING ----------
     async function loadCountries() {
       const sel = document.getElementById('countrySelect');
       try {
         const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,currencies');
         const data = await res.json();
-        data.sort((a,b) => a.name.common.localeCompare(b.name.common));
+        data.sort((a, b) => a.name.common.localeCompare(b.name.common));
         sel.innerHTML = '<option value="">Select country</option>';
         data.forEach(c => {
           const opt = document.createElement('option');
@@ -1584,7 +1669,9 @@
           opt.textContent = c.name.common;
           sel.appendChild(opt);
         });
-      } catch(e) { console.warn('Country load error'); }
+      } catch (e) {
+        console.warn('Country load error');
+      }
     }
     
     document.getElementById('countrySelect').addEventListener('change', async (e) => {
@@ -1592,13 +1679,13 @@
       const opt = e.target.selectedOptions[0];
       if (opt && opt.dataset.currency) {
         countryCurrency = opt.dataset.currency;
-        currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency==='EUR'?'€':countryCurrency);
+        currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency === 'EUR' ? '€' : countryCurrency);
+        updateCalcCurrencyDisplay();
       }
       const regionSel = document.getElementById('regionSelect');
       regionSel.innerHTML = '<option>Loading...</option>';
       regionSel.disabled = true;
       if (!code) return;
-      
       try {
         const query = `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
         const resp = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
@@ -1607,12 +1694,17 @@
           const tags = el.tags || {};
           const name = tags.name || tags['name:en'] || 'Unknown';
           let lat, lon;
-          if (el.lat && el.lon) { lat = el.lat; lon = el.lon; }
-          else if (el.center) { lat = el.center.lat; lon = el.center.lon; }
-          else return null;
+          if (el.lat && el.lon) {
+            lat = el.lat;
+            lon = el.lon;
+          } else if (el.center) {
+            lat = el.center.lat;
+            lon = el.center.lon;
+          } else {
+            return null;
+          }
           return { name, lat, lon };
-        }).filter(i => i && i.lat && i.lon);
-        
+        }).filter(i => i);
         const unique = [];
         const seen = new Set();
         items.forEach(it => {
@@ -1621,24 +1713,14 @@
             unique.push(it);
           }
         });
-        unique.sort((a,b) => a.name.localeCompare(b.name));
-        
-        if (unique.length === 0) {
-          regionSel.innerHTML = '<option value="">No regions found</option>';
-        } else {
-          regionSel.innerHTML = '<option value="">Select region/city</option>';
-          unique.forEach(it => {
-            const opt = document.createElement('option');
-            opt.value = `${it.lat},${it.lon}`;
-            opt.textContent = it.name;
-            regionSel.appendChild(opt);
-          });
-          map.setView([unique[0].lat, unique[0].lon], 6);
-        }
+        unique.sort((a, b) => a.name.localeCompare(b.name));
+        regionSel.innerHTML = unique.length
+          ? '<option value="">Select region/city</option>' + unique.map(it => `<option value="${it.lat},${it.lon}">${it.name}</option>`).join('')
+          : '<option>No regions</option>';
+        if (unique.length) map.setView([unique[0].lat, unique[0].lon], 6);
         regionSel.disabled = false;
-      } catch(e) {
-        console.warn(e);
-        regionSel.innerHTML = '<option value="">Error loading</option>';
+      } catch (e) {
+        regionSel.innerHTML = '<option>Error</option>';
       }
     });
     
@@ -1652,7 +1734,7 @@
     
     document.getElementById('loadMapBtn').addEventListener('click', async () => {
       const val = document.getElementById('regionSelect').value;
-      if (!val) return alert('Select a region/city');
+      if (!val) return alert('Select a region');
       const [lat, lon] = val.split(',').map(Number);
       map.setView([lat, lon], 12);
       document.getElementById('mapStatus').innerHTML = 'Loading stations...';
@@ -1663,39 +1745,59 @@
     });
     
     async function fetchStations(lat, lon, radius = 10000) {
-      const query = `[out:json];(node["amenity"="fuel"](around:${radius},${lat},${lon});way["amenity"="fuel"](around:${radius},${lat},${lon}););out body;`;
+      const query = `[out:json];(node["amenity"="fuel"](around:${radius},${lat},${lon});way["amenity"="fuel"](around:${radius},${lat},${lon}););out center;`;
       try {
         const r = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
         const d = await r.json();
+        const countryCode = document.getElementById('countrySelect').value;
+        const base = countryPriceBase[countryCode] || {petrol: 1.5, diesel: 1.6};
         return d.elements.map(el => {
           const t = el.tags || {};
-          const slat = el.lat || el.center?.lat;
-          const slon = el.lon || el.center?.lon;
+          let lat, lon;
+          if (el.lat && el.lon) {
+            lat = el.lat;
+            lon = el.lon;
+          } else if (el.center) {
+            lat = el.center.lat;
+            lon = el.center.lon;
+          } else {
+            return null;
+          }
           return {
             id: el.id,
             name: t.name || t.brand || 'Fuel Station',
-            lat: slat, lon: slon,
+            lat, lon,
             petrol: t['fuel:petrol'] === 'yes',
             diesel: t['fuel:diesel'] === 'yes',
-            pricePetrol: (1.2 + Math.random()*0.5).toFixed(2),
-            priceDiesel: (1.1 + Math.random()*0.5).toFixed(2),
+            pricePetrol: (base.petrol * (0.9 + Math.random() * 0.3)).toFixed(2),
+            priceDiesel: (base.diesel * (0.9 + Math.random() * 0.3)).toFixed(2),
             amenities: {
               shop: !!t.shop,
-              atm: t.atm==='yes',
+              atm: t.atm === 'yes',
               car_wash: !!t.car_wash,
-              tyres: t['compressed_air']==='yes',
-              restaurant: t.amenity==='restaurant',
-              pharmacy: t.amenity==='pharmacy',
-              toilet: t.toilets==='yes'
-            },
-            rating: +(localStorage.getItem(`rating_${el.id}`) || 0)
+              tyres: t['compressed_air'] === 'yes',
+              restaurant: t.amenity === 'restaurant',
+              pharmacy: t.amenity === 'pharmacy'
+            }
           };
-        });
-      } catch { return []; }
+        }).filter(s => s !== null);
+      } catch {
+        return [];
+      }
     }
     
     function updateFilterCounts() {
-      const counts = { all: currentStations.length, petrol:0, diesel:0, shop:0, atm:0, car_wash:0, tyres:0, restaurant:0, pharmacy:0 };
+      const counts = {
+        all: currentStations.length,
+        petrol: 0,
+        diesel: 0,
+        shop: 0,
+        atm: 0,
+        car_wash: 0,
+        tyres: 0,
+        restaurant: 0,
+        pharmacy: 0
+      };
       currentStations.forEach(s => {
         if (s.petrol) counts.petrol++;
         if (s.diesel) counts.diesel++;
@@ -1706,15 +1808,10 @@
         if (s.amenities.restaurant) counts.restaurant++;
         if (s.amenities.pharmacy) counts.pharmacy++;
       });
-      document.getElementById('countAll').innerText = counts.all;
-      document.getElementById('countPetrol').innerText = counts.petrol;
-      document.getElementById('countDiesel').innerText = counts.diesel;
-      document.getElementById('countShop').innerText = counts.shop;
-      document.getElementById('countAtm').innerText = counts.atm;
-      document.getElementById('countCarWash').innerText = counts.car_wash;
-      document.getElementById('countTyres').innerText = counts.tyres;
-      document.getElementById('countRestaurant').innerText = counts.restaurant;
-      document.getElementById('countPharmacy').innerText = counts.pharmacy;
+      Object.keys(counts).forEach(k => {
+        const el = document.getElementById('count' + k.charAt(0).toUpperCase() + k.slice(1));
+        if (el) el.innerText = counts[k];
+      });
     }
     
     document.querySelectorAll('.chip').forEach(chip => {
@@ -1739,53 +1836,24 @@
     function renderMarkers(stations) {
       markerCluster.clearLayers();
       stations.forEach(s => {
-        const icon = L.divIcon({ 
-          html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);"></i>`, 
-          iconSize: [28,28], 
-          className: 'fuel-marker' 
+        const icon = L.divIcon({
+          html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px;"></i>`,
+          iconSize: [28, 28]
         });
         const marker = L.marker([s.lat, s.lon], { icon });
         marker.bindPopup(() => {
           const ratings = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
-          const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+          const avg = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : '—';
           const div = document.createElement('div');
           div.className = 'popup-content';
-          let amenitiesHtml = '';
-          if (s.amenities.shop) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-store"></i> Shop</span>';
-          if (s.amenities.atm) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-money-bill-wave"></i> ATM</span>';
-          if (s.amenities.car_wash) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-car-wash"></i> Car wash</span>';
-          if (s.amenities.tyres) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-fill-drip"></i> Tyre pump</span>';
-          if (s.amenities.toilet) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-restroom"></i> Toilet</span>';
-          if (s.amenities.restaurant) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-utensils"></i> Restaurant</span>';
-          
           div.innerHTML = `
             <h4>${s.name}</h4>
             <div>⛽ Petrol: ${currencySymbol}${s.pricePetrol}  🛢️ Diesel: ${currencySymbol}${s.priceDiesel}</div>
-            <div class="rating-stars">${'★'.repeat(Math.round(s.rating))}${'☆'.repeat(5-Math.round(s.rating))} (${ratings.length})</div>
-            <div style="margin:8px 0;">${amenitiesHtml}</div>
-            <button class="btn-outline rate-btn" data-id="${s.id}" style="margin-top:8px;">Rate</button>
-            <button class="btn-outline comment-btn" data-id="${s.id}" style="margin-top:8px;">Comment</button>
+            <div>⭐ ${avg} (${ratings.length})</div>
+            <button class="btn-outline rate-report-btn" data-id="${s.id}" style="margin-top:8px;">⭐ Rate & Report</button>
           `;
           setTimeout(() => {
-            div.querySelector('.rate-btn').onclick = () => {
-              const r = prompt('Rate 1-5');
-              if (r && !isNaN(r) && r>=1 && r<=5) {
-                const arr = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
-                arr.push(+r);
-                localStorage.setItem(`ratings_${s.id}`, JSON.stringify(arr));
-                marker.closePopup();
-                marker.openPopup();
-              }
-            };
-            div.querySelector('.comment-btn').onclick = () => {
-              const comment = prompt('Leave a comment:');
-              if (comment) {
-                const comments = JSON.parse(localStorage.getItem(`comments_${s.id}`) || '[]');
-                comments.push({ text: comment, date: new Date().toISOString() });
-                localStorage.setItem(`comments_${s.id}`, JSON.stringify(comments));
-                alert('Comment saved!');
-              }
-            };
+            div.querySelector('.rate-report-btn').onclick = () => openRatingModal(s);
           }, 50);
           return div;
         });
@@ -1794,29 +1862,32 @@
     }
     
     // ---------- TRIP PLANNER ----------
+    function showLoading(show) {
+      let overlay = document.getElementById('globalLoading');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'globalLoading';
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = '<div class="spinner"></div>';
+        document.body.appendChild(overlay);
+      }
+      overlay.style.display = show ? 'flex' : 'none';
+    }
+    
     async function detectUserLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
           userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-          try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lon}&zoom=18`);
-            const data = await res.json();
-            const road = data.address?.road || '';
-            const suburb = data.address?.suburb || '';
-            const city = data.address?.city || data.address?.town || '';
-            const display = [road, suburb, city].filter(Boolean).join(', ') || 'Current location';
-            document.getElementById('userLocationInput').value = display;
-            document.getElementById('locationDetails').innerHTML = `📍 ${display}`;
-          } catch(e) {
-            document.getElementById('userLocationInput').value = `Lat ${userCoords.lat.toFixed(4)}, Lon ${userCoords.lon.toFixed(4)}`;
-          }
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lon}&zoom=18`);
+          const data = await res.json();
+          const display = [data.address?.road, data.address?.suburb, data.address?.city].filter(Boolean).join(', ') || 'Current location';
+          document.getElementById('userLocationInput').value = display;
         }, () => {
-          document.getElementById('userLocationInput').value = 'Lusaka, Zambia (default)';
+          document.getElementById('userLocationInput').value = 'Lusaka, Zambia';
         });
-      } else {
-        document.getElementById('userLocationInput').value = 'Lusaka, Zambia';
       }
     }
+    
     detectUserLocation();
     document.getElementById('detectLocationBtn').addEventListener('click', detectUserLocation);
     
@@ -1829,22 +1900,61 @@
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
         const data = await res.json();
         const sug = document.getElementById('destSuggestions');
-        sug.innerHTML = data.slice(0,5).map(p => `<div class="suggestion-item" data-lat="${p.lat}" data-lon="${p.lon}" data-display="${p.display_name}">${p.display_name}</div>`).join('');
+        sug.innerHTML = data.slice(0, 5).map(p => `
+          <div class="suggestion-item" data-lat="${p.lat}" data-lon="${p.lon}" data-display="${p.display_name}">
+            ${p.display_name}
+          </div>
+        `).join('');
         sug.querySelectorAll('.suggestion-item').forEach(el => {
           el.addEventListener('click', async () => {
             destCoords = { lat: +el.dataset.lat, lon: +el.dataset.lon };
             destName = el.dataset.display;
             document.getElementById('selectedDestDisplay').innerText = `Destination: ${destName}`;
             sug.innerHTML = '';
-            document.getElementById('stationLoadingMsg').innerText = 'Locating five nearest fuel stations near you...';
             document.getElementById('stationSelectionContainer').style.display = 'block';
             document.getElementById('funStopsContainer').style.display = 'none';
             document.getElementById('tripOptionsContainer').style.display = 'none';
+            showLoading(true);
             await loadStationsNearUser();
+            showLoading(false);
           });
         });
       }, 500);
     });
+    
+    async function loadStationsNearUser() {
+      if (!userCoords) {
+        const fallback = await geocodeAddress(document.getElementById('userLocationInput').value);
+        if (fallback) userCoords = fallback;
+      }
+      if (!destCoords) return;
+      const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
+      const container = document.getElementById('stationListContainer');
+      container.innerHTML = stations.slice(0, 5).map(s => `
+        <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
+          <strong>${s.name}</strong>
+          <div>⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
+        </div>
+      `).join('');
+      document.getElementById('stationLoadingMsg').innerText = 'Select a fuel station:';
+      container.querySelectorAll('.station-list-item').forEach(el => {
+        el.addEventListener('click', async () => {
+          container.querySelectorAll('.station-list-item').forEach(e => e.classList.remove('selected'));
+          el.classList.add('selected');
+          selectedStation = {
+            lat: +el.dataset.lat,
+            lon: +el.dataset.lon,
+            name: el.dataset.name,
+            pricePetrol: el.dataset.petrol,
+            priceDiesel: el.dataset.diesel
+          };
+          document.getElementById('funStopsContainer').style.display = 'block';
+          showLoading(true);
+          await loadFunStops();
+          showLoading(false);
+        });
+      });
+    }
     
     async function geocodeAddress(addr) {
       const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
@@ -1852,66 +1962,26 @@
       return data[0] ? { lat: +data[0].lat, lon: +data[0].lon } : null;
     }
     
-    async function loadStationsNearUser() {
-      if (!userCoords) {
-        const fallback = await geocodeAddress(document.getElementById('userLocationInput').value);
-        if (fallback) userCoords = fallback;
-        else return alert('Could not determine your location.');
-      }
-      if (!destCoords) return alert('Destination not set');
-      
-      const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
-      const container = document.getElementById('stationListContainer');
-      container.innerHTML = stations.slice(0,5).map(s => `
-        <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
-          <strong>${s.name}</strong>
-          <div>⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
-          <div>${s.amenities.shop?'🛒 ':''}${s.amenities.atm?'🏧 ':''}${s.amenities.car_wash?'🧼 ':''}</div>
-        </div>
-      `).join('');
-      
-      document.getElementById('stationLoadingMsg').innerText = 'Select a fuel station near you:';
-      
-      container.querySelectorAll('.station-list-item').forEach(el => {
-        el.addEventListener('click', async () => {
-          container.querySelectorAll('.station-list-item').forEach(e => e.classList.remove('selected'));
-          el.classList.add('selected');
-          selectedStation = { 
-            lat: +el.dataset.lat, 
-            lon: +el.dataset.lon, 
-            name: el.dataset.name, 
-            pricePetrol: el.dataset.petrol, 
-            priceDiesel: el.dataset.diesel 
-          };
-          document.getElementById('funLoadingMsg').innerHTML = `Locating fun stops along the journey to ${destName.substring(0,30)}...`;
-          document.getElementById('funStopsContainer').style.display = 'block';
-          await loadFunStops();
-        });
-      });
-    }
-    
     async function loadFunStops() {
       if (!userCoords || !destCoords) return;
-      const midLat = (userCoords.lat + destCoords.lat)/2;
-      const midLon = (userCoords.lon + destCoords.lon)/2;
+      const midLat = (userCoords.lat + destCoords.lat) / 2;
+      const midLon = (userCoords.lon + destCoords.lon) / 2;
       const dist = map.distance([userCoords.lat, userCoords.lon], [destCoords.lat, destCoords.lon]) / 1000;
       const radius = Math.max(dist * 1000 * 0.6, 15000);
-      
-      const funQuery = `[out:json];(node["tourism"~"attraction|museum|theme_park|zoo|viewpoint"](around:${radius},${midLat},${midLon});node["leisure"~"park|amusement_park"](around:${radius},${midLat},${midLon});node["amenity"~"restaurant|cafe"](around:${radius},${midLat},${midLon}););out body;`;
+      const funQuery = `[out:json];(node["tourism"~"attraction|museum"](around:${radius},${midLat},${midLon});node["leisure"="park"](around:${radius},${midLat},${midLon}););out body;`;
       try {
         const fres = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(funQuery)}`);
         const fdata = await fres.json();
         funStops = fdata.elements.map(el => ({
           name: el.tags.name || 'Fun stop',
-          lat: el.lat, lon: el.lon,
-          type: el.tags.tourism || el.tags.leisure || el.tags.amenity
-        })).filter(f => f.lat && f.lon).slice(0, 8);
-      } catch(e) { funStops = []; }
-      
+          lat: el.lat,
+          lon: el.lon
+        })).filter(f => f.lat).slice(0, 8);
+      } catch (e) {
+        funStops = [];
+      }
       const funList = document.getElementById('funStopsList');
-      funList.innerHTML = funStops.map((f, i) => `<div class="fun-stop-item" data-index="${i}">📍 ${f.name} (${f.type})</div>`).join('');
-      document.getElementById('funLoadingMsg').innerText = 'Pick a fun stop to add to your route:';
-      
+      funList.innerHTML = funStops.map((f, i) => `<div class="fun-stop-item" data-index="${i}">📍 ${f.name}</div>`).join('');
       funList.querySelectorAll('.fun-stop-item').forEach(el => {
         el.addEventListener('click', () => {
           funList.querySelectorAll('.fun-stop-item').forEach(e => e.classList.remove('selected'));
@@ -1923,40 +1993,51 @@
     }
     
     document.getElementById('calculateAndDrawRoute').addEventListener('click', async () => {
-      if (!userCoords) { 
-        const addr = await geocodeAddress(document.getElementById('userLocationInput').value); 
-        if (addr) userCoords = addr; 
-        else return alert('Invalid start'); 
+      if (!userCoords) {
+        const addr = await geocodeAddress(document.getElementById('userLocationInput').value);
+        if (addr) userCoords = addr;
+        else return;
       }
-      if (!destCoords) return alert('Destination not set');
-      if (!selectedStation) return alert('Select a fuel station');
+      if (!destCoords || !selectedStation) return alert('Select a destination and a fuel station first.');
       
-      const waypoints = [L.latLng(userCoords.lat, userCoords.lon), L.latLng(selectedStation.lat, selectedStation.lon)];
-      if (selectedFunStop) waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
+      const waypoints = [
+        L.latLng(userCoords.lat, userCoords.lon),
+        L.latLng(selectedStation.lat, selectedStation.lon)
+      ];
+      if (selectedFunStop) {
+        waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
+      }
       waypoints.push(L.latLng(destCoords.lat, destCoords.lon));
       
       if (routingControl) map.removeControl(routingControl);
-      routingControl = L.Routing.control({ 
-        waypoints, 
-        lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }, 
-        createMarker: (i, wp) => {
-          if (i === 0) return L.marker(wp.latLng, { icon: L.divIcon({html:'<i class="fas fa-home" style="color:#2563eb;"></i>'}) });
-          if (i === waypoints.length-1) return L.marker(wp.latLng, { icon: L.divIcon({html:'<i class="fas fa-flag-checkered" style="color:#dc2626;"></i>'}) });
-          return null;
-        }
+      routingControl = L.Routing.control({
+        waypoints,
+        lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
       }).addTo(map);
+      
       map.fitBounds(L.latLngBounds(waypoints));
+      
+      // Scroll to map so user can see the route
+      document.getElementById('mapSection').scrollIntoView({ behavior: 'smooth' });
       
       const tank = +document.getElementById('tankCapacity').value || 50;
       const cons = +document.getElementById('fuelConsumption').value || 7.5;
-      const totalDist = waypoints.reduce((acc, _, i, arr) => i ? acc + map.distance(arr[i-1], arr[i])/1000 : 0, 0);
-      const fuelNeeded = (totalDist/100)*cons;
+      const totalDist = waypoints.reduce((acc, _, i, arr) => {
+        return i ? acc + map.distance(arr[i - 1], arr[i]) / 1000 : 0;
+      }, 0);
+      const fuelNeeded = (totalDist / 100) * cons;
       const fuelPrice = (document.getElementById('fuelTypeSelect').value === 'petrol' ? selectedStation.pricePetrol : selectedStation.priceDiesel) || 1.5;
-      const cost = fuelNeeded * fuelPrice;
-      document.getElementById('tripSummary').innerHTML = `📏 ${totalDist.toFixed(1)} km · ⛽ ${fuelNeeded.toFixed(1)} L · 💰 ${currencySymbol}${cost.toFixed(2)}`;
+      
+      document.getElementById('tripSummary').innerHTML = `
+        📏 Total distance: ${totalDist.toFixed(1)} km<br>
+        ⛽ Fuel needed: ${fuelNeeded.toFixed(1)} L<br>
+        💰 Estimated cost: ${currencySymbol}${(fuelNeeded * fuelPrice).toFixed(2)}
+      `;
     });
     
-    document.getElementById('openPlannerBtn').onclick = () => document.getElementById('planner').scrollIntoView({behavior:'smooth'});
+    document.getElementById('openPlannerBtn').onclick = () => {
+      document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
+    };
     
     initMap();
     loadCountries();
