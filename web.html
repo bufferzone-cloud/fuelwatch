@@ -655,7 +655,47 @@
       100% { transform: translateY(0); }
     }
 
-    /* Partners */
+    /* Partners Dropdown */
+    .partner-dropdown-section {
+      background: #f8fafc;
+      border-radius: 40px;
+      margin-top: 30px;
+      border: 1px solid #e2efe2;
+      overflow: hidden;
+    }
+    
+    body.dark .partner-dropdown-section {
+      background: #1e1e1e;
+    }
+    
+    .partner-dropdown-header {
+      padding: 24px 32px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #16a34a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: #f0fdf4;
+    }
+    
+    body.dark .partner-dropdown-header {
+      background: #1e2a1e;
+    }
+    
+    .partner-dropdown-content {
+      padding: 0 32px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out;
+    }
+    
+    .partner-dropdown-section.open .partner-dropdown-content {
+      max-height: 600px;
+      padding: 32px;
+    }
+
     .partners-grid {
       display: flex;
       flex-wrap: wrap;
@@ -681,19 +721,6 @@
       color: #1e293b;
     }
 
-    /* Partner Form */
-    .partner-form-section {
-      background: #f8fafc;
-      border-radius: 40px;
-      padding: 50px 40px;
-      margin-top: 50px;
-      border: 1px solid #e2efe2;
-    }
-    
-    body.dark .partner-form-section {
-      background: #1e1e1e;
-    }
-    
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -726,7 +753,7 @@
       border-radius: 24px;
     }
 
-    /* Contact */
+    /* Contact improved */
     .contact-card {
       background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);
       border-radius: 40px;
@@ -734,14 +761,11 @@
       display: flex;
       flex-wrap: wrap;
       gap: 40px;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.05);
     }
     
     body.dark .contact-card {
       background: #1e2a1e;
-    }
-    
-    .contact-info {
-      flex: 1;
     }
     
     .contact-info h2 {
@@ -754,6 +778,38 @@
       font-weight: 800;
       color: #16a34a;
       margin: 20px 0;
+    }
+    
+    .contact-methods {
+      display: flex;
+      gap: 24px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    
+    .contact-method {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .contact-method i {
+      font-size: 24px;
+      color: #16a34a;
+      background: white;
+      padding: 10px;
+      border-radius: 50%;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .social-links a {
+      color: #16a34a;
+      font-size: 24px;
     }
     
     .contact-form {
@@ -871,6 +927,7 @@
       border: 1px solid #bbf7d0;
       cursor: pointer;
       white-space: nowrap;
+      position: relative;
     }
     
     body.dark .chip {
@@ -881,6 +938,20 @@
     .chip.active {
       background: #16a34a;
       color: white;
+    }
+    
+    .chip .count-badge {
+      background: #16a34a;
+      color: white;
+      border-radius: 20px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      font-size: 11px;
+    }
+    
+    .chip.active .count-badge {
+      background: white;
+      color: #16a34a;
     }
     
     .planner-card {
@@ -967,6 +1038,12 @@
       padding: 8px 16px;
       margin-bottom: 6px;
       border: 1px solid #e2efe2;
+      cursor: pointer;
+    }
+    
+    .fun-stop-item.selected {
+      background: #e0f2e0;
+      border-color: #16a34a;
     }
     
     .popup-content {
@@ -977,43 +1054,43 @@
       color: #fbbf24;
     }
 
+    .amenity-badge {
+      background: #f3f4f6;
+      border-radius: 40px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    
+    .rating-stars {
+      display: flex;
+      gap: 4px;
+      margin: 8px 0;
+    }
+    
+    .rating-stars i {
+      color: #fbbf24;
+      cursor: pointer;
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
-      .hero {
-        flex-direction: column;
-      }
-      .phone-mockup {
-        flex: 0 0 auto;
-        width: 260px;
-      }
-      .benefits-grid {
-        grid-template-columns: 1fr;
-      }
-      .tech-section {
-        flex-direction: column;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero { flex-direction: column; }
+      .phone-mockup { flex: 0 0 auto; width: 260px; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .tech-section { flex-direction: column; }
+      .form-grid { grid-template-columns: 1fr; }
     }
     
     @media (max-width: 768px) {
-      .navbar {
-        flex-wrap: wrap;
-      }
-      .nav-links,
-      .nav-buttons {
-        display: none;
-      }
-      .menu-toggle {
-        display: block;
-      }
-      .car-bg-content {
-        flex-direction: column;
-      }
-      .card-grid {
-        gap: 12px;
-      }
+      .navbar { flex-wrap: wrap; }
+      .nav-links, .nav-buttons { display: none; }
+      .menu-toggle { display: block; }
+      .car-bg-content { flex-direction: column; }
+      .card-grid { gap: 12px; }
     }
   </style>
 </head>
@@ -1022,7 +1099,7 @@
 <!-- Navigation -->
 <nav class="navbar">
   <div class="logo-area">
-    <img src="logo.png" alt="FuelRadar Logo">
+    <img src="logo.png" alt="FuelRadar Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
     <div class="brand-name"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></div>
   </div>
   <div class="nav-links">
@@ -1079,7 +1156,7 @@
     </div>
     <div class="phone-mockup">
       <div class="phone-screen">
-        <img src="app.jpeg" alt="FuelRadar app screenshot">
+        <img src="app.jpeg" alt="FuelRadar app screenshot" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
       </div>
     </div>
   </div>
@@ -1142,17 +1219,17 @@
       <button class="btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
     </div>
     
-    <!-- Filter chips -->
+    <!-- Filter chips with counts -->
     <div class="filter-scroll" id="filterBar">
-      <span class="chip active" data-filter="all">All</span>
-      <span class="chip" data-filter="petrol">Petrol</span>
-      <span class="chip" data-filter="diesel">Diesel</span>
-      <span class="chip" data-filter="shop">Shop</span>
-      <span class="chip" data-filter="atm">ATM</span>
-      <span class="chip" data-filter="car_wash">Car wash</span>
-      <span class="chip" data-filter="tyres">Tyre pump</span>
-      <span class="chip" data-filter="restaurant">Restaurant</span>
-      <span class="chip" data-filter="pharmacy">Pharmacy</span>
+      <span class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></span>
+      <span class="chip" data-filter="petrol">Petrol <span class="count-badge" id="countPetrol">0</span></span>
+      <span class="chip" data-filter="diesel">Diesel <span class="count-badge" id="countDiesel">0</span></span>
+      <span class="chip" data-filter="shop">Shop <span class="count-badge" id="countShop">0</span></span>
+      <span class="chip" data-filter="atm">ATM <span class="count-badge" id="countAtm">0</span></span>
+      <span class="chip" data-filter="car_wash">Car wash <span class="count-badge" id="countCarWash">0</span></span>
+      <span class="chip" data-filter="tyres">Tyre pump <span class="count-badge" id="countTyres">0</span></span>
+      <span class="chip" data-filter="restaurant">Restaurant <span class="count-badge" id="countRestaurant">0</span></span>
+      <span class="chip" data-filter="pharmacy">Pharmacy <span class="count-badge" id="countPharmacy">0</span></span>
     </div>
     
     <div id="mapContainer"></div>
@@ -1250,7 +1327,7 @@
       </div>
     </div>
     <div class="floating-logo">
-      <img src="logo.png" alt="FuelRadar logo" style="width:180px;">
+      <img src="logo.png" alt="FuelRadar logo" style="width:180px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
     </div>
   </div>
 </section>
@@ -1260,7 +1337,7 @@
   <div class="container">
     <h2 class="section-title">✈️ Plan a Fun Trip</h2>
     <div class="planner-card">
-      <!-- Step 1: User location (auto-detected) -->
+      <!-- Step 1: User location -->
       <div class="step-container">
         <div class="step-header"><i class="fas fa-map-pin"></i> Your location</div>
         <div class="search-pill">
@@ -1268,7 +1345,7 @@
           <input type="text" id="userLocationInput" placeholder="Detecting your location..." readonly>
           <button class="btn-outline" id="detectLocationBtn" style="border:none;"><i class="fas fa-crosshairs"></i></button>
         </div>
-        <p class="text-small" id="locationDetails" style="margin-top:8px;"></p>
+        <p id="locationDetails" style="margin-top:8px;"></p>
       </div>
       
       <!-- Step 2: Destination search -->
@@ -1283,18 +1360,18 @@
         <p id="selectedDestDisplay" class="text-small" style="margin-top:8px;"></p>
       </div>
       
-      <!-- Step 3: Station selection near user -->
+      <!-- Step 3: Station selection -->
       <div id="stationSelectionContainer" style="display:none;">
         <div class="step-container">
-          <div class="step-header"><i class="fas fa-gas-pump"></i> Select a fuel station near you</div>
+          <div class="step-header"><i class="fas fa-gas-pump"></i> <span id="stationLoadingMsg">Locating five nearest fuel stations near you...</span></div>
           <div id="stationListContainer"></div>
         </div>
       </div>
       
-      <!-- Step 4: Fun stops (appear after station selected) -->
+      <!-- Step 4: Fun stops -->
       <div id="funStopsContainer" style="display:none;">
         <div class="step-container">
-          <div class="step-header"><i class="fas fa-camera"></i> Fun stops along the way</div>
+          <div class="step-header"><i class="fas fa-camera"></i> <span id="funLoadingMsg">Locating fun stops along the journey...</span></div>
           <div id="funStopsList"></div>
         </div>
       </div>
@@ -1319,7 +1396,7 @@
   </div>
 </section>
 
-<!-- Partners -->
+<!-- Partners Dropdown -->
 <section id="partners">
   <div class="container">
     <h2 class="section-title">Our Partners</h2>
@@ -1334,32 +1411,45 @@
         <button class="btn-primary" id="partnerFormBtn">Apply to Become a Partner</button>
       </div>
     </div>
-    <div class="partner-form-section">
-      <h3 style="font-size:28px; margin-bottom:32px; color:#16a34a;">Partner Application</h3>
-      <form onsubmit="alert('Application submitted!'); return false;">
-        <div class="form-grid">
-          <div class="form-group"><label>Business / Station Name *</label><input type="text" required></div>
-          <div class="form-group"><label>Contact Person *</label><input type="text" required></div>
-          <div class="form-group"><label>Email Address *</label><input type="email" required></div>
-          <div class="form-group"><label>Phone Number *</label><input type="tel" required></div>
-        </div>
-        <div class="form-group"><label>Business Type *</label><select required><option value="">Select...</option><option>Fuel Station</option><option>Service Provider</option><option>Other</option></select></div>
-        <div class="form-group"><label>Tell us about your business</label><textarea rows="3"></textarea></div>
-        <button type="submit" class="btn-primary" style="padding:14px 36px;">Submit Application</button>
-      </form>
+    <div class="partner-dropdown-section" id="partnerDropdown">
+      <div class="partner-dropdown-header">
+        <span><i class="fas fa-handshake"></i> Partner Application Form</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="partner-dropdown-content">
+        <form onsubmit="alert('Application submitted!'); return false;">
+          <div class="form-grid">
+            <div class="form-group"><label>Business / Station Name *</label><input type="text" required></div>
+            <div class="form-group"><label>Contact Person *</label><input type="text" required></div>
+            <div class="form-group"><label>Email Address *</label><input type="email" required></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" required></div>
+          </div>
+          <div class="form-group"><label>Business Type *</label><select required><option value="">Select...</option><option>Fuel Station</option><option>Service Provider</option><option>Other</option></select></div>
+          <div class="form-group"><label>Tell us about your business</label><textarea rows="3"></textarea></div>
+          <button type="submit" class="btn-primary" style="padding:14px 36px;">Submit Application</button>
+        </form>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Contact -->
+<!-- Contact improved -->
 <section id="contact">
   <div class="container contact-card">
     <div class="contact-info">
-      <h2>Contact us</h2>
-      <p>Send us a message or give us a call</p>
+      <h2>📞 Contact us</h2>
+      <p>We're here to help 24/7</p>
       <div class="phone-large"><i class="fas fa-phone-alt"></i> 0972454724</div>
-      <p><i class="fas fa-envelope"></i> hello@fuelradar.global</p>
-      <p><i class="fas fa-map-marker-alt"></i> Global · Based in Zambia</p>
+      <div class="contact-methods">
+        <div class="contact-method"><i class="fas fa-envelope"></i> hello@fuelradar.global</div>
+        <div class="contact-method"><i class="fas fa-map-marker-alt"></i> Lusaka, Zambia · Global</div>
+      </div>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
     </div>
     <div class="contact-form">
       <input type="text" placeholder="Your name">
@@ -1374,7 +1464,7 @@
   <p>© 2026 FuelRadar. All rights reserved. · Built for the World</p>
 </footer>
 
-<!-- Partner Modal -->
+<!-- Partner Modal (for quick partner) -->
 <div id="partnerModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" onclick="closePartnerModal()">&times;</span>
@@ -1412,6 +1502,12 @@
     document.getElementById('closeSidebarBtn').addEventListener('click', () => sidebar.classList.remove('open'));
     document.querySelectorAll('.sidebar-item').forEach(i => i.addEventListener('click', () => sidebar.classList.remove('open')));
     
+    // ---------- PARTNER DROPDOWN ----------
+    const partnerDropdown = document.getElementById('partnerDropdown');
+    partnerDropdown.querySelector('.partner-dropdown-header').addEventListener('click', () => {
+      partnerDropdown.classList.toggle('open');
+    });
+    
     // ---------- MODALS ----------
     const partnerModal = document.getElementById('partnerModal');
     window.openPartnerModal = () => partnerModal.style.display = 'flex';
@@ -1437,6 +1533,8 @@
     let currentStations = [], currentFilter = 'all';
     let countryCurrency = 'USD', currencySymbol = '$';
     let userCoords = null, destCoords = null, selectedStation = null, funStops = [];
+    let selectedFunStop = null;
+    let destName = '';
     
     function initMap() {
       map = L.map('mapContainer').setView([20, 0], 2);
@@ -1471,7 +1569,7 @@
       document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
     }
     
-    // ---------- COUNTRY & REGION LOADING (WORKING VERSION) ----------
+    // ---------- COUNTRY & REGION LOADING ----------
     async function loadCountries() {
       const sel = document.getElementById('countrySelect');
       try {
@@ -1502,7 +1600,6 @@
       if (!code) return;
       
       try {
-        // Query Overpass for admin boundaries (admin_level 4/5) and cities/towns
         const query = `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
         const resp = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
         const data = await resp.json();
@@ -1516,7 +1613,6 @@
           return { name, lat, lon };
         }).filter(i => i && i.lat && i.lon);
         
-        // Remove duplicates by name
         const unique = [];
         const seen = new Set();
         items.forEach(it => {
@@ -1550,7 +1646,7 @@
       const val = e.target.value;
       if (val) {
         const [lat, lon] = val.split(',').map(Number);
-        map.setView([lat, lon], 12);
+        map.setView([lat, lon], 10);
       }
     });
     
@@ -1558,9 +1654,10 @@
       const val = document.getElementById('regionSelect').value;
       if (!val) return alert('Select a region/city');
       const [lat, lon] = val.split(',').map(Number);
-      map.setView([lat, lon], 13);
+      map.setView([lat, lon], 12);
       document.getElementById('mapStatus').innerHTML = 'Loading stations...';
       currentStations = await fetchStations(lat, lon);
+      updateFilterCounts();
       applyFilter();
       document.getElementById('mapStatus').innerHTML = `${currentStations.length} stations found.`;
     });
@@ -1588,12 +1685,36 @@
               car_wash: !!t.car_wash,
               tyres: t['compressed_air']==='yes',
               restaurant: t.amenity==='restaurant',
-              pharmacy: t.amenity==='pharmacy'
+              pharmacy: t.amenity==='pharmacy',
+              toilet: t.toilets==='yes'
             },
             rating: +(localStorage.getItem(`rating_${el.id}`) || 0)
           };
         });
       } catch { return []; }
+    }
+    
+    function updateFilterCounts() {
+      const counts = { all: currentStations.length, petrol:0, diesel:0, shop:0, atm:0, car_wash:0, tyres:0, restaurant:0, pharmacy:0 };
+      currentStations.forEach(s => {
+        if (s.petrol) counts.petrol++;
+        if (s.diesel) counts.diesel++;
+        if (s.amenities.shop) counts.shop++;
+        if (s.amenities.atm) counts.atm++;
+        if (s.amenities.car_wash) counts.car_wash++;
+        if (s.amenities.tyres) counts.tyres++;
+        if (s.amenities.restaurant) counts.restaurant++;
+        if (s.amenities.pharmacy) counts.pharmacy++;
+      });
+      document.getElementById('countAll').innerText = counts.all;
+      document.getElementById('countPetrol').innerText = counts.petrol;
+      document.getElementById('countDiesel').innerText = counts.diesel;
+      document.getElementById('countShop').innerText = counts.shop;
+      document.getElementById('countAtm').innerText = counts.atm;
+      document.getElementById('countCarWash').innerText = counts.car_wash;
+      document.getElementById('countTyres').innerText = counts.tyres;
+      document.getElementById('countRestaurant').innerText = counts.restaurant;
+      document.getElementById('countPharmacy').innerText = counts.pharmacy;
     }
     
     document.querySelectorAll('.chip').forEach(chip => {
@@ -1618,24 +1739,33 @@
     function renderMarkers(stations) {
       markerCluster.clearLayers();
       stations.forEach(s => {
-        const icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:24px;"></i>`, iconSize: [24,24] });
+        const icon = L.divIcon({ 
+          html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);"></i>`, 
+          iconSize: [28,28], 
+          className: 'fuel-marker' 
+        });
         const marker = L.marker([s.lat, s.lon], { icon });
         marker.bindPopup(() => {
           const ratings = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
           const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
           const div = document.createElement('div');
           div.className = 'popup-content';
+          let amenitiesHtml = '';
+          if (s.amenities.shop) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-store"></i> Shop</span>';
+          if (s.amenities.atm) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-money-bill-wave"></i> ATM</span>';
+          if (s.amenities.car_wash) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-car-wash"></i> Car wash</span>';
+          if (s.amenities.tyres) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-fill-drip"></i> Tyre pump</span>';
+          if (s.amenities.toilet) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-restroom"></i> Toilet</span>';
+          if (s.amenities.restaurant) amenitiesHtml += '<span class="amenity-badge"><i class="fas fa-utensils"></i> Restaurant</span>';
+          
           div.innerHTML = `
             <h4>${s.name}</h4>
             <div>⛽ Petrol: ${currencySymbol}${s.pricePetrol}  🛢️ Diesel: ${currencySymbol}${s.priceDiesel}</div>
-            <div class="stars">${'★'.repeat(Math.round(s.rating))}${'☆'.repeat(5-Math.round(s.rating))} (${ratings.length})</div>
-            <div style="font-size:12px; margin:5px 0;">
-              ${s.amenities.shop ? '🛒 Shop ' : ''}
-              ${s.amenities.atm ? '🏧 ATM ' : ''}
-              ${s.amenities.car_wash ? '🧼 Wash ' : ''}
-              ${s.amenities.restaurant ? '🍽️ Food ' : ''}
-            </div>
-            <button class="btn-outline rate-btn" data-id="${s.id}" style="margin-top:8px;">Rate</button>`;
+            <div class="rating-stars">${'★'.repeat(Math.round(s.rating))}${'☆'.repeat(5-Math.round(s.rating))} (${ratings.length})</div>
+            <div style="margin:8px 0;">${amenitiesHtml}</div>
+            <button class="btn-outline rate-btn" data-id="${s.id}" style="margin-top:8px;">Rate</button>
+            <button class="btn-outline comment-btn" data-id="${s.id}" style="margin-top:8px;">Comment</button>
+          `;
           setTimeout(() => {
             div.querySelector('.rate-btn').onclick = () => {
               const r = prompt('Rate 1-5');
@@ -1647,6 +1777,15 @@
                 marker.openPopup();
               }
             };
+            div.querySelector('.comment-btn').onclick = () => {
+              const comment = prompt('Leave a comment:');
+              if (comment) {
+                const comments = JSON.parse(localStorage.getItem(`comments_${s.id}`) || '[]');
+                comments.push({ text: comment, date: new Date().toISOString() });
+                localStorage.setItem(`comments_${s.id}`, JSON.stringify(comments));
+                alert('Comment saved!');
+              }
+            };
           }, 50);
           return div;
         });
@@ -1654,7 +1793,7 @@
       });
     }
     
-    // ---------- TRIP PLANNER (IMPROVED FLOW) ----------
+    // ---------- TRIP PLANNER ----------
     async function detectUserLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -1694,8 +1833,13 @@
         sug.querySelectorAll('.suggestion-item').forEach(el => {
           el.addEventListener('click', async () => {
             destCoords = { lat: +el.dataset.lat, lon: +el.dataset.lon };
-            document.getElementById('selectedDestDisplay').innerText = `Destination: ${el.dataset.display}`;
+            destName = el.dataset.display;
+            document.getElementById('selectedDestDisplay').innerText = `Destination: ${destName}`;
             sug.innerHTML = '';
+            document.getElementById('stationLoadingMsg').innerText = 'Locating five nearest fuel stations near you...';
+            document.getElementById('stationSelectionContainer').style.display = 'block';
+            document.getElementById('funStopsContainer').style.display = 'none';
+            document.getElementById('tripOptionsContainer').style.display = 'none';
             await loadStationsNearUser();
           });
         });
@@ -1718,7 +1862,7 @@
       
       const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
       const container = document.getElementById('stationListContainer');
-      container.innerHTML = stations.map(s => `
+      container.innerHTML = stations.slice(0,5).map(s => `
         <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
           <strong>${s.name}</strong>
           <div>⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
@@ -1726,9 +1870,7 @@
         </div>
       `).join('');
       
-      document.getElementById('stationSelectionContainer').style.display = 'block';
-      document.getElementById('funStopsContainer').style.display = 'none';
-      document.getElementById('tripOptionsContainer').style.display = 'none';
+      document.getElementById('stationLoadingMsg').innerText = 'Select a fuel station near you:';
       
       container.querySelectorAll('.station-list-item').forEach(el => {
         el.addEventListener('click', async () => {
@@ -1741,9 +1883,9 @@
             pricePetrol: el.dataset.petrol, 
             priceDiesel: el.dataset.diesel 
           };
-          await loadFunStops();
+          document.getElementById('funLoadingMsg').innerHTML = `Locating fun stops along the journey to ${destName.substring(0,30)}...`;
           document.getElementById('funStopsContainer').style.display = 'block';
-          document.getElementById('tripOptionsContainer').style.display = 'block';
+          await loadFunStops();
         });
       });
     }
@@ -1767,16 +1909,30 @@
       } catch(e) { funStops = []; }
       
       const funList = document.getElementById('funStopsList');
-      funList.innerHTML = funStops.map(f => `<div class="fun-stop-item"><span>📍 ${f.name} (${f.type})</span></div>`).join('');
+      funList.innerHTML = funStops.map((f, i) => `<div class="fun-stop-item" data-index="${i}">📍 ${f.name} (${f.type})</div>`).join('');
+      document.getElementById('funLoadingMsg').innerText = 'Pick a fun stop to add to your route:';
+      
+      funList.querySelectorAll('.fun-stop-item').forEach(el => {
+        el.addEventListener('click', () => {
+          funList.querySelectorAll('.fun-stop-item').forEach(e => e.classList.remove('selected'));
+          el.classList.add('selected');
+          selectedFunStop = funStops[el.dataset.index];
+          document.getElementById('tripOptionsContainer').style.display = 'block';
+        });
+      });
     }
     
     document.getElementById('calculateAndDrawRoute').addEventListener('click', async () => {
-      if (!userCoords) { const addr = await geocodeAddress(document.getElementById('userLocationInput').value); if (addr) userCoords = addr; else return alert('Invalid start'); }
+      if (!userCoords) { 
+        const addr = await geocodeAddress(document.getElementById('userLocationInput').value); 
+        if (addr) userCoords = addr; 
+        else return alert('Invalid start'); 
+      }
       if (!destCoords) return alert('Destination not set');
       if (!selectedStation) return alert('Select a fuel station');
       
       const waypoints = [L.latLng(userCoords.lat, userCoords.lon), L.latLng(selectedStation.lat, selectedStation.lon)];
-      funStops.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
+      if (selectedFunStop) waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
       waypoints.push(L.latLng(destCoords.lat, destCoords.lon));
       
       if (routingControl) map.removeControl(routingControl);
