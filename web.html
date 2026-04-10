@@ -2,243 +2,302 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=yes">
-  <title>FuelRadar · Zambia · Never Run Out</title>
-  <!-- Font Awesome & Google Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>FuelRadar · Global · Never Run Out</title>
+
+  <!-- Fonts & Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet & Plugins -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
   <style>
+    /* ----- RESET & GLOBAL ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background: #fff;
-      color: #1e1e1e;
-      line-height: 1.5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ffffff;
+      color: #1d1d1f;
+      line-height: 1.4;
       scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
     }
+
+    body.dark {
+      background: #000000;
+      color: #f5f5f7;
+    }
+
     .container {
-      max-width: 1200px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* Navigation */
+    /* ----- TYPOGRAPHY & BUTTONS ----- */
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+
+    .text-small {
+      font-size: 0.8rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .btn-primary {
+      background: #16a34a;
+      color: white;
+      box-shadow: 0 4px 12px rgba(22,163,74,0.2);
+    }
+
+    .btn-outline {
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark .btn-outline {
+      background: rgba(30,30,30,0.7);
+      border-color: rgba(255,255,255,0.1);
+      color: #f5f5f7;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      padding: 0;
+    }
+
+    /* ----- NAVIGATION ----- */
     .navbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    .logo-area {
+
+    body.dark .navbar {
+      background: rgba(20,20,20,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
-    .logo-area img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
-    .brand-name {
-      font-size: 22px;
-      font-weight: 800;
-    }
+
     .fuel-green { color: #16a34a; }
     .radar-red { color: #dc2626; }
+
     .nav-links {
       display: flex;
       gap: 24px;
-      font-weight: 600;
-    }
-    .nav-links a {
-      text-decoration: none;
-      color: #1e293b;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: #16a34a; }
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-    }
-    .btn-outline {
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-weight: 600;
-      background: transparent;
-      border: 1.5px solid #16a34a;
-      color: #16a34a;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    .btn-outline:hover {
-      background: #16a34a;
-      color: white;
-    }
-    .btn-primary {
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: 700;
-      background: #16a34a;
-      border: none;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #14532d;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #14532d;
-    }
-    .menu-toggle {
-      display: none;
-      font-size: 24px;
-      background: none;
-      border: none;
-      color: #16a34a;
+      font-weight: 500;
     }
 
-    /* Sidebar overlay for mobile */
+    .nav-links a {
+      text-decoration: none;
+      color: inherit;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .nav-links a:hover { opacity: 1; }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #16a34a;
+      cursor: pointer;
+    }
+
+    /* ----- SIDEBAR (mobile) ----- */
     .sidebar-overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.3);
       z-index: 3000;
       visibility: hidden;
       opacity: 0;
       transition: 0.2s;
+      backdrop-filter: blur(4px);
     }
+
     .sidebar-overlay.open { visibility: visible; opacity: 1; }
+
     .sidebar-panel {
       position: fixed;
-      top: 0;
-      right: -280px;
-      width: 260px;
-      height: 100%;
-      background: white;
-      box-shadow: -4px 0 24px rgba(0,0,0,0.2);
+      top: 0; right: -260px;
+      width: 240px; height: 100%;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(30px);
+      box-shadow: -4px 0 30px rgba(0,0,0,0.1);
       z-index: 3001;
-      transition: right 0.25s ease-out;
+      transition: right 0.25s;
       display: flex;
       flex-direction: column;
       padding: 20px 0;
+      border-left: 1px solid rgba(0,0,0,0.05);
     }
+
+    body.dark .sidebar-panel {
+      background: rgba(20,20,20,0.95);
+      border-left-color: #3a3a3c;
+    }
+
     .sidebar-overlay.open .sidebar-panel { right: 0; }
+
     .sidebar-header {
       padding: 12px 20px;
-      border-bottom: 1px solid #e0f0e0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
       display: flex;
       justify-content: space-between;
-      align-items: center;
     }
-    .sidebar-menu {
-      flex: 1;
-      padding: 16px 0;
-    }
+
+    .sidebar-menu { flex: 1; padding: 16px 0; }
+
     .sidebar-item {
-      padding: 14px 24px;
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       gap: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1e3a1e;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1d1d1f;
       cursor: pointer;
-    }
-    .sidebar-item i { width: 24px; color: #16a34a; }
-    .sidebar-buttons {
-      padding: 20px;
-      border-top: 1px solid #e2efe2;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      text-decoration: none;
     }
 
-    /* Sections */
-    section { padding: 60px 0; }
-    .section-title {
-      font-size: 32px;
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    .section-subtitle {
-      text-align: center;
-      color: #4b5563;
-      max-width: 600px;
-      margin: 0 auto 40px;
-      font-size: 16px;
-    }
+    body.dark .sidebar-item { color: #f5f5f7; }
+    .sidebar-item i { width: 20px; color: #16a34a; }
 
-    /* Hero */
+    /* ----- HERO ----- */
     .hero-wrapper {
       background: linear-gradient(135deg, #0a0a0a 0%, #064e3b 100%);
       border-radius: 0 0 40px 40px;
       padding: 50px 0;
     }
+
     .hero {
       display: flex;
       align-items: center;
       gap: 30px;
     }
+
     .hero-content {
       flex: 1;
       color: white;
-      text-align: center;
     }
+
     .hero h1 {
-      font-size: 44px;
+      font-size: 2.8rem;
       font-weight: 800;
       line-height: 1.2;
       margin-bottom: 20px;
     }
+
     .hero h1 span { color: #4ade80; }
+
     .hero p {
-      font-size: 16px;
+      font-size: 0.9rem;
       color: #e2e8f0;
       margin-bottom: 28px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: 460px;
     }
+
     .hero-buttons {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
-      justify-content: center;
     }
+
     .hero .btn-primary {
       background: white;
       color: #16a34a;
       box-shadow: 0 4px 0 #15803d;
     }
+
     .hero .btn-outline {
       border-color: white;
       color: white;
     }
+
     .hero .btn-outline:hover {
       background: white;
       color: #16a34a;
     }
+
     .feature-icons {
       display: flex;
-      justify-content: center;
       margin-top: 40px;
-      flex-wrap: wrap;
       gap: 24px;
+      flex-wrap: wrap;
     }
+
     .feature-item {
       display: flex;
       flex-direction: column;
@@ -246,33 +305,37 @@
       gap: 6px;
       font-weight: 600;
       color: white;
-      font-size: 14px;
+      font-size: 0.8rem;
     }
+
     .feature-item i {
-      font-size: 28px;
+      font-size: 24px;
       color: #4ade80;
       background: rgba(255,255,255,0.15);
-      padding: 10px;
+      padding: 8px;
       border-radius: 50%;
       backdrop-filter: blur(4px);
     }
+
     .phone-mockup {
-      flex: 0 0 280px;
+      flex: 0 0 240px;
       background: #111;
-      border-radius: 36px;
-      padding: 10px;
+      border-radius: 28px;
+      padding: 8px;
       box-shadow: 0 30px 50px rgba(0,0,0,0.5);
       border: 2px solid #333;
     }
+
     .phone-screen {
       background: #f0fdf4;
-      border-radius: 28px;
+      border-radius: 22px;
       overflow: hidden;
-      height: 560px;
+      height: 440px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     .phone-screen img {
       width: 100%;
       height: 100%;
@@ -280,47 +343,53 @@
       display: block;
     }
 
-    /* 3x3 Grid – always 3 columns */
+    /* ----- 3x3 FEATURE GRID ----- */
     .card-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 32px;
+      gap: 16px;
+      margin: 32px 0;
     }
+
     .feature-card {
-      background: white;
-      padding: 24px 12px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      background: #f5f5f7;
+      padding: 20px 12px;
+      border-radius: 24px;
       text-align: center;
       border: 1.5px solid #dc2626;
-      transition: all 0.3s;
+      transition: transform 0.2s;
     }
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 30px rgba(220,38,38,0.1);
+
+    body.dark .feature-card {
+      background: #1c1c1e;
+      border-color: #4ade80;
     }
+
+    .feature-card:hover { transform: translateY(-4px); }
+
     .feature-card i {
-      font-size: 36px;
+      font-size: 28px;
       color: #16a34a;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       background: #f0fdf4;
-      padding: 12px;
+      padding: 10px;
       border-radius: 16px;
     }
-    .feature-card h3 { margin-bottom: 8px; font-size: 18px; }
-    .feature-card p { font-size: 13px; color: #4b5563; }
 
-    /* Monitoring section */
+    .feature-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+    .feature-card p { font-size: 0.8rem; opacity: 0.7; }
+
+    /* ----- MONITORING SECTION ----- */
     .monitoring-bg {
       background: url('https://images.pexels.com/photos/977213/pexels-photo-977213.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
       position: relative;
       border-radius: 32px;
       overflow: hidden;
       color: white;
-      padding: 60px 40px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      padding: 48px 32px;
+      margin: 40px 0;
     }
+
     .monitoring-bg::before {
       content: '';
       position: absolute;
@@ -328,43 +397,38 @@
       background: rgba(6, 78, 59, 0.9);
       z-index: 0;
     }
+
     .monitoring-content {
       position: relative;
       z-index: 2;
-      max-width: 550px;
-    }
-    .monitoring-content h2 {
-      font-size: 36px;
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-    .check-list {
-      list-style: none;
-      margin: 28px 0;
-    }
-    .check-list li {
-      margin: 16px 0;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    .check-list i {
-      color: #fbbf24;
-      font-size: 26px;
+      max-width: 440px;
     }
 
-    /* Car at gas station background */
+    .monitoring-content h2 { font-size: 2rem; margin-bottom: 16px; }
+
+    .check-list { list-style: none; margin: 24px 0; }
+
+    .check-list li {
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+    }
+
+    .check-list i { color: #fbbf24; font-size: 1.3rem; }
+
+    /* ----- CAR BACKGROUND (Drivers & Stations) ----- */
     .car-bg-section {
       background: url('https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
       position: relative;
       border-radius: 32px;
       overflow: hidden;
       color: white;
-      padding: 60px 40px;
+      padding: 48px 32px;
       margin: 40px 0;
     }
+
     .car-bg-section::before {
       content: '';
       position: absolute;
@@ -372,277 +436,449 @@
       background: rgba(0, 0, 0, 0.5);
       z-index: 0;
     }
+
     .car-bg-content {
       position: relative;
       z-index: 2;
       display: flex;
-      gap: 30px;
+      gap: 24px;
       flex-wrap: wrap;
     }
+
     .driver-station-card {
       flex: 1;
       background: rgba(255,255,255,0.1);
       backdrop-filter: blur(8px);
-      border-radius: 28px;
-      padding: 36px 28px;
+      border-radius: 24px;
+      padding: 28px 24px;
       border: 1px solid rgba(255,255,255,0.2);
     }
+
     .driver-station-card h3 {
-      font-size: 26px;
-      margin-bottom: 24px;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
       color: #4ade80;
     }
+
     .driver-station-card ul { list-style: none; }
+
     .driver-station-card li {
-      margin: 14px 0;
+      margin: 12px 0;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 16px;
+      gap: 10px;
+      font-size: 0.9rem;
     }
 
-    /* Enhanced Benefits */
+    /* ----- BENEFITS ----- */
     .benefits-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 30px;
+      gap: 24px;
+      margin: 40px 0;
     }
+
     .benefit-card {
       background: #ffffff;
       border-radius: 28px;
-      padding: 36px;
+      padding: 32px;
+      border-top: 6px solid #16a34a;
       box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-      border-top: 8px solid #16a34a;
-      transition: transform 0.3s;
     }
-    .benefit-card:hover { transform: translateY(-6px); }
+
+    body.dark .benefit-card { background: #1c1c1e; }
+
     .benefit-card h3 {
-      font-size: 26px;
-      margin-bottom: 28px;
+      font-size: 1.3rem;
+      margin-bottom: 24px;
       color: #16a34a;
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .benefit-list { list-style: none; }
+
     .benefit-list li {
-      margin: 22px 0;
+      margin: 20px 0;
       display: flex;
       align-items: flex-start;
-      gap: 14px;
+      gap: 12px;
     }
+
     .benefit-list i {
       color: #16a34a;
-      font-size: 24px;
+      font-size: 1.2rem;
       background: #f0fdf4;
       padding: 8px;
       border-radius: 14px;
     }
-    .benefit-list strong { display: block; font-size: 17px; margin-bottom: 4px; }
 
-    /* Advanced Tech (white background) */
+    .benefit-list strong { display: block; font-size: 1rem; margin-bottom: 4px; }
+
+    /* ----- TECH SECTION ----- */
     .tech-section {
       background: white;
-      border-radius: 40px;
-      padding: 50px;
+      border-radius: 32px;
+      padding: 40px;
       display: flex;
       align-items: center;
-      gap: 40px;
+      gap: 32px;
+      margin: 40px 0;
       box-shadow: 0 10px 30px rgba(0,0,0,0.05);
       border: 1px solid #e2e8f0;
     }
+
+    body.dark .tech-section {
+      background: #1c1c1e;
+      border-color: #2c2c2c;
+    }
+
     .tech-content { flex: 1; }
+
     .tech-content h2 {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 20px;
+      font-size: 1.8rem;
+      margin-bottom: 16px;
       color: #064e3b;
     }
-    .tech-content p {
-      font-size: 16px;
-      color: #334155;
-      margin-bottom: 24px;
-    }
+
     .tech-features {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 24px;
+      gap: 12px;
+      margin-top: 20px;
     }
+
     .tech-feature {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: #f8fafc;
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: 40px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-      font-size: 14px;
+      font-size: 0.8rem;
       border: 1px solid #e2e8f0;
     }
-    .tech-feature i { color: #16a34a; font-size: 20px; }
-    .floating-logo {
-      flex: 0 0 200px;
-      text-align: center;
-    }
-    .floating-logo img {
-      max-width: 100%;
-      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-      100% { transform: translateY(0); }
+
+    body.dark .tech-feature {
+      background: #2c2c2e;
+      border-color: #3a3a3c;
     }
 
-    /* Partners */
+    .tech-feature i { color: #16a34a; }
+
+    /* ----- PARTNERS ----- */
     .partners-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 30px;
+      gap: 24px;
       align-items: center;
     }
+
     .partner-card {
       background: white;
       border-radius: 24px;
-      padding: 28px 36px;
+      padding: 24px 32px;
+      text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.04);
       border: 1px solid #e2efe2;
-      text-align: center;
     }
-    .partner-card h4 { font-size: 22px; color: #1e293b; }
 
-    /* Partner Form (improved) */
+    body.dark .partner-card {
+      background: #1c1c1e;
+      border-color: #2c2c2c;
+    }
+
     .partner-form-section {
       background: #f8fafc;
-      border-radius: 40px;
-      padding: 50px 40px;
-      margin-top: 50px;
-      border: 1px solid #e2efe2;
+      border-radius: 32px;
+      padding: 40px;
+      margin-top: 40px;
     }
+
+    body.dark .partner-form-section { background: #1c1c1e; }
+
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
+
     .form-group { margin-bottom: 20px; }
+
     .form-group label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: #1e293b;
     }
-    .form-group input, .form-group select, .form-group textarea {
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
       width: 100%;
-      padding: 14px 20px;
+      padding: 12px 18px;
       border-radius: 40px;
       border: 1.5px solid #bbf7d0;
-      font-size: 15px;
+      font-size: 0.9rem;
       background: white;
     }
-    .form-group textarea { border-radius: 24px; }
 
-    /* Contact */
+    /* ----- CONTACT ----- */
     .contact-card {
       background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%);
-      border-radius: 40px;
-      padding: 50px 40px;
+      border-radius: 32px;
+      padding: 40px;
       display: flex;
       flex-wrap: wrap;
-      gap: 40px;
+      gap: 32px;
+      margin: 40px 0;
     }
+
+    body.dark .contact-card { background: #1e2a1e; }
+
     .contact-info { flex: 1; }
-    .contact-info h2 { font-size: 32px; margin-bottom: 16px; }
-    .phone-large {
-      font-size: 32px;
-      font-weight: 800;
-      color: #16a34a;
-      margin: 20px 0;
-    }
+    .contact-info h2 { font-size: 1.8rem; margin-bottom: 16px; }
+    .phone-large { font-size: 1.8rem; font-weight: 800; color: #16a34a; margin: 20px 0; }
+
     .contact-form {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
-    .contact-form input, .contact-form textarea {
-      padding: 14px 20px;
+
+    .contact-form input,
+    .contact-form textarea {
+      padding: 12px 18px;
       border-radius: 60px;
       border: 2px solid #bbf7d0;
-      font-size: 15px;
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
+    /* ----- MAP & TRIP PLANNER ----- */
+    .map-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0 12px;
+    }
+
+    .selector-pill {
+      background: #f5f5f7;
+      border-radius: 40px;
+      padding: 4px 8px 4px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    body.dark .selector-pill {
+      background: #1c1c1e;
+      border-color: #3a3a3c;
+    }
+
+    .selector-pill select {
+      background: transparent;
+      border: none;
+      padding: 8px 20px 8px 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 40px;
+      outline: none;
+      color: inherit;
+    }
+
+    .map-container {
+      position: relative;
+      height: 420px;
+      width: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    #map { height: 100%; width: 100%; background: #e5e5ea; }
+
+    .map-fab {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 900;
+    }
+
+    .fab {
+      width: 44px;
+      height: 44px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(20px);
+      border: none;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+      color: #16a34a;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
-    .modal-content {
-      background: white;
-      max-width: 480px;
-      width: 90%;
-      border-radius: 40px;
-      padding: 36px;
-      position: relative;
-      max-height: 90vh;
-      overflow-y: auto;
+
+    body.dark .fab {
+      background: rgba(30,30,30,0.8);
+      color: #4ade80;
     }
-    .close-modal {
-      position: absolute;
-      top: 20px; right: 20px;
-      font-size: 28px;
+
+    .filter-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px 0 16px;
+    }
+
+    .chip {
+      background: #f5f5f7;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border: 1px solid transparent;
       cursor: pointer;
+    }
+
+    body.dark .chip { background: #1c1c1e; }
+    .chip.active { background: #16a34a; color: white; }
+
+    /* Trip Planner */
+    .planner-card {
+      background: #f5f5f7;
+      border-radius: 32px;
+      padding: 28px;
+      margin: 40px 0;
+    }
+
+    body.dark .planner-card { background: #1c1c1e; }
+
+    .step-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
       color: #16a34a;
     }
+
+    .location-pill {
+      background: white;
+      border-radius: 48px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    body.dark .location-pill {
+      background: #2c2c2e;
+      border-color: #3a3a3c;
+    }
+
+    .location-pill input {
+      border: none;
+      background: transparent;
+      flex: 1;
+      font-size: 0.9rem;
+      outline: none;
+      color: inherit;
+    }
+
+    .search-pill {
+      background: white;
+      border-radius: 48px;
+      padding: 6px 6px 6px 20px;
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .search-pill input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px 0;
+      font-size: 0.9rem;
+      outline: none;
+      color: inherit;
+    }
+
+    .suggestions {
+      background: white;
+      border-radius: 20px;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .suggestion-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .suggestion-item:hover { background: #f0fdf4; }
+
+    .station-list-item {
+      background: white;
+      border-radius: 20px;
+      padding: 14px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.04);
+      cursor: pointer;
+    }
+
+    .station-list-item.selected {
+      border: 2px solid #16a34a;
+      background: #f0fdf4;
+    }
+
+    .fun-stop-item {
+      background: white;
+      border-radius: 40px;
+      padding: 8px 16px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Popup */
+    .popup-content { min-width: 240px; font-size: 0.85rem; }
+    .stars i { color: #fbbf24; }
 
     /* Footer */
     footer {
       text-align: center;
-      padding: 28px;
+      padding: 24px;
       color: #6b7280;
       border-top: 1px solid #e2e8f0;
     }
 
-    /* Animations */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
-
     /* Responsive */
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .hero { flex-direction: column; }
-      .phone-mockup { flex: 0 0 auto; width: 260px; }
+      .nav-links { display: none; }
+      .menu-toggle { display: block; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
       .benefits-grid { grid-template-columns: 1fr; }
       .tech-section { flex-direction: column; }
       .form-grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 768px) {
-      .navbar { flex-wrap: wrap; }
-      .nav-links, .nav-buttons { display: none; }
-      .menu-toggle { display: block; }
-      .car-bg-content { flex-direction: column; }
-      .card-grid { gap: 12px; }
-      .feature-card { padding: 16px 8px; }
-      .feature-card i { font-size: 28px; padding: 8px; }
-      .feature-card h3 { font-size: 15px; }
-      .feature-card p { font-size: 11px; }
-    }
     @media (max-width: 480px) {
-      .hero h1 { font-size: 32px; }
-      .section-title { font-size: 28px; }
-      .card-grid { gap: 8px; }
-      .feature-card { padding: 12px 4px; }
-      .feature-card i { font-size: 24px; }
-      .feature-card h3 { font-size: 14px; }
+      .card-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -650,43 +886,41 @@
 
 <!-- Navigation -->
 <nav class="navbar">
-  <div class="logo-area">
-    <img src="logo.png" alt="FuelRadar Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2316a34a\'/%3E%3Cpath d=\'M30 70 L30 30 L70 50 Z\' fill=\'white\'/%3E%3C/svg%3E'">
-    <div class="brand-name"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></div>
+  <div class="logo">
+    <i class="fas fa-gas-pump" style="color: #16a34a; font-size: 1.6rem;"></i>
+    <span class="brand"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></span>
   </div>
-  <div class="nav-links" id="navLinks">
+  <div class="nav-links">
     <a href="#home">Home</a>
     <a href="#features">Features</a>
+    <a href="#mapSection">Map</a>
     <a href="#drivers">Drivers</a>
     <a href="#stations">Stations</a>
     <a href="#partners">Partners</a>
     <a href="#contact">Contact</a>
   </div>
-  <div class="nav-buttons" id="desktopButtons">
-    <button class="btn-outline" onclick="alert('Login')">Login</button>
-    <button class="btn-primary" onclick="window.location.href='https://bufferzone-cloud.github.io/fuelwatch/home.html'">Get Started</button>
+  <div style="display: flex; gap: 8px;">
+    <button class="btn btn-outline btn-icon" id="darkToggle"><i class="far fa-moon"></i></button>
+    <button class="btn btn-primary" id="calcBtn"><i class="fas fa-calculator"></i><span>Calculator</span></button>
   </div>
   <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
 </nav>
 
-<!-- Mobile Sidebar -->
+<!-- Sidebar mobile -->
 <div id="sidebarOverlay" class="sidebar-overlay">
   <div class="sidebar-panel">
     <div class="sidebar-header">
-      <span style="font-weight:800;">FuelRadar</span>
-      <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button>
+      <span style="font-weight:600;">FuelRadar</span>
+      <button id="closeSidebarBtn" style="background:none; border:none; font-size:1.5rem; color:#16a34a;">&times;</button>
     </div>
     <div class="sidebar-menu">
       <a href="#home" class="sidebar-item"><i class="fas fa-home"></i> Home</a>
       <a href="#features" class="sidebar-item"><i class="fas fa-th-large"></i> Features</a>
+      <a href="#mapSection" class="sidebar-item"><i class="fas fa-map-marked-alt"></i> Map</a>
       <a href="#drivers" class="sidebar-item"><i class="fas fa-user"></i> Drivers</a>
       <a href="#stations" class="sidebar-item"><i class="fas fa-store"></i> Stations</a>
       <a href="#partners" class="sidebar-item"><i class="fas fa-handshake"></i> Partners</a>
       <a href="#contact" class="sidebar-item"><i class="fas fa-envelope"></i> Contact</a>
-    </div>
-    <div class="sidebar-buttons">
-      <button class="btn-outline" onclick="alert('Login')">Login</button>
-      <button class="btn-primary" onclick="window.location.href='https://bufferzone-cloud.github.io/fuelwatch/home.html'">Get Started</button>
     </div>
   </div>
 </div>
@@ -694,80 +928,124 @@
 <!-- Hero -->
 <section id="home" class="hero-wrapper">
   <div class="container hero">
-    <div class="hero-content fade-up visible">
+    <div class="hero-content">
       <h1>NEVER RUN OUT OF<br><span>FUEL AGAIN.</span></h1>
-      <p>Check real‑time fuel availability across Zambia before you drive. Save time, avoid empty stations, and plan smarter.</p>
+      <p>Check real‑time fuel availability worldwide. Choose country & city to find stations, compare prices, and plan smarter.</p>
       <div class="hero-buttons">
-        <button class="btn-primary" onclick="window.location.href='https://bufferzone-cloud.github.io/fuelwatch/home.html'">Get Started</button>
-        <button class="btn-outline" onclick="openPartnerModal()">Partner with Us</button>
+        <button class="btn-primary" onclick="document.getElementById('mapSection').scrollIntoView({behavior:'smooth'})">Find Stations</button>
+        <button class="btn-outline" id="heroPartnerBtn">Partner with Us</button>
       </div>
       <div class="feature-icons">
-        <div class="feature-item"><i class="fas fa-sync-alt"></i> Real‑time updates</div>
+        <div class="feature-item"><i class="fas fa-globe"></i> 190+ Countries</div>
         <div class="feature-item"><i class="fas fa-microchip"></i> Smart monitoring</div>
-        <div class="feature-item"><i class="fas fa-globe"></i> Global expansion</div>
+        <div class="feature-item"><i class="fas fa-route"></i> Trip Planner</div>
       </div>
     </div>
-    <div class="phone-mockup fade-up">
+    <div class="phone-mockup">
       <div class="phone-screen">
-        <img src="app.jpeg" alt="FuelRadar App Screenshot" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'600\' viewBox=\'0 0 300 600\'%3E%3Crect width=\'300\' height=\'600\' fill=\'%23f0fdf4\'/%3E%3Ctext x=\'150\' y=\'300\' text-anchor=\'middle\' fill=\'%2316a34a\' font-size=\'24\'%3EFuelRadar%3C/text%3E%3C/svg%3E'">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='600' viewBox='0 0 300 600'%3E%3Crect width='300' height='600' fill='%23f0fdf4'/%3E%3Ctext x='150' y='300' text-anchor='middle' fill='%2316a34a' font-size='24'%3EFuelRadar%3C/text%3E%3C/svg%3E" alt="app">
       </div>
     </div>
   </div>
 </section>
 
-<!-- Features 3x3 Grid -->
+<!-- Features 3x3 -->
 <section id="features">
   <div class="container">
-    <h2 class="section-title fade-up">How FuelRadar Works</h2>
-    <p class="section-subtitle fade-up">Find stations near you instantly</p>
+    <h2 style="text-align:center;">How FuelRadar Works</h2>
+    <p style="text-align:center; margin-bottom:24px; opacity:0.7;">Find stations near you instantly</p>
     <div class="card-grid">
-      <div class="feature-card fade-up"><i class="fas fa-map-marked-alt"></i><h3>Live Map</h3><p>See all fuel stations around you in real time.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-search"></i><h3>Smart Search</h3><p>Search by name, address, or amenities.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-filter"></i><h3>Fuel Filters</h3><p>Petrol, diesel, shops, ATM – filter easily.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-route"></i><h3>Trip Planner</h3><p>Plan routes with fuel stops & fun places.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-chart-line"></i><h3>Price Comparison</h3><p>Compare petrol/diesel prices instantly.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-car"></i><h3>Garage</h3><p>Track your vehicles & fuel consumption.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-flag"></i><h3>Community Reports</h3><p>Report availability, queues, or prices.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-heart"></i><h3>Favorites</h3><p>Save your go‑to stations.</p></div>
-      <div class="feature-card fade-up"><i class="fas fa-history"></i><h3>Trip History</h3><p>Review past trips and fuel logs.</p></div>
+      <div class="feature-card"><i class="fas fa-map-marked-alt"></i><h3>Live Map</h3><p>See all fuel stations in real time.</p></div>
+      <div class="feature-card"><i class="fas fa-search"></i><h3>Smart Search</h3><p>Search by name, address, amenities.</p></div>
+      <div class="feature-card"><i class="fas fa-filter"></i><h3>Fuel Filters</h3><p>Petrol, diesel, shops, ATM.</p></div>
+      <div class="feature-card"><i class="fas fa-route"></i><h3>Trip Planner</h3><p>Plan routes with fuel stops & fun.</p></div>
+      <div class="feature-card"><i class="fas fa-chart-line"></i><h3>Price Comparison</h3><p>Compare petrol/diesel prices.</p></div>
+      <div class="feature-card"><i class="fas fa-star"></i><h3>Ratings & Comments</h3><p>Rate stations, read feedback.</p></div>
+      <div class="feature-card"><i class="fas fa-flag"></i><h3>Community Reports</h3><p>Report availability, queues.</p></div>
+      <div class="feature-card"><i class="fas fa-heart"></i><h3>Favorites</h3><p>Save your go‑to stations.</p></div>
+      <div class="feature-card"><i class="fas fa-calculator"></i><h3>Fuel Calculator</h3><p>Estimate cost and fuel needed.</p></div>
     </div>
   </div>
 </section>
 
-<!-- Real-time Monitoring -->
+<!-- Monitoring -->
 <section>
   <div class="container">
-    <div class="monitoring-bg fade-up">
+    <div class="monitoring-bg">
       <div class="monitoring-content">
         <h2>Real‑time station monitoring</h2>
-        <p style="font-size:16px; margin-bottom:20px;">Updated by stations and smart monitoring systems.</p>
+        <p style="margin-bottom:20px;">Updated by stations and smart systems.</p>
         <ul class="check-list">
           <li><i class="fas fa-check-circle"></i> Live available indicators</li>
           <li><i class="fas fa-check-circle"></i> Radius search</li>
           <li><i class="fas fa-check-circle"></i> Filter by fuel type</li>
           <li><i class="fas fa-check-circle"></i> Save favourite stations</li>
         </ul>
-        <button class="btn-primary" style="background:white; color:#064e3b; box-shadow:none;" onclick="openPartnerModal()">Become a partner →</button>
+        <button class="btn-primary" style="background:white; color:#064e3b;" id="monitorPartnerBtn">Become a partner →</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Car at gas station (Drivers & Stations) -->
+<!-- Map Section -->
+<section id="mapSection">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h2>🌍 Find Fuel Worldwide</h2>
+      <span class="text-small">Live updates</span>
+    </div>
+    
+    <div class="map-header">
+      <div class="selector-pill">
+        <i class="fas fa-globe" style="opacity:0.6;"></i>
+        <select id="countrySelect"></select>
+      </div>
+      <div class="selector-pill">
+        <i class="fas fa-location-dot" style="opacity:0.6;"></i>
+        <select id="regionSelect" disabled><option>Select region/city</option></select>
+      </div>
+      <button class="btn btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
+    </div>
+    
+    <!-- Filter chips -->
+    <div class="filter-scroll" id="filterBar">
+      <span class="chip active" data-filter="all">All</span>
+      <span class="chip" data-filter="petrol"><i class="fas fa-gas-pump"></i> Petrol</span>
+      <span class="chip" data-filter="diesel"><i class="fas fa-oil-can"></i> Diesel</span>
+      <span class="chip" data-filter="shop"><i class="fas fa-store"></i> Shop</span>
+      <span class="chip" data-filter="atm"><i class="fas fa-credit-card"></i> ATM</span>
+      <span class="chip" data-filter="car_wash"><i class="fas fa-car-wash"></i> Car wash</span>
+      <span class="chip" data-filter="tyres"><i class="fas fa-circle"></i> Tyre pump</span>
+      <span class="chip" data-filter="restaurant"><i class="fas fa-utensils"></i> Restaurant</span>
+      <span class="chip" data-filter="pharmacy"><i class="fas fa-prescription-bottle"></i> Pharmacy</span>
+    </div>
+    
+    <div class="map-container">
+      <div id="map"></div>
+      <div class="map-fab">
+        <button class="fab" id="locateBtn"><i class="fas fa-crosshairs"></i></button>
+        <button class="fab" id="refreshMapBtn"><i class="fas fa-arrows-rotate"></i></button>
+      </div>
+    </div>
+    <div id="mapStatus" class="text-small" style="margin-top:8px; text-align:center;"></div>
+  </div>
+</section>
+
+<!-- Car background Drivers & Stations -->
 <section>
-  <div class="container car-bg-section fade-up">
+  <div class="container car-bg-section">
     <div class="car-bg-content">
       <div class="driver-station-card">
-        <h3><i class="fas fa-user me-2"></i> For Drivers</h3>
+        <h3><i class="fas fa-user"></i> For Drivers</h3>
         <ul>
           <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Find fuel fast</li>
           <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Avoid empty stations</li>
           <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Plan your route</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Save time and money</li>
+          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Save time & money</li>
         </ul>
       </div>
       <div class="driver-station-card">
-        <h3><i class="fas fa-store me-2"></i> For Fuel Stations</h3>
+        <h3><i class="fas fa-store"></i> For Fuel Stations</h3>
         <ul>
           <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Increase daily customers</li>
           <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Real‑time visibility</li>
@@ -782,22 +1060,22 @@
 <!-- Driver Benefits -->
 <section id="drivers">
   <div class="container">
-    <h2 class="section-title fade-up">Why Drivers Love FuelRadar</h2>
+    <h2 style="text-align:center;">Why Drivers Love FuelRadar</h2>
     <div class="benefits-grid">
-      <div class="benefit-card fade-up">
+      <div class="benefit-card">
         <h3><i class="fas fa-car-side"></i> Never Get Stranded</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-map-pin"></i> <div><strong>Real-time availability</strong>Know which stations have fuel before you leave.</div></li>
-          <li><i class="fas fa-route"></i> <div><strong>Smart route planning</strong>Find the best fuel stops along your journey.</div></li>
-          <li><i class="fas fa-chart-bar"></i> <div><strong>Price comparison</strong>Save money by comparing prices across stations.</div></li>
+          <li><i class="fas fa-map-pin"></i> <div><strong>Real-time availability</strong>Know which stations have fuel.</div></li>
+          <li><i class="fas fa-route"></i> <div><strong>Smart route planning</strong>Best fuel stops.</div></li>
+          <li><i class="fas fa-chart-bar"></i> <div><strong>Price comparison</strong>Save money.</div></li>
         </ul>
       </div>
-      <div class="benefit-card fade-up">
+      <div class="benefit-card">
         <h3><i class="fas fa-mobile-alt"></i> All-in-One App</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-gas-pump"></i> <div><strong>Fuel logs & garage</strong>Track consumption and maintenance.</div></li>
-          <li><i class="fas fa-users"></i> <div><strong>Community reports</strong>Get live updates from other drivers.</div></li>
-          <li><i class="fas fa-bell"></i> <div><strong>Favorite stations</strong>Quick access to your trusted spots.</div></li>
+          <li><i class="fas fa-gas-pump"></i> <div><strong>Fuel logs & garage</strong>Track consumption.</div></li>
+          <li><i class="fas fa-users"></i> <div><strong>Community reports</strong>Live updates.</div></li>
+          <li><i class="fas fa-bell"></i> <div><strong>Favorite stations</strong>Quick access.</div></li>
         </ul>
       </div>
     </div>
@@ -807,34 +1085,34 @@
 <!-- Station Benefits -->
 <section id="stations">
   <div class="container">
-    <h2 class="section-title fade-up">Grow Your Station with FuelRadar</h2>
+    <h2 style="text-align:center;">Grow Your Station with FuelRadar</h2>
     <div class="benefits-grid">
-      <div class="benefit-card fade-up">
+      <div class="benefit-card">
         <h3><i class="fas fa-chart-line"></i> Increased Visibility</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-eye"></i> <div><strong>Real-time dashboard</strong>Update fuel availability and prices instantly.</div></li>
-          <li><i class="fas fa-map-marked-alt"></i> <div><strong>Appear in searches</strong>Drivers find you when they need fuel.</div></li>
-          <li><i class="fas fa-star"></i> <div><strong>Customer trust</strong>Verified status builds loyalty.</div></li>
+          <li><i class="fas fa-eye"></i> <div><strong>Real-time dashboard</strong>Update fuel & prices.</div></li>
+          <li><i class="fas fa-map-marked-alt"></i> <div><strong>Appear in searches</strong>Drivers find you.</div></li>
+          <li><i class="fas fa-star"></i> <div><strong>Customer trust</strong>Verified status.</div></li>
         </ul>
       </div>
-      <div class="benefit-card fade-up">
+      <div class="benefit-card">
         <h3><i class="fas fa-hand-holding-usd"></i> Business Growth</h3>
         <ul class="benefit-list">
-          <li><i class="fas fa-users"></i> <div><strong>Attract more customers</strong>Reach drivers actively looking for fuel.</div></li>
-          <li><i class="fas fa-chart-pie"></i> <div><strong>Analytics & insights</strong>Understand demand patterns.</div></li>
-          <li><i class="fas fa-ad"></i> <div><strong>Promote offers</strong>Highlight discounts and specials.</div></li>
+          <li><i class="fas fa-users"></i> <div><strong>Attract more customers</strong>Targeted traffic.</div></li>
+          <li><i class="fas fa-chart-pie"></i> <div><strong>Analytics & insights</strong>Demand patterns.</div></li>
+          <li><i class="fas fa-ad"></i> <div><strong>Promote offers</strong>Highlight discounts.</div></li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Advanced Technology (white background) -->
+<!-- Advanced Tech -->
 <section>
-  <div class="container tech-section fade-up">
+  <div class="container tech-section">
     <div class="tech-content">
       <h2>Secure & Technologically Advanced</h2>
-      <p>FuelRadar is built on cutting‑edge infrastructure with real‑time data synchronization, end‑to‑end encryption, and AI‑powered predictions to ensure you always have the most accurate fuel information.</p>
+      <p>FuelRadar is built on real‑time data sync, end‑to‑end encryption, and AI‑powered predictions.</p>
       <div class="tech-features">
         <div class="tech-feature"><i class="fas fa-shield-alt"></i> 256-bit Encryption</div>
         <div class="tech-feature"><i class="fas fa-cloud-upload-alt"></i> Real‑time Sync</div>
@@ -843,7 +1121,59 @@
       </div>
     </div>
     <div class="floating-logo">
-      <img src="logo.png" alt="FuelRadar Logo" style="width:180px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2316a34a\'/%3E%3Cpath d=\'M30 70 L30 30 L70 50 Z\' fill=\'white\'/%3E%3C/svg%3E'">
+      <i class="fas fa-gas-pump" style="font-size:5rem; color:#16a34a;"></i>
+    </div>
+  </div>
+</section>
+
+<!-- Trip Planner Wizard -->
+<section id="planner">
+  <div class="container">
+    <h2 style="text-align:center; margin-bottom:20px;">✈️ Plan a Fun Trip</h2>
+    <div class="planner-card">
+      <!-- Step 1: Location -->
+      <div class="step-container">
+        <div class="step-header"><i class="fas fa-map-pin"></i> Your location</div>
+        <div class="location-pill">
+          <i class="fas fa-home"></i>
+          <input type="text" id="userLocationInput" placeholder="House number, street, city" value="Lusaka, Zambia">
+          <button class="btn btn-outline btn-icon" id="detectLocationBtn"><i class="fas fa-crosshairs"></i></button>
+        </div>
+      </div>
+      
+      <!-- Step 2: Destination -->
+      <div class="step-container">
+        <div class="step-header"><i class="fas fa-flag-checkered"></i> Where to?</div>
+        <div class="search-pill">
+          <i class="fas fa-search"></i>
+          <input type="text" id="destSearchInput" placeholder="Enter destination">
+          <button class="btn btn-primary" id="searchDestBtn">Search</button>
+        </div>
+        <div id="destSuggestions" class="suggestions"></div>
+        <p id="selectedDestDisplay" class="text-small" style="margin-top:8px;"></p>
+      </div>
+      
+      <!-- Step 3: Auto-loaded options -->
+      <div id="tripOptionsContainer" style="display:none;">
+        <div class="step-container">
+          <div class="step-header"><i class="fas fa-camera"></i> Fun stops along the way</div>
+          <div id="funStopsList"></div>
+        </div>
+        <div class="step-container">
+          <div class="step-header"><i class="fas fa-gas-pump"></i> Select a fuel station</div>
+          <div id="stationListContainer"></div>
+        </div>
+        <div class="step-container">
+          <div class="step-header"><i class="fas fa-car"></i> Vehicle details</div>
+          <div style="display:grid; gap:12px;">
+            <input type="number" id="tankCapacity" placeholder="Tank capacity (L)" value="50">
+            <input type="number" id="fuelConsumption" placeholder="Consumption (L/100km)" value="7.5">
+            <select id="fuelTypeSelect"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select>
+            <button class="btn btn-primary" id="calculateAndDrawRoute">Calculate & Draw Route</button>
+          </div>
+          <div id="tripSummary" class="text-small" style="margin-top:16px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -851,55 +1181,30 @@
 <!-- Partners -->
 <section id="partners">
   <div class="container">
-    <h2 class="section-title fade-up">Our Partners</h2>
-    <div class="partners-grid fade-up">
+    <h2 style="text-align:center;">Our Partners</h2>
+    <div class="partners-grid">
       <div class="partner-card">
-        <i class="fas fa-paint-brush" style="font-size:44px; color:#16a34a; margin-bottom:16px;"></i>
+        <i class="fas fa-paint-brush" style="font-size:2.5rem; color:#16a34a;"></i>
         <h4>BUFFER ZONE</h4>
-        <p style="color:#4b5563;">Graphics & Tech Solutions</p>
+        <p class="text-small">Graphics & Tech Solutions</p>
       </div>
-      <div style="flex:1; min-width:250px;">
-        <p style="font-size:18px; margin-bottom:20px;">Join the network of trusted fuel stations and service providers.</p>
-        <button class="btn-primary" onclick="openPartnerModal()">Apply to Become a Partner</button>
+      <div style="flex:1;">
+        <p>Join the trusted network of fuel stations and service providers.</p>
+        <button class="btn btn-primary" id="partnerFormBtn">Apply to Become a Partner</button>
       </div>
     </div>
-
-    <!-- Improved Partner Form -->
-    <div class="partner-form-section fade-up">
-      <h3 style="font-size:28px; margin-bottom:32px; color:#16a34a;">Partner Application</h3>
-      <form onsubmit="alert('Application submitted! We will contact you soon.'); return false;">
+    <div class="partner-form-section">
+      <h3 style="margin-bottom:24px; color:#16a34a;">Partner Application</h3>
+      <form onsubmit="alert('Application submitted!'); return false;">
         <div class="form-grid">
-          <div class="form-group">
-            <label>Business / Station Name *</label>
-            <input type="text" required>
-          </div>
-          <div class="form-group">
-            <label>Contact Person *</label>
-            <input type="text" required>
-          </div>
-          <div class="form-group">
-            <label>Email Address *</label>
-            <input type="email" required>
-          </div>
-          <div class="form-group">
-            <label>Phone Number *</label>
-            <input type="tel" required>
-          </div>
+          <div class="form-group"><label>Business / Station Name *</label><input type="text" required></div>
+          <div class="form-group"><label>Contact Person *</label><input type="text" required></div>
+          <div class="form-group"><label>Email Address *</label><input type="email" required></div>
+          <div class="form-group"><label>Phone Number *</label><input type="tel" required></div>
         </div>
-        <div class="form-group">
-          <label>Business Type *</label>
-          <select required>
-            <option value="">Select...</option>
-            <option>Fuel Station</option>
-            <option>Service Provider</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tell us about your business</label>
-          <textarea rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn-primary" style="padding:14px 36px;">Submit Application</button>
+        <div class="form-group"><label>Business Type *</label><select required><option value="">Select...</option><option>Fuel Station</option><option>Service Provider</option><option>Other</option></select></div>
+        <div class="form-group"><label>Tell us about your business</label><textarea rows="3"></textarea></div>
+        <button type="submit" class="btn-primary" style="padding:12px 28px;">Submit Application</button>
       </form>
     </div>
   </div>
@@ -907,19 +1212,19 @@
 
 <!-- Contact -->
 <section id="contact">
-  <div class="container contact-card fade-up">
+  <div class="container contact-card">
     <div class="contact-info">
       <h2>Contact us</h2>
-      <p style="font-size:16px;">Send us a message or give us a call</p>
-      <div class="phone-large"><i class="fas fa-phone-alt me-3"></i> 0972454724</div>
-      <p><i class="fas fa-envelope me-2"></i> hello@fuelradar.co.zm</p>
-      <p><i class="fas fa-map-marker-alt me-2"></i> Lusaka, Zambia</p>
+      <p style="font-size:0.9rem;">Send us a message or give us a call</p>
+      <div class="phone-large"><i class="fas fa-phone-alt"></i> 0972454724</div>
+      <p><i class="fas fa-envelope"></i> hello@fuelradar.global</p>
+      <p><i class="fas fa-map-marker-alt"></i> Global · Based in Zambia</p>
     </div>
     <div class="contact-form">
       <input type="text" placeholder="Your name">
       <input type="email" placeholder="Email address">
       <textarea rows="3" placeholder="Your message"></textarea>
-      <button class="btn-primary" style="width:fit-content; padding:12px 36px;">Send Message</button>
+      <button class="btn-primary" style="width:fit-content; padding:10px 28px;">Send Message</button>
     </div>
   </div>
 </section>
@@ -928,59 +1233,313 @@
   <p>© 2026 FuelRadar. All rights reserved. · Built for the World</p>
 </footer>
 
-<!-- Partner Modal (popup) -->
-<div id="partnerModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closePartnerModal()">&times;</span>
-    <h2 style="color:#16a34a; margin-bottom:24px;">Partner Application</h2>
-    <form onsubmit="alert('Application submitted! We will contact you soon.'); closePartnerModal(); return false;">
-      <div style="margin-bottom:16px;"><input type="text" placeholder="Business / Station Name" required style="width:100%; padding:14px 20px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
-      <div style="margin-bottom:16px;"><input type="text" placeholder="Contact Person" required style="width:100%; padding:14px 20px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
-      <div style="margin-bottom:16px;"><input type="email" placeholder="Email Address" required style="width:100%; padding:14px 20px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
-      <div style="margin-bottom:16px;"><input type="tel" placeholder="Phone Number" required style="width:100%; padding:14px 20px; border-radius:40px; border:1.5px solid #bbf7d0;"></div>
-      <div style="margin-bottom:16px;">
-        <select required style="width:100%; padding:14px 20px; border-radius:40px; border:1.5px solid #bbf7d0;">
-          <option value="">Business Type</option><option>Fuel Station</option><option>Service Provider</option><option>Other</option>
-        </select>
-      </div>
-      <div style="margin-bottom:20px;"><textarea rows="3" placeholder="Tell us about your business" style="width:100%; padding:14px 20px; border-radius:30px; border:1.5px solid #bbf7d0;"></textarea></div>
-      <button type="submit" class="btn-primary" style="width:100%;">Submit Application</button>
-    </form>
+<!-- Calculator modal -->
+<div id="calcModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:32px; padding:28px; max-width:360px; width:90%;">
+    <h3 style="margin-bottom:20px;">Fuel Calculator</h3>
+    <input type="number" id="calcDist" placeholder="Distance (km)" value="100" style="width:100%; padding:12px; border-radius:40px; border:1px solid #ddd; margin-bottom:12px;">
+    <input type="number" id="calcCons" placeholder="L/100km" value="7.0" style="width:100%; padding:12px; border-radius:40px; border:1px solid #ddd; margin-bottom:12px;">
+    <input type="number" id="calcPrice" placeholder="Price per liter" value="1.50" style="width:100%; padding:12px; border-radius:40px; border:1px solid #ddd; margin-bottom:20px;">
+    <button class="btn btn-primary" id="runCalc" style="width:100%;">Calculate</button>
+    <p id="calcResult" style="margin-top:16px; font-weight:600;"></p>
+    <button onclick="document.getElementById('calcModal').style.display='none'" style="margin-top:12px; background:none; border:none; color:#16a34a;">Close</button>
   </div>
 </div>
 
 <script>
-  const toggle = document.getElementById('menuToggle');
-  const sidebar = document.getElementById('sidebarOverlay');
-  const closeBtn = document.getElementById('closeSidebarBtn');
-
-  toggle.addEventListener('click', () => sidebar.classList.add('open'));
-  closeBtn.addEventListener('click', () => sidebar.classList.remove('open'));
-  sidebar.addEventListener('click', (e) => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-  document.querySelectorAll('.sidebar-item').forEach(link => {
-    link.addEventListener('click', () => sidebar.classList.remove('open'));
-  });
-
-  const fadeElements = document.querySelectorAll('.fade-up');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  fadeElements.forEach(el => observer.observe(el));
-
-  document.querySelectorAll('.nav-links a, .sidebar-item').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targetId = link.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (target) { target.scrollIntoView({ behavior: 'smooth' }); }
+  (function(){
+    "use strict";
+    
+    // Dark mode & sidebar
+    document.getElementById('darkToggle').addEventListener('click', () => document.body.classList.toggle('dark'));
+    const sidebar = document.getElementById('sidebarOverlay');
+    document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.add('open'));
+    document.getElementById('closeSidebarBtn').addEventListener('click', () => sidebar.classList.remove('open'));
+    document.querySelectorAll('.sidebar-item').forEach(i => i.addEventListener('click', () => sidebar.classList.remove('open')));
+    
+    // Calculator modal
+    const calcModal = document.getElementById('calcModal');
+    document.getElementById('calcBtn').addEventListener('click', () => calcModal.style.display = 'flex');
+    document.getElementById('runCalc').addEventListener('click', () => {
+      const d = +document.getElementById('calcDist').value || 0;
+      const c = +document.getElementById('calcCons').value || 0;
+      const p = +document.getElementById('calcPrice').value || 0;
+      const fuel = (d/100)*c;
+      const cost = fuel*p;
+      document.getElementById('calcResult').innerText = `Fuel: ${fuel.toFixed(1)} L · Cost: $${cost.toFixed(2)}`;
     });
-  });
-
-  const modal = document.getElementById('partnerModal');
-  window.openPartnerModal = () => modal.style.display = 'flex';
-  window.closePartnerModal = () => modal.style.display = 'none';
-  window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+    window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; });
+    
+    function partnerAlert() { alert('Partner application – we will contact you.'); }
+    document.getElementById('heroPartnerBtn').onclick = partnerAlert;
+    document.getElementById('monitorPartnerBtn').onclick = partnerAlert;
+    document.getElementById('partnerFormBtn').onclick = partnerAlert;
+    
+    // ========== MAP & TRIP PLANNER ==========
+    let map, markerCluster, routingControl = null;
+    let currentStations = [], currentFilter = 'all';
+    let countryCurrency = 'USD', currencySymbol = '$';
+    let userCoords = null, destCoords = null, selectedStation = null, funStops = [];
+    
+    function initMap() {
+      map = L.map('map').setView([20,0],2);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+      markerCluster = L.markerClusterGroup();
+      map.addLayer(markerCluster);
+    }
+    
+    // Load countries
+    async function loadCountries() {
+      const sel = document.getElementById('countrySelect');
+      try {
+        const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,currencies');
+        const data = await res.json();
+        data.sort((a,b) => a.name.common.localeCompare(b.name.common));
+        sel.innerHTML = '<option value="">Select country</option>';
+        data.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.cca2;
+          opt.dataset.currency = c.currencies ? Object.keys(c.currencies)[0] : 'USD';
+          opt.textContent = c.name.common;
+          sel.appendChild(opt);
+        });
+      } catch(e) {}
+    }
+    
+    document.getElementById('countrySelect').addEventListener('change', async (e) => {
+      const code = e.target.value;
+      const opt = e.target.selectedOptions[0];
+      if (opt.dataset.currency) {
+        countryCurrency = opt.dataset.currency;
+        currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency==='EUR'?'€':(countryCurrency==='GBP'?'£':countryCurrency));
+      }
+      const regionSel = document.getElementById('regionSelect');
+      regionSel.innerHTML = '<option>Loading...</option>';
+      regionSel.disabled = true;
+      if (!code) return;
+      try {
+        const query = `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
+        const resp = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+        const data = await resp.json();
+        const items = data.elements.map(el => ({
+          name: el.tags.name || el.tags['name:en'] || 'Unknown',
+          lat: el.lat || (el.center?.lat),
+          lon: el.lon || (el.center?.lon)
+        })).filter(i => i.lat && i.lon);
+        items.sort((a,b) => a.name.localeCompare(b.name));
+        regionSel.innerHTML = '<option value="">Select region/city</option>';
+        items.forEach(it => {
+          const opt = document.createElement('option');
+          opt.value = `${it.lat},${it.lon}`;
+          opt.textContent = it.name;
+          regionSel.appendChild(opt);
+        });
+        regionSel.disabled = false;
+        if (items.length) map.setView([items[0].lat, items[0].lon], 6);
+      } catch(e) { regionSel.innerHTML = '<option>Error</option>'; }
+    });
+    
+    document.getElementById('regionSelect').addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val) { const [lat, lon] = val.split(',').map(Number); map.setView([lat, lon], 12); }
+    });
+    
+    document.getElementById('loadMapBtn').addEventListener('click', async () => {
+      const val = document.getElementById('regionSelect').value;
+      if (!val) return alert('Select a region/city');
+      const [lat, lon] = val.split(',').map(Number);
+      map.setView([lat, lon], 13);
+      document.getElementById('mapStatus').innerHTML = 'Loading stations...';
+      currentStations = await fetchStations(lat, lon);
+      applyFilter();
+      document.getElementById('mapStatus').innerHTML = `${currentStations.length} stations found.`;
+    });
+    
+    async function fetchStations(lat, lon) {
+      const query = `[out:json];(node["amenity"="fuel"](around:10000,${lat},${lon});way["amenity"="fuel"](around:10000,${lat},${lon}););out body;`;
+      try {
+        const r = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+        const d = await r.json();
+        return d.elements.map(el => {
+          const t = el.tags || {};
+          const slat = el.lat || el.center?.lat;
+          const slon = el.lon || el.center?.lon;
+          return {
+            id: el.id, name: t.name || t.brand || 'Fuel Station',
+            lat: slat, lon: slon,
+            petrol: t['fuel:petrol'] === 'yes', diesel: t['fuel:diesel'] === 'yes',
+            pricePetrol: (1.2 + Math.random()*0.5).toFixed(2),
+            priceDiesel: (1.1 + Math.random()*0.5).toFixed(2),
+            amenities: {
+              shop: !!t.shop, atm: t.atm==='yes', car_wash: !!t.car_wash,
+              tyres: t['compressed_air']==='yes', restaurant: t.amenity==='restaurant', pharmacy: t.amenity==='pharmacy'
+            },
+            rating: +(localStorage.getItem(`rating_${el.id}`) || 0)
+          };
+        });
+      } catch { return []; }
+    }
+    
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.dataset.filter;
+        applyFilter();
+      });
+    });
+    
+    function applyFilter() {
+      let filtered = currentStations.filter(s => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'petrol') return s.petrol;
+        if (currentFilter === 'diesel') return s.diesel;
+        return s.amenities[currentFilter] === true;
+      });
+      renderMarkers(filtered);
+    }
+    
+    function renderMarkers(stations) {
+      markerCluster.clearLayers();
+      stations.forEach(s => {
+        const icon = L.divIcon({ html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:24px;"></i>`, iconSize: [24,24] });
+        const marker = L.marker([s.lat, s.lon], { icon });
+        marker.bindPopup(() => {
+          const ratings = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
+          const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+          const div = document.createElement('div'); div.className = 'popup-content';
+          div.innerHTML = `<h4>${s.name}</h4><div>⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
+            <div class="stars">${'★'.repeat(Math.round(s.rating))}${'☆'.repeat(5-Math.round(s.rating))} (${ratings.length})</div>
+            <button class="btn btn-outline btn-sm rate-btn" data-id="${s.id}">Rate</button>`;
+          setTimeout(() => { div.querySelector('.rate-btn').onclick = () => {
+            const r = prompt('Rate 1-5'); if (r && !isNaN(r) && r>=1 && r<=5) {
+              const arr = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]'); arr.push(+r);
+              localStorage.setItem(`ratings_${s.id}`, JSON.stringify(arr)); marker.closePopup(); marker.openPopup();
+            }
+          };}, 50);
+          return div;
+        });
+        markerCluster.addLayer(marker);
+      });
+    }
+    
+    // Trip Planner
+    document.getElementById('detectLocationBtn').addEventListener('click', () => {
+      navigator.geolocation?.getCurrentPosition(pos => {
+        userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        document.getElementById('userLocationInput').value = `Lat ${userCoords.lat.toFixed(4)}, Lon ${userCoords.lon.toFixed(4)}`;
+      });
+    });
+    
+    let destSearchTimeout;
+    document.getElementById('destSearchInput').addEventListener('input', function() {
+      clearTimeout(destSearchTimeout);
+      const q = this.value;
+      if (q.length < 3) return;
+      destSearchTimeout = setTimeout(async () => {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        const sug = document.getElementById('destSuggestions');
+        sug.innerHTML = data.slice(0,5).map(p => `<div class="suggestion-item" data-lat="${p.lat}" data-lon="${p.lon}" data-display="${p.display_name}">${p.display_name}</div>`).join('');
+        sug.querySelectorAll('.suggestion-item').forEach(el => {
+          el.addEventListener('click', async () => {
+            destCoords = { lat: +el.dataset.lat, lon: +el.dataset.lon };
+            document.getElementById('selectedDestDisplay').innerText = `Destination: ${el.dataset.display}`;
+            sug.innerHTML = '';
+            await loadTripOptions();
+          });
+        });
+      }, 500);
+    });
+    
+    async function geocodeAddress(addr) {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
+      const data = await res.json();
+      return data[0] ? { lat: +data[0].lat, lon: +data[0].lon } : null;
+    }
+    
+    async function loadTripOptions() {
+      const locStr = document.getElementById('userLocationInput').value;
+      if (!userCoords) userCoords = await geocodeAddress(locStr);
+      if (!userCoords) return alert('Enter a valid start location');
+      if (!destCoords) return alert('Select a destination');
+      
+      document.getElementById('tripOptionsContainer').style.display = 'block';
+      
+      const midLat = (userCoords.lat + destCoords.lat)/2;
+      const midLon = (userCoords.lon + destCoords.lon)/2;
+      const dist = map.distance([userCoords.lat, userCoords.lon], [destCoords.lat, destCoords.lon]) / 1000;
+      const radius = dist * 1000 * 0.5;
+      
+      const stations = await fetchStations(midLat, midLon);
+      const stationContainer = document.getElementById('stationListContainer');
+      stationContainer.innerHTML = stations.map(s => `
+        <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
+          <strong>${s.name}</strong>
+          <div class="text-small">⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
+          <div class="text-small">${s.amenities.shop?'🛒 ':''}${s.amenities.atm?'🏧 ':''}</div>
+        </div>
+      `).join('');
+      stationContainer.querySelectorAll('.station-list-item').forEach(el => {
+        el.addEventListener('click', () => {
+          stationContainer.querySelectorAll('.station-list-item').forEach(e => e.classList.remove('selected'));
+          el.classList.add('selected');
+          selectedStation = { 
+            lat: +el.dataset.lat, lon: +el.dataset.lon, 
+            name: el.dataset.name, 
+            pricePetrol: el.dataset.petrol, 
+            priceDiesel: el.dataset.diesel 
+          };
+        });
+      });
+      
+      const funQuery = `[out:json];(node["tourism"~"attraction|museum|theme_park|zoo|viewpoint"](around:${radius},${midLat},${midLon});node["leisure"~"park|amusement_park"](around:${radius},${midLat},${midLon});node["amenity"~"restaurant|cafe"](around:${radius},${midLat},${midLon}););out body;`;
+      try {
+        const fres = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(funQuery)}`);
+        const fdata = await fres.json();
+        funStops = fdata.elements.map(el => ({
+          name: el.tags.name || 'Fun stop',
+          lat: el.lat, lon: el.lon,
+          type: el.tags.tourism || el.tags.leisure || el.tags.amenity
+        })).filter(f => f.lat && f.lon).slice(0, 8);
+      } catch(e) { funStops = []; }
+      
+      const funList = document.getElementById('funStopsList');
+      funList.innerHTML = funStops.map(f => `<div class="fun-stop-item"><span>📍 ${f.name} (${f.type})</span></div>`).join('');
+    }
+    
+    document.getElementById('calculateAndDrawRoute').addEventListener('click', async () => {
+      if (!userCoords) { const addr = await geocodeAddress(document.getElementById('userLocationInput').value); if (addr) userCoords = addr; else return alert('Invalid start'); }
+      if (!destCoords) return alert('Destination not set');
+      if (!selectedStation) return alert('Select a fuel station');
+      
+      const waypoints = [L.latLng(userCoords.lat, userCoords.lon), L.latLng(selectedStation.lat, selectedStation.lon)];
+      funStops.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
+      waypoints.push(L.latLng(destCoords.lat, destCoords.lon));
+      
+      if (routingControl) map.removeControl(routingControl);
+      routingControl = L.Routing.control({ waypoints, lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }, createMarker: ()=>null }).addTo(map);
+      map.fitBounds(L.latLngBounds(waypoints));
+      
+      const tank = +document.getElementById('tankCapacity').value || 50;
+      const cons = +document.getElementById('fuelConsumption').value || 7.5;
+      const totalDist = waypoints.reduce((acc, _, i, arr) => i ? acc + map.distance(arr[i-1], arr[i])/1000 : 0, 0);
+      const fuelNeeded = (totalDist/100)*cons;
+      const fuelPrice = (document.getElementById('fuelTypeSelect').value === 'petrol' ? selectedStation.pricePetrol : selectedStation.priceDiesel) || 1.5;
+      const cost = fuelNeeded * fuelPrice;
+      document.getElementById('tripSummary').innerHTML = `📏 ${totalDist.toFixed(1)} km · ⛽ ${fuelNeeded.toFixed(1)} L · 💰 ${currencySymbol}${cost.toFixed(2)}`;
+    });
+    
+    document.getElementById('locateBtn').addEventListener('click', () => {
+      navigator.geolocation?.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 14));
+    });
+    document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
+    
+    initMap();
+    loadCountries();
+  })();
 </script>
 </body>
 </html>
