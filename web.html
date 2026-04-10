@@ -1022,7 +1022,7 @@
 <!-- Navigation -->
 <nav class="navbar">
   <div class="logo-area">
-    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2316a34a'/%3E%3Cpath d='M30 70 L30 30 L70 50 Z' fill='white'/%3E%3C/svg%3E" alt="FuelRadar Logo">
+    <img src="logo.png" alt="FuelRadar Logo">
     <div class="brand-name"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></div>
   </div>
   <div class="nav-links">
@@ -1079,7 +1079,7 @@
     </div>
     <div class="phone-mockup">
       <div class="phone-screen">
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='600' viewBox='0 0 300 600'%3E%3Crect width='300' height='600' fill='%23f0fdf4'/%3E%3Ctext x='150' y='300' text-anchor='middle' fill='%2316a34a' font-size='24'%3EFuelRadar%3C/text%3E%3C/svg%3E" alt="app">
+        <img src="app.jpeg" alt="FuelRadar app screenshot">
       </div>
     </div>
   </div>
@@ -1136,7 +1136,7 @@
       <div class="selector-pill">
         <i class="fas fa-location-dot"></i>
         <select id="regionSelect" disabled>
-          <option value="">Select region/city</option>
+          <option>Select region/city</option>
         </select>
       </div>
       <button class="btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
@@ -1250,7 +1250,7 @@
       </div>
     </div>
     <div class="floating-logo">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2316a34a'/%3E%3Cpath d='M30 70 L30 30 L70 50 Z' fill='white'/%3E%3C/svg%3E" alt="logo" style="width:180px;">
+      <img src="logo.png" alt="FuelRadar logo" style="width:180px;">
     </div>
   </div>
 </section>
@@ -1471,7 +1471,7 @@
       document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
     }
     
-    // ---------- COUNTRY & REGION LOADING (FIXED) ----------
+    // ---------- COUNTRY & REGION LOADING (WORKING VERSION) ----------
     async function loadCountries() {
       const sel = document.getElementById('countrySelect');
       try {
@@ -1497,31 +1497,24 @@
         currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency==='EUR'?'€':countryCurrency);
       }
       const regionSel = document.getElementById('regionSelect');
-      regionSel.innerHTML = '<option value="">Loading regions...</option>';
+      regionSel.innerHTML = '<option>Loading...</option>';
       regionSel.disabled = true;
       if (!code) return;
       
       try {
-        // Fetch administrative boundaries and major cities for the country using Overpass
-        const query = `[out:json];
-          area["ISO3166-1"="${code}"]->.a;
-          (
-            relation["admin_level"="4"](area.a);
-            relation["admin_level"="5"](area.a);
-            node["place"~"city|town|state|region"](area.a);
-          );
-          out body;`;
+        // Query Overpass for admin boundaries (admin_level 4/5) and cities/towns
+        const query = `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
         const resp = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
         const data = await resp.json();
         const items = data.elements.map(el => {
           const tags = el.tags || {};
-          let name = tags.name || tags['name:en'] || tags.official_name || '';
+          const name = tags.name || tags['name:en'] || 'Unknown';
           let lat, lon;
           if (el.lat && el.lon) { lat = el.lat; lon = el.lon; }
           else if (el.center) { lat = el.center.lat; lon = el.center.lon; }
           else return null;
           return { name, lat, lon };
-        }).filter(i => i && i.lat && i.lon && i.name);
+        }).filter(i => i && i.lat && i.lon);
         
         // Remove duplicates by name
         const unique = [];
@@ -1535,7 +1528,7 @@
         unique.sort((a,b) => a.name.localeCompare(b.name));
         
         if (unique.length === 0) {
-          regionSel.innerHTML = '<option value="">No regions found, try map</option>';
+          regionSel.innerHTML = '<option value="">No regions found</option>';
         } else {
           regionSel.innerHTML = '<option value="">Select region/city</option>';
           unique.forEach(it => {
@@ -1549,7 +1542,7 @@
         regionSel.disabled = false;
       } catch(e) {
         console.warn(e);
-        regionSel.innerHTML = '<option value="">Error loading regions</option>';
+        regionSel.innerHTML = '<option value="">Error loading</option>';
       }
     });
     
@@ -1723,7 +1716,6 @@
       }
       if (!destCoords) return alert('Destination not set');
       
-      // Find stations around user (radius 15km)
       const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
       const container = document.getElementById('stationListContainer');
       container.innerHTML = stations.map(s => `
@@ -1749,7 +1741,6 @@
             pricePetrol: el.dataset.petrol, 
             priceDiesel: el.dataset.diesel 
           };
-          // Now load fun stops between user and destination
           await loadFunStops();
           document.getElementById('funStopsContainer').style.display = 'block';
           document.getElementById('tripOptionsContainer').style.display = 'block';
@@ -1811,7 +1802,6 @@
     
     document.getElementById('openPlannerBtn').onclick = () => document.getElementById('planner').scrollIntoView({behavior:'smooth'});
     
-    // Initialize everything
     initMap();
     loadCountries();
   })();
