@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>FuelRadar · Station Manager</title>
+  <title>FuelRadar · Station Manager Pro</title>
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -45,12 +45,11 @@
       border-radius: 48px;
       box-shadow: 0 25px 50px -12px rgba(0, 80, 0, 0.25);
       overflow: hidden;
-      border: 1px solid rgba(22, 163, 74, 0.2);
       transition: background 0.3s;
+      /* border removed */
     }
     body.dark .app {
       background: #121212;
-      border-color: #2c3a2c;
     }
 
     /* ========== AUTH VIEW ========== */
@@ -362,7 +361,7 @@
       transform: translateX(24px);
     }
 
-    /* ========== PAGE OVERLAYS ========== */
+    /* ========== PAGE OVERLAYS (fixed) ========== */
     .page-overlay {
       position: fixed;
       top: 0;
@@ -532,6 +531,17 @@
       gap: 8px;
       align-items: center;
     }
+    .remove-btn {
+      background: #fee2e2;
+      border: none;
+      border-radius: 30px;
+      padding: 6px 12px;
+      color: #b91c1c;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
@@ -696,6 +706,7 @@
   </div>
   <div class="page-content">
     <div class="card-premium">
+      <h3>Manage Amenities</h3>
       <div id="amenitiesManagerList"></div>
       <div style="margin-top:20px;">
         <input type="text" id="newAmenityInput" class="input-pill" placeholder="e.g., Free WiFi">
@@ -1014,7 +1025,10 @@
       const cont = document.getElementById('fuelManagerList');
       cont.innerHTML = Object.entries(fuel).map(([key, enabled]) => `
         <div class="toggle-item">
-          <span>${key}</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span>${key}</span>
+            <button class="remove-btn" data-remove-fuel="${key}" ${key === 'diesel' || key === 'petrol' ? 'disabled style="opacity:0.5;"' : ''}>Remove</button>
+          </div>
           <label class="switch">
             <input type="checkbox" ${enabled ? 'checked' : ''} data-fm="${key}">
             <span class="slider"></span>
@@ -1028,13 +1042,55 @@
           renderToggles();
         };
       });
+      cont.querySelectorAll('[data-remove-fuel]').forEach(btn => {
+        btn.onclick = async () => {
+          const key = btn.dataset.removeFuel;
+          if (key === 'diesel' || key === 'petrol') return;
+          delete stationData.fuelTypes[key];
+          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          renderFuelManager();
+          renderToggles();
+          showToast(`${key} removed`);
+        };
+      });
     }
 
     function renderAmenitiesManager() {
       const cont = document.getElementById('amenitiesManagerList');
-      cont.innerHTML = stationData.amenities.map(a => 
-        `<div class="amenity-chip">${a}</div>`
-      ).join('');
+      cont.innerHTML = stationData.amenities.map(a => `
+        <div class="toggle-item">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span>${a}</span>
+            <button class="remove-btn" data-remove-amenity="${a}">Remove</button>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked data-am="${a}">
+            <span class="slider"></span>
+          </label>
+        </div>
+      `).join('');
+      cont.querySelectorAll('input').forEach(cb => {
+        cb.onchange = async () => {
+          const am = cb.dataset.am;
+          if (!cb.checked) {
+            stationData.amenities = stationData.amenities.filter(a => a !== am);
+          } else if (!stationData.amenities.includes(am)) {
+            stationData.amenities.push(am);
+          }
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderToggles();
+        };
+      });
+      cont.querySelectorAll('[data-remove-amenity]').forEach(btn => {
+        btn.onclick = async () => {
+          const am = btn.dataset.removeAmenity;
+          stationData.amenities = stationData.amenities.filter(a => a !== am);
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderAmenitiesManager();
+          renderToggles();
+          showToast(`${am} removed`);
+        };
+      });
     }
 
     function renderStationDetails() {
@@ -1144,7 +1200,7 @@
       document.getElementById('subscriptionContent').innerHTML = `
         <div class="card-premium">
           <h3>${stationData.subscription?.plan || 'trial'} plan</h3>
-          <p>Expires: ${exp}</p>
+          <p>📅 Expires: ${exp}</p>
           <p>✅ Station visible on map</p>
           <p>✅ Real-time price updates</p>
           <p>✅ Priority support</p>
