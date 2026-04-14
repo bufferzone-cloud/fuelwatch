@@ -3,28 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>FuelRadar · Station Manager</title>
+  <title>FuelRadar · Station Manager Pro</title>
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Firebase Compat -->
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <!-- Cloudinary -->
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
   <style>
+    /* ---------- RESET & GLOBAL ---------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     body {
-      background: #ffffff;
+      background: #f5f9f5;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -33,31 +35,32 @@
       transition: background 0.3s;
     }
     body.dark {
-      background: #121212;
+      background: #0a0f0a;
       color: #e0e0e0;
     }
-    .station-app {
-      max-width: 560px;
+    .app {
+      max-width: 600px;
       width: 100%;
-      background: white;
-      border-radius: 36px;
-      box-shadow: 0 12px 30px rgba(0, 80, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-radius: 48px;
+      box-shadow: 0 25px 50px -12px rgba(0, 80, 0, 0.25);
       overflow: hidden;
-      border: 1px solid #dcfce7;
+      border: 1px solid rgba(22, 163, 74, 0.2);
       transition: background 0.3s;
     }
-    body.dark .station-app {
-      background: #1e1e1e;
-      border-color: #2c2c2c;
+    body.dark .app {
+      background: #121212;
+      border-color: #2c3a2c;
     }
 
-    /* AUTH OVERLAY */
-    #authOverlayStation {
-      padding: 24px 20px;
+    /* ---------- AUTH VIEW ---------- */
+    #authView {
+      padding: 28px 20px;
     }
     .auth-header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     .auth-header h1 {
       font-size: 32px;
@@ -66,43 +69,47 @@
     .fuel-green { color: #16a34a; }
     .radar-red { color: #dc2626; }
     .slogan {
-      background: #eef5e8;
+      background: #e6f7e6;
       border-radius: 40px;
-      padding: 6px 16px;
+      padding: 8px 20px;
       display: inline-block;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
-      color: #16a34a;
+      color: #0f5c0f;
+      margin-top: 8px;
     }
     .country-badge {
       background: #f0fdf4;
       border-radius: 30px;
-      padding: 10px 16px;
-      margin: 12px 0;
+      padding: 12px 18px;
+      margin: 16px 0;
       text-align: center;
-      font-weight: 600;
+      font-weight: 700;
       color: #065f46;
+      border: 1px solid #bbf7d0;
     }
-    .auth-tab-bar {
+    .auth-tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 28px;
     }
     .auth-tab {
       flex: 1;
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       border-radius: 40px;
       font-weight: 700;
       background: #f0fdf4;
       color: #065f46;
       cursor: pointer;
       border: 1px solid #bbf7d0;
+      transition: all 0.2s;
     }
     .auth-tab.active {
       background: #16a34a;
-      color: white;
+      color: #fff;
       border-color: #14532d;
+      box-shadow: 0 8px 14px -6px rgba(22,163,74,0.4);
     }
     .auth-form {
       display: block;
@@ -111,44 +118,49 @@
       display: none;
     }
     .input-pill {
-      background: #f9fafb;
-      border: 1.5px solid #d1d5db;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
       border-radius: 60px;
-      padding: 14px 20px;
+      padding: 16px 20px;
       font-size: 15px;
       width: 100%;
       margin-bottom: 16px;
       outline: none;
+      transition: border 0.2s;
+    }
+    .input-pill:focus {
+      border-color: #16a34a;
     }
     body.dark .input-pill {
-      background: #2c2c2c;
-      border-color: #4ade80;
-      color: white;
+      background: #1e1e1e;
+      border-color: #3a5a3a;
+      color: #fff;
     }
     .phone-row {
       display: flex;
       gap: 8px;
     }
-    .country-code-box {
+    .country-code {
       background: #eef5e8;
       border: 1.5px solid #16a34a;
       border-radius: 60px;
-      padding: 14px 12px;
-      min-width: 100px;
+      padding: 16px 14px;
+      min-width: 110px;
       text-align: center;
-      font-weight: 600;
+      font-weight: 700;
+      color: #065f46;
     }
-    .photo-upload-row {
+    .photo-row {
       display: flex;
-      gap: 12px;
-      margin: 16px 0;
+      gap: 16px;
+      margin: 18px 0;
     }
     .photo-box {
       flex: 1;
-      background: #f0fdf4;
+      background: #f8fcf8;
       border: 2px dashed #16a34a;
-      border-radius: 24px;
-      height: 100px;
+      border-radius: 28px;
+      height: 110px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -158,167 +170,334 @@
       font-weight: 600;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      text-shadow: 0 0 2px white;
+      transition: 0.2s;
+    }
+    .photo-box i {
+      font-size: 28px;
+      margin-bottom: 6px;
     }
     .amenities-editor {
       margin: 10px 0;
     }
     .amenity-chip {
       display: inline-block;
-      background: #eef5e8;
-      border-radius: 30px;
-      padding: 6px 12px;
-      margin: 4px;
-      font-size: 13px;
-    }
-    .add-amenity-btn {
-      background: none;
-      border: 1px dashed #16a34a;
+      background: #e9f5e9;
       border-radius: 40px;
       padding: 8px 16px;
-      width: 100%;
-      margin-top: 8px;
-      color: #16a34a;
-      font-weight: 600;
-      cursor: pointer;
+      margin: 6px 6px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid #b8e0b8;
     }
     .location-picker {
-      background: #f8fafc;
-      border-radius: 24px;
-      padding: 12px;
-      margin: 16px 0;
+      background: #fafdfa;
+      border-radius: 28px;
+      padding: 16px;
+      margin: 18px 0;
+      border: 1px solid #d1e7d1;
     }
-    #registerStationMap {
+    #registerMap {
       height: 180px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      border: 1px solid #bbf7d0;
-      z-index: 1;
+      border-radius: 24px;
+      margin-bottom: 14px;
+      border: 2px solid #16a34a;
     }
     .auth-btn {
-      background: #16a34a;
-      color: white;
+      background: linear-gradient(145deg, #16a34a, #0f823a);
+      color: #fff;
       border: none;
       border-radius: 60px;
-      padding: 14px;
+      padding: 16px;
       font-weight: 800;
       font-size: 16px;
       width: 100%;
       cursor: pointer;
-      box-shadow: 0 4px 0 #14532d;
-      margin-top: 16px;
+      box-shadow: 0 10px 18px -8px rgba(22,163,74,0.5);
+      margin-top: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      transition: 0.15s;
     }
-    .auth-btn .spinner {
+    .auth-btn:active {
+      transform: scale(0.98);
+    }
+    .spinner {
       display: none;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border: 3px solid rgba(255,255,255,0.3);
       border-radius: 50%;
-      border-top-color: white;
+      border-top-color: #fff;
       animation: spin 0.8s linear infinite;
     }
-    .auth-btn.loading .spinner { display: inline-block; }
+    .auth-btn.loading .spinner {
+      display: inline-block;
+    }
 
-    /* DASHBOARD */
+    /* ---------- DASHBOARD ---------- */
     #dashboardView {
       display: none;
     }
-    .dashboard-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #e2efe2;
+    .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 18px 20px 10px;
     }
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .logo-area img {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+    .logo-left img {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
       object-fit: cover;
     }
-    .welcome-title {
+    .title-center {
+      font-size: 24px;
       font-weight: 800;
-      font-size: 18px;
+      letter-spacing: -0.3px;
     }
-    .menu-toggle {
+    .flag-right {
+      background: #ecfdf3;
+      padding: 8px 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      border: 1px solid #bbf7d0;
+    }
+    .station-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 20px 16px;
+    }
+    .station-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      border: 3px solid #fff;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+      object-fit: cover;
+    }
+    .station-info {
+      flex: 1;
+      font-weight: 700;
+      font-size: 20px;
+      color: #0a2e0a;
+    }
+    .menu-btn {
       background: #f0fdf4;
       border: none;
-      border-radius: 30px;
-      padding: 8px 16px;
+      border-radius: 40px;
+      padding: 12px 18px;
       color: #16a34a;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
       cursor: pointer;
     }
-    .station-name-badge {
-      background: #dcfce7;
-      padding: 12px 20px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #065f46;
+    .map-card {
+      margin: 4px 20px 16px;
+      border-radius: 36px;
+      overflow: hidden;
+      border: 2px solid rgba(22,163,74,0.2);
+      box-shadow: 0 16px 24px -8px rgba(0,40,0,0.12);
+    }
+    #dashboardMap {
+      height: 190px;
+      width: 100%;
+    }
+    .toggle-section {
+      padding: 8px 20px 24px;
+    }
+    .section-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #1e4a1e;
+    }
+    .toggle-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-    .station-name-badge img {
-      width: 50px;
-      height: 50px;
+      justify-content: space-between;
+      background: #ffffffd9;
+      backdrop-filter: blur(4px);
+      padding: 14px 18px;
       border-radius: 40px;
-      border: 2px solid white;
-      object-fit: cover;
+      margin-bottom: 10px;
+      border: 1px solid #e2f0e2;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
     }
-    .map-container {
-      height: 180px;
-      margin: 12px 16px;
-      border-radius: 28px;
-      overflow: hidden;
-      border: 2px solid #16a34a;
+    body.dark .toggle-item {
+      background: #1e2a1e;
+      border-color: #2c4a2c;
     }
-    .toggle-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 16px;
+    .toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
     }
-    .toggle-card {
-      background: #f9fafb;
-      border-radius: 28px;
-      padding: 16px 8px;
-      text-align: center;
-      border: 1px solid #dcfce7;
+    .toggle-left i {
+      font-size: 22px;
+      width: 28px;
+      color: #16a34a;
+    }
+    /* iOS Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
       cursor: pointer;
-      transition: all 0.2s;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .2s;
+      border-radius: 34px;
     }
-    .toggle-card.active {
-      background: #16a34a;
-      color: white;
-      border-color: #14532d;
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    body.dark .toggle-card {
-      background: #2c2c2c;
-      border-color: #4ade80;
+    input:checked + .slider {
+      background-color: #16a34a;
     }
-    .toggle-card i {
-      font-size: 24px;
-      margin-bottom: 6px;
+    input:checked + .slider:before {
+      transform: translateX(24px);
     }
 
-    /* SIDEBAR */
+    /* ---------- MODALS & OVERLAYS ---------- */
+    .modal-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,20,0,0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .modal-popup.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal-card {
+      background: #fff;
+      border-radius: 48px;
+      padding: 28px 24px;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 30px 40px rgba(0,80,0,0.3);
+      border: 2px solid #16a34a;
+    }
+    body.dark .modal-card {
+      background: #1a2a1a;
+    }
+    .modal-card h3 {
+      font-size: 26px;
+      margin-bottom: 16px;
+      color: #16a34a;
+    }
+    .modal-btn {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 60px;
+      padding: 14px 30px;
+      font-weight: bold;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .page-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f8faf8;
+      z-index: 3000;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    body.dark .page-overlay {
+      background: #121212;
+    }
+    .page-overlay.show {
+      display: flex;
+    }
+    .page-header {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #cde0cd;
+    }
+    .page-header h2 {
+      flex: 1;
+      font-weight: 800;
+    }
+    .close-page {
+      background: none;
+      border: none;
+      font-size: 32px;
+      color: #16a34a;
+      cursor: pointer;
+    }
+    .page-content {
+      padding: 24px;
+    }
+    .card-premium {
+      background: linear-gradient(135deg, #ffffff 0%, #f3faf3 100%);
+      border-radius: 32px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 20px -5px rgba(0,30,0,0.05);
+      border: 1px solid #cae3ca;
+    }
+    .price-tag {
+      background: #16a34a;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 60px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    /* ---------- SIDEBAR ---------- */
     .sidebar-overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.3);
-      z-index: 3000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.2);
+      z-index: 4000;
       visibility: hidden;
       opacity: 0;
       transition: 0.2s;
@@ -329,89 +508,49 @@
     }
     .sidebar-panel {
       position: fixed;
-      top: 0; right: -300px;
-      width: 280px; height: 100%;
+      top: 0;
+      right: -300px;
+      width: 280px;
+      height: 100%;
       background: white;
-      box-shadow: -4px 0 24px rgba(0,0,0,0.2);
-      z-index: 3001;
+      z-index: 4001;
       transition: right 0.25s;
-      display: flex;
-      flex-direction: column;
       padding: 20px 0;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
       overflow-y: auto;
     }
-    body.dark .sidebar-panel { background: #1e1e1e; }
-    .sidebar-overlay.open .sidebar-panel { right: 0; }
+    body.dark .sidebar-panel {
+      background: #1a231a;
+    }
+    .sidebar-overlay.open .sidebar-panel {
+      right: 0;
+    }
     .sidebar-header {
       padding: 12px 20px;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 800;
       color: #16a34a;
-      display: flex;
-      justify-content: space-between;
     }
     .sidebar-item {
-      padding: 14px 24px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       font-weight: 600;
       cursor: pointer;
     }
-    .sidebar-item i { width: 24px; color: #16a34a; }
-
-    /* PAGE OVERLAYS */
-    .page-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: white;
-      z-index: 2500;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-    body.dark .page-overlay { background: #1e1e1e; }
-    .page-overlay.show { display: flex; }
-    .page-header {
-      display: flex;
-      align-items: center;
-      padding: 16px;
-      border-bottom: 1px solid #e2efe2;
-    }
-    .page-header h2 { flex: 1; font-weight: 800; }
-    .close-page {
-      background: none;
-      border: none;
-      font-size: 28px;
+    .sidebar-item i {
+      width: 24px;
       color: #16a34a;
-      cursor: pointer;
     }
-    .page-content { padding: 20px; }
 
-    .subscription-card {
-      background: #f0fdf4;
-      border-radius: 32px;
-      padding: 20px;
-      margin-bottom: 16px;
-      border: 2px solid #16a34a;
-    }
-    .price-option {
-      background: white;
-      border-radius: 40px;
-      padding: 14px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      border: 1px solid #bbf7d0;
-    }
+    /* ---------- TOAST ---------- */
     .toast-message {
       position: fixed;
       bottom: 30px;
-      left: 20px; right: 20px;
-      background: #1e2a1e;
+      left: 20px;
+      right: 20px;
+      background: #1a2e1a;
       color: white;
       padding: 14px;
       border-radius: 60px;
@@ -421,122 +560,220 @@
       max-width: 500px;
       margin: 0 auto;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .small-note { font-size: 13px; color: #6b7280; margin-top: 8px; }
-    .flex-row { display: flex; gap: 8px; align-items: center; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .small-note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .flex-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
-<div class="station-app" id="stationApp">
-  <!-- AUTH / REGISTER VIEW -->
-  <div id="authOverlayStation">
+<div class="app">
+  <!-- AUTHENTICATION VIEW -->
+  <div id="authView">
     <div class="auth-header">
-      <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> <span style="font-size:20px;">⛽</span></h1>
-      <div class="slogan">for station owners</div>
+      <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> ⛽</h1>
+      <div class="slogan">station owner · join the network</div>
     </div>
     <div id="countryDetectionBox" class="country-badge">
-      <span id="detectSpinner" class="spinner" style="display:inline-block; width:16px; height:16px;"></span>
-      <span id="countryMessage">Detecting your country...</span>
+      <span id="countryMessage">🌍 Detecting country...</span>
     </div>
-    <div class="auth-tab-bar">
+    <div class="auth-tabs">
       <div class="auth-tab active" data-tab="login">Login</div>
-      <div class="auth-tab" data-tab="register">Register Station</div>
+      <div class="auth-tab" data-tab="register">Register</div>
     </div>
-    <!-- LOGIN -->
-    <div id="loginFormStation" class="auth-form">
-      <input type="email" id="loginEmail" class="input-pill" placeholder="Manager Email" value="">
+
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-form">
+      <input type="email" id="loginEmail" class="input-pill" placeholder="Manager Email">
       <input type="password" id="loginPassword" class="input-pill" placeholder="Password">
-      <button class="auth-btn" id="loginBtnStation"><span>Sign In</span> <span class="spinner"></span></button>
+      <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
     </div>
-    <!-- REGISTER -->
-    <div id="registerFormStation" class="auth-form hide">
+
+    <!-- Register Form -->
+    <div id="registerForm" class="auth-form hide">
       <input type="text" id="regStationName" class="input-pill" placeholder="Station Name">
       <input type="text" id="regManagerName" class="input-pill" placeholder="Manager Full Name">
       <input type="email" id="regManagerEmail" class="input-pill" placeholder="Manager Email">
       <div class="phone-row">
-        <span class="country-code-box" id="regPhonePrefix">+1</span>
+        <span class="country-code" id="regPhonePrefix">+1</span>
         <input type="tel" id="regManagerPhone" class="input-pill" placeholder="Phone number" style="flex:2;">
       </div>
       <input type="password" id="regPassword" class="input-pill" placeholder="Password (min 6 chars)">
-      <div class="photo-upload-row">
-        <div class="photo-box" id="photoUpload1"><i class="fas fa-camera"></i> Front view</div>
-        <div class="photo-box" id="photoUpload2"><i class="fas fa-camera"></i> Entrance</div>
+      
+      <div class="photo-row">
+        <div class="photo-box" id="photoUpload1"><i class="fas fa-store"></i> Front view</div>
+        <div class="photo-box" id="photoUpload2"><i class="fas fa-door-open"></i> Entrance</div>
       </div>
+
       <div class="amenities-editor">
-        <label style="font-weight:600;">Amenities <i class="fas fa-plus-circle" id="addCustomAmenityBtn" style="margin-left:8px; color:#16a34a; cursor:pointer;"></i></label>
+        <label style="font-weight:600;">Amenities 
+          <i class="fas fa-plus-circle" id="addCustomAmenityBtn" style="margin-left:8px; color:#16a34a; cursor:pointer;"></i>
+        </label>
         <div id="amenityChipsContainer"></div>
-        <div class="flex-row" id="customAmenityRow" style="display:none; margin-top:8px;">
-          <input type="text" id="customAmenityInput" placeholder="e.g., Restaurant, Pharmacy" class="input-pill" style="margin-bottom:0;">
-          <button id="saveCustomAmenityBtn" class="auth-btn" style="width:auto; margin:0; padding:10px 16px;">Add</button>
+        <div class="flex-row" id="customAmenityRow" style="display:none; margin-top:10px;">
+          <input type="text" id="customAmenityInput" placeholder="e.g., Pharmacy" class="input-pill" style="margin:0;">
+          <button id="saveCustomAmenityBtn" class="auth-btn" style="width:auto; margin:0; padding:10px 20px;">Add</button>
         </div>
       </div>
+
       <div class="location-picker">
-        <div id="registerStationMap"></div>
+        <div id="registerMap"></div>
         <div style="display:flex; gap:8px;">
-          <input type="text" id="locationSearchInput" placeholder="Search address" class="input-pill" style="margin-bottom:0;">
-          <button id="locateMeBtn" class="auth-btn" style="width:auto; margin:0; padding:12px 16px;"><i class="fas fa-crosshairs"></i></button>
+          <input type="text" id="locationSearchInput" placeholder="Search address" class="input-pill" style="margin:0;">
+          <button id="locateMeBtn" class="auth-btn" style="width:auto; margin:0; padding:14px 18px;"><i class="fas fa-location-dot"></i></button>
         </div>
-        <small>📍 Pin location (accuracy ~10m)</small>
+        <small>📍 Pin your exact location (accuracy ~10m)</small>
       </div>
-      <button class="auth-btn" id="registerStationBtn"><span>Register Station</span> <span class="spinner"></span></button>
+
+      <button class="auth-btn" id="registerBtn"><span>Register Station</span> <span class="spinner"></span></button>
     </div>
   </div>
 
   <!-- DASHBOARD VIEW -->
   <div id="dashboardView">
-    <div class="dashboard-header">
-      <div class="logo-area">
-        <img src="logo.png" id="dashboardLogo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z\'/%3E%3C/svg%3E';">
-        <span class="welcome-title"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> <span id="countryFlagSmall">🇿🇲</span></span>
+    <div class="top-bar">
+      <div class="logo-left">
+        <img src="logo.png" id="dashLogo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z\'/%3E%3C/svg%3E';">
       </div>
-      <button class="menu-toggle" id="dashboardMenuBtn"><i class="fas fa-bars"></i> Menu</button>
+      <div class="title-center">
+        <span class="fuel-green">Fuel</span><span class="radar-red">Radar</span>
+      </div>
+      <div class="flag-right" id="flagHeader">🇿🇲</div>
     </div>
-    <div class="station-name-badge" id="stationNameDisplay">
-      <img id="stationIconThumb" src="station_placeholder.png" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z\'/%3E%3C/svg%3E';">
-      <span id="stationNameHeader">My Station</span>
-    </div>
-    <div class="map-container" id="dashboardMap"></div>
 
-    <div class="toggle-grid" id="fuelTogglesGrid"></div>
-    <div style="padding:0 16px 16px;"><small><i class="fas fa-info-circle"></i> Toggle fuel/amenities above. Use sidebar for full management.</small></div>
+    <div class="station-row">
+      <img class="station-avatar" id="stationAvatar" src="station_placeholder.png" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z\'/%3E%3C/svg%3E';">
+      <div class="station-info" id="stationNameHeader">My Station</div>
+      <button class="menu-btn" id="dashboardMenuBtn"><i class="fas fa-bars"></i></button>
+    </div>
+
+    <div class="map-card">
+      <div id="dashboardMap"></div>
+    </div>
+
+    <div class="toggle-section">
+      <div class="section-label">
+        <span>⛽ Fuel availability</span>
+        <span>⚡ tap to toggle</span>
+      </div>
+      <div id="fuelTogglesContainer"></div>
+
+      <div class="section-label" style="margin-top:20px;">
+        <span>🧼 Amenities & services</span>
+      </div>
+      <div id="amenitiesTogglesContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRIAL POPUP -->
+<div class="modal-popup" id="trialPopup">
+  <div class="modal-card">
+    <h3>🎉 Welcome!</h3>
+    <p style="font-size:18px;">Hello <span id="popupManagerName"></span>,</p>
+    <p>You have a <strong style="color:#16a34a;">FREE 1‑month trial</strong>.<br>Your station is visible to all drivers.</p>
+    <p style="margin-top:16px;">📅 Trial ends: <span id="trialExpiryDate"></span></p>
+    <button class="modal-btn" id="closeTrialPopup">Let's go →</button>
   </div>
 </div>
 
 <!-- SIDEBAR -->
-<div class="sidebar-overlay" id="sidebarOverlayStation">
+<div class="sidebar-overlay" id="sidebarOverlay">
   <div class="sidebar-panel">
-    <div class="sidebar-header"><span>⚡ Manager</span><button id="closeSidebarBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div>
-    <div class="sidebar-item" data-page="fuelManager"><i class="fas fa-gas-pump"></i> Fuel types</div>
+    <div class="sidebar-header">⚡ Manager</div>
+    <div class="sidebar-item" data-page="fuelManager"><i class="fas fa-gas-pump"></i> Fuel Types</div>
     <div class="sidebar-item" data-page="amenitiesManager"><i class="fas fa-concierge-bell"></i> Amenities</div>
-    <div class="sidebar-item" data-page="stationDetails"><i class="fas fa-info-circle"></i> Station details</div>
+    <div class="sidebar-item" data-page="stationDetails"><i class="fas fa-store"></i> Station Details</div>
+    <div class="sidebar-item" data-page="priceManager"><i class="fas fa-dollar-sign"></i> Fuel Prices</div>
+    <div class="sidebar-item" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</div>
+    <div class="sidebar-item" data-page="reportsPage"><i class="fas fa-flag"></i> User Reports</div>
     <div class="sidebar-item" data-page="settingsPage"><i class="fas fa-cog"></i> Settings</div>
     <div class="sidebar-item" data-page="subscriptionPage"><i class="fas fa-credit-card"></i> Subscription</div>
-    <div class="sidebar-item" data-page="reportsPage"><i class="fas fa-chart-bar"></i> Reports</div>
-    <div class="sidebar-item" id="darkModeToggleSidebar"><i class="fas fa-moon"></i> Dark mode</div>
-    <div class="sidebar-item" id="logoutSidebarBtn"><i class="fas fa-sign-out-alt"></i> Logout</div>
+    <div class="sidebar-item" id="darkModeToggle"><i class="fas fa-moon"></i> Dark Mode</div>
+    <div class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</div>
   </div>
 </div>
 
 <!-- PAGE OVERLAYS -->
-<div id="fuelManagerPage" class="page-overlay"><div class="page-header"><h2>Fuel Types</h2><button class="close-page" data-close="fuelManagerPage">&times;</button></div><div class="page-content" id="fuelManagerContent"></div></div>
-<div id="amenitiesManagerPage" class="page-overlay"><div class="page-header"><h2>Amenities</h2><button class="close-page" data-close="amenitiesManagerPage">&times;</button></div><div class="page-content" id="amenitiesManagerContent"></div></div>
-<div id="stationDetailsPage" class="page-overlay"><div class="page-header"><h2>Station Details</h2><button class="close-page" data-close="stationDetailsPage">&times;</button></div><div class="page-content" id="stationDetailsContent"></div></div>
-<div id="settingsPage" class="page-overlay"><div class="page-header"><h2>Settings</h2><button class="close-page" data-close="settingsPage">&times;</button></div><div class="page-content">
-  <button class="auth-btn" id="logoutSettingsBtn">Logout</button>
-  <button class="auth-btn" style="background:#6b7280; margin-top:12px;" id="toggleNotifBtn">🔔 Stop notifications</button>
-  <p style="margin-top:20px;">Language: English</p>
-  <p class="small-note">Notifications are simulated; tap to toggle.</p>
-</div></div>
-<div id="subscriptionPage" class="page-overlay"><div class="page-header"><h2>Subscription</h2><button class="close-page" data-close="subscriptionPage">&times;</button></div><div class="page-content" id="subscriptionContent"></div></div>
-<div id="reportsPage" class="page-overlay"><div class="page-header"><h2>Reports & Insights</h2><button class="close-page" data-close="reportsPage">&times;</button></div><div class="page-content">📊 User visits, popular fuels (demo data).</div></div>
+<!-- Fuel Manager -->
+<div id="fuelManagerPage" class="page-overlay">
+  <div class="page-header"><h2>⛽ Fuel Types</h2><button class="close-page" data-close="fuelManagerPage">&times;</button></div>
+  <div class="page-content" id="fuelManagerContent"></div>
+</div>
+<!-- Amenities Manager -->
+<div id="amenitiesManagerPage" class="page-overlay">
+  <div class="page-header"><h2>🧼 Amenities</h2><button class="close-page" data-close="amenitiesManagerPage">&times;</button></div>
+  <div class="page-content" id="amenitiesManagerContent"></div>
+</div>
+<!-- Station Details -->
+<div id="stationDetailsPage" class="page-overlay">
+  <div class="page-header"><h2>📋 Station Details</h2><button class="close-page" data-close="stationDetailsPage">&times;</button></div>
+  <div class="page-content" id="stationDetailsContent"></div>
+</div>
+<!-- Price Manager -->
+<div id="priceManagerPage" class="page-overlay">
+  <div class="page-header"><h2>💰 Fuel Prices</h2><button class="close-page" data-close="priceManagerPage">&times;</button></div>
+  <div class="page-content" id="priceManagerContent"></div>
+</div>
+<!-- Analytics -->
+<div id="analyticsPage" class="page-overlay">
+  <div class="page-header"><h2>📊 Analytics</h2><button class="close-page" data-close="analyticsPage">&times;</button></div>
+  <div class="page-content">
+    <canvas id="visitsChart" width="300" height="200"></canvas>
+    <p class="small-note">Demo: last 7 days visits</p>
+    <canvas id="fuelPopularityChart" width="300" height="200" style="margin-top:24px;"></canvas>
+  </div>
+</div>
+<!-- User Reports -->
+<div id="reportsPage" class="page-overlay">
+  <div class="page-header"><h2>📋 User Reports</h2><button class="close-page" data-close="reportsPage">&times;</button></div>
+  <div class="page-content" id="reportsContent"></div>
+</div>
+<!-- Settings -->
+<div id="settingsPage" class="page-overlay">
+  <div class="page-header"><h2>⚙️ Settings</h2><button class="close-page" data-close="settingsPage">&times;</button></div>
+  <div class="page-content">
+    <div class="card-premium">
+      <h3>Manager Profile</h3>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <img id="settingsProfilePic" style="width:60px;height:60px;border-radius:30px;object-fit:cover;">
+        <div style="flex:1;">
+          <input id="editManagerName" class="input-pill" placeholder="Full Name" style="margin:0 0 8px;">
+          <input id="editManagerPhone" class="input-pill" placeholder="Phone" style="margin:0;">
+        </div>
+      </div>
+      <button id="updateProfileBtn" class="auth-btn" style="margin-top:16px;">Update Profile</button>
+      <button id="changeProfilePicBtn" class="auth-btn" style="background:#3b82f6; margin-top:8px;">Change Picture</button>
+    </div>
+    <button class="auth-btn" id="logoutSettingsBtn">Logout</button>
+    <button class="auth-btn" style="background:#6b7280; margin-top:16px;" id="toggleNotifBtn">🔔 Notifications ON</button>
+    <p style="margin-top:24px;">🌐 Language: English</p>
+  </div>
+</div>
+<!-- Subscription -->
+<div id="subscriptionPage" class="page-overlay">
+  <div class="page-header"><h2>💳 Subscription</h2><button class="close-page" data-close="subscriptionPage">&times;</button></div>
+  <div class="page-content" id="subscriptionContent"></div>
+</div>
 
+<!-- TOAST MESSAGE -->
 <div id="toastMessage" class="toast-message"></div>
 
 <script>
   (function(){
     "use strict";
 
-    // Firebase config (identical to user app)
+    // ---------- FIREBASE CONFIG ----------
     const firebaseConfig = {
       apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
       authDomain: "dmkl-8ea2c.firebaseapp.com",
@@ -550,28 +787,23 @@
     const auth = firebase.auth();
     const rtdb = firebase.database();
 
+    // ---------- CLOUDINARY CONFIG ----------
     const CLOUD_NAME = 'dd3lcymrk';
     const UPLOAD_PRESET = 'h3eyhc2o';
 
-    // State
+    // ---------- GLOBAL STATE ----------
     let currentUser = null;
     let stationData = null;
-    let userCountry = { code: 'US', phone: '+1', currency: 'USD', name: 'United States', flag: '🇺🇸' };
+    let userCountry = { code: 'US', phone: '+1', currency: 'USD', flag: '🇺🇸' };
     let registerMap, dashboardMap, markerPin;
     let selectedLatLng = null;
     let uploadedImages = { photo1: '', photo2: '' };
     let customAmenities = [];
     let defaultAmenities = ['Toilet', 'ATM', 'Shop', 'Car Wash'];
-    let trialPopupShown = false;
     let notificationsEnabled = true;
+    let visitChart, fuelChart;
 
-    // DOM elements
-    const authOverlay = document.getElementById('authOverlayStation');
-    const dashboardView = document.getElementById('dashboardView');
-    const loginForm = document.getElementById('loginFormStation');
-    const registerForm = document.getElementById('registerFormStation');
-
-    // Helpers
+    // ---------- HELPER FUNCTIONS ----------
     function showToast(msg, isGood = true) {
       const toast = document.getElementById('toastMessage');
       toast.textContent = msg;
@@ -579,13 +811,22 @@
       toast.style.display = 'block';
       setTimeout(() => toast.style.display = 'none', 4000);
     }
-    function setButtonLoading(btn, loading) {
-      if(loading) { btn.classList.add('loading'); btn.disabled = true; }
-      else { btn.classList.remove('loading'); btn.disabled = false; }
-    }
-    function getFlagEmoji(code) { return code ? String.fromCodePoint(...code.toUpperCase().split('').map(c=>127397+c.charCodeAt())) : '🇺🇸'; }
 
-    // Country detection
+    function setButtonLoading(btn, loading) {
+      if (loading) {
+        btn.classList.add('loading');
+        btn.disabled = true;
+      } else {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    }
+
+    function getFlagEmoji(code) {
+      return code ? String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt())) : '🇺🇸';
+    }
+
+    // ---------- COUNTRY DETECTION ----------
     async function detectCountry() {
       try {
         const res = await fetch('https://ipapi.co/json/');
@@ -597,210 +838,400 @@
           name: data.country_name || 'United States',
           flag: getFlagEmoji(data.country_code)
         };
-      } catch(e) { /* fallback */ }
+      } catch (e) {
+        // fallback
+      }
       document.getElementById('countryMessage').innerHTML = `${userCountry.flag} ${userCountry.name} · ${userCountry.currency}`;
       document.getElementById('regPhonePrefix').innerHTML = `${userCountry.flag} ${userCountry.phone}`;
-      document.getElementById('countryFlagSmall').textContent = userCountry.flag;
+      document.getElementById('flagHeader').innerText = userCountry.flag;
     }
+    detectCountry();
 
-    // MAP functions
+    // ---------- MAP FUNCTIONS ----------
     function initRegisterMap() {
       if (registerMap) return;
-      registerMap = L.map('registerStationMap').setView([0,0], 2);
+      registerMap = L.map('registerMap').setView([0, 0], 2);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(registerMap);
       registerMap.on('click', e => setMarker(e.latlng));
-      // Try to get current location
+      
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
-          const { latitude, longitude } = pos.coords;
-          registerMap.setView([latitude, longitude], 15);
-          setMarker({ lat: latitude, lng: longitude });
+          registerMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
+          setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         }, () => {});
       }
-      setTimeout(() => registerMap.invalidateSize(), 100);
+      setTimeout(() => registerMap.invalidateSize(), 200);
     }
+
     function setMarker(latlng) {
       if (markerPin) registerMap.removeLayer(markerPin);
       markerPin = L.marker(latlng).addTo(registerMap);
       selectedLatLng = latlng;
     }
 
-    // Fix map size when register tab becomes visible
-    function refreshMapWhenVisible() {
-      setTimeout(() => {
-        if (registerMap) registerMap.invalidateSize();
-        if (dashboardMap) dashboardMap.invalidateSize();
-      }, 200);
+    // ---------- AMENITIES CHIPS ----------
+    function renderAmenityChips() {
+      const all = [...defaultAmenities, ...customAmenities];
+      const container = document.getElementById('amenityChipsContainer');
+      container.innerHTML = all.map(a => 
+        `<span class="amenity-chip">${a} <i class="fas fa-times" data-rem="${a}" style="cursor:pointer;"></i></span>`
+      ).join('');
+      
+      container.querySelectorAll('[data-rem]').forEach(btn => {
+        btn.onclick = (e) => {
+          const val = e.target.dataset.rem;
+          customAmenities = customAmenities.filter(x => x !== val);
+          defaultAmenities = defaultAmenities.filter(x => x !== val);
+          renderAmenityChips();
+        };
+      });
     }
+    renderAmenityChips();
 
-    // Cloudinary upload
-    function openUploadWidget(targetId, callback) {
+    // ---------- CLOUDINARY UPLOAD ----------
+    function openUploadWidget(callback) {
       cloudinary.createUploadWidget({
-        cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET,
-        sources: ['local', 'camera'], cropping: true, croppingAspectRatio: 1.5
+        cloudName: CLOUD_NAME,
+        uploadPreset: UPLOAD_PRESET,
+        sources: ['local', 'camera'],
+        cropping: true,
+        croppingAspectRatio: 1.5
       }, (error, result) => {
-        if (!error && result.event === 'success') callback(result.info.secure_url);
+        if (!error && result.event === 'success') {
+          callback(result.info.secure_url);
+        }
       }).open();
     }
 
-    // Amenities chips
-    function renderAmenityChips() {
-      const container = document.getElementById('amenityChipsContainer');
-      let all = [...defaultAmenities, ...customAmenities];
-      container.innerHTML = all.map(a => `<span class="amenity-chip">${a} <i class="fas fa-times" data-remove="${a}" style="margin-left:6px; cursor:pointer;"></i></span>`).join('');
-      container.querySelectorAll('[data-remove]').forEach(btn => btn.onclick = (e) => {
-        const val = e.target.dataset.remove;
-        customAmenities = customAmenities.filter(c => c !== val);
-        defaultAmenities = defaultAmenities.filter(d => d !== val);
-        renderAmenityChips();
-      });
-    }
-
-    // Dashboard rendering
+    // ---------- DASHBOARD RENDERING ----------
     function loadDashboard() {
       if (!stationData) return;
+      
       document.getElementById('stationNameHeader').innerText = stationData.stationName;
       const thumb = stationData.photos?.[0] || 'station_placeholder.png';
-      document.getElementById('stationIconThumb').src = thumb;
-      document.getElementById('dashboardLogo').src = thumb;
+      document.getElementById('stationAvatar').src = thumb;
+      document.getElementById('dashLogo').src = thumb;
 
       if (!dashboardMap) {
         dashboardMap = L.map('dashboardMap').setView([stationData.location.lat, stationData.location.lng], 16);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(dashboardMap);
         L.marker([stationData.location.lat, stationData.location.lng], {
-          icon: L.divIcon({ html: `<img src="${thumb}" style="width:40px;height:40px;border-radius:50%;border:2px solid #16a34a;">`, iconSize:[40,40] })
+          icon: L.divIcon({
+            html: `<img src="${thumb}" style="width:40px;height:40px;border-radius:50%;border:2px solid #16a34a;">`,
+            iconSize: [40, 40]
+          })
         }).addTo(dashboardMap);
         setTimeout(() => dashboardMap.invalidateSize(), 100);
       }
-      renderFuelToggles();
+      renderToggles();
     }
 
-    function renderFuelToggles() {
-      const grid = document.getElementById('fuelTogglesGrid');
+    function renderToggles() {
       const fuel = stationData.fuelTypes || { diesel: true, petrol: true, lpg: false, unleaded95: false };
-      const items = [
+      const fuelItems = [
         { key: 'diesel', label: 'Diesel', icon: 'fa-oil-can' },
         { key: 'petrol', label: 'Petrol', icon: 'fa-gas-pump' },
         { key: 'lpg', label: 'LPG Gas', icon: 'fa-fire' },
         { key: 'unleaded95', label: 'Unleaded 95', icon: 'fa-flask' }
       ];
-      grid.innerHTML = items.map(item => `
-        <div class="toggle-card ${fuel[item.key] ? 'active' : ''}" data-fuel="${item.key}">
-          <i class="fas ${item.icon}"></i> ${item.label}
+      
+      const fuelHtml = fuelItems.map(item => `
+        <div class="toggle-item">
+          <div class="toggle-left">
+            <i class="fas ${item.icon}" style="color:${fuel[item.key] ? '#16a34a' : '#aaa'};"></i>
+            ${item.label}
+          </div>
+          <label class="switch">
+            <input type="checkbox" ${fuel[item.key] ? 'checked' : ''} data-fuel="${item.key}">
+            <span class="slider"></span>
+          </label>
         </div>
       `).join('');
-      document.querySelectorAll('.toggle-card[data-fuel]').forEach(card => {
-        card.onclick = async () => {
-          const key = card.dataset.fuel;
-          stationData.fuelTypes[key] = !stationData.fuelTypes[key];
+      
+      const amens = stationData.amenities || [];
+      const amenHtml = amens.map(a => `
+        <div class="toggle-item">
+          <div class="toggle-left">
+            <i class="fas fa-check-circle" style="color:#16a34a;"></i> ${a}
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked data-amenity="${a}">
+            <span class="slider"></span>
+          </label>
+        </div>
+      `).join('');
+      
+      document.getElementById('fuelTogglesContainer').innerHTML = fuelHtml;
+      document.getElementById('amenitiesTogglesContainer').innerHTML = amenHtml;
+
+      // Fuel toggle listeners
+      document.querySelectorAll('[data-fuel]').forEach(cb => {
+        cb.onchange = async (e) => {
+          const key = cb.dataset.fuel;
+          stationData.fuelTypes[key] = cb.checked;
           await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-          renderFuelToggles();
+          renderToggles();
+        };
+      });
+
+      // Amenity toggle listeners
+      document.querySelectorAll('[data-amenity]').forEach(cb => {
+        cb.onchange = async (e) => {
+          const am = cb.dataset.amenity;
+          if (!cb.checked) {
+            stationData.amenities = stationData.amenities.filter(a => a !== am);
+          } else if (!stationData.amenities.includes(am)) {
+            stationData.amenities.push(am);
+          }
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderToggles();
         };
       });
     }
 
-    // Manager pages
-    function openManagerPage(pageId) {
+    // ---------- PAGE MANAGEMENT ----------
+    function openPage(pageId) {
       document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
-      const pg = document.getElementById(pageId+'Page') || document.getElementById(pageId);
-      if(pg) pg.classList.add('show');
-      if(pageId === 'fuelManager') renderFuelManager();
-      if(pageId === 'amenitiesManager') renderAmenitiesManager();
-      if(pageId === 'stationDetails') renderStationDetails();
-      if(pageId === 'subscriptionPage') renderSubscription();
+      const pageEl = document.getElementById(pageId + 'Page');
+      if (pageEl) pageEl.classList.add('show');
+
+      // Load content based on page
+      if (pageId === 'fuelManager') renderFuelManager();
+      else if (pageId === 'amenitiesManager') renderAmenitiesManager();
+      else if (pageId === 'stationDetails') renderStationDetails();
+      else if (pageId === 'priceManager') renderPriceManager();
+      else if (pageId === 'analytics') renderAnalytics();
+      else if (pageId === 'reports') renderReports();
+      else if (pageId === 'subscription') renderSubscription();
+      else if (pageId === 'settings') loadSettingsProfile();
     }
 
     function renderFuelManager() {
-      const cont = document.getElementById('fuelManagerContent');
       const fuel = stationData.fuelTypes || {};
-      cont.innerHTML = Object.entries({ diesel:'Diesel', petrol:'Petrol', lpg:'LPG', unleaded95:'Unleaded 95' }).map(([k,label]) => `
-        <div class="toggle-card" style="display:flex; justify-content:space-between;">
+      const cont = document.getElementById('fuelManagerContent');
+      cont.innerHTML = Object.entries({
+        diesel: 'Diesel',
+        petrol: 'Petrol',
+        lpg: 'LPG',
+        unleaded95: 'Unleaded 95'
+      }).map(([key, label]) => `
+        <div class="toggle-item">
           <span>${label}</span>
-          <input type="checkbox" ${fuel[k] ? 'checked' : ''} data-fuelkey="${k}">
+          <label class="switch">
+            <input type="checkbox" ${fuel[key] ? 'checked' : ''} data-fm="${key}">
+            <span class="slider"></span>
+          </label>
         </div>
       `).join('');
-      cont.querySelectorAll('input').forEach(cb => cb.onchange = async (e) => {
-        stationData.fuelTypes[cb.dataset.fuelkey] = cb.checked;
-        await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-        renderFuelToggles();
+      
+      cont.querySelectorAll('input').forEach(cb => {
+        cb.onchange = async () => {
+          stationData.fuelTypes[cb.dataset.fm] = cb.checked;
+          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          renderToggles();
+        };
       });
     }
+
     function renderAmenitiesManager() {
       const cont = document.getElementById('amenitiesManagerContent');
-      cont.innerHTML = stationData.amenities.map(a => `<div class="amenity-chip">${a}</div>`).join('');
+      cont.innerHTML = stationData.amenities.map(a => 
+        `<div class="amenity-chip">${a}</div>`
+      ).join('');
     }
+
     function renderStationDetails() {
       const cont = document.getElementById('stationDetailsContent');
-      cont.innerHTML = `<p><strong>${stationData.stationName}</strong><br>📍 ${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}<br>📞 ${stationData.managerPhone}<br>📧 ${stationData.email}</p>`;
+      cont.innerHTML = `
+        <div class="card-premium">
+          <h3>${stationData.stationName}</h3>
+          <p>📍 ${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}<br>
+          📞 ${stationData.managerPhone}<br>
+          📧 ${stationData.email}<br>
+          🗓️ Joined: ${new Date(stationData.createdAt).toLocaleDateString()}</p>
+          <button id="editStationDetailsBtn" class="auth-btn" style="margin-top:16px;">Edit Details</button>
+        </div>
+      `;
+      document.getElementById('editStationDetailsBtn').onclick = () => {
+        const newName = prompt('Enter new station name:', stationData.stationName);
+        if (newName) {
+          stationData.stationName = newName;
+          rtdb.ref(`stationOwners/${currentUser.uid}/stationName`).set(newName);
+          document.getElementById('stationNameHeader').innerText = newName;
+          showToast('Station name updated');
+        }
+      };
     }
+
+    function renderPriceManager() {
+      const prices = stationData.prices || { petrol: 1.50, diesel: 1.40 };
+      const cont = document.getElementById('priceManagerContent');
+      cont.innerHTML = `
+        <div class="card-premium">
+          <label>Petrol price (${userCountry.currency})</label>
+          <input id="petrolPriceInput" class="input-pill" type="number" step="0.01" value="${prices.petrol}">
+          <label>Diesel price (${userCountry.currency})</label>
+          <input id="dieselPriceInput" class="input-pill" type="number" step="0.01" value="${prices.diesel}">
+          <button id="savePricesBtn" class="auth-btn">Save Prices</button>
+        </div>
+      `;
+      document.getElementById('savePricesBtn').onclick = async () => {
+        const newPetrol = parseFloat(document.getElementById('petrolPriceInput').value);
+        const newDiesel = parseFloat(document.getElementById('dieselPriceInput').value);
+        stationData.prices = { petrol: newPetrol, diesel: newDiesel };
+        await rtdb.ref(`stationOwners/${currentUser.uid}/prices`).set(stationData.prices);
+        showToast('Prices updated');
+      };
+    }
+
+    function renderAnalytics() {
+      const ctx1 = document.getElementById('visitsChart').getContext('2d');
+      if (visitChart) visitChart.destroy();
+      visitChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Visits',
+            data: [12, 19, 15, 22, 28, 35, 42],
+            borderColor: '#16a34a',
+            backgroundColor: 'rgba(22,163,74,0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        }
+      });
+
+      const ctx2 = document.getElementById('fuelPopularityChart').getContext('2d');
+      if (fuelChart) fuelChart.destroy();
+      fuelChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Petrol', 'Diesel', 'LPG'],
+          datasets: [{
+            data: [65, 30, 5],
+            backgroundColor: ['#16a34a', '#3b82f6', '#f59e0b']
+          }]
+        }
+      });
+    }
+
+    async function renderReports() {
+      const cont = document.getElementById('reportsContent');
+      const snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
+      const reports = [];
+      snap.forEach(r => reports.push(r.val()));
+      
+      if (!reports.length) {
+        cont.innerHTML = '<p>No reports yet.</p>';
+      } else {
+        cont.innerHTML = reports.map(r => `
+          <div class="card-premium">
+            <strong>${r.type}</strong><br>
+            ${r.comment || ''}<br>
+            <small>${new Date(r.timestamp).toLocaleString()}</small>
+          </div>
+        `).join('');
+      }
+    }
+
     function renderSubscription() {
       const cur = userCountry.currency;
       const rates = { USD: 1, EUR: 0.92, GBP: 0.79, ZMW: 26, NGN: 1500 };
       const rate = rates[cur] || 1;
-      const oneMonth = Math.round(15 * rate);
-      const fiveMonth = Math.round(90 * rate);
-      const twelveMonth = Math.round(180 * rate);
-      const plan = stationData.subscription?.plan || 'trial';
-      const exp = stationData.subscription?.expires ? new Date(stationData.subscription.expires).toLocaleDateString() : 'N/A';
+      const m1 = Math.round(15 * rate);
+      const m5 = Math.round(90 * rate);
+      const m12 = Math.round(180 * rate);
+      const exp = stationData.subscription?.expires 
+        ? new Date(stationData.subscription.expires).toLocaleDateString() 
+        : 'N/A';
+      
       document.getElementById('subscriptionContent').innerHTML = `
-        <div class="subscription-card">
-          <h3>Current: ${plan}</h3>
+        <div class="card-premium">
+          <h3>${stationData.subscription?.plan || 'trial'} plan</h3>
           <p>Expires: ${exp}</p>
         </div>
-        <div class="price-option" data-plan="1month">1 Month · ${cur} ${oneMonth}</div>
-        <div class="price-option" data-plan="5months">5 Months · ${cur} ${fiveMonth}</div>
-        <div class="price-option" data-plan="12months">12 Months · ${cur} ${twelveMonth}</div>
-        <p class="small-note">🔒 Secure payment via PayPal (demo).</p>
+        <div class="price-tag" style="margin-bottom:16px;">💳 PayPal (demo)</div>
+        <div class="toggle-item" style="justify-content:space-between">
+          <span>1 Month</span> <strong>${cur} ${m1}</strong>
+        </div>
+        <div class="toggle-item" style="justify-content:space-between">
+          <span>5 Months</span> <strong>${cur} ${m5}</strong>
+        </div>
+        <div class="toggle-item" style="justify-content:space-between">
+          <span>12 Months</span> <strong>${cur} ${m12}</strong>
+        </div>
+        <button class="auth-btn" id="simulatePaypalBtn" style="margin-top:24px;">Simulate PayPal Payment</button>
       `;
-      document.querySelectorAll('.price-option').forEach(opt => opt.onclick = () => {
-        showToast(`PayPal mock: selected ${opt.dataset.plan}`, true);
-      });
+      document.getElementById('simulatePaypalBtn').onclick = () => {
+        showToast('PayPal simulation: payment successful (demo)');
+      };
     }
 
-    // Auth state
+    function loadSettingsProfile() {
+      document.getElementById('settingsProfilePic').src = stationData.photos?.[0] || 'station_placeholder.png';
+      document.getElementById('editManagerName').value = stationData.managerName || '';
+      document.getElementById('editManagerPhone').value = stationData.managerPhone || '';
+    }
+
+    // ---------- AUTH STATE OBSERVER ----------
     auth.onAuthStateChanged(async user => {
       if (user) {
         currentUser = user;
         const snap = await rtdb.ref(`stationOwners/${user.uid}`).once('value');
         stationData = snap.val();
-        if (!stationData) { auth.signOut(); showToast('No station data found', false); return; }
-        authOverlay.style.display = 'none';
-        dashboardView.style.display = 'block';
-        loadDashboard();
-        if (stationData.subscription?.plan === 'trial' && !trialPopupShown) {
-          showToast(`👋 Hello ${stationData.managerName}! Welcome to FuelRadar. You have a 1-month free trial.`, true);
-          trialPopupShown = true;
+        
+        if (!stationData) {
+          auth.signOut();
+          showToast('No station data found', false);
+          return;
         }
-        refreshMapWhenVisible();
+        
+        // Ensure prices exist
+        if (!stationData.prices) {
+          stationData.prices = { petrol: 1.50, diesel: 1.40 };
+        }
+        
+        document.getElementById('authView').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'block';
+        loadDashboard();
+        
+        // Show trial popup once
+        if (stationData.subscription?.plan === 'trial' && !localStorage.getItem('trialShown_' + user.uid)) {
+          document.getElementById('popupManagerName').innerText = stationData.managerName;
+          document.getElementById('trialExpiryDate').innerText = new Date(stationData.subscription.expires).toLocaleDateString();
+          document.getElementById('trialPopup').classList.add('show');
+          localStorage.setItem('trialShown_' + user.uid, '1');
+        }
       } else {
-        authOverlay.style.display = 'block';
-        dashboardView.style.display = 'none';
+        document.getElementById('authView').style.display = 'block';
+        document.getElementById('dashboardView').style.display = 'none';
       }
     });
 
-    // Event listeners
+    // ---------- EVENT LISTENERS (DOM Ready) ----------
     document.addEventListener('DOMContentLoaded', () => {
-      detectCountry();
       initRegisterMap();
-      renderAmenityChips();
 
       // Tab switching
-      document.querySelectorAll('.auth-tab').forEach(t => t.onclick = () => {
-        document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
-        t.classList.add('active');
-        const isLogin = t.dataset.tab === 'login';
-        loginForm.classList.toggle('hide', !isLogin);
-        registerForm.classList.toggle('hide', isLogin);
-        if (!isLogin) refreshMapWhenVisible();
+      document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.onclick = () => {
+          document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const isLogin = tab.dataset.tab === 'login';
+          document.getElementById('loginForm').classList.toggle('hide', !isLogin);
+          document.getElementById('registerForm').classList.toggle('hide', isLogin);
+          if (!isLogin) setTimeout(() => registerMap?.invalidateSize(), 100);
+        };
       });
 
       // Photo uploads
-      document.getElementById('photoUpload1').onclick = () => openUploadWidget('photo1', url => {
+      document.getElementById('photoUpload1').onclick = () => openUploadWidget(url => {
         uploadedImages.photo1 = url;
         document.getElementById('photoUpload1').style.backgroundImage = `url(${url})`;
         document.getElementById('photoUpload1').innerHTML = '';
       });
-      document.getElementById('photoUpload2').onclick = () => openUploadWidget('photo2', url => {
+      document.getElementById('photoUpload2').onclick = () => openUploadWidget(url => {
         uploadedImages.photo2 = url;
         document.getElementById('photoUpload2').style.backgroundImage = `url(${url})`;
         document.getElementById('photoUpload2').innerHTML = '';
@@ -812,7 +1243,10 @@
       };
       document.getElementById('saveCustomAmenityBtn').onclick = () => {
         const val = document.getElementById('customAmenityInput').value.trim();
-        if(val) { customAmenities.push(val); renderAmenityChips(); }
+        if (val) {
+          customAmenities.push(val);
+          renderAmenityChips();
+        }
         document.getElementById('customAmenityInput').value = '';
         document.getElementById('customAmenityRow').style.display = 'none';
       };
@@ -824,81 +1258,134 @@
           setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         }, err => showToast('Location error', false));
       };
-      document.getElementById('locationSearchInput').addEventListener('change', async function(){
+      
+      document.getElementById('locationSearchInput').addEventListener('change', async function() {
         const q = this.value;
-        if(!q) return;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`);
+        if (!q) return;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
         const data = await res.json();
-        if(data[0]) {
-          const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+        if (data[0]) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
           registerMap.setView([lat, lon], 17);
           setMarker({ lat, lng: lon });
         }
       });
 
       // Register
-      document.getElementById('registerStationBtn').onclick = async function(){
+      document.getElementById('registerBtn').onclick = async function() {
         const btn = this;
         const stationName = document.getElementById('regStationName').value.trim();
         const managerName = document.getElementById('regManagerName').value.trim();
         const email = document.getElementById('regManagerEmail').value.trim();
         const phone = document.getElementById('regManagerPhone').value.trim();
         const password = document.getElementById('regPassword').value;
-        if(!stationName||!managerName||!email||!password||!selectedLatLng) {
-          showToast('Fill all fields and set location', false); return;
+        
+        if (!stationName || !managerName || !email || !password || !selectedLatLng) {
+          showToast('Fill all fields and set location', false);
+          return;
         }
+        
         setButtonLoading(btn, true);
         try {
           const cred = await auth.createUserWithEmailAndPassword(email, password);
           const uid = cred.user.uid;
-          const amenitiesList = [...defaultAmenities, ...customAmenities];
-          const stationPayload = {
-            stationName, managerName, email, managerPhone: userCountry.phone + phone,
+          const amenities = [...defaultAmenities, ...customAmenities];
+          
+          const payload = {
+            stationName,
+            managerName,
+            email,
+            managerPhone: userCountry.phone + phone,
             location: { lat: selectedLatLng.lat, lng: selectedLatLng.lng },
-            photos: [uploadedImages.photo1, uploadedImages.photo2].filter(u=>u),
-            amenities: amenitiesList,
+            photos: [uploadedImages.photo1, uploadedImages.photo2].filter(u => u),
+            amenities,
             fuelTypes: { diesel: true, petrol: true, lpg: false, unleaded95: false },
-            country: userCountry.code, currency: userCountry.currency,
-            subscription: { plan: 'trial', expires: Date.now() + 30*24*3600*1000, trialUsed: true },
+            prices: { petrol: 1.50, diesel: 1.40 },
+            country: userCountry.code,
+            currency: userCountry.currency,
+            subscription: { plan: 'trial', expires: Date.now() + 30 * 24 * 3600 * 1000 },
             createdAt: Date.now()
           };
-          await rtdb.ref(`stationOwners/${uid}`).set(stationPayload);
+          
+          await rtdb.ref(`stationOwners/${uid}`).set(payload);
           showToast('Station registered! Please login.');
           auth.signOut();
-        } catch(e) { showToast(e.message, false); }
+        } catch (e) {
+          showToast(e.message, false);
+        }
         setButtonLoading(btn, false);
       };
 
       // Login
-      document.getElementById('loginBtnStation').onclick = () => {
+      document.getElementById('loginBtn').onclick = () => {
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPassword').value;
         auth.signInWithEmailAndPassword(email, pass).catch(e => showToast(e.message, false));
       };
 
       // Sidebar
-      const sidebar = document.getElementById('sidebarOverlayStation');
+      const sidebar = document.getElementById('sidebarOverlay');
       document.getElementById('dashboardMenuBtn').onclick = () => sidebar.classList.add('open');
-      document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
-      sidebar.addEventListener('click', e => { if(e.target === sidebar) sidebar.classList.remove('open'); });
+      sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
       
       document.querySelectorAll('[data-page]').forEach(el => {
         el.onclick = () => {
-          openManagerPage(el.dataset.page);
+          openPage(el.dataset.page);
           sidebar.classList.remove('open');
         };
       });
-      document.querySelectorAll('.close-page').forEach(btn => btn.onclick = () => {
-        btn.closest('.page-overlay').classList.remove('show');
+
+      document.querySelectorAll('.close-page').forEach(btn => {
+        btn.onclick = () => btn.closest('.page-overlay').classList.remove('show');
       });
 
-      document.getElementById('darkModeToggleSidebar').onclick = () => document.body.classList.toggle('dark');
-      document.getElementById('logoutSidebarBtn').onclick = () => auth.signOut();
+      // Trial popup close
+      document.getElementById('closeTrialPopup').onclick = () => {
+        document.getElementById('trialPopup').classList.remove('show');
+      };
+
+      // Dark mode toggle
+      document.getElementById('darkModeToggle').onclick = () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+      };
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark');
+      }
+
+      // Logout
+      document.getElementById('logoutBtn').onclick = () => auth.signOut();
       document.getElementById('logoutSettingsBtn').onclick = () => auth.signOut();
-      document.getElementById('toggleNotifBtn').onclick = function(){
+
+      // Notifications toggle
+      document.getElementById('toggleNotifBtn').onclick = function() {
         notificationsEnabled = !notificationsEnabled;
-        this.innerHTML = notificationsEnabled ? '🔔 Stop notifications' : '🔕 Enable notifications';
-        showToast(notificationsEnabled ? 'Notifications ON' : 'Notifications OFF');
+        this.innerHTML = notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF';
+      };
+
+      // Profile update
+      document.getElementById('updateProfileBtn').onclick = async () => {
+        const newName = document.getElementById('editManagerName').value;
+        const newPhone = document.getElementById('editManagerPhone').value;
+        await rtdb.ref(`stationOwners/${currentUser.uid}`).update({
+          managerName: newName,
+          managerPhone: newPhone
+        });
+        stationData.managerName = newName;
+        stationData.managerPhone = newPhone;
+        showToast('Profile updated');
+      };
+
+      // Change profile picture
+      document.getElementById('changeProfilePicBtn').onclick = () => {
+        openUploadWidget(async url => {
+          await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set([url, stationData.photos?.[1] || '']);
+          stationData.photos[0] = url;
+          document.getElementById('settingsProfilePic').src = url;
+          document.getElementById('stationAvatar').src = url;
+          showToast('Profile picture updated');
+        });
       };
     });
   })();
