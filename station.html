@@ -689,6 +689,51 @@
       background: #f0fdf4;
       border-color: #16a34a;
     }
+
+    .trial-benefit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+      text-align: left;
+    }
+
+    .trial-benefit i {
+      width: 28px;
+      color: #16a34a;
+      font-size: 20px;
+    }
+
+    .section-card {
+      background: #f9fef9;
+      border-radius: 24px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #d0e8d0;
+    }
+
+    .section-title {
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #0f5c0f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .photo-grid {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .photo-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      object-fit: cover;
+      border: 2px solid #16a34a;
+    }
   </style>
 </head>
 
@@ -792,14 +837,31 @@
     </div>
   </div>
 
-  <!-- ========== TRIAL POPUP ========== -->
+  <!-- ========== TRIAL POPUP (improved) ========== -->
   <div class="modal-popup" id="trialPopup">
-    <div class="modal-card">
-      <h3 style="color:#16a34a;">🎉 Welcome!</h3>
-      <p style="font-size:18px;">Hello <span id="popupManagerName"></span>,</p>
-      <p>You have a <strong>FREE 1‑month trial</strong>.<br>Your station is visible to all drivers.</p>
-      <p style="margin-top:16px;">📅 Trial ends: <span id="trialExpiryDate"></span></p>
-      <button class="auth-btn" id="closeTrialPopup" style="margin-top:24px;">Let's go →</button>
+    <div class="modal-card" style="padding: 32px 24px;">
+      <div style="text-align: center;">
+        <i class="fas fa-gift" style="font-size: 48px; color: #16a34a; margin-bottom: 16px;"></i>
+        <h3 style="color:#16a34a; font-size: 28px;">Welcome!</h3>
+        <p style="font-size: 20px; margin: 8px 0;">Hello <span id="popupManagerName"></span>,</p>
+      </div>
+      <div class="trial-benefit">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>Your station is visible to all drivers</span>
+      </div>
+      <div class="trial-benefit">
+        <i class="fas fa-calendar-check"></i>
+        <span>FREE 1‑month trial, no payment required</span>
+      </div>
+      <div class="trial-benefit">
+        <i class="fas fa-chart-line"></i>
+        <span>Access to analytics and reports</span>
+      </div>
+      <div style="background: #f0fdf4; border-radius: 30px; padding: 16px; margin: 20px 0;">
+        <i class="fas fa-hourglass-half"></i>
+        <strong>Trial ends:</strong> <span id="trialExpiryDate"></span>
+      </div>
+      <button class="auth-btn" id="closeTrialPopup" style="margin-top: 8px;">Start Managing →</button>
     </div>
   </div>
 
@@ -864,10 +926,10 @@
     </div>
   </div>
 
-  <!-- Station Details -->
+  <!-- Station Details (reorganized) -->
   <div id="stationDetailsPage" class="page-overlay">
     <div class="page-header">
-      <h2>📋 Station Details</h2>
+      <h2>📋 Station Profile</h2>
       <button class="close-page" data-close="stationDetailsPage">&times;</button>
     </div>
     <div class="page-content" id="stationDetailsContent"></div>
@@ -929,10 +991,10 @@
     </div>
   </div>
 
-  <!-- Subscription -->
+  <!-- Subscription (improved) -->
   <div id="subscriptionPage" class="page-overlay">
     <div class="page-header">
-      <h2>💳 Subscription</h2>
+      <h2>💳 Subscription Plans</h2>
       <button class="close-page" data-close="subscriptionPage">&times;</button>
     </div>
     <div class="page-content" id="subscriptionContent"></div>
@@ -1097,7 +1159,7 @@
         document.getElementById('stationNameHeader').innerText = stationData.stationName;
         var thumb = stationData.photos && stationData.photos[0] ? stationData.photos[0] : 'station_placeholder.png';
         document.getElementById('stationAvatar').src = thumb;
-        document.getElementById('dashLogo').src = thumb;
+        document.getElementById('dashLogo').src = 'logo.png';  // force logo, not station picture
 
         if (!dashboardMap) {
           dashboardMap = L.map('dashboardMap').setView([stationData.location.lat, stationData.location.lng], 16);
@@ -1272,22 +1334,67 @@
 
       function renderStationDetails() {
         var cont = document.getElementById('stationDetailsContent');
-        cont.innerHTML = '<div class="card-premium">' +
-          '<h3>' + stationData.stationName + '</h3>' +
-          '<p>📍 ' + stationData.location.lat.toFixed(4) + ', ' + stationData.location.lng.toFixed(4) + '<br>' +
-          '📞 ' + stationData.managerPhone + '<br>' +
-          '📧 ' + stationData.email + '<br>' +
-          '🗓️ Joined: ' + new Date(stationData.createdAt).toLocaleDateString() + '</p>' +
-          '<button id="editStationDetailsBtn" class="auth-btn" style="margin-top:16px;">Edit Details</button>' +
+        var photos = stationData.photos || [];
+        var fuel = stationData.fuelTypes || {};
+        var amenities = stationData.amenities || [];
+
+        cont.innerHTML =
+          '<div class="section-card">' +
+          '<div class="section-title"><i class="fas fa-user-circle"></i> Manager</div>' +
+          '<p><strong>' + stationData.managerName + '</strong><br>📞 ' + stationData.managerPhone + '<br>📧 ' + stationData.email + '</p>' +
+          '<button id="editManagerBtn" class="auth-btn" style="margin-top: 12px; padding: 12px;">Edit Manager Info</button>' +
+          '</div>' +
+
+          '<div class="section-card">' +
+          '<div class="section-title"><i class="fas fa-gas-pump"></i> Fuel Types</div>' +
+          '<div>' + Object.entries(fuel).filter(function(e) { return e[1]; }).map(function(e) { return '<span class="amenity-chip">' + e[0] + '</span>'; }).join('') + '</div>' +
+          '</div>' +
+
+          '<div class="section-card">' +
+          '<div class="section-title"><i class="fas fa-concierge-bell"></i> Amenities</div>' +
+          '<div>' + amenities.map(function(a) { return '<span class="amenity-chip">' + a + '</span>'; }).join('') + '</div>' +
+          '</div>' +
+
+          '<div class="section-card">' +
+          '<div class="section-title"><i class="fas fa-map-marker-alt"></i> Location</div>' +
+          '<p>Lat: ' + stationData.location.lat.toFixed(6) + '<br>Lng: ' + stationData.location.lng.toFixed(6) + '</p>' +
+          '<button id="updateLocationBtn" class="auth-btn" style="margin-top: 12px; padding: 12px; background: #3b82f6;">Update Location</button>' +
+          '</div>' +
+
+          '<div class="section-card">' +
+          '<div class="section-title"><i class="fas fa-images"></i> Station Pictures</div>' +
+          '<div class="photo-grid">' +
+          (photos[0] ? '<img src="' + photos[0] + '" class="photo-thumb">' : '<div class="photo-thumb" style="background:#eef5e8; display:flex; align-items:center; justify-content:center;">No photo</div>') +
+          (photos[1] ? '<img src="' + photos[1] + '" class="photo-thumb">' : '<div class="photo-thumb" style="background:#eef5e8; display:flex; align-items:center; justify-content:center;">No photo</div>') +
+          '</div>' +
+          '<button id="updatePhotosBtn" class="auth-btn" style="margin-top: 16px; background: #8b5cf6;">Update Pictures</button>' +
           '</div>';
-        document.getElementById('editStationDetailsBtn').onclick = function () {
-          var newName = prompt('Enter new station name:', stationData.stationName);
-          if (newName) {
-            stationData.stationName = newName;
-            rtdb.ref('stationOwners/' + currentUser.uid + '/stationName').set(newName);
-            document.getElementById('stationNameHeader').innerText = newName;
-            showToast('Station name updated');
+
+        document.getElementById('editManagerBtn').onclick = function() {
+          var newName = prompt('Manager name:', stationData.managerName);
+          var newPhone = prompt('Manager phone:', stationData.managerPhone);
+          if (newName || newPhone) {
+            if (newName) stationData.managerName = newName;
+            if (newPhone) stationData.managerPhone = newPhone;
+            rtdb.ref('stationOwners/' + currentUser.uid).update({ managerName: stationData.managerName, managerPhone: stationData.managerPhone });
+            renderStationDetails();
+            showToast('Manager info updated');
           }
+        };
+
+        document.getElementById('updateLocationBtn').onclick = function() {
+          showToast('Location update: open map picker (demo)');
+        };
+
+        document.getElementById('updatePhotosBtn').onclick = function() {
+          openUploadWidget(async function(url) {
+            var newPhotos = [url, stationData.photos && stationData.photos[1] ? stationData.photos[1] : ''];
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/photos').set(newPhotos);
+            stationData.photos = newPhotos;
+            renderStationDetails();
+            document.getElementById('stationAvatar').src = url;
+            showToast('Picture updated');
+          });
         };
       }
 
@@ -1373,22 +1480,26 @@
         var plan = stationData.subscription && stationData.subscription.plan ? stationData.subscription.plan : 'trial';
 
         document.getElementById('subscriptionContent').innerHTML =
-          '<div class="card-premium">' +
-          '<h3>' + plan + ' plan</h3>' +
-          '<p>📅 Expires: ' + exp + '</p>' +
-          '<p>✅ Station visible on map · ✅ Real-time updates · ✅ Priority support</p>' +
+          '<div class="card-premium" style="padding: 24px;">' +
+          '<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">' +
+          '<i class="fas fa-crown" style="font-size: 32px; color: #fbbf24;"></i>' +
+          '<div><h3>' + plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan</h3><p>Expires: ' + exp + '</p></div>' +
           '</div>' +
-          '<div class="price-tag" style="background:#16a34a; color:#fff; padding:12px 24px; border-radius:60px; display:inline-block; margin-bottom:20px;">💳 Secure payment</div>' +
-          '<div class="toggle-item sub-option" data-plan="1month" data-price="' + m1 + '" style="cursor:pointer;">' +
-          '<span>1 Month</span> <strong>' + cur + ' ' + m1 + '</strong>' +
+          '<div class="trial-benefit"><i class="fas fa-map-pin"></i> Station visible on map</div>' +
+          '<div class="trial-benefit"><i class="fas fa-clock"></i> Real‑time price updates</div>' +
+          '<div class="trial-benefit"><i class="fas fa-headset"></i> Priority support</div>' +
           '</div>' +
-          '<div class="toggle-item sub-option" data-plan="5months" data-price="' + m5 + '" style="cursor:pointer;">' +
-          '<span>5 Months</span> <strong>' + cur + ' ' + m5 + '</strong>' +
+          '<div style="margin: 24px 0 16px;"><i class="fas fa-credit-card"></i> Choose a plan:</div>' +
+          '<div class="toggle-item sub-option" data-plan="1month" data-price="' + m1 + '" style="padding: 18px;">' +
+          '<span><i class="fas fa-calendar-alt"></i> 1 Month</span> <strong>' + cur + ' ' + m1 + '</strong>' +
           '</div>' +
-          '<div class="toggle-item sub-option" data-plan="12months" data-price="' + m12 + '" style="cursor:pointer;">' +
-          '<span>12 Months</span> <strong>' + cur + ' ' + m12 + '</strong>' +
+          '<div class="toggle-item sub-option" data-plan="5months" data-price="' + m5 + '" style="padding: 18px;">' +
+          '<span><i class="fas fa-calendar-alt"></i> 5 Months</span> <strong>' + cur + ' ' + m5 + '</strong>' +
           '</div>' +
-          '<p class="small-note" style="margin-top:16px;">Tap any plan to pay with card</p>';
+          '<div class="toggle-item sub-option" data-plan="12months" data-price="' + m12 + '" style="padding: 18px;">' +
+          '<span><i class="fas fa-calendar-alt"></i> 12 Months</span> <strong>' + cur + ' ' + m12 + '</strong>' +
+          '</div>' +
+          '<p class="small-note" style="margin-top: 20px;"><i class="fas fa-lock"></i> Secure payment · Cancel anytime</p>';
 
         document.querySelectorAll('.sub-option').forEach(function (opt) {
           opt.onclick = function () {
