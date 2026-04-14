@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>FuelRadar · Station Manager</title>
+  <title>FuelRadar · Station Manager Pro</title>
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -534,7 +534,7 @@
       color: #16a34a;
     }
 
-    /* ========== MODAL ========== */
+    /* ========== MODAL (Trial & Payment) ========== */
     .modal-popup {
       position: fixed;
       top: 0;
@@ -568,6 +568,69 @@
 
     body.dark .modal-card {
       background: #1a2a1a;
+    }
+
+    .payment-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      z-index: 8000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+
+    .payment-modal.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .payment-card {
+      background: #fff;
+      border-radius: 48px;
+      padding: 28px 24px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
+      border: 2px solid #16a34a;
+    }
+
+    body.dark .payment-card {
+      background: #1e2e1e;
+    }
+
+    .card-input {
+      background: #f4f9f4;
+      border: 1px solid #b8d9b8;
+      border-radius: 30px;
+      padding: 16px;
+      font-size: 16px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .card-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .pay-btn {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 60px;
+      padding: 16px;
+      font-weight: 800;
+      width: 100%;
+      margin-top: 12px;
+      cursor: pointer;
     }
 
     /* ========== TOAST ========== */
@@ -615,6 +678,16 @@
       font-size: 12px;
       cursor: pointer;
       margin-left: 8px;
+    }
+
+    .sub-option {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sub-option:hover {
+      background: #f0fdf4;
+      border-color: #16a34a;
     }
   </style>
 </head>
@@ -865,6 +938,25 @@
     <div class="page-content" id="subscriptionContent"></div>
   </div>
 
+  <!-- Payment Modal -->
+  <div class="payment-modal" id="cardPaymentModal">
+    <div class="payment-card">
+      <h3 style="margin-bottom:20px; color:#16a34a;"><i class="fab fa-cc-visa"></i> Enter Card Details</h3>
+      <input type="text" id="cardNumber" class="card-input" placeholder="Card Number" maxlength="19">
+      <div class="card-row">
+        <input type="text" id="cardExpiry" class="card-input" placeholder="MM/YY" maxlength="5">
+        <input type="text" id="cardCvv" class="card-input" placeholder="CVV" maxlength="3">
+      </div>
+      <input type="text" id="cardName" class="card-input" placeholder="Name on Card">
+      <div style="display:flex; justify-content:space-between; margin:16px 0;">
+        <span>Selected plan: <strong id="selectedPlanDisplay"></strong></span>
+        <span><strong id="selectedPriceDisplay"></strong></span>
+      </div>
+      <button class="pay-btn" id="confirmPaymentBtn">Pay Securely</button>
+      <button class="auth-btn" style="background:#9ca3af; margin-top:10px;" id="cancelPaymentBtn">Cancel</button>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toastMessage" class="toast-message"></div>
 
@@ -900,7 +992,7 @@
       let defaultAmenities = ['Toilet', 'ATM', 'Shop', 'Car Wash'];
       let notificationsEnabled = true;
       let visitChart, fuelChart;
-      let exchangeRates = { USD: 1, EUR: 0.92, GBP: 0.79, ZMW: 26, NGN: 1500 };
+      const exchangeRates = { USD: 1, EUR: 0.92, GBP: 0.79, ZMW: 26.5, NGN: 1550, INR: 83, ZAR: 18.5, KES: 145 };
 
       // ========== HELPERS ==========
       function showToast(msg, isGood = true) {
@@ -908,7 +1000,7 @@
         toast.textContent = msg;
         toast.style.backgroundColor = isGood ? '#16a34a' : '#b91c1c';
         toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 4000);
+        setTimeout(function () { toast.style.display = 'none'; }, 4000);
       }
 
       function setButtonLoading(btn, loading) {
@@ -922,14 +1014,19 @@
       }
 
       function getFlagEmoji(code) {
-        return code ? String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt())) : '🇺🇸';
+        return code ? String.fromCodePoint(...code.toUpperCase().split('').map(function (c) { return 127397 + c.charCodeAt(); })) : '🇺🇸';
+      }
+
+      function convertPrice(usdAmount) {
+        var rate = exchangeRates[userCountry.currency] || 1;
+        return (usdAmount * rate).toFixed(2);
       }
 
       // ========== COUNTRY DETECTION ==========
       async function detectCountry() {
         try {
-          const res = await fetch('https://ipapi.co/json/');
-          const data = await res.json();
+          var res = await fetch('https://ipapi.co/json/');
+          var data = await res.json();
           userCountry = {
             code: data.country_code || 'US',
             phone: data.country_calling_code || '+1',
@@ -938,8 +1035,8 @@
             flag: getFlagEmoji(data.country_code)
           };
         } catch (e) { }
-        document.getElementById('countryMessage').innerHTML = `${userCountry.flag} ${userCountry.name} · ${userCountry.currency}`;
-        document.getElementById('regPhonePrefix').innerHTML = `${userCountry.flag} ${userCountry.phone}`;
+        document.getElementById('countryMessage').innerHTML = userCountry.flag + ' ' + userCountry.name + ' · ' + userCountry.currency;
+        document.getElementById('regPhonePrefix').innerHTML = userCountry.flag + ' ' + userCountry.phone;
         document.getElementById('flagHeader').innerText = userCountry.flag;
       }
       detectCountry();
@@ -949,14 +1046,14 @@
         if (registerMap) return;
         registerMap = L.map('registerMap').setView([0, 0], 2);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(registerMap);
-        registerMap.on('click', e => setMarker(e.latlng));
+        registerMap.on('click', function (e) { setMarker(e.latlng); });
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
+          navigator.geolocation.getCurrentPosition(function (pos) {
             registerMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
             setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          }, () => { });
+          }, function () { });
         }
-        setTimeout(() => registerMap.invalidateSize(), 200);
+        setTimeout(function () { registerMap.invalidateSize(); }, 200);
       }
 
       function setMarker(latlng) {
@@ -967,16 +1064,16 @@
 
       // ========== AMENITIES CHIPS ==========
       function renderAmenityChips() {
-        const all = [...defaultAmenities, ...customAmenities];
-        const container = document.getElementById('amenityChipsContainer');
-        container.innerHTML = all.map(a =>
-          `<span class="amenity-chip">${a} <i class="fas fa-times" data-rem="${a}" style="cursor:pointer;"></i></span>`
-        ).join('');
-        container.querySelectorAll('[data-rem]').forEach(btn => {
-          btn.onclick = (e) => {
-            const val = e.target.dataset.rem;
-            customAmenities = customAmenities.filter(x => x !== val);
-            defaultAmenities = defaultAmenities.filter(x => x !== val);
+        var all = defaultAmenities.concat(customAmenities);
+        var container = document.getElementById('amenityChipsContainer');
+        container.innerHTML = all.map(function (a) {
+          return '<span class="amenity-chip">' + a + ' <i class="fas fa-times" data-rem="' + a + '" style="cursor:pointer;"></i></span>';
+        }).join('');
+        container.querySelectorAll('[data-rem]').forEach(function (btn) {
+          btn.onclick = function (e) {
+            var val = e.target.dataset.rem;
+            customAmenities = customAmenities.filter(function (x) { return x !== val; });
+            defaultAmenities = defaultAmenities.filter(function (x) { return x !== val; });
             renderAmenityChips();
           };
         });
@@ -989,7 +1086,7 @@
           uploadPreset: UPLOAD_PRESET,
           sources: ['local', 'camera'],
           cropping: true
-        }, (error, result) => {
+        }, function (error, result) {
           if (!error && result.event === 'success') callback(result.info.secure_url);
         }).open();
       }
@@ -998,7 +1095,7 @@
       function loadDashboard() {
         if (!stationData) return;
         document.getElementById('stationNameHeader').innerText = stationData.stationName;
-        const thumb = stationData.photos?.[0] || 'station_placeholder.png';
+        var thumb = stationData.photos && stationData.photos[0] ? stationData.photos[0] : 'station_placeholder.png';
         document.getElementById('stationAvatar').src = thumb;
         document.getElementById('dashLogo').src = thumb;
 
@@ -1007,74 +1104,76 @@
           L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(dashboardMap);
           L.marker([stationData.location.lat, stationData.location.lng], {
             icon: L.divIcon({
-              html: `<img src="${thumb}" style="width:40px;height:40px;border-radius:50%;border:2px solid #16a34a;">`,
+              html: '<img src="' + thumb + '" style="width:40px;height:40px;border-radius:50%;border:2px solid #16a34a;">',
               iconSize: [40, 40]
             })
           }).addTo(dashboardMap);
-          setTimeout(() => dashboardMap.invalidateSize(), 100);
+          setTimeout(function () { dashboardMap.invalidateSize(); }, 100);
         }
         renderToggles();
       }
 
       function renderToggles() {
-        const fuel = stationData.fuelTypes || { diesel: true, petrol: true, lpg: false, unleaded95: false };
-        const fuelItems = Object.entries(fuel).map(([key, enabled]) => {
-          let label = key.charAt(0).toUpperCase() + key.slice(1);
-          let icon = 'fa-gas-pump';
+        var fuel = stationData.fuelTypes || { diesel: true, petrol: true, lpg: false, unleaded95: false };
+        var fuelItems = Object.entries(fuel).map(function (entry) {
+          var key = entry[0];
+          var enabled = entry[1];
+          var label = key.charAt(0).toUpperCase() + key.slice(1);
+          var icon = 'fa-gas-pump';
           if (key === 'diesel') icon = 'fa-oil-can';
           if (key === 'lpg') icon = 'fa-fire';
           if (key === 'cng') icon = 'fa-wind';
           if (key === 'electric') icon = 'fa-bolt';
-          return { key, label, icon, enabled };
+          return { key: key, label: label, icon: icon, enabled: enabled };
         });
 
-        const fuelHtml = fuelItems.map(item => `
-          <div class="toggle-item">
-            <div class="toggle-left">
-              <i class="fas ${item.icon}" style="color:${item.enabled ? '#16a34a' : '#aaa'};"></i>
-              ${item.label}
-            </div>
-            <label class="switch">
-              <input type="checkbox" ${item.enabled ? 'checked' : ''} data-fuel="${item.key}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
+        var fuelHtml = fuelItems.map(function (item) {
+          return '<div class="toggle-item">' +
+            '<div class="toggle-left">' +
+            '<i class="fas ' + item.icon + '" style="color:' + (item.enabled ? '#16a34a' : '#aaa') + ';"></i>' +
+            item.label +
+            '</div>' +
+            '<label class="switch">' +
+            '<input type="checkbox" ' + (item.enabled ? 'checked' : '') + ' data-fuel="' + item.key + '">' +
+            '<span class="slider"></span>' +
+            '</label>' +
+            '</div>';
+        }).join('');
 
-        const amens = stationData.amenities || [];
-        const amenHtml = amens.map(a => `
-          <div class="toggle-item">
-            <div class="toggle-left">
-              <i class="fas fa-check-circle" style="color:#16a34a;"></i> ${a}
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked data-amenity="${a}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
+        var amens = stationData.amenities || [];
+        var amenHtml = amens.map(function (a) {
+          return '<div class="toggle-item">' +
+            '<div class="toggle-left">' +
+            '<i class="fas fa-check-circle" style="color:#16a34a;"></i> ' + a +
+            '</div>' +
+            '<label class="switch">' +
+            '<input type="checkbox" checked data-amenity="' + a + '">' +
+            '<span class="slider"></span>' +
+            '</label>' +
+            '</div>';
+        }).join('');
 
         document.getElementById('fuelTogglesContainer').innerHTML = fuelHtml;
         document.getElementById('amenitiesTogglesContainer').innerHTML = amenHtml;
 
-        document.querySelectorAll('[data-fuel]').forEach(cb => {
-          cb.onchange = async (e) => {
-            const key = cb.dataset.fuel;
+        document.querySelectorAll('[data-fuel]').forEach(function (cb) {
+          cb.onchange = async function (e) {
+            var key = cb.dataset.fuel;
             stationData.fuelTypes[key] = cb.checked;
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/fuelTypes').set(stationData.fuelTypes);
             renderToggles();
           };
         });
 
-        document.querySelectorAll('[data-amenity]').forEach(cb => {
-          cb.onchange = async (e) => {
-            const am = cb.dataset.amenity;
+        document.querySelectorAll('[data-amenity]').forEach(function (cb) {
+          cb.onchange = async function (e) {
+            var am = cb.dataset.amenity;
             if (!cb.checked) {
-              stationData.amenities = stationData.amenities.filter(a => a !== am);
+              stationData.amenities = stationData.amenities.filter(function (a) { return a !== am; });
             } else if (!stationData.amenities.includes(am)) {
               stationData.amenities.push(am);
             }
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/amenities').set(stationData.amenities);
             renderToggles();
           };
         });
@@ -1082,8 +1181,8 @@
 
       // ========== PAGE MANAGEMENT ==========
       function openPage(pageId) {
-        document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
-        const pageEl = document.getElementById(pageId + 'Page');
+        document.querySelectorAll('.page-overlay').forEach(function (p) { p.classList.remove('show'); });
+        var pageEl = document.getElementById(pageId + 'Page');
         if (pageEl) pageEl.classList.add('show');
 
         if (pageId === 'fuelManager') renderFuelManager();
@@ -1097,95 +1196,95 @@
       }
 
       function renderFuelManager() {
-        const fuel = stationData.fuelTypes || {};
-        const cont = document.getElementById('fuelManagerList');
-        cont.innerHTML = Object.entries(fuel).map(([key, enabled]) => `
-          <div class="toggle-item">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span>${key}</span>
-              <button class="remove-btn" data-remove-fuel="${key}" ${key === 'diesel' || key === 'petrol' ? 'disabled style="opacity:0.5;"' : ''}>Remove</button>
-            </div>
-            <label class="switch">
-              <input type="checkbox" ${enabled ? 'checked' : ''} data-fm="${key}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
-        cont.querySelectorAll('input').forEach(cb => {
-          cb.onchange = async () => {
+        var fuel = stationData.fuelTypes || {};
+        var cont = document.getElementById('fuelManagerList');
+        cont.innerHTML = Object.entries(fuel).map(function (entry) {
+          var key = entry[0];
+          var enabled = entry[1];
+          return '<div class="toggle-item">' +
+            '<div style="display:flex; align-items:center; gap:8px;">' +
+            '<span>' + key + '</span>' +
+            '<button class="remove-btn" data-remove-fuel="' + key + '" ' + (key === 'diesel' || key === 'petrol' ? 'disabled style="opacity:0.5;"' : '') + '>Remove</button>' +
+            '</div>' +
+            '<label class="switch">' +
+            '<input type="checkbox" ' + (enabled ? 'checked' : '') + ' data-fm="' + key + '">' +
+            '<span class="slider"></span>' +
+            '</label>' +
+            '</div>';
+        }).join('');
+        cont.querySelectorAll('input').forEach(function (cb) {
+          cb.onchange = async function () {
             stationData.fuelTypes[cb.dataset.fm] = cb.checked;
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/fuelTypes').set(stationData.fuelTypes);
             renderToggles();
           };
         });
-        cont.querySelectorAll('[data-remove-fuel]').forEach(btn => {
-          btn.onclick = async () => {
-            const key = btn.dataset.removeFuel;
+        cont.querySelectorAll('[data-remove-fuel]').forEach(function (btn) {
+          btn.onclick = async function () {
+            var key = btn.dataset.removeFuel;
             if (key === 'diesel' || key === 'petrol') return;
             delete stationData.fuelTypes[key];
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/fuelTypes').set(stationData.fuelTypes);
             renderFuelManager();
             renderToggles();
-            showToast(`${key} removed`);
+            showToast(key + ' removed');
           };
         });
       }
 
       function renderAmenitiesManager() {
-        const cont = document.getElementById('amenitiesManagerList');
-        cont.innerHTML = stationData.amenities.map(a => `
-          <div class="toggle-item">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span>${a}</span>
-              <button class="remove-btn" data-remove-amenity="${a}">Remove</button>
-            </div>
-            <label class="switch">
-              <input type="checkbox" checked data-am="${a}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
-        cont.querySelectorAll('input').forEach(cb => {
-          cb.onchange = async () => {
-            const am = cb.dataset.am;
+        var cont = document.getElementById('amenitiesManagerList');
+        cont.innerHTML = stationData.amenities.map(function (a) {
+          return '<div class="toggle-item">' +
+            '<div style="display:flex; align-items:center; gap:8px;">' +
+            '<span>' + a + '</span>' +
+            '<button class="remove-btn" data-remove-amenity="' + a + '">Remove</button>' +
+            '</div>' +
+            '<label class="switch">' +
+            '<input type="checkbox" checked data-am="' + a + '">' +
+            '<span class="slider"></span>' +
+            '</label>' +
+            '</div>';
+        }).join('');
+        cont.querySelectorAll('input').forEach(function (cb) {
+          cb.onchange = async function () {
+            var am = cb.dataset.am;
             if (!cb.checked) {
-              stationData.amenities = stationData.amenities.filter(a => a !== am);
+              stationData.amenities = stationData.amenities.filter(function (a) { return a !== am; });
             } else if (!stationData.amenities.includes(am)) {
               stationData.amenities.push(am);
             }
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/amenities').set(stationData.amenities);
             renderToggles();
           };
         });
-        cont.querySelectorAll('[data-remove-amenity]').forEach(btn => {
-          btn.onclick = async () => {
-            const am = btn.dataset.removeAmenity;
-            stationData.amenities = stationData.amenities.filter(a => a !== am);
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+        cont.querySelectorAll('[data-remove-amenity]').forEach(function (btn) {
+          btn.onclick = async function () {
+            var am = btn.dataset.removeAmenity;
+            stationData.amenities = stationData.amenities.filter(function (a) { return a !== am; });
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/amenities').set(stationData.amenities);
             renderAmenitiesManager();
             renderToggles();
-            showToast(`${am} removed`);
+            showToast(am + ' removed');
           };
         });
       }
 
       function renderStationDetails() {
-        const cont = document.getElementById('stationDetailsContent');
-        cont.innerHTML = `
-          <div class="card-premium">
-            <h3>${stationData.stationName}</h3>
-            <p>📍 ${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}<br>
-            📞 ${stationData.managerPhone}<br>
-            📧 ${stationData.email}<br>
-            🗓️ Joined: ${new Date(stationData.createdAt).toLocaleDateString()}</p>
-            <button id="editStationDetailsBtn" class="auth-btn" style="margin-top:16px;">Edit Details</button>
-          </div>
-        `;
-        document.getElementById('editStationDetailsBtn').onclick = () => {
-          const newName = prompt('Enter new station name:', stationData.stationName);
+        var cont = document.getElementById('stationDetailsContent');
+        cont.innerHTML = '<div class="card-premium">' +
+          '<h3>' + stationData.stationName + '</h3>' +
+          '<p>📍 ' + stationData.location.lat.toFixed(4) + ', ' + stationData.location.lng.toFixed(4) + '<br>' +
+          '📞 ' + stationData.managerPhone + '<br>' +
+          '📧 ' + stationData.email + '<br>' +
+          '🗓️ Joined: ' + new Date(stationData.createdAt).toLocaleDateString() + '</p>' +
+          '<button id="editStationDetailsBtn" class="auth-btn" style="margin-top:16px;">Edit Details</button>' +
+          '</div>';
+        document.getElementById('editStationDetailsBtn').onclick = function () {
+          var newName = prompt('Enter new station name:', stationData.stationName);
           if (newName) {
             stationData.stationName = newName;
-            rtdb.ref(`stationOwners/${currentUser.uid}/stationName`).set(newName);
+            rtdb.ref('stationOwners/' + currentUser.uid + '/stationName').set(newName);
             document.getElementById('stationNameHeader').innerText = newName;
             showToast('Station name updated');
           }
@@ -1193,28 +1292,30 @@
       }
 
       function renderPriceManager() {
-        const prices = stationData.prices || { petrol: 1.50, diesel: 1.40 };
-        const cont = document.getElementById('priceManagerContent');
-        cont.innerHTML = `
-          <div class="card-premium">
-            <label>Petrol price (${userCountry.currency})</label>
-            <input id="petrolPriceInput" class="input-pill" type="number" step="0.01" value="${prices.petrol}">
-            <label>Diesel price (${userCountry.currency})</label>
-            <input id="dieselPriceInput" class="input-pill" type="number" step="0.01" value="${prices.diesel}">
-            <button id="savePricesBtn" class="auth-btn">Save Prices</button>
-          </div>
-        `;
-        document.getElementById('savePricesBtn').onclick = async () => {
-          const newPetrol = parseFloat(document.getElementById('petrolPriceInput').value);
-          const newDiesel = parseFloat(document.getElementById('dieselPriceInput').value);
-          stationData.prices = { petrol: newPetrol, diesel: newDiesel };
-          await rtdb.ref(`stationOwners/${currentUser.uid}/prices`).set(stationData.prices);
+        var prices = stationData.prices || { petrol: 1.50, diesel: 1.40 };
+        var localPetrol = convertPrice(prices.petrol);
+        var localDiesel = convertPrice(prices.diesel);
+        var cont = document.getElementById('priceManagerContent');
+        cont.innerHTML = '<div class="card-premium">' +
+          '<label>Petrol price (' + userCountry.currency + ')</label>' +
+          '<input id="petrolPriceInput" class="input-pill" type="number" step="0.01" value="' + localPetrol + '">' +
+          '<label>Diesel price (' + userCountry.currency + ')</label>' +
+          '<input id="dieselPriceInput" class="input-pill" type="number" step="0.01" value="' + localDiesel + '">' +
+          '<p class="small-note">Base USD: petrol $' + prices.petrol.toFixed(2) + ', diesel $' + prices.diesel.toFixed(2) + '</p>' +
+          '<button id="savePricesBtn" class="auth-btn">Save Prices</button>' +
+          '</div>';
+        document.getElementById('savePricesBtn').onclick = async function () {
+          var newPetrolLocal = parseFloat(document.getElementById('petrolPriceInput').value);
+          var newDieselLocal = parseFloat(document.getElementById('dieselPriceInput').value);
+          var rate = exchangeRates[userCountry.currency] || 1;
+          stationData.prices = { petrol: newPetrolLocal / rate, diesel: newDieselLocal / rate };
+          await rtdb.ref('stationOwners/' + currentUser.uid + '/prices').set(stationData.prices);
           showToast('Prices updated');
         };
       }
 
       function renderAnalytics() {
-        const ctx1 = document.getElementById('visitsChart').getContext('2d');
+        var ctx1 = document.getElementById('visitsChart').getContext('2d');
         if (visitChart) visitChart.destroy();
         visitChart = new Chart(ctx1, {
           type: 'line',
@@ -1230,7 +1331,7 @@
             }]
           }
         });
-        const ctx2 = document.getElementById('fuelPopularityChart').getContext('2d');
+        var ctx2 = document.getElementById('fuelPopularityChart').getContext('2d');
         if (fuelChart) fuelChart.destroy();
         fuelChart = new Chart(ctx2, {
           type: 'doughnut',
@@ -1245,69 +1346,72 @@
       }
 
       async function renderReports() {
-        const cont = document.getElementById('reportsContent');
-        const snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
-        const reports = [];
-        snap.forEach(r => reports.push(r.val()));
+        var cont = document.getElementById('reportsContent');
+        var snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
+        var reports = [];
+        snap.forEach(function (r) { reports.push(r.val()); });
         if (!reports.length) {
           cont.innerHTML = '<p>No reports yet.</p>';
         } else {
-          cont.innerHTML = reports.map(r => `
-            <div class="card-premium">
-              <strong>${r.type}</strong><br>
-              ${r.comment || ''}<br>
-              <small>${new Date(r.timestamp).toLocaleString()}</small>
-            </div>
-          `).join('');
+          cont.innerHTML = reports.map(function (r) {
+            return '<div class="card-premium">' +
+              '<strong>' + r.type + '</strong><br>' +
+              (r.comment || '') + '<br>' +
+              '<small>' + new Date(r.timestamp).toLocaleString() + '</small>' +
+              '</div>';
+          }).join('');
         }
       }
 
       function renderSubscription() {
-        const cur = userCountry.currency;
-        const rate = exchangeRates[cur] || 1;
-        const m1 = Math.round(15 * rate);
-        const m5 = Math.round(90 * rate);
-        const m12 = Math.round(180 * rate);
-        const exp = stationData.subscription?.expires
-          ? new Date(stationData.subscription.expires).toLocaleDateString()
-          : 'N/A';
+        var cur = userCountry.currency;
+        var rate = exchangeRates[cur] || 1;
+        var m1 = Math.round(15 * rate);
+        var m5 = Math.round(90 * rate);
+        var m12 = Math.round(180 * rate);
+        var exp = stationData.subscription && stationData.subscription.expires ? new Date(stationData.subscription.expires).toLocaleDateString() : 'N/A';
+        var plan = stationData.subscription && stationData.subscription.plan ? stationData.subscription.plan : 'trial';
 
-        document.getElementById('subscriptionContent').innerHTML = `
-          <div class="card-premium">
-            <h3>${stationData.subscription?.plan || 'trial'} plan</h3>
-            <p>📅 Expires: ${exp}</p>
-            <p>✅ Station visible on map</p>
-            <p>✅ Real-time price updates</p>
-            <p>✅ Priority support</p>
-          </div>
-          <div class="price-tag" style="background:#16a34a; color:#fff; padding:10px 22px; border-radius:60px; display:inline-block; margin-bottom:16px;">💳 PayPal (demo)</div>
-          <div class="toggle-item" style="justify-content:space-between">
-            <span>1 Month</span> <strong>${cur} ${m1}</strong>
-          </div>
-          <div class="toggle-item" style="justify-content:space-between">
-            <span>5 Months</span> <strong>${cur} ${m5}</strong>
-          </div>
-          <div class="toggle-item" style="justify-content:space-between">
-            <span>12 Months</span> <strong>${cur} ${m12}</strong>
-          </div>
-          <button class="auth-btn" id="simulatePaypalBtn" style="margin-top:24px;">Simulate PayPal Payment</button>
-        `;
-        document.getElementById('simulatePaypalBtn').onclick = () => {
-          showToast('PayPal simulation: payment successful (demo)');
-        };
+        document.getElementById('subscriptionContent').innerHTML =
+          '<div class="card-premium">' +
+          '<h3>' + plan + ' plan</h3>' +
+          '<p>📅 Expires: ' + exp + '</p>' +
+          '<p>✅ Station visible on map · ✅ Real-time updates · ✅ Priority support</p>' +
+          '</div>' +
+          '<div class="price-tag" style="background:#16a34a; color:#fff; padding:12px 24px; border-radius:60px; display:inline-block; margin-bottom:20px;">💳 Secure payment</div>' +
+          '<div class="toggle-item sub-option" data-plan="1month" data-price="' + m1 + '" style="cursor:pointer;">' +
+          '<span>1 Month</span> <strong>' + cur + ' ' + m1 + '</strong>' +
+          '</div>' +
+          '<div class="toggle-item sub-option" data-plan="5months" data-price="' + m5 + '" style="cursor:pointer;">' +
+          '<span>5 Months</span> <strong>' + cur + ' ' + m5 + '</strong>' +
+          '</div>' +
+          '<div class="toggle-item sub-option" data-plan="12months" data-price="' + m12 + '" style="cursor:pointer;">' +
+          '<span>12 Months</span> <strong>' + cur + ' ' + m12 + '</strong>' +
+          '</div>' +
+          '<p class="small-note" style="margin-top:16px;">Tap any plan to pay with card</p>';
+
+        document.querySelectorAll('.sub-option').forEach(function (opt) {
+          opt.onclick = function () {
+            var plan = opt.dataset.plan;
+            var price = opt.dataset.price;
+            document.getElementById('selectedPlanDisplay').innerText = plan;
+            document.getElementById('selectedPriceDisplay').innerText = cur + ' ' + price;
+            document.getElementById('cardPaymentModal').classList.add('show');
+          };
+        });
       }
 
       function loadSettingsProfile() {
-        document.getElementById('settingsProfilePic').src = stationData.photos?.[0] || 'station_placeholder.png';
+        document.getElementById('settingsProfilePic').src = stationData.photos && stationData.photos[0] ? stationData.photos[0] : 'station_placeholder.png';
         document.getElementById('editManagerName').value = stationData.managerName || '';
         document.getElementById('editManagerPhone').value = stationData.managerPhone || '';
       }
 
       // ========== AUTH STATE ==========
-      auth.onAuthStateChanged(async user => {
+      auth.onAuthStateChanged(async function (user) {
         if (user) {
           currentUser = user;
-          const snap = await rtdb.ref(`stationOwners/${user.uid}`).once('value');
+          var snap = await rtdb.ref('stationOwners/' + user.uid).once('value');
           stationData = snap.val();
           if (!stationData) { auth.signOut(); return; }
           if (!stationData.prices) stationData.prices = { petrol: 1.50, diesel: 1.40 };
@@ -1317,7 +1421,7 @@
           document.getElementById('dashboardView').style.display = 'block';
           loadDashboard();
 
-          if (stationData.subscription?.plan === 'trial' && !localStorage.getItem('trialShown_' + user.uid)) {
+          if (stationData.subscription && stationData.subscription.plan === 'trial' && !localStorage.getItem('trialShown_' + user.uid)) {
             document.getElementById('popupManagerName').innerText = stationData.managerName;
             document.getElementById('trialExpiryDate').innerText = new Date(stationData.subscription.expires).toLocaleDateString();
             document.getElementById('trialPopup').classList.add('show');
@@ -1330,91 +1434,100 @@
       });
 
       // ========== EVENT LISTENERS ==========
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', function () {
         initRegisterMap();
         renderAmenityChips();
 
         // Tabs
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-          tab.onclick = () => {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-tab').forEach(function (tab) {
+          tab.onclick = function () {
+            document.querySelectorAll('.auth-tab').forEach(function (t) { t.classList.remove('active'); });
             tab.classList.add('active');
-            const isLogin = tab.dataset.tab === 'login';
+            var isLogin = tab.dataset.tab === 'login';
             document.getElementById('loginForm').classList.toggle('hide', !isLogin);
             document.getElementById('registerForm').classList.toggle('hide', isLogin);
           };
         });
 
         // Photo uploads
-        document.getElementById('photoUpload1').onclick = () => openUploadWidget(url => {
-          uploadedImages.photo1 = url;
-          document.getElementById('photoUpload1').style.backgroundImage = `url(${url})`;
-          document.getElementById('photoUpload1').innerHTML = '';
-        });
-        document.getElementById('photoUpload2').onclick = () => openUploadWidget(url => {
-          uploadedImages.photo2 = url;
-          document.getElementById('photoUpload2').style.backgroundImage = `url(${url})`;
-          document.getElementById('photoUpload2').innerHTML = '';
-        });
+        document.getElementById('photoUpload1').onclick = function () {
+          openUploadWidget(function (url) {
+            uploadedImages.photo1 = url;
+            document.getElementById('photoUpload1').style.backgroundImage = 'url(' + url + ')';
+            document.getElementById('photoUpload1').innerHTML = '';
+          });
+        };
+        document.getElementById('photoUpload2').onclick = function () {
+          openUploadWidget(function (url) {
+            uploadedImages.photo2 = url;
+            document.getElementById('photoUpload2').style.backgroundImage = 'url(' + url + ')';
+            document.getElementById('photoUpload2').innerHTML = '';
+          });
+        };
 
         // Custom amenity
-        document.getElementById('addCustomAmenityBtn').onclick = () => {
+        document.getElementById('addCustomAmenityBtn').onclick = function () {
           document.getElementById('customAmenityRow').style.display = 'flex';
         };
-        document.getElementById('saveCustomAmenityBtn').onclick = () => {
-          const val = document.getElementById('customAmenityInput').value.trim();
+        document.getElementById('saveCustomAmenityBtn').onclick = function () {
+          var val = document.getElementById('customAmenityInput').value.trim();
           if (val) { customAmenities.push(val); renderAmenityChips(); }
           document.getElementById('customAmenityInput').value = '';
           document.getElementById('customAmenityRow').style.display = 'none';
         };
 
         // Location
-        document.getElementById('locateMeBtn').onclick = () => {
-          navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('locateMeBtn').onclick = function () {
+          navigator.geolocation.getCurrentPosition(function (pos) {
             registerMap.setView([pos.coords.latitude, pos.coords.longitude], 17);
             setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          }, err => showToast('Location error', false));
+          }, function (err) { showToast('Location error', false); });
         };
         document.getElementById('locationSearchInput').addEventListener('change', async function () {
-          const q = this.value;
+          var q = this.value;
           if (!q) return;
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
-          const data = await res.json();
+          var res = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q));
+          var data = await res.json();
           if (data[0]) {
-            const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+            var lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
             registerMap.setView([lat, lon], 17);
-            setMarker({ lat, lng: lon });
+            setMarker({ lat: lat, lng: lon });
           }
         });
 
         // Register
         document.getElementById('registerBtn').onclick = async function () {
-          const btn = this;
-          const stationName = document.getElementById('regStationName').value.trim();
-          const managerName = document.getElementById('regManagerName').value.trim();
-          const email = document.getElementById('regManagerEmail').value.trim();
-          const phone = document.getElementById('regManagerPhone').value.trim();
-          const password = document.getElementById('regPassword').value;
+          var btn = this;
+          var stationName = document.getElementById('regStationName').value.trim();
+          var managerName = document.getElementById('regManagerName').value.trim();
+          var email = document.getElementById('regManagerEmail').value.trim();
+          var phone = document.getElementById('regManagerPhone').value.trim();
+          var password = document.getElementById('regPassword').value;
           if (!stationName || !managerName || !email || !password || !selectedLatLng) {
-            showToast('Fill all fields and set location', false); return;
+            showToast('Fill all fields and set location', false);
+            return;
           }
           setButtonLoading(btn, true);
           try {
-            const cred = await auth.createUserWithEmailAndPassword(email, password);
-            const uid = cred.user.uid;
-            const amenities = [...defaultAmenities, ...customAmenities];
-            const payload = {
-              stationName, managerName, email, managerPhone: userCountry.phone + phone,
+            var cred = await auth.createUserWithEmailAndPassword(email, password);
+            var uid = cred.user.uid;
+            var amenities = defaultAmenities.concat(customAmenities);
+            var payload = {
+              stationName: stationName,
+              managerName: managerName,
+              email: email,
+              managerPhone: userCountry.phone + phone,
               location: { lat: selectedLatLng.lat, lng: selectedLatLng.lng },
-              photos: [uploadedImages.photo1, uploadedImages.photo2].filter(u => u),
-              amenities,
+              photos: [uploadedImages.photo1, uploadedImages.photo2].filter(function (u) { return u; }),
+              amenities: amenities,
               fuelTypes: { diesel: true, petrol: true, lpg: false, unleaded95: false },
               prices: { petrol: 1.50, diesel: 1.40 },
-              country: userCountry.code, currency: userCountry.currency,
+              country: userCountry.code,
+              currency: userCountry.currency,
               subscription: { plan: 'trial', expires: Date.now() + 30 * 24 * 3600 * 1000 },
               createdAt: Date.now()
             };
-            await rtdb.ref(`stationOwners/${uid}`).set(payload);
+            await rtdb.ref('stationOwners/' + uid).set(payload);
             showToast('Station registered! Please login.');
             auth.signOut();
           } catch (e) { showToast(e.message, false); }
@@ -1422,44 +1535,44 @@
         };
 
         // Login
-        document.getElementById('loginBtn').onclick = () => {
-          const email = document.getElementById('loginEmail').value;
-          const pass = document.getElementById('loginPassword').value;
-          auth.signInWithEmailAndPassword(email, pass).catch(e => showToast(e.message, false));
+        document.getElementById('loginBtn').onclick = function () {
+          var email = document.getElementById('loginEmail').value;
+          var pass = document.getElementById('loginPassword').value;
+          auth.signInWithEmailAndPassword(email, pass).catch(function (e) { showToast(e.message, false); });
         };
 
         // Sidebar
-        const sidebar = document.getElementById('sidebarOverlay');
-        document.getElementById('dashboardMenuBtn').onclick = () => sidebar.classList.add('open');
-        sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-        document.querySelectorAll('[data-page]').forEach(el => {
-          el.onclick = () => { openPage(el.dataset.page); sidebar.classList.remove('open'); };
+        var sidebar = document.getElementById('sidebarOverlay');
+        document.getElementById('dashboardMenuBtn').onclick = function () { sidebar.classList.add('open'); };
+        sidebar.addEventListener('click', function (e) { if (e.target === sidebar) sidebar.classList.remove('open'); });
+        document.querySelectorAll('[data-page]').forEach(function (el) {
+          el.onclick = function () { openPage(el.dataset.page); sidebar.classList.remove('open'); };
         });
-        document.querySelectorAll('.close-page').forEach(btn => {
-          btn.onclick = () => btn.closest('.page-overlay').classList.remove('show');
+        document.querySelectorAll('.close-page').forEach(function (btn) {
+          btn.onclick = function () { btn.closest('.page-overlay').classList.remove('show'); };
         });
 
         // Add fuel type
-        document.getElementById('addFuelTypeBtn').onclick = async () => {
-          const select = document.getElementById('newFuelSelect');
-          const newFuel = select.value;
+        document.getElementById('addFuelTypeBtn').onclick = async function () {
+          var select = document.getElementById('newFuelSelect');
+          var newFuel = select.value;
           if (!newFuel) { showToast('Select a fuel type', false); return; }
           if (stationData.fuelTypes[newFuel]) { showToast('Fuel type already exists', false); return; }
           stationData.fuelTypes[newFuel] = true;
-          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          await rtdb.ref('stationOwners/' + currentUser.uid + '/fuelTypes').set(stationData.fuelTypes);
           renderFuelManager();
           renderToggles();
-          showToast(`${newFuel} added`);
+          showToast(newFuel + ' added');
         };
 
         // Add amenity
-        document.getElementById('addAmenityBtn').onclick = async () => {
-          const input = document.getElementById('newAmenityInput');
-          const val = input.value.trim();
+        document.getElementById('addAmenityBtn').onclick = async function () {
+          var input = document.getElementById('newAmenityInput');
+          var val = input.value.trim();
           if (!val) return;
           if (!stationData.amenities.includes(val)) {
             stationData.amenities.push(val);
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/amenities').set(stationData.amenities);
             renderAmenitiesManager();
             renderToggles();
           }
@@ -1467,20 +1580,20 @@
         };
 
         // Trial popup close
-        document.getElementById('closeTrialPopup').onclick = () => {
+        document.getElementById('closeTrialPopup').onclick = function () {
           document.getElementById('trialPopup').classList.remove('show');
         };
 
         // Dark mode
-        document.getElementById('darkModeToggle').onclick = () => {
+        document.getElementById('darkModeToggle').onclick = function () {
           document.body.classList.toggle('dark');
           localStorage.setItem('darkMode', document.body.classList.contains('dark'));
         };
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
 
         // Logout
-        document.getElementById('logoutBtn').onclick = () => auth.signOut();
-        document.getElementById('logoutSettingsBtn').onclick = () => auth.signOut();
+        document.getElementById('logoutBtn').onclick = function () { auth.signOut(); };
+        document.getElementById('logoutSettingsBtn').onclick = function () { auth.signOut(); };
 
         // Notifications
         document.getElementById('toggleNotifBtn').onclick = function () {
@@ -1489,23 +1602,37 @@
         };
 
         // Profile update
-        document.getElementById('updateProfileBtn').onclick = async () => {
-          const newName = document.getElementById('editManagerName').value;
-          const newPhone = document.getElementById('editManagerPhone').value;
-          await rtdb.ref(`stationOwners/${currentUser.uid}`).update({ managerName: newName, managerPhone: newPhone });
+        document.getElementById('updateProfileBtn').onclick = async function () {
+          var newName = document.getElementById('editManagerName').value;
+          var newPhone = document.getElementById('editManagerPhone').value;
+          await rtdb.ref('stationOwners/' + currentUser.uid).update({ managerName: newName, managerPhone: newPhone });
           stationData.managerName = newName;
           stationData.managerPhone = newPhone;
           showToast('Profile updated');
         };
 
-        document.getElementById('changeProfilePicBtn').onclick = () => {
-          openUploadWidget(async url => {
-            await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set([url, stationData.photos?.[1] || '']);
+        document.getElementById('changeProfilePicBtn').onclick = function () {
+          openUploadWidget(async function (url) {
+            await rtdb.ref('stationOwners/' + currentUser.uid + '/photos').set([url, stationData.photos && stationData.photos[1] ? stationData.photos[1] : '']);
             stationData.photos[0] = url;
             document.getElementById('settingsProfilePic').src = url;
             document.getElementById('stationAvatar').src = url;
             showToast('Profile picture updated');
           });
+        };
+
+        // Payment modal
+        document.getElementById('confirmPaymentBtn').onclick = function () {
+          var cardNum = document.getElementById('cardNumber').value;
+          if (cardNum.length < 15) { showToast('Invalid card number', false); return; }
+          showToast('Payment successful! Subscription activated (demo)');
+          document.getElementById('cardPaymentModal').classList.remove('show');
+          stationData.subscription = { plan: 'paid', expires: Date.now() + 30 * 24 * 3600 * 1000 };
+          rtdb.ref('stationOwners/' + currentUser.uid + '/subscription').set(stationData.subscription);
+          renderSubscription();
+        };
+        document.getElementById('cancelPaymentBtn').onclick = function () {
+          document.getElementById('cardPaymentModal').classList.remove('show');
         };
       });
     })();
