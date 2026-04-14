@@ -42,9 +42,10 @@
       background: #000000;
       min-height: 100vh;
       position: relative;
+      padding-bottom: 100px;
     }
 
-    /* ========== AUTH VIEW (Dark) ========== */
+    /* ========== AUTH VIEW ========== */
     #authView {
       padding: 28px 20px;
       color: #fff;
@@ -60,13 +61,8 @@
       font-weight: 800;
     }
 
-    .fuel-green {
-      color: #16a34a;
-    }
-
-    .radar-red {
-      color: #dc2626;
-    }
+    .fuel-green { color: #16a34a; }
+    .radar-red { color: #dc2626; }
 
     .slogan {
       background: #1a1a1a;
@@ -238,7 +234,7 @@
       display: inline-block;
     }
 
-    /* ========== DASHBOARD (New Design) ========== */
+    /* ========== DASHBOARD ========== */
     #dashboardView {
       display: none;
     }
@@ -252,7 +248,7 @@
 
     .station-title {
       padding: 20px 20px 10px;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -281,11 +277,36 @@
       z-index: 50;
     }
 
+    /* Scrollable toggle area */
+    .toggle-scroll-area {
+      max-height: calc(100vh - 50vh - 180px);
+      overflow-y: auto;
+      padding: 0 16px 20px;
+      margin-bottom: 20px;
+    }
+
     .toggle-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
-      padding: 20px;
+      padding: 10px 0;
+    }
+
+    .toggle-separator {
+      margin: 20px 0 10px;
+      border-top: 2px solid #16a34a;
+      text-align: center;
+      position: relative;
+    }
+
+    .toggle-separator span {
+      background: #000;
+      padding: 0 16px;
+      color: #16a34a;
+      font-weight: 700;
+      font-size: 14px;
+      position: relative;
+      top: -10px;
     }
 
     .toggle-card {
@@ -314,7 +335,7 @@
       margin-bottom: 12px;
     }
 
-    /* iOS Switch inside card */
+    /* iOS Switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -352,11 +373,11 @@
       border-radius: 50%;
     }
 
-    input:checked+.slider {
+    input:checked + .slider {
       background-color: #ffffff;
     }
 
-    input:checked+.slider:before {
+    input:checked + .slider:before {
       transform: translateX(24px);
       background-color: #16a34a;
     }
@@ -468,7 +489,7 @@
       color: #fff;
     }
 
-    /* ========== PAGE OVERLAYS (Dark) ========== */
+    /* ========== PAGE OVERLAYS ========== */
     .page-overlay {
       position: fixed;
       top: 0;
@@ -519,7 +540,33 @@
       border: 1px solid #333;
     }
 
-    /* ========== SIDEBAR (Dark) ========== */
+    /* Manager list items with remove button right-aligned */
+    .manager-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .manager-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .remove-btn {
+      background: #e74c5e;
+      border: none;
+      border-radius: 30px;
+      padding: 8px 16px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* ========== SIDEBAR ========== */
     .sidebar-overlay {
       position: fixed;
       top: 0;
@@ -595,7 +642,7 @@
       margin: 0 auto;
     }
 
-    /* ========== MODAL (Trial & Payment) ========== */
+    /* ========== MODALS ========== */
     .modal-popup {
       position: fixed;
       top: 0;
@@ -732,18 +779,6 @@
       border: 2px solid #16a34a;
     }
 
-    .remove-btn {
-      background: #e74c5e;
-      border: none;
-      border-radius: 30px;
-      padding: 6px 12px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-
     .sub-option {
       cursor: pointer;
       transition: all 0.2s;
@@ -755,9 +790,7 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     .small-note {
@@ -773,1018 +806,1027 @@
     }
   </style>
 </head>
-
 <body>
-  <div class="app">
-    <!-- ========== AUTH VIEW ========== -->
-    <div id="authView">
-      <div class="auth-header">
-        <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> ⛽</h1>
-        <div class="slogan">station owner · join the network</div>
-      </div>
-      <div id="countryDetectionBox" class="country-badge">
-        <span id="countryMessage">🌍 Detecting country...</span>
-      </div>
-      <div class="auth-tabs">
-        <div class="auth-tab active" data-tab="login">Login</div>
-        <div class="auth-tab" data-tab="register">Register</div>
-      </div>
-
-      <!-- Login Form -->
-      <div id="loginForm" class="auth-form">
-        <input type="email" id="loginEmail" class="input-pill" placeholder="Manager Email">
-        <input type="password" id="loginPassword" class="input-pill" placeholder="Password">
-        <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
-      </div>
-
-      <!-- Register Form -->
-      <div id="registerForm" class="auth-form hide">
-        <input type="text" id="regStationName" class="input-pill" placeholder="Station Name">
-        <input type="text" id="regManagerName" class="input-pill" placeholder="Manager Full Name">
-        <input type="email" id="regManagerEmail" class="input-pill" placeholder="Manager Email">
-        <div class="phone-row">
-          <span class="country-code" id="regPhonePrefix">+1</span>
-          <input type="tel" id="regManagerPhone" class="input-pill" placeholder="Phone number" style="flex:2;">
-        </div>
-        <input type="password" id="regPassword" class="input-pill" placeholder="Password (min 6 chars)">
-
-        <div class="photo-row">
-          <div class="photo-box" id="photoUpload1"><i class="fas fa-store"></i> Front view</div>
-          <div class="photo-box" id="photoUpload2"><i class="fas fa-door-open"></i> Entrance</div>
-        </div>
-
-        <div class="amenities-editor">
-          <label style="font-weight:600;">Amenities
-            <i class="fas fa-plus-circle" id="addCustomAmenityBtn" style="margin-left:8px; color:#16a34a; cursor:pointer;"></i>
-          </label>
-          <div id="amenityChipsContainer"></div>
-          <div class="flex-row" id="customAmenityRow" style="display:none; margin-top:10px;">
-            <input type="text" id="customAmenityInput" placeholder="e.g., Pharmacy" class="input-pill" style="margin:0;">
-            <button id="saveCustomAmenityBtn" class="auth-btn" style="width:auto; margin:0; padding:10px 20px;">Add</button>
-          </div>
-        </div>
-
-        <div class="location-picker">
-          <div id="registerMap"></div>
-          <div style="display:flex; gap:8px;">
-            <input type="text" id="locationSearchInput" placeholder="Search address" class="input-pill" style="margin:0;">
-            <button id="locateMeBtn" class="auth-btn" style="width:auto; margin:0; padding:14px 18px;"><i class="fas fa-location-dot"></i></button>
-          </div>
-          <small>📍 Pin your exact location (accuracy ~10m)</small>
-        </div>
-
-        <button class="auth-btn" id="registerBtn"><span>Register Station</span> <span class="spinner"></span></button>
-      </div>
+<div class="app">
+  <!-- ========== AUTH VIEW ========== -->
+  <div id="authView">
+    <div class="auth-header">
+      <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> ⛽</h1>
+      <div class="slogan">station owner · join the network</div>
+    </div>
+    <div id="countryDetectionBox" class="country-badge">
+      <span id="countryMessage">🌍 Detecting country...</span>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-tab="login">Login</div>
+      <div class="auth-tab" data-tab="register">Register</div>
     </div>
 
-    <!-- ========== DASHBOARD VIEW (New Design) ========== -->
-    <div id="dashboardView">
-      <img class="station-photo" id="mainStationPhoto" src="station_placeholder.png" alt="Station">
-      <div class="station-title">
-        <span id="stationNameDisplay">STATION</span> IN <span id="countryNameDisplay">ZAMBIA</span> WITH <span class="fuel-green">FUEL</span><span class="radar-red">RADAR</span>
-      </div>
-      <button class="menu-btn" id="dashboardMenuBtn"><i class="fas fa-bars"></i></button>
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-form">
+      <input type="email" id="loginEmail" class="input-pill" placeholder="Manager Email">
+      <input type="password" id="loginPassword" class="input-pill" placeholder="Password">
+      <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
+    </div>
 
-      <!-- 2x2 Grid for Fuel Toggles -->
+    <!-- Register Form -->
+    <div id="registerForm" class="auth-form hide">
+      <input type="text" id="regStationName" class="input-pill" placeholder="Station Name">
+      <input type="text" id="regManagerName" class="input-pill" placeholder="Manager Full Name">
+      <input type="email" id="regManagerEmail" class="input-pill" placeholder="Manager Email">
+      <div class="phone-row">
+        <span class="country-code" id="regPhonePrefix">+1</span>
+        <input type="tel" id="regManagerPhone" class="input-pill" placeholder="Phone number" style="flex:2;">
+      </div>
+      <input type="password" id="regPassword" class="input-pill" placeholder="Password (min 6 chars)">
+
+      <div class="photo-row">
+        <div class="photo-box" id="photoUpload1"><i class="fas fa-store"></i> Front view</div>
+        <div class="photo-box" id="photoUpload2"><i class="fas fa-door-open"></i> Entrance</div>
+      </div>
+
+      <div class="amenities-editor">
+        <label style="font-weight:600;">Amenities
+          <i class="fas fa-plus-circle" id="addCustomAmenityBtn" style="margin-left:8px; color:#16a34a; cursor:pointer;"></i>
+        </label>
+        <div id="amenityChipsContainer"></div>
+        <div class="flex-row" id="customAmenityRow" style="display:none; margin-top:10px;">
+          <input type="text" id="customAmenityInput" placeholder="e.g., Pharmacy" class="input-pill" style="margin:0;">
+          <button id="saveCustomAmenityBtn" class="auth-btn" style="width:auto; margin:0; padding:10px 20px;">Add</button>
+        </div>
+      </div>
+
+      <div class="location-picker">
+        <div id="registerMap"></div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="locationSearchInput" placeholder="Search address" class="input-pill" style="margin:0;">
+          <button id="locateMeBtn" class="auth-btn" style="width:auto; margin:0; padding:14px 18px;"><i class="fas fa-location-dot"></i></button>
+        </div>
+        <small>📍 Pin your exact location (accuracy ~10m)</small>
+      </div>
+
+      <button class="auth-btn" id="registerBtn"><span>Register Station</span> <span class="spinner"></span></button>
+    </div>
+  </div>
+
+  <!-- ========== DASHBOARD VIEW ========== -->
+  <div id="dashboardView">
+    <img class="station-photo" id="mainStationPhoto" src="station_placeholder.png" alt="Station">
+    <div class="station-title">
+      <span id="stationNameDisplay">STATION</span> IN <span id="countryNameDisplay">ZAMBIA</span> WITH <span class="fuel-green">FUEL</span><span class="radar-red">RADAR</span>
+    </div>
+    <button class="menu-btn" id="dashboardMenuBtn"><i class="fas fa-bars"></i></button>
+
+    <div class="toggle-scroll-area">
+      <!-- Fuel Toggles -->
       <div class="toggle-grid" id="fuelToggleGrid"></div>
 
-      <!-- 2x2 Grid for Amenities Toggles -->
+      <!-- Separator -->
+      <div class="toggle-separator">
+        <span>⚡ AMENITIES ⚡</span>
+      </div>
+
+      <!-- Amenities Toggles -->
       <div class="toggle-grid" id="amenitiesToggleGrid"></div>
+    </div>
 
-      <button class="floating-details-btn" id="showDetailsBtn">⛽ FUEL STATION DETAILS</button>
+    <button class="floating-details-btn" id="showDetailsBtn">⛽ FUEL STATION DETAILS</button>
+  </div>
+</div>
+
+<!-- ========== DETAILS OVERLAY ========== -->
+<div class="details-overlay" id="detailsOverlay">
+  <div class="details-header">
+    <h2><i class="fas fa-gas-pump"></i> Station Details</h2>
+    <button class="close-details" id="closeDetailsBtn">&times;</button>
+  </div>
+  <div class="map-half" id="detailsMap"></div>
+  <div class="prices-row">
+    <div class="price-box">
+      <div class="fuel-type">PETROL</div>
+      <div class="price-value" id="detailPetrolPrice">--</div>
+    </div>
+    <div class="price-box">
+      <div class="fuel-type">DIESEL</div>
+      <div class="price-value" id="detailDieselPrice">--</div>
     </div>
   </div>
+  <div class="info-section" id="detailsInfoSection"></div>
+</div>
 
-  <!-- ========== DETAILS OVERLAY ========== -->
-  <div class="details-overlay" id="detailsOverlay">
-    <div class="details-header">
-      <h2><i class="fas fa-gas-pump"></i> Station Details</h2>
-      <button class="close-details" id="closeDetailsBtn">&times;</button>
+<!-- ========== TRIAL POPUP ========== -->
+<div class="modal-popup" id="trialPopup">
+  <div class="modal-card">
+    <div style="text-align: center;">
+      <i class="fas fa-gift" style="font-size: 48px; color: #16a34a; margin-bottom: 16px;"></i>
+      <h3 style="color:#16a34a; font-size: 28px;">Welcome!</h3>
+      <p style="font-size: 20px; margin: 8px 0;">Hello <span id="popupManagerName"></span>,</p>
     </div>
-    <div class="map-half" id="detailsMap"></div>
-    <div class="prices-row">
-      <div class="price-box">
-        <div class="fuel-type">PETROL</div>
-        <div class="price-value" id="detailPetrolPrice">--</div>
-      </div>
-      <div class="price-box">
-        <div class="fuel-type">DIESEL</div>
-        <div class="price-value" id="detailDieselPrice">--</div>
-      </div>
+    <div class="trial-benefit">
+      <i class="fas fa-map-marked-alt"></i>
+      <span>Your station is visible to all drivers</span>
     </div>
-    <div class="info-section" id="detailsInfoSection"></div>
+    <div class="trial-benefit">
+      <i class="fas fa-calendar-check"></i>
+      <span>FREE 1‑month trial, no payment required</span>
+    </div>
+    <div class="trial-benefit">
+      <i class="fas fa-chart-line"></i>
+      <span>Access to analytics and reports</span>
+    </div>
+    <div style="background: #111; border-radius: 30px; padding: 16px; margin: 20px 0;">
+      <i class="fas fa-hourglass-half"></i>
+      <strong>Trial ends:</strong> <span id="trialExpiryDate"></span>
+    </div>
+    <button class="auth-btn" id="closeTrialPopup" style="margin-top: 8px;">Start Managing →</button>
   </div>
+</div>
 
-  <!-- ========== TRIAL POPUP ========== -->
-  <div class="modal-popup" id="trialPopup">
-    <div class="modal-card">
-      <div style="text-align: center;">
-        <i class="fas fa-gift" style="font-size: 48px; color: #16a34a; margin-bottom: 16px;"></i>
-        <h3 style="color:#16a34a; font-size: 28px;">Welcome!</h3>
-        <p style="font-size: 20px; margin: 8px 0;">Hello <span id="popupManagerName"></span>,</p>
+<!-- ========== SIDEBAR ========== -->
+<div class="sidebar-overlay" id="sidebarOverlay">
+  <div class="sidebar-panel">
+    <div class="sidebar-header">⚡ Manager</div>
+    <div class="sidebar-item" data-page="fuelManager"><i class="fas fa-gas-pump"></i> Fuel Types</div>
+    <div class="sidebar-item" data-page="amenitiesManager"><i class="fas fa-concierge-bell"></i> Amenities</div>
+    <div class="sidebar-item" data-page="stationDetails"><i class="fas fa-store"></i> Station Details</div>
+    <div class="sidebar-item" data-page="priceManager"><i class="fas fa-dollar-sign"></i> Fuel Prices</div>
+    <div class="sidebar-item" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</div>
+    <div class="sidebar-item" data-page="reports"><i class="fas fa-flag"></i> User Reports</div>
+    <div class="sidebar-item" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
+    <div class="sidebar-item" data-page="subscription"><i class="fas fa-credit-card"></i> Subscription</div>
+    <div class="sidebar-item" id="darkModeToggle"><i class="fas fa-moon"></i> Dark Mode</div>
+    <div class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</div>
+  </div>
+</div>
+
+<!-- ========== PAGE OVERLAYS ========== -->
+<!-- Fuel Manager -->
+<div id="fuelManagerPage" class="page-overlay">
+  <div class="page-header">
+    <h2>⛽ Fuel Types</h2>
+    <button class="close-page" data-close="fuelManagerPage">&times;</button>
+  </div>
+  <div class="page-content">
+    <div class="card-premium">
+      <h3>Available Fuel Types</h3>
+      <div id="fuelManagerList"></div>
+      <div style="margin-top:20px;">
+        <label>Add new fuel type:</label>
+        <select id="newFuelSelect" class="input-pill" style="margin-bottom:10px;">
+          <option value="">-- Select --</option>
+          <option value="cng">CNG</option>
+          <option value="ethanol">Ethanol</option>
+          <option value="biodiesel">Biodiesel</option>
+        </select>
+        <button id="addFuelTypeBtn" class="auth-btn" style="margin-top:0;">Add Fuel Type</button>
       </div>
-      <div class="trial-benefit">
-        <i class="fas fa-map-marked-alt"></i>
-        <span>Your station is visible to all drivers</span>
-      </div>
-      <div class="trial-benefit">
-        <i class="fas fa-calendar-check"></i>
-        <span>FREE 1‑month trial, no payment required</span>
-      </div>
-      <div class="trial-benefit">
-        <i class="fas fa-chart-line"></i>
-        <span>Access to analytics and reports</span>
-      </div>
-      <div style="background: #111; border-radius: 30px; padding: 16px; margin: 20px 0;">
-        <i class="fas fa-hourglass-half"></i>
-        <strong>Trial ends:</strong> <span id="trialExpiryDate"></span>
-      </div>
-      <button class="auth-btn" id="closeTrialPopup" style="margin-top: 8px;">Start Managing →</button>
     </div>
   </div>
+</div>
 
-  <!-- ========== SIDEBAR ========== -->
-  <div class="sidebar-overlay" id="sidebarOverlay">
-    <div class="sidebar-panel">
-      <div class="sidebar-header">⚡ Manager</div>
-      <div class="sidebar-item" data-page="fuelManager"><i class="fas fa-gas-pump"></i> Fuel Types</div>
-      <div class="sidebar-item" data-page="amenitiesManager"><i class="fas fa-concierge-bell"></i> Amenities</div>
-      <div class="sidebar-item" data-page="stationDetails"><i class="fas fa-store"></i> Station Details</div>
-      <div class="sidebar-item" data-page="priceManager"><i class="fas fa-dollar-sign"></i> Fuel Prices</div>
-      <div class="sidebar-item" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</div>
-      <div class="sidebar-item" data-page="reports"><i class="fas fa-flag"></i> User Reports</div>
-      <div class="sidebar-item" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
-      <div class="sidebar-item" data-page="subscription"><i class="fas fa-credit-card"></i> Subscription</div>
-      <div class="sidebar-item" id="darkModeToggle"><i class="fas fa-moon"></i> Dark Mode</div>
-      <div class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</div>
+<!-- Amenities Manager -->
+<div id="amenitiesManagerPage" class="page-overlay">
+  <div class="page-header">
+    <h2>🧼 Amenities</h2>
+    <button class="close-page" data-close="amenitiesManagerPage">&times;</button>
+  </div>
+  <div class="page-content">
+    <div class="card-premium">
+      <h3>Manage Amenities</h3>
+      <div id="amenitiesManagerList"></div>
+      <div style="margin-top:20px;">
+        <input type="text" id="newAmenityInput" class="input-pill" placeholder="e.g., Free WiFi">
+        <button id="addAmenityBtn" class="auth-btn">Add Amenity</button>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ========== PAGE OVERLAYS ========== -->
-  <!-- Fuel Manager -->
-  <div id="fuelManagerPage" class="page-overlay">
-    <div class="page-header">
-      <h2>⛽ Fuel Types</h2>
-      <button class="close-page" data-close="fuelManagerPage">&times;</button>
-    </div>
-    <div class="page-content">
-      <div class="card-premium">
-        <h3>Available Fuel Types</h3>
-        <div id="fuelManagerList"></div>
-        <div style="margin-top:20px;">
-          <label>Add new fuel type:</label>
-          <select id="newFuelSelect" class="input-pill" style="margin-bottom:10px;">
-            <option value="">-- Select --</option>
-            <option value="cng">CNG</option>
-            <option value="electric">Electric</option>
-            <option value="ethanol">Ethanol</option>
-            <option value="biodiesel">Biodiesel</option>
-          </select>
-          <button id="addFuelTypeBtn" class="auth-btn" style="margin-top:0;">Add Fuel Type</button>
+<!-- Station Details -->
+<div id="stationDetailsPage" class="page-overlay">
+  <div class="page-header">
+    <h2>📋 Station Profile</h2>
+    <button class="close-page" data-close="stationDetailsPage">&times;</button>
+  </div>
+  <div class="page-content" id="stationDetailsContent"></div>
+</div>
+
+<!-- Price Manager -->
+<div id="priceManagerPage" class="page-overlay">
+  <div class="page-header">
+    <h2>💰 Fuel Prices</h2>
+    <button class="close-page" data-close="priceManagerPage">&times;</button>
+  </div>
+  <div class="page-content" id="priceManagerContent"></div>
+</div>
+
+<!-- Analytics -->
+<div id="analyticsPage" class="page-overlay">
+  <div class="page-header">
+    <h2>📊 Analytics</h2>
+    <button class="close-page" data-close="analyticsPage">&times;</button>
+  </div>
+  <div class="page-content">
+    <canvas id="visitsChart" width="300" height="200"></canvas>
+    <p class="small-note">Demo: last 7 days visits</p>
+    <canvas id="fuelPopularityChart" width="300" height="200" style="margin-top:24px;"></canvas>
+  </div>
+</div>
+
+<!-- User Reports -->
+<div id="reportsPage" class="page-overlay">
+  <div class="page-header">
+    <h2>📋 User Reports</h2>
+    <button class="close-page" data-close="reportsPage">&times;</button>
+  </div>
+  <div class="page-content" id="reportsContent"></div>
+</div>
+
+<!-- Settings -->
+<div id="settingsPage" class="page-overlay">
+  <div class="page-header">
+    <h2>⚙️ Settings</h2>
+    <button class="close-page" data-close="settingsPage">&times;</button>
+  </div>
+  <div class="page-content">
+    <div class="card-premium">
+      <h3>Manager Profile</h3>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <img id="settingsProfilePic" style="width:60px;height:60px;border-radius:30px;object-fit:cover;">
+        <div style="flex:1;">
+          <input id="editManagerName" class="input-pill" placeholder="Full Name" style="margin:0 0 8px;">
+          <input id="editManagerPhone" class="input-pill" placeholder="Phone" style="margin:0;">
         </div>
       </div>
+      <button id="updateProfileBtn" class="auth-btn" style="margin-top:16px;">Update Profile</button>
+      <button id="changeProfilePicBtn" class="auth-btn" style="background:#3b82f6; margin-top:8px;">Change Picture</button>
     </div>
+    <button class="auth-btn" id="logoutSettingsBtn">Logout</button>
+    <button class="auth-btn" style="background:#6b7280; margin-top:16px;" id="toggleNotifBtn">🔔 Notifications ON</button>
+    <p style="margin-top:24px;">🌐 Language: English</p>
   </div>
+</div>
 
-  <!-- Amenities Manager -->
-  <div id="amenitiesManagerPage" class="page-overlay">
-    <div class="page-header">
-      <h2>🧼 Amenities</h2>
-      <button class="close-page" data-close="amenitiesManagerPage">&times;</button>
-    </div>
-    <div class="page-content">
-      <div class="card-premium">
-        <h3>Manage Amenities</h3>
-        <div id="amenitiesManagerList"></div>
-        <div style="margin-top:20px;">
-          <input type="text" id="newAmenityInput" class="input-pill" placeholder="e.g., Free WiFi">
-          <button id="addAmenityBtn" class="auth-btn">Add Amenity</button>
-        </div>
-      </div>
-    </div>
+<!-- Subscription -->
+<div id="subscriptionPage" class="page-overlay">
+  <div class="page-header">
+    <h2>💳 Subscription Plans</h2>
+    <button class="close-page" data-close="subscriptionPage">&times;</button>
   </div>
+  <div class="page-content" id="subscriptionContent"></div>
+</div>
 
-  <!-- Station Details (reorganized) -->
-  <div id="stationDetailsPage" class="page-overlay">
-    <div class="page-header">
-      <h2>📋 Station Profile</h2>
-      <button class="close-page" data-close="stationDetailsPage">&times;</button>
+<!-- Payment Modal -->
+<div class="payment-modal" id="cardPaymentModal">
+  <div class="payment-card">
+    <h3 style="margin-bottom:20px; color:#16a34a;"><i class="fab fa-cc-visa"></i> Enter Card Details</h3>
+    <input type="text" id="cardNumber" class="card-input" placeholder="Card Number" maxlength="19">
+    <div class="card-row">
+      <input type="text" id="cardExpiry" class="card-input" placeholder="MM/YY" maxlength="5">
+      <input type="text" id="cardCvv" class="card-input" placeholder="CVV" maxlength="3">
     </div>
-    <div class="page-content" id="stationDetailsContent"></div>
+    <input type="text" id="cardName" class="card-input" placeholder="Name on Card">
+    <div style="display:flex; justify-content:space-between; margin:16px 0;">
+      <span>Selected plan: <strong id="selectedPlanDisplay"></strong></span>
+      <span><strong id="selectedPriceDisplay"></strong></span>
+    </div>
+    <button class="pay-btn" id="confirmPaymentBtn">Pay Securely</button>
+    <button class="auth-btn" style="background:#9ca3af; margin-top:10px;" id="cancelPaymentBtn">Cancel</button>
   </div>
+</div>
 
-  <!-- Price Manager -->
-  <div id="priceManagerPage" class="page-overlay">
-    <div class="page-header">
-      <h2>💰 Fuel Prices</h2>
-      <button class="close-page" data-close="priceManagerPage">&times;</button>
-    </div>
-    <div class="page-content" id="priceManagerContent"></div>
-  </div>
+<!-- Toast -->
+<div id="toastMessage" class="toast-message"></div>
 
-  <!-- Analytics -->
-  <div id="analyticsPage" class="page-overlay">
-    <div class="page-header">
-      <h2>📊 Analytics</h2>
-      <button class="close-page" data-close="analyticsPage">&times;</button>
-    </div>
-    <div class="page-content">
-      <canvas id="visitsChart" width="300" height="200"></canvas>
-      <p class="small-note">Demo: last 7 days visits</p>
-      <canvas id="fuelPopularityChart" width="300" height="200" style="margin-top:24px;"></canvas>
-    </div>
-  </div>
+<script>
+  (function () {
+    "use strict";
 
-  <!-- User Reports -->
-  <div id="reportsPage" class="page-overlay">
-    <div class="page-header">
-      <h2>📋 User Reports</h2>
-      <button class="close-page" data-close="reportsPage">&times;</button>
-    </div>
-    <div class="page-content" id="reportsContent"></div>
-  </div>
+    // ========== FIREBASE CONFIG ==========
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
+      authDomain: "dmkl-8ea2c.firebaseapp.com",
+      databaseURL: "https://dmkl-8ea2c-default-rtdb.firebaseio.com",
+      projectId: "dmkl-8ea2c",
+      storageBucket: "dmkl-8ea2c.firebasestorage.app",
+      messagingSenderId: "155892504799",
+      appId: "1:155892504799:web:45ed0037fd0fe79b85b16a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const rtdb = firebase.database();
 
-  <!-- Settings -->
-  <div id="settingsPage" class="page-overlay">
-    <div class="page-header">
-      <h2>⚙️ Settings</h2>
-      <button class="close-page" data-close="settingsPage">&times;</button>
-    </div>
-    <div class="page-content">
-      <div class="card-premium">
-        <h3>Manager Profile</h3>
-        <div style="display:flex; align-items:center; gap:16px;">
-          <img id="settingsProfilePic" style="width:60px;height:60px;border-radius:30px;object-fit:cover;">
-          <div style="flex:1;">
-            <input id="editManagerName" class="input-pill" placeholder="Full Name" style="margin:0 0 8px;">
-            <input id="editManagerPhone" class="input-pill" placeholder="Phone" style="margin:0;">
-          </div>
-        </div>
-        <button id="updateProfileBtn" class="auth-btn" style="margin-top:16px;">Update Profile</button>
-        <button id="changeProfilePicBtn" class="auth-btn" style="background:#3b82f6; margin-top:8px;">Change Picture</button>
-      </div>
-      <button class="auth-btn" id="logoutSettingsBtn">Logout</button>
-      <button class="auth-btn" style="background:#6b7280; margin-top:16px;" id="toggleNotifBtn">🔔 Notifications ON</button>
-      <p style="margin-top:24px;">🌐 Language: English</p>
-    </div>
-  </div>
+    const CLOUD_NAME = 'dd3lcymrk';
+    const UPLOAD_PRESET = 'h3eyhc2o';
 
-  <!-- Subscription (improved) -->
-  <div id="subscriptionPage" class="page-overlay">
-    <div class="page-header">
-      <h2>💳 Subscription Plans</h2>
-      <button class="close-page" data-close="subscriptionPage">&times;</button>
-    </div>
-    <div class="page-content" id="subscriptionContent"></div>
-  </div>
+    // ========== ACTUAL FUEL PRICES BY COUNTRY (per liter, local currency) ==========
+    const countryFuelPrices = {
+      US: { petrol: 1.02, diesel: 1.15, currency: 'USD' },
+      GB: { petrol: 1.45, diesel: 1.55, currency: 'GBP' },
+      DE: { petrol: 1.85, diesel: 1.75, currency: 'EUR' },
+      FR: { petrol: 1.90, diesel: 1.80, currency: 'EUR' },
+      IN: { petrol: 106, diesel: 94, currency: 'INR' },
+      ZA: { petrol: 23.50, diesel: 22.80, currency: 'ZAR' },
+      ZM: { petrol: 28.50, diesel: 26.80, currency: 'ZMW' },
+      NG: { petrol: 650, diesel: 700, currency: 'NGN' },
+      KE: { petrol: 210, diesel: 200, currency: 'KES' },
+      AU: { petrol: 1.95, diesel: 2.05, currency: 'AUD' },
+      CA: { petrol: 1.65, diesel: 1.75, currency: 'CAD' }
+    };
 
-  <!-- Payment Modal -->
-  <div class="payment-modal" id="cardPaymentModal">
-    <div class="payment-card">
-      <h3 style="margin-bottom:20px; color:#16a34a;"><i class="fab fa-cc-visa"></i> Enter Card Details</h3>
-      <input type="text" id="cardNumber" class="card-input" placeholder="Card Number" maxlength="19">
-      <div class="card-row">
-        <input type="text" id="cardExpiry" class="card-input" placeholder="MM/YY" maxlength="5">
-        <input type="text" id="cardCvv" class="card-input" placeholder="CVV" maxlength="3">
-      </div>
-      <input type="text" id="cardName" class="card-input" placeholder="Name on Card">
-      <div style="display:flex; justify-content:space-between; margin:16px 0;">
-        <span>Selected plan: <strong id="selectedPlanDisplay"></strong></span>
-        <span><strong id="selectedPriceDisplay"></strong></span>
-      </div>
-      <button class="pay-btn" id="confirmPaymentBtn">Pay Securely</button>
-      <button class="auth-btn" style="background:#9ca3af; margin-top:10px;" id="cancelPaymentBtn">Cancel</button>
-    </div>
-  </div>
+    // ========== GLOBAL STATE ==========
+    let currentUser = null;
+    let stationData = null;
+    let userCountry = { code: 'US', phone: '+1', currency: 'USD', name: 'United States', flag: '🇺🇸' };
+    let registerMap, detailsMap, markerPin;
+    let selectedLatLng = null;
+    let uploadedImages = { photo1: '', photo2: '' };
+    let customAmenities = [];
+    let defaultAmenities = ['Toilet', 'ATM', 'Shop', 'Car Wash'];
+    let notificationsEnabled = true;
+    let visitChart, fuelChart;
 
-  <!-- Toast -->
-  <div id="toastMessage" class="toast-message"></div>
+    // ========== HELPERS ==========
+    function showToast(msg, isGood = true) {
+      const toast = document.getElementById('toastMessage');
+      toast.textContent = msg;
+      toast.style.backgroundColor = isGood ? '#16a34a' : '#e74c5e';
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 4000);
+    }
 
-  <script>
-    (function () {
-      "use strict";
+    function setButtonLoading(btn, loading) {
+      if (loading) { btn.classList.add('loading'); btn.disabled = true; }
+      else { btn.classList.remove('loading'); btn.disabled = false; }
+    }
 
-      // ========== FIREBASE CONFIG ==========
-      const firebaseConfig = {
-        apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
-        authDomain: "dmkl-8ea2c.firebaseapp.com",
-        databaseURL: "https://dmkl-8ea2c-default-rtdb.firebaseio.com",
-        projectId: "dmkl-8ea2c",
-        storageBucket: "dmkl-8ea2c.firebasestorage.app",
-        messagingSenderId: "155892504799",
-        appId: "1:155892504799:web:45ed0037fd0fe79b85b16a"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const rtdb = firebase.database();
+    function getFlagEmoji(code) {
+      return code ? String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt())) : '🇺🇸';
+    }
 
-      const CLOUD_NAME = 'dd3lcymrk';
-      const UPLOAD_PRESET = 'h3eyhc2o';
-
-      // ========== GLOBAL STATE ==========
-      let currentUser = null;
-      let stationData = null;
-      let userCountry = { code: 'US', phone: '+1', currency: 'USD', flag: '🇺🇸', name: 'United States' };
-      let registerMap, dashboardMap, detailsMap, markerPin;
-      let selectedLatLng = null;
-      let uploadedImages = { photo1: '', photo2: '' };
-      let customAmenities = [];
-      let defaultAmenities = ['Toilet', 'ATM', 'Shop', 'Car Wash'];
-      let notificationsEnabled = true;
-      let visitChart, fuelChart;
-      const exchangeRates = { USD: 1, EUR: 0.92, GBP: 0.79, ZMW: 26.5, NGN: 1550, INR: 83, ZAR: 18.5, KES: 145 };
-
-      // ========== HELPERS ==========
-      function showToast(msg, isGood = true) {
-        const toast = document.getElementById('toastMessage');
-        toast.textContent = msg;
-        toast.style.backgroundColor = isGood ? '#16a34a' : '#e74c5e';
-        toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 4000);
+    function getLocalFuelPrice(type) {
+      const country = userCountry.code;
+      if (countryFuelPrices[country]) {
+        return countryFuelPrices[country][type] || (type === 'petrol' ? 1.50 : 1.40);
       }
+      return type === 'petrol' ? 1.50 : 1.40;
+    }
 
-      function setButtonLoading(btn, loading) {
-        if (loading) {
-          btn.classList.add('loading');
-          btn.disabled = true;
-        } else {
-          btn.classList.remove('loading');
-          btn.disabled = false;
-        }
-      }
-
-      function getFlagEmoji(code) {
-        return code ? String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt())) : '🇺🇸';
-      }
-
-      function convertPrice(usdAmount) {
-        const rate = exchangeRates[userCountry.currency] || 1;
-        return (usdAmount * rate).toFixed(2);
-      }
-
-      // ========== COUNTRY DETECTION ==========
-      async function detectCountry() {
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          const data = await res.json();
-          userCountry = {
-            code: data.country_code || 'US',
-            phone: data.country_calling_code || '+1',
-            currency: data.currency || 'USD',
-            name: data.country_name || 'United States',
-            flag: getFlagEmoji(data.country_code)
-          };
-        } catch (e) { }
-        document.getElementById('countryMessage').innerHTML = `${userCountry.flag} ${userCountry.name} · ${userCountry.currency}`;
-        document.getElementById('regPhonePrefix').innerHTML = `${userCountry.flag} ${userCountry.phone}`;
-        if (document.getElementById('countryNameDisplay')) {
-          document.getElementById('countryNameDisplay').innerText = userCountry.name.toUpperCase();
-        }
-      }
-      detectCountry();
-
-      // ========== MAP FUNCTIONS ==========
-      function initRegisterMap() {
-        if (registerMap) return;
-        registerMap = L.map('registerMap').setView([0, 0], 2);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(registerMap);
-        registerMap.on('click', e => setMarker(e.latlng));
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            registerMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
-            setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          }, () => { });
-        }
-        setTimeout(() => registerMap.invalidateSize(), 200);
-      }
-
-      function setMarker(latlng) {
-        if (markerPin) registerMap.removeLayer(markerPin);
-        markerPin = L.marker(latlng).addTo(registerMap);
-        selectedLatLng = latlng;
-      }
-
-      // ========== AMENITIES CHIPS ==========
-      function renderAmenityChips() {
-        const all = [...defaultAmenities, ...customAmenities];
-        const container = document.getElementById('amenityChipsContainer');
-        container.innerHTML = all.map(a =>
-          `<span class="amenity-chip">${a} <i class="fas fa-times" data-rem="${a}" style="cursor:pointer;"></i></span>`
-        ).join('');
-        container.querySelectorAll('[data-rem]').forEach(btn => {
-          btn.onclick = (e) => {
-            const val = e.target.dataset.rem;
-            customAmenities = customAmenities.filter(x => x !== val);
-            defaultAmenities = defaultAmenities.filter(x => x !== val);
-            renderAmenityChips();
-          };
-        });
-      }
-
-      // ========== CLOUDINARY ==========
-      function openUploadWidget(callback) {
-        cloudinary.createUploadWidget({
-          cloudName: CLOUD_NAME,
-          uploadPreset: UPLOAD_PRESET,
-          sources: ['local', 'camera'],
-          cropping: true
-        }, (error, result) => {
-          if (!error && result.event === 'success') callback(result.info.secure_url);
-        }).open();
-      }
-
-      // ========== DASHBOARD RENDERING ==========
-      function loadDashboard() {
-        if (!stationData) return;
-        const photoUrl = stationData.photos?.[0] || 'station_placeholder.png';
-        document.getElementById('mainStationPhoto').src = photoUrl;
-        document.getElementById('stationNameDisplay').innerText = stationData.stationName.toUpperCase();
+    // ========== COUNTRY DETECTION ==========
+    async function detectCountry() {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        userCountry = {
+          code: data.country_code || 'US',
+          phone: data.country_calling_code || '+1',
+          currency: data.currency || 'USD',
+          name: data.country_name || 'United States',
+          flag: getFlagEmoji(data.country_code)
+        };
+      } catch (e) { }
+      document.getElementById('countryMessage').innerHTML = `${userCountry.flag} ${userCountry.name} · ${userCountry.currency}`;
+      document.getElementById('regPhonePrefix').innerHTML = `${userCountry.flag} ${userCountry.phone}`;
+      if (document.getElementById('countryNameDisplay')) {
         document.getElementById('countryNameDisplay').innerText = userCountry.name.toUpperCase();
-
-        renderToggles();
       }
+    }
+    detectCountry();
 
-      function renderToggles() {
-        const fuel = stationData.fuelTypes || { diesel: true, petrol: true, lpg: false, unleaded95: false };
-        const fuelItems = [
-          { key: 'diesel', label: 'DIESEL', icon: 'fa-oil-can' },
-          { key: 'petrol', label: 'PETROL', icon: 'fa-gas-pump' },
-          { key: 'lpg', label: 'LPG', icon: 'fa-fire' },
-          { key: 'electric', label: 'ELECTRIC', icon: 'fa-bolt' }
-        ];
-        const fuelGrid = document.getElementById('fuelToggleGrid');
-        fuelGrid.innerHTML = fuelItems.map(item => `
-          <div class="toggle-card ${fuel[item.key] ? 'active' : ''}">
-            <i class="fas ${item.icon}"></i>
-            <div class="label">${item.label}</div>
-            <label class="switch">
-              <input type="checkbox" ${fuel[item.key] ? 'checked' : ''} data-fuel="${item.key}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
-
-        const amenities = stationData.amenities || [];
-        const amenGrid = document.getElementById('amenitiesToggleGrid');
-        amenGrid.innerHTML = amenities.slice(0, 4).map(a => `
-          <div class="toggle-card active">
-            <i class="fas fa-check-circle"></i>
-            <div class="label">${a.toUpperCase()}</div>
-            <label class="switch">
-              <input type="checkbox" checked data-amenity="${a}">
-              <span class="slider"></span>
-            </label>
-          </div>
-        `).join('');
-
-        document.querySelectorAll('[data-fuel]').forEach(cb => {
-          cb.onchange = async () => {
-            const key = cb.dataset.fuel;
-            stationData.fuelTypes[key] = cb.checked;
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-            renderToggles();
-          };
-        });
-
-        document.querySelectorAll('[data-amenity]').forEach(cb => {
-          cb.onchange = async () => {
-            const am = cb.dataset.amenity;
-            if (!cb.checked) {
-              stationData.amenities = stationData.amenities.filter(a => a !== am);
-            } else if (!stationData.amenities.includes(am)) {
-              stationData.amenities.push(am);
-            }
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
-            renderToggles();
-          };
-        });
+    // ========== MAP FUNCTIONS ==========
+    function initRegisterMap() {
+      if (registerMap) return;
+      registerMap = L.map('registerMap').setView([0, 0], 2);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(registerMap);
+      registerMap.on('click', e => setMarker(e.latlng));
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          registerMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
+          setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        }, () => { });
       }
+      setTimeout(() => registerMap.invalidateSize(), 200);
+    }
 
-      // ========== DETAILS OVERLAY ==========
-      document.getElementById('showDetailsBtn').addEventListener('click', () => {
-        const overlay = document.getElementById('detailsOverlay');
-        overlay.classList.add('show');
+    function setMarker(latlng) {
+      if (markerPin) registerMap.removeLayer(markerPin);
+      markerPin = L.marker(latlng).addTo(registerMap);
+      selectedLatLng = latlng;
+    }
 
-        if (!detailsMap) {
-          detailsMap = L.map('detailsMap').setView([stationData.location.lat, stationData.location.lng], 15);
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(detailsMap);
-          L.marker([stationData.location.lat, stationData.location.lng]).addTo(detailsMap);
-        } else {
-          detailsMap.invalidateSize();
-        }
+    // ========== AMENITIES CHIPS ==========
+    function renderAmenityChips() {
+      const all = [...defaultAmenities, ...customAmenities];
+      const container = document.getElementById('amenityChipsContainer');
+      container.innerHTML = all.map(a =>
+        `<span class="amenity-chip">${a} <i class="fas fa-times" data-rem="${a}" style="cursor:pointer;"></i></span>`
+      ).join('');
+      container.querySelectorAll('[data-rem]').forEach(btn => {
+        btn.onclick = (e) => {
+          const val = e.target.dataset.rem;
+          customAmenities = customAmenities.filter(x => x !== val);
+          defaultAmenities = defaultAmenities.filter(x => x !== val);
+          renderAmenityChips();
+        };
+      });
+    }
 
-        const prices = stationData.prices || { petrol: 1.50, diesel: 1.40 };
-        const localPetrol = convertPrice(prices.petrol);
-        const localDiesel = convertPrice(prices.diesel);
-        document.getElementById('detailPetrolPrice').innerText = `${userCountry.currency} ${localPetrol}`;
-        document.getElementById('detailDieselPrice').innerText = `${userCountry.currency} ${localDiesel}`;
+    // ========== CLOUDINARY ==========
+    function openUploadWidget(callback) {
+      cloudinary.createUploadWidget({
+        cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET,
+        sources: ['local', 'camera'], cropping: true
+      }, (error, result) => {
+        if (!error && result.event === 'success') callback(result.info.secure_url);
+      }).open();
+    }
 
-        const infoHtml = `
-          <div class="info-row"><span class="info-label">Station</span><span class="info-value">${stationData.stationName}</span></div>
-          <div class="info-row"><span class="info-label">Manager</span><span class="info-value">${stationData.managerName}</span></div>
-          <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${stationData.managerPhone}</span></div>
-          <div class="info-row"><span class="info-label">Email</span><span class="info-value">${stationData.email}</span></div>
-          <div class="info-row"><span class="info-label">Location</span><span class="info-value">${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}</span></div>
-        `;
-        document.getElementById('detailsInfoSection').innerHTML = infoHtml;
+    // ========== DASHBOARD RENDERING ==========
+    function loadDashboard() {
+      if (!stationData) return;
+      const photoUrl = stationData.photos?.[0] || 'station_placeholder.png';
+      document.getElementById('mainStationPhoto').src = photoUrl;
+      document.getElementById('stationNameDisplay').innerText = stationData.stationName.toUpperCase();
+      document.getElementById('countryNameDisplay').innerText = userCountry.name.toUpperCase();
+      renderToggles();
+    }
+
+    function renderToggles() {
+      const fuel = stationData.fuelTypes || { diesel: true, petrol: true, lpg: false, unleaded95: false };
+      const fuelItems = [
+        { key: 'diesel', label: 'DIESEL', icon: 'fa-oil-can' },
+        { key: 'petrol', label: 'PETROL', icon: 'fa-gas-pump' },
+        { key: 'lpg', label: 'LPG', icon: 'fa-fire' },
+        { key: 'unleaded95', label: 'UNLEADED 95', icon: 'fa-flask' }
+      ];
+      const fuelGrid = document.getElementById('fuelToggleGrid');
+      fuelGrid.innerHTML = fuelItems.map(item => `
+        <div class="toggle-card ${fuel[item.key] ? 'active' : ''}">
+          <i class="fas ${item.icon}"></i>
+          <div class="label">${item.label}</div>
+          <label class="switch">
+            <input type="checkbox" ${fuel[item.key] ? 'checked' : ''} data-fuel="${item.key}">
+            <span class="slider"></span>
+          </label>
+        </div>
+      `).join('');
+
+      const amenities = stationData.amenities || [];
+      const amenGrid = document.getElementById('amenitiesToggleGrid');
+      amenGrid.innerHTML = amenities.slice(0, 4).map(a => `
+        <div class="toggle-card active">
+          <i class="fas fa-check-circle"></i>
+          <div class="label">${a.toUpperCase()}</div>
+          <label class="switch">
+            <input type="checkbox" checked data-amenity="${a}">
+            <span class="slider"></span>
+          </label>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('[data-fuel]').forEach(cb => {
+        cb.onchange = async () => {
+          const key = cb.dataset.fuel;
+          stationData.fuelTypes[key] = cb.checked;
+          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          renderToggles();
+        };
       });
 
-      document.getElementById('closeDetailsBtn').addEventListener('click', () => {
-        document.getElementById('detailsOverlay').classList.remove('show');
+      document.querySelectorAll('[data-amenity]').forEach(cb => {
+        cb.onchange = async () => {
+          const am = cb.dataset.amenity;
+          if (!cb.checked) {
+            stationData.amenities = stationData.amenities.filter(a => a !== am);
+          } else if (!stationData.amenities.includes(am)) {
+            stationData.amenities.push(am);
+          }
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderToggles();
+        };
       });
+    }
 
-      // ========== PAGE MANAGEMENT ==========
-      function openPage(pageId) {
-        document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
-        const pageEl = document.getElementById(pageId + 'Page');
-        if (pageEl) pageEl.classList.add('show');
+    // ========== DETAILS OVERLAY ==========
+    document.getElementById('showDetailsBtn').addEventListener('click', () => {
+      const overlay = document.getElementById('detailsOverlay');
+      overlay.classList.add('show');
 
-        if (pageId === 'fuelManager') renderFuelManager();
-        else if (pageId === 'amenitiesManager') renderAmenitiesManager();
-        else if (pageId === 'stationDetails') renderStationDetails();
-        else if (pageId === 'priceManager') renderPriceManager();
-        else if (pageId === 'analytics') renderAnalytics();
-        else if (pageId === 'reports') renderReports();
-        else if (pageId === 'subscription') renderSubscription();
-        else if (pageId === 'settings') loadSettingsProfile();
+      if (!detailsMap) {
+        detailsMap = L.map('detailsMap').setView([stationData.location.lat, stationData.location.lng], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(detailsMap);
+        L.marker([stationData.location.lat, stationData.location.lng]).addTo(detailsMap);
+      } else {
+        detailsMap.invalidateSize();
       }
 
-      function renderFuelManager() {
-        const fuel = stationData.fuelTypes || {};
-        const cont = document.getElementById('fuelManagerList');
-        cont.innerHTML = Object.entries(fuel).map(([key, enabled]) => `
-          <div class="toggle-item">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span>${key}</span>
-              <button class="remove-btn" data-remove-fuel="${key}" ${key === 'diesel' || key === 'petrol' ? 'disabled style="opacity:0.5;"' : ''}>Remove</button>
-            </div>
+      const prices = stationData.prices || { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') };
+      document.getElementById('detailPetrolPrice').innerText = `${userCountry.currency} ${prices.petrol.toFixed(2)}`;
+      document.getElementById('detailDieselPrice').innerText = `${userCountry.currency} ${prices.diesel.toFixed(2)}`;
+
+      const infoHtml = `
+        <div class="info-row"><span class="info-label">Station</span><span class="info-value">${stationData.stationName}</span></div>
+        <div class="info-row"><span class="info-label">Manager</span><span class="info-value">${stationData.managerName}</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${stationData.managerPhone}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">${stationData.email}</span></div>
+        <div class="info-row"><span class="info-label">Location</span><span class="info-value">${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}</span></div>
+      `;
+      document.getElementById('detailsInfoSection').innerHTML = infoHtml;
+    });
+
+    document.getElementById('closeDetailsBtn').addEventListener('click', () => {
+      document.getElementById('detailsOverlay').classList.remove('show');
+    });
+
+    // ========== PAGE MANAGEMENT ==========
+    function openPage(pageId) {
+      document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
+      const pageEl = document.getElementById(pageId + 'Page');
+      if (pageEl) pageEl.classList.add('show');
+
+      if (pageId === 'fuelManager') renderFuelManager();
+      else if (pageId === 'amenitiesManager') renderAmenitiesManager();
+      else if (pageId === 'stationDetails') renderStationDetails();
+      else if (pageId === 'priceManager') renderPriceManager();
+      else if (pageId === 'analytics') renderAnalytics();
+      else if (pageId === 'reports') renderReports();
+      else if (pageId === 'subscription') renderSubscription();
+      else if (pageId === 'settings') loadSettingsProfile();
+    }
+
+    function renderFuelManager() {
+      const fuel = stationData.fuelTypes || {};
+      const cont = document.getElementById('fuelManagerList');
+      cont.innerHTML = Object.entries(fuel).map(([key, enabled]) => `
+        <div class="manager-item">
+          <div class="manager-item-left">
+            <span>${key}</span>
             <label class="switch">
               <input type="checkbox" ${enabled ? 'checked' : ''} data-fm="${key}">
               <span class="slider"></span>
             </label>
           </div>
-        `).join('');
-        cont.querySelectorAll('input').forEach(cb => {
-          cb.onchange = async () => {
-            stationData.fuelTypes[cb.dataset.fm] = cb.checked;
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-            renderToggles();
-          };
-        });
-        cont.querySelectorAll('[data-remove-fuel]').forEach(btn => {
-          btn.onclick = async () => {
-            const key = btn.dataset.removeFuel;
-            if (key === 'diesel' || key === 'petrol') return;
-            delete stationData.fuelTypes[key];
-            await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-            renderFuelManager();
-            renderToggles();
-            showToast(key + ' removed');
-          };
-        });
-      }
+          <button class="remove-btn" data-remove-fuel="${key}" ${key === 'diesel' || key === 'petrol' ? 'disabled style="opacity:0.5;"' : ''}>Remove</button>
+        </div>
+      `).join('');
+      cont.querySelectorAll('input').forEach(cb => {
+        cb.onchange = async () => {
+          stationData.fuelTypes[cb.dataset.fm] = cb.checked;
+          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          renderToggles();
+        };
+      });
+      cont.querySelectorAll('[data-remove-fuel]').forEach(btn => {
+        btn.onclick = async () => {
+          const key = btn.dataset.removeFuel;
+          if (key === 'diesel' || key === 'petrol') return;
+          delete stationData.fuelTypes[key];
+          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+          renderFuelManager();
+          renderToggles();
+          showToast(key + ' removed');
+        };
+      });
+    }
 
-      function renderAmenitiesManager() {
-        const cont = document.getElementById('amenitiesManagerList');
-        cont.innerHTML = stationData.amenities.map(a => `
-          <div class="toggle-item">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span>${a}</span>
-              <button class="remove-btn" data-remove-amenity="${a}">Remove</button>
-            </div>
+    function renderAmenitiesManager() {
+      const cont = document.getElementById('amenitiesManagerList');
+      cont.innerHTML = stationData.amenities.map(a => `
+        <div class="manager-item">
+          <div class="manager-item-left">
+            <span>${a}</span>
             <label class="switch">
               <input type="checkbox" checked data-am="${a}">
               <span class="slider"></span>
             </label>
           </div>
-        `).join('');
-        cont.querySelectorAll('input').forEach(cb => {
-          cb.onchange = async () => {
-            const am = cb.dataset.am;
-            if (!cb.checked) {
-              stationData.amenities = stationData.amenities.filter(a => a !== am);
-            } else if (!stationData.amenities.includes(am)) {
-              stationData.amenities.push(am);
-            }
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
-            renderToggles();
-          };
-        });
-        cont.querySelectorAll('[data-remove-amenity]').forEach(btn => {
-          btn.onclick = async () => {
-            const am = btn.dataset.removeAmenity;
+          <button class="remove-btn" data-remove-amenity="${a}">Remove</button>
+        </div>
+      `).join('');
+      cont.querySelectorAll('input').forEach(cb => {
+        cb.onchange = async () => {
+          const am = cb.dataset.am;
+          if (!cb.checked) {
             stationData.amenities = stationData.amenities.filter(a => a !== am);
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
-            renderAmenitiesManager();
-            renderToggles();
-            showToast(am + ' removed');
-          };
-        });
-      }
-
-      function renderStationDetails() {
-        const cont = document.getElementById('stationDetailsContent');
-        const photos = stationData.photos || [];
-        const fuel = stationData.fuelTypes || {};
-        const amenities = stationData.amenities || [];
-
-        cont.innerHTML = `
-          <div class="section-card">
-            <div class="section-title"><i class="fas fa-user-circle"></i> Manager</div>
-            <p><strong>${stationData.managerName}</strong><br>📞 ${stationData.managerPhone}<br>📧 ${stationData.email}</p>
-            <button id="editManagerBtn" class="auth-btn" style="margin-top: 12px; padding: 12px;">Edit Manager Info</button>
-          </div>
-
-          <div class="section-card">
-            <div class="section-title"><i class="fas fa-gas-pump"></i> Fuel Types</div>
-            <div>${Object.entries(fuel).filter(e => e[1]).map(e => `<span class="amenity-chip">${e[0]}</span>`).join('')}</div>
-          </div>
-
-          <div class="section-card">
-            <div class="section-title"><i class="fas fa-concierge-bell"></i> Amenities</div>
-            <div>${amenities.map(a => `<span class="amenity-chip">${a}</span>`).join('')}</div>
-          </div>
-
-          <div class="section-card">
-            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Location</div>
-            <p>Lat: ${stationData.location.lat.toFixed(6)}<br>Lng: ${stationData.location.lng.toFixed(6)}</p>
-            <button id="updateLocationBtn" class="auth-btn" style="margin-top: 12px; padding: 12px; background: #3b82f6;">Update Location</button>
-          </div>
-
-          <div class="section-card">
-            <div class="section-title"><i class="fas fa-images"></i> Station Pictures</div>
-            <div class="photo-grid">
-              ${photos[0] ? `<img src="${photos[0]}" class="photo-thumb">` : '<div class="photo-thumb" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center;">No photo</div>'}
-              ${photos[1] ? `<img src="${photos[1]}" class="photo-thumb">` : '<div class="photo-thumb" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center;">No photo</div>'}
-            </div>
-            <button id="updatePhotosBtn" class="auth-btn" style="margin-top: 16px; background: #8b5cf6;">Update Pictures</button>
-          </div>
-        `;
-
-        document.getElementById('editManagerBtn').onclick = () => {
-          const newName = prompt('Manager name:', stationData.managerName);
-          const newPhone = prompt('Manager phone:', stationData.managerPhone);
-          if (newName || newPhone) {
-            if (newName) stationData.managerName = newName;
-            if (newPhone) stationData.managerPhone = newPhone;
-            rtdb.ref(`stationOwners/${currentUser.uid}`).update({ managerName: stationData.managerName, managerPhone: stationData.managerPhone });
-            renderStationDetails();
-            showToast('Manager info updated');
+          } else if (!stationData.amenities.includes(am)) {
+            stationData.amenities.push(am);
           }
-        };
-
-        document.getElementById('updateLocationBtn').onclick = () => showToast('Location update: open map picker (demo)');
-
-        document.getElementById('updatePhotosBtn').onclick = () => {
-          openUploadWidget(async url => {
-            const newPhotos = [url, stationData.photos?.[1] || ''];
-            await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set(newPhotos);
-            stationData.photos = newPhotos;
-            renderStationDetails();
-            document.getElementById('mainStationPhoto').src = url;
-            showToast('Picture updated');
-          });
-        };
-      }
-
-      function renderPriceManager() {
-        const prices = stationData.prices || { petrol: 1.50, diesel: 1.40 };
-        const localPetrol = convertPrice(prices.petrol);
-        const localDiesel = convertPrice(prices.diesel);
-        const cont = document.getElementById('priceManagerContent');
-        cont.innerHTML = `
-          <div class="card-premium">
-            <label>Petrol price (${userCountry.currency})</label>
-            <input id="petrolPriceInput" class="input-pill" type="number" step="0.01" value="${localPetrol}">
-            <label>Diesel price (${userCountry.currency})</label>
-            <input id="dieselPriceInput" class="input-pill" type="number" step="0.01" value="${localDiesel}">
-            <p class="small-note">Base USD: petrol $${prices.petrol.toFixed(2)}, diesel $${prices.diesel.toFixed(2)}</p>
-            <button id="savePricesBtn" class="auth-btn">Save Prices</button>
-          </div>
-        `;
-        document.getElementById('savePricesBtn').onclick = async () => {
-          const newPetrolLocal = parseFloat(document.getElementById('petrolPriceInput').value);
-          const newDieselLocal = parseFloat(document.getElementById('dieselPriceInput').value);
-          const rate = exchangeRates[userCountry.currency] || 1;
-          stationData.prices = { petrol: newPetrolLocal / rate, diesel: newDieselLocal / rate };
-          await rtdb.ref(`stationOwners/${currentUser.uid}/prices`).set(stationData.prices);
-          showToast('Prices updated');
-        };
-      }
-
-      function renderAnalytics() {
-        const ctx1 = document.getElementById('visitsChart').getContext('2d');
-        if (visitChart) visitChart.destroy();
-        visitChart = new Chart(ctx1, {
-          type: 'line',
-          data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-              label: 'Visits',
-              data: [12, 19, 15, 22, 28, 35, 42],
-              borderColor: '#16a34a',
-              backgroundColor: 'rgba(22,163,74,0.1)',
-              tension: 0.3,
-              fill: true
-            }]
-          }
-        });
-        const ctx2 = document.getElementById('fuelPopularityChart').getContext('2d');
-        if (fuelChart) fuelChart.destroy();
-        fuelChart = new Chart(ctx2, {
-          type: 'doughnut',
-          data: {
-            labels: ['Petrol', 'Diesel', 'LPG'],
-            datasets: [{
-              data: [65, 30, 5],
-              backgroundColor: ['#16a34a', '#3b82f6', '#f59e0b']
-            }]
-          }
-        });
-      }
-
-      async function renderReports() {
-        const cont = document.getElementById('reportsContent');
-        const snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
-        const reports = [];
-        snap.forEach(r => reports.push(r.val()));
-        if (!reports.length) {
-          cont.innerHTML = '<p>No reports yet.</p>';
-        } else {
-          cont.innerHTML = reports.map(r => `
-            <div class="card-premium">
-              <strong>${r.type}</strong><br>
-              ${r.comment || ''}<br>
-              <small>${new Date(r.timestamp).toLocaleString()}</small>
-            </div>
-          `).join('');
-        }
-      }
-
-      function renderSubscription() {
-        const cur = userCountry.currency;
-        const rate = exchangeRates[cur] || 1;
-        const m1 = Math.round(15 * rate);
-        const m5 = Math.round(90 * rate);
-        const m12 = Math.round(180 * rate);
-        const exp = stationData.subscription?.expires ? new Date(stationData.subscription.expires).toLocaleDateString() : 'N/A';
-        const plan = stationData.subscription?.plan || 'trial';
-
-        document.getElementById('subscriptionContent').innerHTML = `
-          <div class="card-premium" style="padding: 24px;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-              <i class="fas fa-crown" style="font-size: 32px; color: #fbbf24;"></i>
-              <div><h3>${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan</h3><p>Expires: ${exp}</p></div>
-            </div>
-            <div class="trial-benefit"><i class="fas fa-map-pin"></i> Station visible on map</div>
-            <div class="trial-benefit"><i class="fas fa-clock"></i> Real‑time price updates</div>
-            <div class="trial-benefit"><i class="fas fa-headset"></i> Priority support</div>
-          </div>
-          <div style="margin: 24px 0 16px;"><i class="fas fa-credit-card"></i> Choose a plan:</div>
-          <div class="toggle-item sub-option" data-plan="1month" data-price="${m1}" style="padding: 18px;">
-            <span><i class="fas fa-calendar-alt"></i> 1 Month</span> <strong>${cur} ${m1}</strong>
-          </div>
-          <div class="toggle-item sub-option" data-plan="5months" data-price="${m5}" style="padding: 18px;">
-            <span><i class="fas fa-calendar-alt"></i> 5 Months</span> <strong>${cur} ${m5}</strong>
-          </div>
-          <div class="toggle-item sub-option" data-plan="12months" data-price="${m12}" style="padding: 18px;">
-            <span><i class="fas fa-calendar-alt"></i> 12 Months</span> <strong>${cur} ${m12}</strong>
-          </div>
-          <p class="small-note" style="margin-top: 20px;"><i class="fas fa-lock"></i> Secure payment · Cancel anytime</p>
-        `;
-
-        document.querySelectorAll('.sub-option').forEach(opt => {
-          opt.onclick = () => {
-            const plan = opt.dataset.plan;
-            const price = opt.dataset.price;
-            document.getElementById('selectedPlanDisplay').innerText = plan;
-            document.getElementById('selectedPriceDisplay').innerText = `${cur} ${price}`;
-            document.getElementById('cardPaymentModal').classList.add('show');
-          };
-        });
-      }
-
-      function loadSettingsProfile() {
-        document.getElementById('settingsProfilePic').src = stationData.photos?.[0] || 'station_placeholder.png';
-        document.getElementById('editManagerName').value = stationData.managerName || '';
-        document.getElementById('editManagerPhone').value = stationData.managerPhone || '';
-      }
-
-      // ========== AUTH STATE ==========
-      auth.onAuthStateChanged(async user => {
-        if (user) {
-          currentUser = user;
-          const snap = await rtdb.ref(`stationOwners/${user.uid}`).once('value');
-          stationData = snap.val();
-          if (!stationData) { auth.signOut(); return; }
-          if (!stationData.prices) stationData.prices = { petrol: 1.50, diesel: 1.40 };
-          if (!stationData.fuelTypes) stationData.fuelTypes = { diesel: true, petrol: true, lpg: false, unleaded95: false };
-
-          document.getElementById('authView').style.display = 'none';
-          document.getElementById('dashboardView').style.display = 'block';
-          loadDashboard();
-
-          if (stationData.subscription?.plan === 'trial' && !localStorage.getItem('trialShown_' + user.uid)) {
-            document.getElementById('popupManagerName').innerText = stationData.managerName;
-            document.getElementById('trialExpiryDate').innerText = new Date(stationData.subscription.expires).toLocaleDateString();
-            document.getElementById('trialPopup').classList.add('show');
-            localStorage.setItem('trialShown_' + user.uid, '1');
-          }
-        } else {
-          document.getElementById('authView').style.display = 'block';
-          document.getElementById('dashboardView').style.display = 'none';
-        }
-      });
-
-      // ========== EVENT LISTENERS ==========
-      document.addEventListener('DOMContentLoaded', () => {
-        initRegisterMap();
-        renderAmenityChips();
-
-        // Tabs
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-          tab.onclick = () => {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            const isLogin = tab.dataset.tab === 'login';
-            document.getElementById('loginForm').classList.toggle('hide', !isLogin);
-            document.getElementById('registerForm').classList.toggle('hide', isLogin);
-          };
-        });
-
-        // Photo uploads
-        document.getElementById('photoUpload1').onclick = () => openUploadWidget(url => {
-          uploadedImages.photo1 = url;
-          document.getElementById('photoUpload1').style.backgroundImage = `url(${url})`;
-          document.getElementById('photoUpload1').innerHTML = '';
-        });
-        document.getElementById('photoUpload2').onclick = () => openUploadWidget(url => {
-          uploadedImages.photo2 = url;
-          document.getElementById('photoUpload2').style.backgroundImage = `url(${url})`;
-          document.getElementById('photoUpload2').innerHTML = '';
-        });
-
-        // Custom amenity
-        document.getElementById('addCustomAmenityBtn').onclick = () => document.getElementById('customAmenityRow').style.display = 'flex';
-        document.getElementById('saveCustomAmenityBtn').onclick = () => {
-          const val = document.getElementById('customAmenityInput').value.trim();
-          if (val) { customAmenities.push(val); renderAmenityChips(); }
-          document.getElementById('customAmenityInput').value = '';
-          document.getElementById('customAmenityRow').style.display = 'none';
-        };
-
-        // Location
-        document.getElementById('locateMeBtn').onclick = () => {
-          navigator.geolocation.getCurrentPosition(pos => {
-            registerMap.setView([pos.coords.latitude, pos.coords.longitude], 17);
-            setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          }, err => showToast('Location error', false));
-        };
-        document.getElementById('locationSearchInput').addEventListener('change', async function () {
-          const q = this.value;
-          if (!q) return;
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
-          const data = await res.json();
-          if (data[0]) {
-            const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
-            registerMap.setView([lat, lon], 17);
-            setMarker({ lat, lng: lon });
-          }
-        });
-
-        // Register
-        document.getElementById('registerBtn').onclick = async function () {
-          const btn = this;
-          const stationName = document.getElementById('regStationName').value.trim();
-          const managerName = document.getElementById('regManagerName').value.trim();
-          const email = document.getElementById('regManagerEmail').value.trim();
-          const phone = document.getElementById('regManagerPhone').value.trim();
-          const password = document.getElementById('regPassword').value;
-          if (!stationName || !managerName || !email || !password || !selectedLatLng) {
-            showToast('Fill all fields and set location', false);
-            return;
-          }
-          setButtonLoading(btn, true);
-          try {
-            const cred = await auth.createUserWithEmailAndPassword(email, password);
-            const uid = cred.user.uid;
-            const amenities = [...defaultAmenities, ...customAmenities];
-            const payload = {
-              stationName, managerName, email, managerPhone: userCountry.phone + phone,
-              location: { lat: selectedLatLng.lat, lng: selectedLatLng.lng },
-              photos: [uploadedImages.photo1, uploadedImages.photo2].filter(u => u),
-              amenities,
-              fuelTypes: { diesel: true, petrol: true, lpg: false, unleaded95: false },
-              prices: { petrol: 1.50, diesel: 1.40 },
-              country: userCountry.code, currency: userCountry.currency,
-              subscription: { plan: 'trial', expires: Date.now() + 30 * 24 * 3600 * 1000 },
-              createdAt: Date.now()
-            };
-            await rtdb.ref(`stationOwners/${uid}`).set(payload);
-            showToast('Station registered! Please login.');
-            auth.signOut();
-          } catch (e) { showToast(e.message, false); }
-          setButtonLoading(btn, false);
-        };
-
-        // Login
-        document.getElementById('loginBtn').onclick = () => {
-          const email = document.getElementById('loginEmail').value;
-          const pass = document.getElementById('loginPassword').value;
-          auth.signInWithEmailAndPassword(email, pass).catch(e => showToast(e.message, false));
-        };
-
-        // Sidebar
-        const sidebar = document.getElementById('sidebarOverlay');
-        document.getElementById('dashboardMenuBtn').onclick = () => sidebar.classList.add('open');
-        sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-        document.querySelectorAll('[data-page]').forEach(el => {
-          el.onclick = () => { openPage(el.dataset.page); sidebar.classList.remove('open'); };
-        });
-        document.querySelectorAll('.close-page').forEach(btn => {
-          btn.onclick = () => btn.closest('.page-overlay').classList.remove('show');
-        });
-
-        // Add fuel type
-        document.getElementById('addFuelTypeBtn').onclick = async () => {
-          const select = document.getElementById('newFuelSelect');
-          const newFuel = select.value;
-          if (!newFuel) { showToast('Select a fuel type', false); return; }
-          if (stationData.fuelTypes[newFuel]) { showToast('Fuel type already exists', false); return; }
-          stationData.fuelTypes[newFuel] = true;
-          await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
-          renderFuelManager();
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
           renderToggles();
-          showToast(`${newFuel} added`);
         };
-
-        // Add amenity
-        document.getElementById('addAmenityBtn').onclick = async () => {
-          const input = document.getElementById('newAmenityInput');
-          const val = input.value.trim();
-          if (!val) return;
-          if (!stationData.amenities.includes(val)) {
-            stationData.amenities.push(val);
-            await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
-            renderAmenitiesManager();
-            renderToggles();
-          }
-          input.value = '';
-        };
-
-        // Trial popup close
-        document.getElementById('closeTrialPopup').onclick = () => document.getElementById('trialPopup').classList.remove('show');
-
-        // Dark mode
-        document.getElementById('darkModeToggle').onclick = () => {
-          document.body.classList.toggle('dark');
-          localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-        };
-        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
-
-        // Logout
-        document.getElementById('logoutBtn').onclick = () => auth.signOut();
-        document.getElementById('logoutSettingsBtn').onclick = () => auth.signOut();
-
-        // Notifications
-        document.getElementById('toggleNotifBtn').onclick = function () {
-          notificationsEnabled = !notificationsEnabled;
-          this.innerHTML = notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF';
-        };
-
-        // Profile update
-        document.getElementById('updateProfileBtn').onclick = async () => {
-          const newName = document.getElementById('editManagerName').value;
-          const newPhone = document.getElementById('editManagerPhone').value;
-          await rtdb.ref(`stationOwners/${currentUser.uid}`).update({ managerName: newName, managerPhone: newPhone });
-          stationData.managerName = newName;
-          stationData.managerPhone = newPhone;
-          showToast('Profile updated');
-        };
-
-        document.getElementById('changeProfilePicBtn').onclick = () => {
-          openUploadWidget(async url => {
-            await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set([url, stationData.photos?.[1] || '']);
-            stationData.photos[0] = url;
-            document.getElementById('settingsProfilePic').src = url;
-            document.getElementById('mainStationPhoto').src = url;
-            showToast('Profile picture updated');
-          });
-        };
-
-        // Payment modal
-        document.getElementById('confirmPaymentBtn').onclick = () => {
-          const cardNum = document.getElementById('cardNumber').value;
-          if (cardNum.length < 15) { showToast('Invalid card number', false); return; }
-          showToast('Payment successful! Subscription activated (demo)');
-          document.getElementById('cardPaymentModal').classList.remove('show');
-          stationData.subscription = { plan: 'paid', expires: Date.now() + 30 * 24 * 3600 * 1000 };
-          rtdb.ref(`stationOwners/${currentUser.uid}/subscription`).set(stationData.subscription);
-          renderSubscription();
-        };
-        document.getElementById('cancelPaymentBtn').onclick = () => document.getElementById('cardPaymentModal').classList.remove('show');
       });
-    })();
-  </script>
+      cont.querySelectorAll('[data-remove-amenity]').forEach(btn => {
+        btn.onclick = async () => {
+          const am = btn.dataset.removeAmenity;
+          stationData.amenities = stationData.amenities.filter(a => a !== am);
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderAmenitiesManager();
+          renderToggles();
+          showToast(am + ' removed');
+        };
+      });
+    }
+
+    function renderStationDetails() {
+      const cont = document.getElementById('stationDetailsContent');
+      const photos = stationData.photos || [];
+      const fuel = stationData.fuelTypes || {};
+      const amenities = stationData.amenities || [];
+
+      cont.innerHTML = `
+        <div class="section-card">
+          <div class="section-title"><i class="fas fa-user-circle"></i> Manager</div>
+          <p><strong>${stationData.managerName}</strong><br>📞 ${stationData.managerPhone}<br>📧 ${stationData.email}</p>
+          <button id="editManagerBtn" class="auth-btn" style="margin-top: 12px; padding: 12px;">Edit Manager Info</button>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title"><i class="fas fa-gas-pump"></i> Fuel Types</div>
+          <div>${Object.entries(fuel).filter(e => e[1]).map(e => `<span class="amenity-chip">${e[0]}</span>`).join('')}</div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title"><i class="fas fa-concierge-bell"></i> Amenities</div>
+          <div>${amenities.map(a => `<span class="amenity-chip">${a}</span>`).join('')}</div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title"><i class="fas fa-map-marker-alt"></i> Location</div>
+          <p>Lat: ${stationData.location.lat.toFixed(6)}<br>Lng: ${stationData.location.lng.toFixed(6)}</p>
+          <button id="updateLocationBtn" class="auth-btn" style="margin-top: 12px; padding: 12px; background: #3b82f6;">Update Location</button>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title"><i class="fas fa-images"></i> Station Pictures</div>
+          <div class="photo-grid">
+            ${photos[0] ? `<img src="${photos[0]}" class="photo-thumb">` : '<div class="photo-thumb" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center;">No photo</div>'}
+            ${photos[1] ? `<img src="${photos[1]}" class="photo-thumb">` : '<div class="photo-thumb" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center;">No photo</div>'}
+          </div>
+          <button id="updatePhotosBtn" class="auth-btn" style="margin-top: 16px; background: #8b5cf6;">Update Pictures</button>
+        </div>
+      `;
+
+      document.getElementById('editManagerBtn').onclick = () => {
+        const newName = prompt('Manager name:', stationData.managerName);
+        const newPhone = prompt('Manager phone:', stationData.managerPhone);
+        if (newName || newPhone) {
+          if (newName) stationData.managerName = newName;
+          if (newPhone) stationData.managerPhone = newPhone;
+          rtdb.ref(`stationOwners/${currentUser.uid}`).update({ managerName: stationData.managerName, managerPhone: stationData.managerPhone });
+          renderStationDetails();
+          showToast('Manager info updated');
+        }
+      };
+
+      document.getElementById('updateLocationBtn').onclick = () => showToast('Location update: open map picker (demo)');
+
+      document.getElementById('updatePhotosBtn').onclick = () => {
+        openUploadWidget(async url => {
+          const newPhotos = [url, stationData.photos?.[1] || ''];
+          await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set(newPhotos);
+          stationData.photos = newPhotos;
+          renderStationDetails();
+          document.getElementById('mainStationPhoto').src = url;
+          showToast('Picture updated');
+        });
+      };
+    }
+
+    function renderPriceManager() {
+      const prices = stationData.prices || { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') };
+      const cont = document.getElementById('priceManagerContent');
+      cont.innerHTML = `
+        <div class="card-premium">
+          <label>Petrol price (${userCountry.currency})</label>
+          <input id="petrolPriceInput" class="input-pill" type="number" step="0.01" value="${prices.petrol.toFixed(2)}">
+          <label>Diesel price (${userCountry.currency})</label>
+          <input id="dieselPriceInput" class="input-pill" type="number" step="0.01" value="${prices.diesel.toFixed(2)}">
+          <button id="savePricesBtn" class="auth-btn">Save Prices</button>
+        </div>
+      `;
+      document.getElementById('savePricesBtn').onclick = async () => {
+        const newPetrol = parseFloat(document.getElementById('petrolPriceInput').value);
+        const newDiesel = parseFloat(document.getElementById('dieselPriceInput').value);
+        stationData.prices = { petrol: newPetrol, diesel: newDiesel };
+        await rtdb.ref(`stationOwners/${currentUser.uid}/prices`).set(stationData.prices);
+        showToast('Prices updated');
+      };
+    }
+
+    function renderAnalytics() {
+      const ctx1 = document.getElementById('visitsChart').getContext('2d');
+      if (visitChart) visitChart.destroy();
+      visitChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Visits',
+            data: [12, 19, 15, 22, 28, 35, 42],
+            borderColor: '#16a34a',
+            backgroundColor: 'rgba(22,163,74,0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        }
+      });
+      const ctx2 = document.getElementById('fuelPopularityChart').getContext('2d');
+      if (fuelChart) fuelChart.destroy();
+      fuelChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Petrol', 'Diesel', 'LPG'],
+          datasets: [{
+            data: [65, 30, 5],
+            backgroundColor: ['#16a34a', '#3b82f6', '#f59e0b']
+          }]
+        }
+      });
+    }
+
+    async function renderReports() {
+      const cont = document.getElementById('reportsContent');
+      const snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
+      const reports = [];
+      snap.forEach(r => reports.push(r.val()));
+      if (!reports.length) {
+        cont.innerHTML = '<p>No reports yet.</p>';
+      } else {
+        cont.innerHTML = reports.map(r => `
+          <div class="card-premium">
+            <strong>${r.type}</strong><br>
+            ${r.comment || ''}<br>
+            <small>${new Date(r.timestamp).toLocaleString()}</small>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderSubscription() {
+      const cur = userCountry.currency;
+      const rates = { USD: 1, EUR: 0.92, GBP: 0.79, ZMW: 26.5, NGN: 1550 };
+      const rate = rates[cur] || 1;
+      const m1 = Math.round(15 * rate);
+      const m5 = Math.round(90 * rate);
+      const m12 = Math.round(180 * rate);
+      const exp = stationData.subscription?.expires ? new Date(stationData.subscription.expires).toLocaleDateString() : 'N/A';
+      const plan = stationData.subscription?.plan || 'trial';
+
+      document.getElementById('subscriptionContent').innerHTML = `
+        <div class="card-premium" style="padding: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <i class="fas fa-crown" style="font-size: 32px; color: #fbbf24;"></i>
+            <div><h3>${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan</h3><p>Expires: ${exp}</p></div>
+          </div>
+          <div class="trial-benefit"><i class="fas fa-map-pin"></i> Station visible on map</div>
+          <div class="trial-benefit"><i class="fas fa-clock"></i> Real‑time price updates</div>
+          <div class="trial-benefit"><i class="fas fa-headset"></i> Priority support</div>
+        </div>
+        <div style="margin: 24px 0 16px;"><i class="fas fa-credit-card"></i> Choose a plan:</div>
+        <div class="toggle-item sub-option" data-plan="1month" data-price="${m1}" style="padding: 18px;">
+          <span><i class="fas fa-calendar-alt"></i> 1 Month</span> <strong>${cur} ${m1}</strong>
+        </div>
+        <div class="toggle-item sub-option" data-plan="5months" data-price="${m5}" style="padding: 18px;">
+          <span><i class="fas fa-calendar-alt"></i> 5 Months</span> <strong>${cur} ${m5}</strong>
+        </div>
+        <div class="toggle-item sub-option" data-plan="12months" data-price="${m12}" style="padding: 18px;">
+          <span><i class="fas fa-calendar-alt"></i> 12 Months</span> <strong>${cur} ${m12}</strong>
+        </div>
+        <p class="small-note" style="margin-top: 20px;"><i class="fas fa-lock"></i> Secure payment · Cancel anytime</p>
+      `;
+
+      document.querySelectorAll('.sub-option').forEach(opt => {
+        opt.onclick = () => {
+          const plan = opt.dataset.plan;
+          const price = opt.dataset.price;
+          document.getElementById('selectedPlanDisplay').innerText = plan;
+          document.getElementById('selectedPriceDisplay').innerText = `${cur} ${price}`;
+          document.getElementById('cardPaymentModal').classList.add('show');
+        };
+      });
+    }
+
+    function loadSettingsProfile() {
+      document.getElementById('settingsProfilePic').src = stationData.photos?.[0] || 'station_placeholder.png';
+      document.getElementById('editManagerName').value = stationData.managerName || '';
+      document.getElementById('editManagerPhone').value = stationData.managerPhone || '';
+    }
+
+    // ========== AUTH STATE ==========
+    auth.onAuthStateChanged(async user => {
+      if (user) {
+        currentUser = user;
+        const snap = await rtdb.ref(`stationOwners/${user.uid}`).once('value');
+        stationData = snap.val();
+        if (!stationData) { auth.signOut(); return; }
+        if (!stationData.prices) stationData.prices = { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') };
+        if (!stationData.fuelTypes) stationData.fuelTypes = { diesel: true, petrol: true, lpg: false, unleaded95: false };
+
+        document.getElementById('authView').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'block';
+        loadDashboard();
+
+        if (stationData.subscription?.plan === 'trial' && !localStorage.getItem('trialShown_' + user.uid)) {
+          document.getElementById('popupManagerName').innerText = stationData.managerName;
+          document.getElementById('trialExpiryDate').innerText = new Date(stationData.subscription.expires).toLocaleDateString();
+          document.getElementById('trialPopup').classList.add('show');
+          localStorage.setItem('trialShown_' + user.uid, '1');
+        }
+      } else {
+        document.getElementById('authView').style.display = 'block';
+        document.getElementById('dashboardView').style.display = 'none';
+      }
+    });
+
+    // ========== EVENT LISTENERS ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      initRegisterMap();
+      renderAmenityChips();
+
+      // Tabs
+      document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.onclick = () => {
+          document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const isLogin = tab.dataset.tab === 'login';
+          document.getElementById('loginForm').classList.toggle('hide', !isLogin);
+          document.getElementById('registerForm').classList.toggle('hide', isLogin);
+        };
+      });
+
+      // Photo uploads
+      document.getElementById('photoUpload1').onclick = () => openUploadWidget(url => {
+        uploadedImages.photo1 = url;
+        document.getElementById('photoUpload1').style.backgroundImage = `url(${url})`;
+        document.getElementById('photoUpload1').innerHTML = '';
+      });
+      document.getElementById('photoUpload2').onclick = () => openUploadWidget(url => {
+        uploadedImages.photo2 = url;
+        document.getElementById('photoUpload2').style.backgroundImage = `url(${url})`;
+        document.getElementById('photoUpload2').innerHTML = '';
+      });
+
+      // Custom amenity
+      document.getElementById('addCustomAmenityBtn').onclick = () => document.getElementById('customAmenityRow').style.display = 'flex';
+      document.getElementById('saveCustomAmenityBtn').onclick = () => {
+        const val = document.getElementById('customAmenityInput').value.trim();
+        if (val) { customAmenities.push(val); renderAmenityChips(); }
+        document.getElementById('customAmenityInput').value = '';
+        document.getElementById('customAmenityRow').style.display = 'none';
+      };
+
+      // Location
+      document.getElementById('locateMeBtn').onclick = () => {
+        navigator.geolocation.getCurrentPosition(pos => {
+          registerMap.setView([pos.coords.latitude, pos.coords.longitude], 17);
+          setMarker({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        }, err => showToast('Location error', false));
+      };
+      document.getElementById('locationSearchInput').addEventListener('change', async function () {
+        const q = this.value;
+        if (!q) return;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data[0]) {
+          const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+          registerMap.setView([lat, lon], 17);
+          setMarker({ lat, lng: lon });
+        }
+      });
+
+      // Register
+      document.getElementById('registerBtn').onclick = async function () {
+        const btn = this;
+        const stationName = document.getElementById('regStationName').value.trim();
+        const managerName = document.getElementById('regManagerName').value.trim();
+        const email = document.getElementById('regManagerEmail').value.trim();
+        const phone = document.getElementById('regManagerPhone').value.trim();
+        const password = document.getElementById('regPassword').value;
+        if (!stationName || !managerName || !email || !password || !selectedLatLng) {
+          showToast('Fill all fields and set location', false);
+          return;
+        }
+        setButtonLoading(btn, true);
+        try {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const uid = cred.user.uid;
+          const amenities = [...defaultAmenities, ...customAmenities];
+          const payload = {
+            stationName, managerName, email, managerPhone: userCountry.phone + phone,
+            location: { lat: selectedLatLng.lat, lng: selectedLatLng.lng },
+            photos: [uploadedImages.photo1, uploadedImages.photo2].filter(u => u),
+            amenities,
+            fuelTypes: { diesel: true, petrol: true, lpg: false, unleaded95: false },
+            prices: { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') },
+            country: userCountry.code, currency: userCountry.currency,
+            subscription: { plan: 'trial', expires: Date.now() + 30 * 24 * 3600 * 1000 },
+            createdAt: Date.now()
+          };
+          await rtdb.ref(`stationOwners/${uid}`).set(payload);
+          showToast('Station registered! Please login.');
+          auth.signOut();
+        } catch (e) { showToast(e.message, false); }
+        setButtonLoading(btn, false);
+      };
+
+      // Login
+      document.getElementById('loginBtn').onclick = () => {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPassword').value;
+        auth.signInWithEmailAndPassword(email, pass).catch(e => showToast(e.message, false));
+      };
+
+      // Sidebar
+      const sidebar = document.getElementById('sidebarOverlay');
+      document.getElementById('dashboardMenuBtn').onclick = () => sidebar.classList.add('open');
+      sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
+      document.querySelectorAll('[data-page]').forEach(el => {
+        el.onclick = () => { openPage(el.dataset.page); sidebar.classList.remove('open'); };
+      });
+      document.querySelectorAll('.close-page').forEach(btn => {
+        btn.onclick = () => btn.closest('.page-overlay').classList.remove('show');
+      });
+
+      // Add fuel type
+      document.getElementById('addFuelTypeBtn').onclick = async () => {
+        const select = document.getElementById('newFuelSelect');
+        const newFuel = select.value;
+        if (!newFuel) { showToast('Select a fuel type', false); return; }
+        if (stationData.fuelTypes[newFuel]) { showToast('Fuel type already exists', false); return; }
+        stationData.fuelTypes[newFuel] = true;
+        await rtdb.ref(`stationOwners/${currentUser.uid}/fuelTypes`).set(stationData.fuelTypes);
+        renderFuelManager();
+        renderToggles();
+        showToast(`${newFuel} added`);
+      };
+
+      // Add amenity
+      document.getElementById('addAmenityBtn').onclick = async () => {
+        const input = document.getElementById('newAmenityInput');
+        const val = input.value.trim();
+        if (!val) return;
+        if (!stationData.amenities.includes(val)) {
+          stationData.amenities.push(val);
+          await rtdb.ref(`stationOwners/${currentUser.uid}/amenities`).set(stationData.amenities);
+          renderAmenitiesManager();
+          renderToggles();
+        }
+        input.value = '';
+      };
+
+      // Trial popup close
+      document.getElementById('closeTrialPopup').onclick = () => document.getElementById('trialPopup').classList.remove('show');
+
+      // Dark mode
+      document.getElementById('darkModeToggle').onclick = () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+      };
+      if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
+
+      // Logout
+      document.getElementById('logoutBtn').onclick = () => auth.signOut();
+      document.getElementById('logoutSettingsBtn').onclick = () => auth.signOut();
+
+      // Notifications
+      document.getElementById('toggleNotifBtn').onclick = function () {
+        notificationsEnabled = !notificationsEnabled;
+        this.innerHTML = notificationsEnabled ? '🔔 Notifications ON' : '🔕 Notifications OFF';
+      };
+
+      // Profile update
+      document.getElementById('updateProfileBtn').onclick = async () => {
+        const newName = document.getElementById('editManagerName').value;
+        const newPhone = document.getElementById('editManagerPhone').value;
+        await rtdb.ref(`stationOwners/${currentUser.uid}`).update({ managerName: newName, managerPhone: newPhone });
+        stationData.managerName = newName;
+        stationData.managerPhone = newPhone;
+        showToast('Profile updated');
+      };
+
+      document.getElementById('changeProfilePicBtn').onclick = () => {
+        openUploadWidget(async url => {
+          await rtdb.ref(`stationOwners/${currentUser.uid}/photos`).set([url, stationData.photos?.[1] || '']);
+          stationData.photos[0] = url;
+          document.getElementById('settingsProfilePic').src = url;
+          document.getElementById('mainStationPhoto').src = url;
+          showToast('Profile picture updated');
+        });
+      };
+
+      // Payment modal
+      document.getElementById('confirmPaymentBtn').onclick = () => {
+        const cardNum = document.getElementById('cardNumber').value;
+        if (cardNum.length < 15) { showToast('Invalid card number', false); return; }
+        showToast('Payment successful! Subscription activated (demo)');
+        document.getElementById('cardPaymentModal').classList.remove('show');
+        stationData.subscription = { plan: 'paid', expires: Date.now() + 30 * 24 * 3600 * 1000 };
+        rtdb.ref(`stationOwners/${currentUser.uid}/subscription`).set(stationData.subscription);
+        renderSubscription();
+      };
+      document.getElementById('cancelPaymentBtn').onclick = () => document.getElementById('cardPaymentModal').classList.remove('show');
+    });
+  })();
+</script>
 </body>
 </html>
