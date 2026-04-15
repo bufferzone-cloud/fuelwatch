@@ -1,5 +1,8 @@
 const CACHE_NAME = 'fuelradar-cache-v1';
 const urlsToCache = [
+    '/fuelwatch/welcome.html',
+    '/fuelwatch/station.html',
+    '/fuelwatch/admin.png',
     '/fuelwatch/home.html',
     '/fuelwatch/logo.png',
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
