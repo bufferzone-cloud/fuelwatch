@@ -195,17 +195,22 @@
       border-radius: 20px;
       overflow: hidden;
       font-size: 13px;
+      border-collapse: collapse;
     }
     .data-table th {
       background: #0f1a0f;
-      padding: 10px 8px;
+      padding: 12px 8px;
       text-align: left;
       font-weight: 600;
       color: #9ccc9c;
+      border-bottom: 1px solid #dc2626;
     }
     .data-table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #2a3a2a;
+      padding: 12px 8px;
+      border-bottom: 1px solid #dc2626;
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
     }
     .clickable-row {
       cursor: pointer;
@@ -260,7 +265,7 @@
     .detail-row {
       display: flex;
       padding: 8px 0;
-      border-bottom: 1px solid #2a2a2a;
+      border-bottom: 1px solid #dc2626;
       font-size: 14px;
     }
     .detail-label { width: 100px; color: #9ccc9c; font-weight: 600; }
@@ -514,7 +519,7 @@
         ...users.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,2).map(u=>({type:'user',name:u.name||u.email,time:u.createdAt})),
         ...stations.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,2).map(s=>({type:'station',name:s.stationName,time:s.createdAt}))
       ].sort((a,b)=>(b.time||0)-(a.time||0)).slice(0,4);
-      document.getElementById('recentActivity').innerHTML = recent.map(r=>`<div style="padding:6px 0;border-bottom:1px solid #2a3a2a;font-size:13px;"><i class="fas fa-${r.type==='user'?'user':'store'}" style="color:#16a34a;"></i> ${r.name} <span style="float:right;">${r.time?new Date(r.time).toLocaleDateString():''}</span></div>`).join('')||'<p>No activity</p>';
+      document.getElementById('recentActivity').innerHTML = recent.map(r=>`<div style="padding:6px 0;border-bottom:1px solid #dc2626;font-size:13px;"><i class="fas fa-${r.type==='user'?'user':'store'}" style="color:#16a34a;"></i> ${r.name} <span style="float:right;">${r.time?new Date(r.time).toLocaleDateString():''}</span></div>`).join('')||'<p>No activity</p>';
     }
     
     async function loadUsers() {
