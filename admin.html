@@ -265,25 +265,13 @@
       border-bottom: 1px solid #2a3a2a;
     }
     
-    .action-btn {
-      background: none;
-      border: 1px solid #3a5a3a;
-      border-radius: 30px;
-      padding: 4px 10px;
-      color: #ccc;
+    .clickable-row {
       cursor: pointer;
-      font-size: 11px;
-      margin-right: 4px;
+      transition: background 0.2s;
     }
     
-    .action-btn.danger {
-      border-color: #7f1d1d;
-      color: #fca5a5;
-    }
-    
-    .action-btn.success {
-      border-color: #16a34a;
-      color: #4ade80;
+    .clickable-row:hover {
+      background: #1e3a1e;
     }
     
     .badge {
@@ -295,11 +283,6 @@
     
     .badge.blocked {
       background: #7f1d1d;
-    }
-    
-    .flag-icon {
-      font-size: 16px;
-      margin-right: 4px;
     }
     
     /* ---------- MODALS (compact, mobile-first) ---------- */
@@ -427,10 +410,25 @@
       font-size: 13px;
     }
     
-    .add-vehicle-section {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #2a4a2a;
+    .action-btn {
+      background: none;
+      border: 1px solid #3a5a3a;
+      border-radius: 30px;
+      padding: 6px 14px;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    
+    .action-btn.danger {
+      border-color: #7f1d1d;
+      color: #fca5a5;
+    }
+    
+    .action-btn.success {
+      border-color: #16a34a;
+      color: #4ade80;
     }
     
     .toast {
@@ -765,7 +763,7 @@
       select.value = selectedCountryFilter;
     }
     
-    // ---------- RENDER LISTS WITH COUNTRY FILTER ----------
+    // ---------- RENDER LISTS WITH COUNTRY FILTER (simplified) ----------
     function getFilteredUsers() {
       if (selectedCountryFilter === 'all') return allUsers;
       return allUsers.filter(u => u.country === selectedCountryFilter);
@@ -789,28 +787,21 @@
         return;
       }
       
-      let html = `<table class="data-table"><tr><th>User</th><th>Status</th><th>Actions</th></tr>`;
+      let html = `<table class="data-table"><tr><th>User</th><th>Status</th></tr>`;
       users.forEach(u => {
         const isBlocked = blocked[u.id] === true;
         const flag = u.country ? getFlagEmoji(u.country) : '🌍';
-        html += `<tr>
+        html += `<tr class="clickable-row" data-viewuser="${u.id}">
           <td>${flag} ${u.name || '-'}<br><small>${u.email}</small></td>
           <td>${isBlocked ? '<span class="badge blocked">Blocked</span>' : '<span class="badge">Active</span>'}</td>
-          <td>
-            <button class="action-btn" data-viewuser="${u.id}"><i class="fas fa-eye"></i></button>
-            <button class="action-btn" data-edituser="${u.id}"><i class="fas fa-edit"></i></button>
-            <button class="action-btn" data-addvehicle="${u.id}"><i class="fas fa-car"></i></button>
-            <button class="action-btn ${isBlocked ? 'success' : 'danger'}" data-toggleblock="${u.id}">${isBlocked ? 'Unblock' : 'Block'}</button>
-          </td>
         </tr>`;
       });
       html += '</table>';
       container.innerHTML = html;
       
-      container.querySelectorAll('[data-viewuser]').forEach(b => b.onclick = () => showUserDetail(b.dataset.viewuser));
-      container.querySelectorAll('[data-edituser]').forEach(b => b.onclick = () => showEditUser(b.dataset.edituser));
-      container.querySelectorAll('[data-addvehicle]').forEach(b => b.onclick = () => showAddVehicle(b.dataset.addvehicle));
-      container.querySelectorAll('[data-toggleblock]').forEach(b => b.onclick = () => toggleBlock('users', b.dataset.toggleblock));
+      container.querySelectorAll('[data-viewuser]').forEach(row => {
+        row.addEventListener('click', () => showUserDetail(row.dataset.viewuser));
+      });
     }
     
     async function renderStationsList() {
@@ -826,26 +817,21 @@
         return;
       }
       
-      let html = `<table class="data-table"><tr><th>Station</th><th>Status</th><th>Actions</th></tr>`;
+      let html = `<table class="data-table"><tr><th>Station</th><th>Status</th></tr>`;
       stations.forEach(s => {
         const isBlocked = blocked[s.id] === true;
         const flag = s.country ? getFlagEmoji(s.country) : '🌍';
-        html += `<tr>
+        html += `<tr class="clickable-row" data-viewstation="${s.id}">
           <td>${flag} ${s.stationName}<br><small>${s.managerName}</small></td>
           <td>${isBlocked ? '<span class="badge blocked">Blocked</span>' : '<span class="badge">Active</span>'}</td>
-          <td>
-            <button class="action-btn" data-viewstation="${s.id}"><i class="fas fa-eye"></i></button>
-            <button class="action-btn" data-editstation="${s.id}"><i class="fas fa-edit"></i></button>
-            <button class="action-btn ${isBlocked ? 'success' : 'danger'}" data-toggleblock="${s.id}">${isBlocked ? 'Unblock' : 'Block'}</button>
-          </td>
         </tr>`;
       });
       html += '</table>';
       container.innerHTML = html;
       
-      container.querySelectorAll('[data-viewstation]').forEach(b => b.onclick = () => showStationDetail(b.dataset.viewstation));
-      container.querySelectorAll('[data-editstation]').forEach(b => b.onclick = () => showEditStation(b.dataset.editstation));
-      container.querySelectorAll('[data-toggleblock]').forEach(b => b.onclick = () => toggleBlock('stations', b.dataset.toggleblock));
+      container.querySelectorAll('[data-viewstation]').forEach(row => {
+        row.addEventListener('click', () => showStationDetail(row.dataset.viewstation));
+      });
     }
     
     async function toggleBlock(type, id) {
@@ -857,13 +843,15 @@
       else renderStationsList();
     }
     
-    // ---------- USER DETAIL MODAL (with country flag) ----------
+    // ---------- USER DETAIL MODAL (with actions inside) ----------
     async function showUserDetail(uid) {
       const userSnap = await rtdb.ref(`users/${uid}`).once('value');
       const user = userSnap.val();
       const vehiclesSnap = await rtdb.ref(`vehicles/${uid}`).once('value');
       const vehicles = [];
       vehiclesSnap.forEach(v => vehicles.push(v.val()));
+      const blockedSnap = await rtdb.ref(`blocked/users/${uid}`).once('value');
+      const isBlocked = blockedSnap.val() === true;
       
       const modal = document.getElementById('userDetailModal');
       const content = document.getElementById('userDetailContent');
@@ -897,12 +885,13 @@
         <h4 style="margin:16px 0 8px;">Vehicles (${vehicles.length})</h4>
         ${vehicleHtml || '<p>No vehicles</p>'}
         <div id="userLiveMap" class="map-container"></div>
-        <button class="auth-btn" id="refreshUserLocation" data-uid="${uid}" style="padding:10px; margin-top:8px;">
-          <i class="fas fa-sync-alt"></i> Refresh Location
-        </button>
-        <button class="auth-btn" id="updateUserPhotoBtn" data-uid="${uid}" style="background:#3b82f6; margin-top:8px;">
-          <i class="fas fa-camera"></i> Update Profile Picture
-        </button>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;">
+          <button class="action-btn" id="refreshUserLocationBtn" data-uid="${uid}"><i class="fas fa-sync-alt"></i> Refresh Location</button>
+          <button class="action-btn" id="updateUserPhotoBtn" data-uid="${uid}"><i class="fas fa-camera"></i> Update Photo</button>
+          <button class="action-btn" id="editUserBtn" data-uid="${uid}"><i class="fas fa-edit"></i> Edit</button>
+          <button class="action-btn" id="addVehicleBtn" data-uid="${uid}"><i class="fas fa-car"></i> Add Vehicle</button>
+          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockBtn" data-uid="${uid}">${isBlocked ? 'Unblock' : 'Block'}</button>
+        </div>
       `;
       modal.classList.add('show');
       
@@ -915,7 +904,6 @@
         if (loc && loc.lat) {
           map.setView([loc.lat, loc.lng], 14);
           L.marker([loc.lat, loc.lng]).addTo(map).bindPopup('User location');
-          // Nearby stations
           const rad = 5;
           const query = `[out:json];node["amenity"="fuel"](around:${rad * 1000},${loc.lat},${loc.lng});out;`;
           try {
@@ -924,19 +912,35 @@
             data.elements.forEach(el => L.marker([el.lat, el.lon], { icon: L.divIcon({ html: '⛽', className: 'fuel-icon' }) }).addTo(map));
           } catch (e) {}
         }
-        document.getElementById('refreshUserLocation').onclick = async () => {
-          const newLocSnap = await rtdb.ref(`locations/${uid}`).once('value');
-          const newLoc = newLocSnap.val();
-          if (newLoc) map.setView([newLoc.lat, newLoc.lng], 14);
-          showToast('Location refreshed');
-        };
       }, 100);
       
+      // Action buttons inside modal
+      document.getElementById('refreshUserLocationBtn').onclick = async () => {
+        const newLocSnap = await rtdb.ref(`locations/${uid}`).once('value');
+        const newLoc = newLocSnap.val();
+        if (newLoc) {
+          const map = L.map('userLiveMap');
+          map.setView([newLoc.lat, newLoc.lng], 14);
+        }
+        showToast('Location refreshed');
+      };
       document.getElementById('updateUserPhotoBtn').onclick = () => {
         openUploadWidget(async (url) => {
           await rtdb.ref(`users/${uid}`).update({ photoURL: url });
           showToast('Profile picture updated');
         }, { folder: 'profiles' });
+      };
+      document.getElementById('editUserBtn').onclick = () => {
+        modal.classList.remove('show');
+        showEditUser(uid);
+      };
+      document.getElementById('addVehicleBtn').onclick = () => {
+        modal.classList.remove('show');
+        showAddVehicle(uid);
+      };
+      document.getElementById('toggleBlockBtn').onclick = async () => {
+        await toggleBlock('users', uid);
+        modal.classList.remove('show');
       };
     }
     
@@ -969,7 +973,7 @@
       };
     }
     
-    // ---------- ADD VEHICLE TO USER ----------
+    // ---------- ADD VEHICLE ----------
     function showAddVehicle(uid) {
       const modal = document.getElementById('addVehicleModal');
       const content = document.getElementById('addVehicleContent');
@@ -1029,10 +1033,12 @@
       modal.classList.add('show');
     }
     
-    // ---------- STATION DETAIL MODAL (with country flag) ----------
+    // ---------- STATION DETAIL MODAL (with actions inside) ----------
     async function showStationDetail(sid) {
       const snap = await rtdb.ref(`stationOwners/${sid}`).once('value');
       const station = snap.val();
+      const blockedSnap = await rtdb.ref(`blocked/stations/${sid}`).once('value');
+      const isBlocked = blockedSnap.val() === true;
       const modal = document.getElementById('stationDetailModal');
       const content = document.getElementById('stationDetailContent');
       
@@ -1056,13 +1062,13 @@
         <div class="detail-row"><span class="detail-label">Fuel Types</span><span class="detail-value">${Object.entries(fuel).filter(([k, v]) => v).map(([k]) => k).join(', ')}</span></div>
         ${photos.length ? `<div class="photo-strip">${photos.map(p => `<img src="${p}" onerror="this.src='station_placeholder.png'">`).join('')}</div>` : ''}
         <div id="stationDetailMap" class="map-container"></div>
-        <div style="display:flex; gap:8px; margin-top:16px;">
-          <button class="auth-btn" id="approveSubscriptionBtn" data-sid="${sid}" style="padding:10px;">Approve</button>
-          <button class="auth-btn danger" id="revokeSubscriptionBtn" data-sid="${sid}" style="background:#7f1d1d; padding:10px;">Revoke</button>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;">
+          <button class="action-btn success" id="approveSubscriptionBtn" data-sid="${sid}">Approve</button>
+          <button class="action-btn danger" id="revokeSubscriptionBtn" data-sid="${sid}">Revoke</button>
+          <button class="action-btn" id="updateStationPhotosBtn" data-sid="${sid}"><i class="fas fa-images"></i> Update Photos</button>
+          <button class="action-btn" id="editStationBtn" data-sid="${sid}"><i class="fas fa-edit"></i> Edit</button>
+          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockStationBtn" data-sid="${sid}">${isBlocked ? 'Unblock' : 'Block'}</button>
         </div>
-        <button class="auth-btn" id="updateStationPhotosBtn" data-sid="${sid}" style="background:#8b5cf6; margin-top:8px;">
-          <i class="fas fa-images"></i> Update Photos
-        </button>
       `;
       modal.classList.add('show');
       
@@ -1079,12 +1085,18 @@
           const currentPhotos = station.photos || [];
           currentPhotos[0] = url;
           await rtdb.ref(`stationOwners/${sid}/photos`).set(currentPhotos);
-          station.photos = currentPhotos;
           showToast('Photo updated');
-          // Refresh modal
           modal.classList.remove('show');
           setTimeout(() => showStationDetail(sid), 100);
         }, { folder: 'stations' });
+      };
+      document.getElementById('editStationBtn').onclick = () => {
+        modal.classList.remove('show');
+        showEditStation(sid);
+      };
+      document.getElementById('toggleBlockStationBtn').onclick = async () => {
+        await toggleBlock('stations', sid);
+        modal.classList.remove('show');
       };
     }
     
@@ -1137,7 +1149,7 @@
       };
     }
     
-    // ---------- REPORTS & PAYMENTS ----------
+    // ---------- REPORTS & PAYMENTS (unchanged) ----------
     async function renderReportsList() {
       const snap = await rtdb.ref('reports').once('value');
       const reports = [];
@@ -1275,11 +1287,9 @@
         item.classList.add('active');
         currentNav = item.dataset.nav;
         
-        // Show/hide country filter bar
         const filterBar = document.getElementById('countryFilterBar');
         filterBar.style.display = (currentNav === 'users' || currentNav === 'stations') ? 'flex' : 'none';
         
-        // Render appropriate content
         if (currentNav === 'overview') {
           document.getElementById('dynamicContentPanel').innerHTML = document.getElementById('overviewContent').innerHTML;
           await loadOverviewStats();
@@ -1297,21 +1307,18 @@
       });
     });
     
-    // Country filter change
     document.getElementById('countryFilterSelect').addEventListener('change', (e) => {
       selectedCountryFilter = e.target.value;
       if (currentNav === 'users') renderUsersList();
       else if (currentNav === 'stations') renderStationsList();
     });
     
-    // Close modals when clicking overlay
     document.querySelectorAll('.modal-overlay').forEach(m => {
       m.addEventListener('click', (e) => {
         if (e.target === m) m.classList.remove('show');
       });
     });
     
-    // Initialize
     document.getElementById('countryFilterBar').style.display = 'none';
   })();
 </script>
