@@ -1380,6 +1380,20 @@
       recentStations: '++id, stationId, name, lat, lon, timestamp'
     });
 
+    // ---------- EXCHANGE RATES (relative to USD) ----------
+    const exchangeRates = {
+      USD: 1,
+      EUR: 0.92,
+      GBP: 0.79,
+      ZMW: 26.5,
+      NGN: 1550,
+      INR: 83,
+      ZAR: 18.5,
+      KES: 145,
+      AUD: 1.52,
+      CAD: 1.38
+    };
+
     // ---------- GLOBAL STATE ----------
     let currentUser = null;
     let userProfile = null;
@@ -1394,7 +1408,7 @@
     let userMarker = null;
     let userHeading = 0;
     let favoriteIds = JSON.parse(localStorage.getItem('fuelFavs')) || [];
-    let currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' };
+    let currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' }; // base USD
     let watchId = null;
     let chartInstance = null;
     let stationsLoaded = false;
@@ -1479,8 +1493,21 @@
       return String.fromCodePoint(...codePoints);
     }
 
+    // Convert USD to user's currency
+    function convertFromUSD(usdAmount) {
+      const rate = exchangeRates[userCurrency] || 1;
+      return usdAmount * rate;
+    }
+
+    // Format price with currency symbol
+    function formatPrice(amount) {
+      return `${userCurrency} ${amount.toFixed(2)}`;
+    }
+
     function updatePriceDisplay() {
-      const info = `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}/${currentPrices.diesel.toFixed(2)}`;
+      const petrolLocal = convertFromUSD(currentPrices.petrol);
+      const dieselLocal = convertFromUSD(currentPrices.diesel);
+      const info = `${userCurrency} ${petrolLocal.toFixed(2)}/${dieselLocal.toFixed(2)}`;
       const fuelPriceSpan = document.getElementById('fuelPriceInfo');
       if (fuelPriceSpan) fuelPriceSpan.innerText = info;
     }
@@ -1598,20 +1625,29 @@
 
     async function fetchFuelPricesForCountry(countryCode) {
       const priceMap = {
-        'US': { petrol: 1.02, diesel: 1.15, currency: 'USD' },
-        'GB': { petrol: 1.45, diesel: 1.55, currency: 'GBP' },
-        'DE': { petrol: 1.85, diesel: 1.75, currency: 'EUR' },
-        'FR': { petrol: 1.90, diesel: 1.80, currency: 'EUR' },
-        'IN': { petrol: 106, diesel: 94, currency: 'INR' },
-        'ZA': { petrol: 23.50, diesel: 22.80, currency: 'ZAR' },
-        'ZM': { petrol: 28.50, diesel: 26.80, currency: 'ZMW' },
-        'NG': { petrol: 650, diesel: 700, currency: 'NGN' },
-        'KE': { petrol: 210, diesel: 200, currency: 'KES' },
-        'AU': { petrol: 1.95, diesel: 2.05, currency: 'AUD' },
-        'CA': { petrol: 1.65, diesel: 1.75, currency: 'CAD' }
+        'US': { petrol: 1.02, diesel: 1.15 },
+        'GB': { petrol: 1.45, diesel: 1.55 },
+        'DE': { petrol: 1.85, diesel: 1.75 },
+        'FR': { petrol: 1.90, diesel: 1.80 },
+        'IN': { petrol: 106, diesel: 94 },
+        'ZA': { petrol: 23.50, diesel: 22.80 },
+        'ZM': { petrol: 28.50, diesel: 26.80 },
+        'NG': { petrol: 650, diesel: 700 },
+        'KE': { petrol: 210, diesel: 200 },
+        'AU': { petrol: 1.95, diesel: 2.05 },
+        'CA': { petrol: 1.65, diesel: 1.75 }
       };
-      if (priceMap[countryCode]) currentPrices = { ...priceMap[countryCode] };
-      else currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' };
+      // These prices are already in local currency for some countries (IN, ZA, ZM, NG, KE)
+      // For others, they are in USD. We'll standardise: store base USD internally.
+      // For simplicity, we'll treat all as USD base and convert later.
+      if (priceMap[countryCode]) {
+        // Assume the map gives approximate USD equivalents
+        currentPrices.petrol = priceMap[countryCode].petrol;
+        currentPrices.diesel = priceMap[countryCode].diesel;
+      } else {
+        currentPrices.petrol = 1.50;
+        currentPrices.diesel = 1.40;
+      }
     }
 
     detectUserCountry();
@@ -1638,14 +1674,24 @@
           let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : null;
           let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : 'unknown';
           let amenities = extractAllAmenities(el.tags || {});
-          let priceP = `${currentPrices.currency} ${(currentPrices.petrol + (Math.random()*0.4-0.2)).toFixed(2)}`;
-          let priceD = `${currentPrices.currency} ${(currentPrices.diesel + (Math.random()*0.4-0.2)).toFixed(2)}`;
+          
+          // Base USD price with small random variation
+          let petrolUSD = currentPrices.petrol + (Math.random()*0.4-0.2);
+          let dieselUSD = currentPrices.diesel + (Math.random()*0.4-0.2);
+          // Convert to local currency
+          let petrolLocal = convertFromUSD(petrolUSD);
+          let dieselLocal = convertFromUSD(dieselUSD);
+          
           osmStations.push({
             id: 'osm_' + el.id,
             osmId: el.id,
             name, address: addr, lat: stationLat, lon: stationLon,
             fuel: { petrol: fuelPetrol, diesel: fuelDiesel },
-            status, amenities, pricePetrol: priceP, priceDiesel: priceD,
+            status, amenities,
+            pricePetrol: petrolLocal,
+            priceDiesel: dieselLocal,
+            pricePetrolRaw: petrolUSD,
+            priceDieselRaw: dieselUSD,
             distance: haversine(lat, lon, stationLat, stationLon),
             favorite: favoriteIds.includes('osm_' + el.id),
             phone: el.tags?.phone || '', openingHours: el.tags?.opening_hours || '',
@@ -1671,6 +1717,14 @@
             if (dist <= radKm) {
               const amenities = (data.amenities || []).map(a => ({ icon: 'fa-check-circle', name: a }));
               const fuel = data.fuelTypes || { petrol: true, diesel: true };
+              
+              // Registered stations may store prices in their local currency already.
+              // We'll assume they are in USD for consistency, or convert if needed.
+              let petrolUSD = data.prices?.petrol || currentPrices.petrol;
+              let dieselUSD = data.prices?.diesel || currentPrices.diesel;
+              let petrolLocal = convertFromUSD(petrolUSD);
+              let dieselLocal = convertFromUSD(dieselUSD);
+              
               stations.push({
                 id: 'reg_' + s.key,
                 firebaseId: s.key,
@@ -1684,8 +1738,10 @@
                 },
                 status: (fuel.petrol || fuel.diesel) ? 'available' : 'unknown',
                 amenities: amenities.length ? amenities : [{ icon: 'fa-gas-pump', name: 'Fuel' }],
-                pricePetrol: data.prices?.petrol ? `${userCurrency} ${data.prices.petrol.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}`,
-                priceDiesel: data.prices?.diesel ? `${userCurrency} ${data.prices.diesel.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.diesel.toFixed(2)}`,
+                pricePetrol: petrolLocal,
+                priceDiesel: dieselLocal,
+                pricePetrolRaw: petrolUSD,
+                priceDieselRaw: dieselUSD,
                 distance: dist,
                 favorite: favoriteIds.includes('reg_' + s.key),
                 phone: data.managerPhone || '',
@@ -1735,8 +1791,8 @@
       }
       const sortBy = document.getElementById('sortSelect').value;
       if (sortBy === 'distance') filtered.sort((a,b) => (a.distance||999) - (b.distance||999));
-      else if (sortBy === 'price_petrol') filtered.sort((a,b) => parseFloat(a.pricePetrol.split(' ')[1]) - parseFloat(b.pricePetrol.split(' ')[1]));
-      else if (sortBy === 'price_diesel') filtered.sort((a,b) => parseFloat(a.priceDiesel.split(' ')[1]) - parseFloat(b.priceDiesel.split(' ')[1]));
+      else if (sortBy === 'price_petrol') filtered.sort((a,b) => a.pricePetrol - b.pricePetrol);
+      else if (sortBy === 'price_diesel') filtered.sort((a,b) => a.priceDiesel - b.priceDiesel);
       else if (sortBy === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
       return filtered;
     }
@@ -1788,7 +1844,7 @@
           <div style="min-width:260px;">
             <div style="font-weight:800;">${s.name} ${verifiedBadge}</div>
             <div>${s.address}</div>
-            <div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div>
+            <div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${formatPrice(s.pricePetrol)}/${formatPrice(s.priceDiesel)}</span></div>
             <div>${amenitiesHtml}</div>
             <div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div>
           </div>`;
@@ -1876,7 +1932,7 @@
           <div class="station-name">${s.name} ${verifiedBadge}</div>
           <div class="station-address">${s.address}</div>
           <div class="station-distance">📍 ${s.distance?.toFixed(1)} km away</div>
-          <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
+          <div><span class="fuel-badge">${formatPrice(s.pricePetrol)}</span><span class="fuel-badge">${formatPrice(s.priceDiesel)}</span></div>
           <div class="amenities-list">${amenitiesHtml}</div>
           <select id="reportType_${s.id}">
             <option value="Fuel available">✅ Fuel available</option>
@@ -2124,7 +2180,7 @@
             <div class="floating-card station-select-item" data-station-id="${s.id}">
               <div class="flex-between"><strong>${s.name} ${verifiedBadge}</strong><span class="station-distance">${s.distance.toFixed(1)} km from start</span></div>
               <div class="small-text">${s.address}</div>
-              <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
+              <div><span class="fuel-badge">${formatPrice(s.pricePetrol)}</span><span class="fuel-badge">${formatPrice(s.priceDiesel)}</span></div>
               <div class="amenities-list">${amenitiesHtml}</div>
             </div>
           `}).join('');
@@ -2224,7 +2280,7 @@
       if (!actualUserLocation || !destCoordinates || !selectedStation) return;
       const distTotal = haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon);
       const fuelNeeded = (distTotal / 100) * activeVehicle.consumptionLper100km;
-      const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+      const cost = fuelNeeded * (activeVehicle.fuelType === 'petrol' ? convertFromUSD(currentPrices.petrol) : convertFromUSD(currentPrices.diesel));
       const eta = calculateETA(distTotal);
       const container = document.getElementById('summaryCards');
       let funStopsHtml = selectedFunPlaces.length ? selectedFunPlaces.map(f => `<div>• ${f.name} (${f.type})</div>`).join('') : '<div>No fun stops selected</div>';
@@ -2234,13 +2290,13 @@
           <div class="flex-between mt-2"><span>📍 Destination:</span><strong>${destName.substring(0,40)}</strong></div>
           <div class="flex-between"><span>📏 Total Distance:</span><strong>${distTotal.toFixed(1)} km</strong></div>
           <div class="flex-between"><span>⛽ Fuel needed:</span><strong>${fuelNeeded.toFixed(1)} L</strong></div>
-          <div class="flex-between"><span>💰 Est. cost:</span><strong>${currentPrices.currency} ${cost.toFixed(2)}</strong></div>
+          <div class="flex-between"><span>💰 Est. cost:</span><strong>${formatPrice(cost)}</strong></div>
           <div class="flex-between"><span>⏱️ ETA:</span><strong>${eta}</strong></div>
         </div>
         <div class="plain-card">
           <div class="flex-between"><strong>⛽ Fuel Station: ${selectedStation.name}</strong></div>
           <div class="small-text mt-2">${selectedStation.address}</div>
-          <div><span class="fuel-badge">${selectedStation.pricePetrol}</span><span class="fuel-badge">${selectedStation.priceDiesel}</span></div>
+          <div><span class="fuel-badge">${formatPrice(selectedStation.pricePetrol)}</span><span class="fuel-badge">${formatPrice(selectedStation.priceDiesel)}</span></div>
         </div>
         <div class="plain-card">
           <div class="flex-between"><strong>🎯 Fun Stops (${selectedFunPlaces.length})</strong></div>
@@ -2451,7 +2507,7 @@
         showLoading(false);
         if (nearby.length === 0) { showToast("No stations found nearby."); return; }
         let popupContent = `<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>`;
-        nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation('${s.id}')">Navigate</button></div>`; });
+        nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${formatPrice(s.pricePetrol)}/${formatPrice(s.priceDiesel)}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation('${s.id}')">Navigate</button></div>`; });
         popupContent += `</div>`;
         L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent).openOn(map);
         window.navigateToStation = (id) => { const station = stations.find(s => s.id == id); if (station) startNavigationWithMessage(station); map.closePopup(); };
@@ -2625,11 +2681,11 @@
         let distance = parseFloat(document.getElementById('tripDistanceCalc').value);
         if (isNaN(distance)) return;
         let fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
-        let pricePerLiter = (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+        let pricePerLiter = (activeVehicle.fuelType === 'petrol' ? convertFromUSD(currentPrices.petrol) : convertFromUSD(currentPrices.diesel));
         let cost = fuelNeeded * pricePerLiter;
         let eta = calculateETA(distance);
         document.getElementById('fuelNeededCalc').innerText = fuelNeeded.toFixed(1) + ' L';
-        document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
+        document.getElementById('tripCostCalc').innerText = formatPrice(cost);
         document.getElementById('etaCalc').innerText = eta;
       };
     });
