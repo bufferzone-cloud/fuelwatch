@@ -2,7 +2,7 @@
     "name": "FuelRadar Zambia",
     "short_name": "FuelRadar",
     "description": "Find fuel stations in Zambia with real-time availability, amenities, and directions.",
-    "start_url": "https://bufferzone-cloud.github.io/fuelwatch/home.html",
+    "start_url": "https://bufferzone-cloud.github.io/fuelwatch/welcome.html",
     "scope": "/fuelwatch/",
     "display": "standalone",
     "background_color": "#ffffff",
