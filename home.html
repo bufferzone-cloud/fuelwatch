@@ -1384,8 +1384,7 @@
     let currentUser = null;
     let userProfile = null;
     let activeVehicle = null;
-    let stations = [];                 // Combined OSM + registered stations
-    let registeredStations = [];       // Cache of registered stations from Firebase
+    let stations = [];
     let activeLocation = null;
     let actualUserLocation = null;
     let currentFilter = 'all';
@@ -1400,9 +1399,9 @@
     let chartInstance = null;
     let stationsLoaded = false;
     let currentRouteInstructions = [];
-    let currentRoutingControl = null;
+    let blockedStationIds = new Set();
     let initialLocationSet = false;
-    let blockedStationIds = new Set();  // IDs of blocked stations (OSM IDs + Firebase station IDs)
+    let adminSettings = { defaultRadius: 3, defaultPetrolPrice: 1.50, defaultDieselPrice: 1.40 };
 
     // Trip planner state
     let destCoordinates = null;
@@ -1424,10 +1423,10 @@
     const authOverlay = document.getElementById('authOverlay');
     const mainApp = document.getElementById('mainAppContainer');
     const systemOverlay = document.getElementById('systemOverlay');
+    const toast = document.getElementById('dynamicToast');
 
     // ---------- HELPER FUNCTIONS ----------
     function showToast(msg, isError = false) {
-      const toast = document.getElementById('dynamicToast');
       toast.innerText = msg;
       toast.style.backgroundColor = isError ? '#b91c1c' : '#1e2a1e';
       toast.style.display = 'block';
@@ -1446,6 +1445,44 @@
         btn.classList.remove('loading');
         btn.disabled = false;
       }
+    }
+
+    function haversine(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    function calculateETA(distanceKm) {
+      const minutes = Math.round((distanceKm / 40) * 60);
+      if (minutes < 60) return `${minutes} min`;
+      return `${Math.floor(minutes/60)} hr ${minutes%60} min`;
+    }
+
+    function extractAllAmenities(tags) {
+      let amenities = [];
+      if (tags['fuel:petrol'] === 'yes') amenities.push({ icon: 'fa-gas-pump', name: 'Petrol' });
+      if (tags['fuel:diesel'] === 'yes') amenities.push({ icon: 'fa-oil-can', name: 'Diesel' });
+      if (tags.shop) amenities.push({ icon: 'fa-store', name: 'Shop' });
+      if (tags.atm === 'yes') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
+      if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
+      if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
+      if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
+      if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel' });
+      return amenities;
+    }
+
+    function getFlagEmoji(countryCode) {
+      const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
+      return String.fromCodePoint(...codePoints);
+    }
+
+    function updatePriceDisplay() {
+      const info = `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}/${currentPrices.diesel.toFixed(2)}`;
+      const fuelPriceSpan = document.getElementById('fuelPriceInfo');
+      if (fuelPriceSpan) fuelPriceSpan.innerText = info;
     }
 
     // ---------- SYSTEM CHECKS (Maintenance / Blocked) ----------
@@ -1493,23 +1530,23 @@
       if (currentUser) mainApp.style.display = 'flex';
     }
 
-    // ---------- FETCH ADMIN SETTINGS ----------
+    // ---------- ADMIN SETTINGS & BLOCKED STATIONS ----------
     async function loadAdminSettings() {
       try {
         const snap = await rtdb.ref('adminSettings').once('value');
-        const settings = snap.val() || {};
-        if (settings.defaultRadius) {
-          radiusKm = settings.defaultRadius;
-          document.getElementById('radiusSlider').value = radiusKm;
-          document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
-        }
-        if (settings.defaultPetrolPrice) currentPrices.petrol = settings.defaultPetrolPrice;
-        if (settings.defaultDieselPrice) currentPrices.diesel = settings.defaultDieselPrice;
+        const s = snap.val() || {};
+        adminSettings.defaultRadius = s.defaultRadius || 3;
+        adminSettings.defaultPetrolPrice = s.defaultPetrolPrice || 1.50;
+        adminSettings.defaultDieselPrice = s.defaultDieselPrice || 1.40;
+        radiusKm = adminSettings.defaultRadius;
+        document.getElementById('radiusSlider').value = radiusKm;
+        document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
+        currentPrices.petrol = adminSettings.defaultPetrolPrice;
+        currentPrices.diesel = adminSettings.defaultDieselPrice;
         updatePriceDisplay();
       } catch(e) {}
     }
 
-    // ---------- FETCH BLOCKED STATIONS ----------
     async function loadBlockedStations() {
       try {
         const snap = await rtdb.ref('blocked/stations').once('value');
@@ -1518,66 +1555,13 @@
       } catch(e) {}
     }
 
-    // ---------- FETCH REGISTERED STATIONS FROM FIREBASE ----------
-    async function fetchRegisteredStations(lat, lon, radKm) {
-      try {
-        const snap = await rtdb.ref('stationOwners').once('value');
-        const stations = [];
-        snap.forEach(s => {
-          const data = s.val();
-          // Skip if blocked
-          if (blockedStationIds.has(s.key)) return;
-          // Calculate distance
-          if (data.location && data.location.lat && data.location.lng) {
-            const dist = haversine(lat, lon, data.location.lat, data.location.lng);
-            if (dist <= radKm) {
-              // Build amenities array from data.amenities
-              const amenities = (data.amenities || []).map(a => ({ icon: 'fa-check-circle', name: a }));
-              // Determine fuel availability
-              const fuel = data.fuelTypes || { petrol: true, diesel: true };
-              const station = {
-                id: 'reg_' + s.key,        // Prefix to distinguish from OSM IDs
-                firebaseId: s.key,
-                name: data.stationName,
-                address: data.location.address || 'Registered station',
-                lat: data.location.lat,
-                lon: data.location.lng,
-                fuel: {
-                  petrol: fuel.petrol ? 'yes' : null,
-                  diesel: fuel.diesel ? 'yes' : null
-                },
-                status: (fuel.petrol || fuel.diesel) ? 'available' : 'unknown',
-                amenities: amenities.length ? amenities : [{ icon: 'fa-gas-pump', name: 'Fuel' }],
-                pricePetrol: data.prices?.petrol ? `${userCurrency} ${data.prices.petrol.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}`,
-                priceDiesel: data.prices?.diesel ? `${userCurrency} ${data.prices.diesel.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.diesel.toFixed(2)}`,
-                distance: dist,
-                favorite: favoriteIds.includes('reg_' + s.key),
-                phone: data.managerPhone || '',
-                openingHours: '',
-                isRegistered: true,
-                photos: data.photos || []
-              };
-              stations.push(station);
-            }
-          }
-        });
-        return stations;
-      } catch(e) {
-        console.warn('Failed to fetch registered stations', e);
-        return [];
-      }
-    }
-
-    // ---------- SYNC USER LOCATION TO FIREBASE ----------
+    // ---------- SYNC USER LOCATION ----------
     function syncUserLocation(lat, lng) {
       if (!currentUser) return;
-      rtdb.ref(`locations/${currentUser.uid}`).set({
-        lat, lng,
-        timestamp: Date.now()
-      }).catch(console.warn);
+      rtdb.ref(`locations/${currentUser.uid}`).set({ lat, lng, timestamp: Date.now() }).catch(console.warn);
     }
 
-    // Country detection
+    // ---------- COUNTRY DETECTION ----------
     async function detectUserCountry() {
       const msgDiv = document.getElementById('countryDetectionMessage');
       const welcomeBox = document.getElementById('welcomeCountryBox');
@@ -1612,11 +1596,6 @@
       updatePriceDisplay();
     }
 
-    function getFlagEmoji(countryCode) {
-      const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
-      return String.fromCodePoint(...codePoints);
-    }
-
     async function fetchFuelPricesForCountry(countryCode) {
       const priceMap = {
         'US': { petrol: 1.02, diesel: 1.15, currency: 'USD' },
@@ -1633,44 +1612,11 @@
       };
       if (priceMap[countryCode]) currentPrices = { ...priceMap[countryCode] };
       else currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' };
-      updatePriceDisplay();
-    }
-
-    function updatePriceDisplay() {
-      const info = `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}/${currentPrices.diesel.toFixed(2)}`;
-      const fuelPriceSpan = document.getElementById('fuelPriceInfo');
-      if (fuelPriceSpan) fuelPriceSpan.innerText = info;
     }
 
     detectUserCountry();
 
-    function haversine(lat1, lng1, lat2, lng2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLng = (lng2 - lng1) * Math.PI / 180;
-      const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-
-    function calculateETA(distanceKm) {
-      const minutes = Math.round((distanceKm / 40) * 60);
-      if (minutes < 60) return `${minutes} min`;
-      return `${Math.floor(minutes/60)} hr ${minutes%60} min`;
-    }
-
-    function extractAllAmenities(tags) {
-      let amenities = [];
-      if (tags['fuel:petrol'] === 'yes') amenities.push({ icon: 'fa-gas-pump', name: 'Petrol' });
-      if (tags['fuel:diesel'] === 'yes') amenities.push({ icon: 'fa-oil-can', name: 'Diesel' });
-      if (tags.shop) amenities.push({ icon: 'fa-store', name: 'Shop' });
-      if (tags.atm === 'yes') amenities.push({ icon: 'fa-money-bill-wave', name: 'ATM' });
-      if (tags.car_wash === 'yes') amenities.push({ icon: 'fa-car-wash', name: 'Car wash' });
-      if (tags['compressed_air'] === 'yes' || tags.tyre_pump === 'yes') amenities.push({ icon: 'fa-fill-drip', name: 'Tyre pump' });
-      if (tags.toilets === 'yes') amenities.push({ icon: 'fa-restroom', name: 'Toilets' });
-      if (amenities.length === 0) amenities.push({ icon: 'fa-gas-pump', name: 'Fuel' });
-      return amenities;
-    }
-
+    // ---------- STATION FETCHING ----------
     async function fetchOSMStations(lat, lon, rad) {
       const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
       try {
@@ -1682,9 +1628,7 @@
         const data = await response.json();
         let osmStations = [];
         for (let el of data.elements) {
-          // Skip if blocked
           if (blockedStationIds.has(String(el.id))) continue;
-          
           let name = el.tags?.name || el.tags?.brand || "Fuel station";
           let stationLat = el.lat || (el.center?.lat);
           let stationLon = el.lon || (el.center?.lon);
@@ -1697,12 +1641,13 @@
           let priceP = `${currentPrices.currency} ${(currentPrices.petrol + (Math.random()*0.4-0.2)).toFixed(2)}`;
           let priceD = `${currentPrices.currency} ${(currentPrices.diesel + (Math.random()*0.4-0.2)).toFixed(2)}`;
           osmStations.push({
-            id: el.id,
+            id: 'osm_' + el.id,
+            osmId: el.id,
             name, address: addr, lat: stationLat, lon: stationLon,
             fuel: { petrol: fuelPetrol, diesel: fuelDiesel },
             status, amenities, pricePetrol: priceP, priceDiesel: priceD,
             distance: haversine(lat, lon, stationLat, stationLon),
-            favorite: favoriteIds.includes(el.id),
+            favorite: favoriteIds.includes('osm_' + el.id),
             phone: el.tags?.phone || '', openingHours: el.tags?.opening_hours || '',
             isRegistered: false
           });
@@ -1714,6 +1659,49 @@
       }
     }
 
+    async function fetchRegisteredStations(lat, lon, radKm) {
+      try {
+        const snap = await rtdb.ref('stationOwners').once('value');
+        const stations = [];
+        snap.forEach(s => {
+          const data = s.val();
+          if (blockedStationIds.has(s.key)) return;
+          if (data.location && data.location.lat && data.location.lng) {
+            const dist = haversine(lat, lon, data.location.lat, data.location.lng);
+            if (dist <= radKm) {
+              const amenities = (data.amenities || []).map(a => ({ icon: 'fa-check-circle', name: a }));
+              const fuel = data.fuelTypes || { petrol: true, diesel: true };
+              stations.push({
+                id: 'reg_' + s.key,
+                firebaseId: s.key,
+                name: data.stationName,
+                address: data.location.address || 'Registered station',
+                lat: data.location.lat,
+                lon: data.location.lng,
+                fuel: {
+                  petrol: fuel.petrol ? 'yes' : null,
+                  diesel: fuel.diesel ? 'yes' : null
+                },
+                status: (fuel.petrol || fuel.diesel) ? 'available' : 'unknown',
+                amenities: amenities.length ? amenities : [{ icon: 'fa-gas-pump', name: 'Fuel' }],
+                pricePetrol: data.prices?.petrol ? `${userCurrency} ${data.prices.petrol.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}`,
+                priceDiesel: data.prices?.diesel ? `${userCurrency} ${data.prices.diesel.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.diesel.toFixed(2)}`,
+                distance: dist,
+                favorite: favoriteIds.includes('reg_' + s.key),
+                phone: data.managerPhone || '',
+                openingHours: '',
+                isRegistered: true,
+                photos: data.photos || []
+              });
+            }
+          }
+        });
+        return stations;
+      } catch(e) {
+        return [];
+      }
+    }
+
     async function fetchAllStations(lat, lon, rad) {
       showLoading(true);
       try {
@@ -1721,9 +1709,7 @@
           fetchOSMStations(lat, lon, rad),
           fetchRegisteredStations(lat, lon, rad)
         ]);
-        registeredStations = regStations;
         const combined = [...osmStations, ...regStations];
-        // Sort by distance
         combined.sort((a,b) => a.distance - b.distance);
         return combined;
       } finally {
@@ -1732,6 +1718,7 @@
       }
     }
 
+    // ---------- FILTERING & RENDERING ----------
     function getFilteredStations() {
       let filtered = stations.slice();
       if (currentFilter.startsWith('amenity_')) {
@@ -1785,26 +1772,26 @@
       clusterGroup.clearLayers();
       const filtered = getFilteredStations();
       filtered.forEach(s => {
-        let color = s.isRegistered ? '#fbbf24' : (s.status === 'available' ? '#16a34a' : '#3b82f6');
-        let iconHtml = s.isRegistered 
-          ? `<i class="fas fa-crown" style="color:${color}; font-size:28px;"></i>`
-          : `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`;
-        let icon = L.divIcon({
-          html: iconHtml,
-          iconSize: [28,28],
-          className: 'fuel-marker'
-        });
+        let iconHtml;
+        if (s.isRegistered) {
+          iconHtml = `<div style="position:relative;"><i class="fas fa-gas-pump" style="color:#fbbf24; font-size:28px;"></i><i class="fas fa-crown" style="position:absolute; top:-8px; right:-8px; color:#fbbf24; font-size:16px; text-shadow:0 0 3px black;"></i></div>`;
+        } else {
+          let color = s.status === 'available' ? '#16a34a' : '#3b82f6';
+          iconHtml = `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`;
+        }
+        let icon = L.divIcon({ html: iconHtml, iconSize: [28,28], className: 'fuel-marker' });
         const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
         const eta = s.distance ? calculateETA(s.distance) : '?';
         const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-        const verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
-        const popupContent = `<div style="min-width:260px;">
-          <div style="font-weight:800;">${s.name} ${verifiedBadge}</div>
-          <div>${s.address}</div>
-          <div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div>
-          <div>${amenitiesHtml}</div>
-          <div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div>
-        </div>`;
+        const verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
+        const popupContent = `
+          <div style="min-width:260px;">
+            <div style="font-weight:800;">${s.name} ${verifiedBadge}</div>
+            <div>${s.address}</div>
+            <div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div>
+            <div>${amenitiesHtml}</div>
+            <div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div>
+          </div>`;
         let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
         clusterGroup.addLayer(marker);
       });
@@ -1829,14 +1816,6 @@
       });
     }
 
-    function openReportForStation(stationId) {
-      openPage('reportPage');
-      setTimeout(() => {
-        let el = document.getElementById(`reportStation_${stationId}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
-    }
-
     async function loadStationsAndRefresh(showMsg = true) {
       if (!activeLocation) return;
       await loadBlockedStations();
@@ -1849,6 +1828,7 @@
       if (showMsg) showToast(`${newStations.length} stations loaded`);
     }
 
+    // ---------- NAVIGATION ----------
     function startNavigationWithMessage(station) {
       if (!actualUserLocation) { showToast("Enable location first", true); return; }
       if (!activeVehicle) { showToast("No active vehicle", true); return; }
@@ -1867,7 +1847,6 @@
         routeWhileDragging: false,
         lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
       }).addTo(map);
-      currentRoutingControl = routingControl;
       routingControl.on('routesfound', e => {
         currentRouteInstructions = e.routes[0].instructions.map(inst => inst.text);
         document.getElementById('startTripBtn').style.display = 'flex';
@@ -1876,13 +1855,22 @@
       localDB.recentStations.add({ stationId: station.id, name: station.name, lat: station.lat, lon: station.lon, timestamp: Date.now() });
     }
 
+    // ---------- REPORTS ----------
+    function openReportForStation(stationId) {
+      openPage('reportPage');
+      setTimeout(() => {
+        let el = document.getElementById(`reportStation_${stationId}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+
     async function renderReportStationsList() {
       let sorted = getFilteredStations();
       let container = document.getElementById('reportStationsList');
       if (!container) return;
       container.innerHTML = sorted.map(s => {
         let amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
         return `
         <div class="station-card" id="reportStation_${s.id}">
           <div class="station-name">${s.name} ${verifiedBadge}</div>
@@ -1907,20 +1895,28 @@
           let type = document.getElementById(`reportType_${sid}`).value;
           let comment = document.getElementById(`reportComment_${sid}`).value;
           let priceReport = document.getElementById(`reportPrice_${sid}`).value;
-          await localDB.userReports.add({ stationId: sid, type, comment, timestamp: Date.now(), priceReport });
-          rtdb.ref('reports').push({
+          const station = stations.find(s => s.id == sid);
+          const reportData = {
             stationId: sid,
+            stationName: station?.name || 'Unknown',
             type,
             comment,
             priceReport,
             timestamp: Date.now(),
             userId: currentUser.uid
-          });
-          showToast(`Report submitted!`);
+          };
+          if (station && !station.isRegistered) {
+            reportData.location = { lat: station.lat, lng: station.lon };
+            reportData.address = station.address;
+          }
+          await localDB.userReports.add(reportData);
+          await rtdb.ref('reports').push(reportData);
+          showToast('Report submitted!');
         };
       });
     }
 
+    // ---------- FAVORITES ----------
     function toggleFavorite(id) {
       let s = stations.find(s => s.id == id);
       if (s) {
@@ -1936,13 +1932,13 @@
       let favStations = stations.filter(s => favoriteIds.includes(s.id));
       let container = document.getElementById('favStationsList');
       if (container) container.innerHTML = favStations.map(s => {
-        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
         return `<div class="station-card"><div class="station-name">${s.name} ${verifiedBadge}</div><div class="station-distance">📍 ${s.distance?.toFixed(1)} km</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm" data-fav-remove="${s.id}">Remove</button></div></div>`;
       }).join('');
       container.querySelectorAll('[data-fav-remove]').forEach(btn => { btn.onclick = () => toggleFavorite(btn.dataset.favRemove); });
     }
 
-    // ---------- VEHICLE MANAGEMENT (unchanged) ----------
+    // ---------- VEHICLE MANAGEMENT ----------
     async function loadUserVehicles() {
       if (!currentUser) return;
       const snap = await rtdb.ref('vehicles/' + currentUser.uid).once('value');
@@ -1998,7 +1994,7 @@
       });
     }
 
-    // ---------- FUEL LOGS (unchanged) ----------
+    // ---------- FUEL LOGS ----------
     async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) {
       let totalCost = liters * pricePerLiter;
       await localDB.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer });
@@ -2017,7 +2013,7 @@
       chartInstance = new Chart(ctx, { type: 'line', data: { labels: logs.slice(0,10).reverse().map(l => l.date), datasets: [{ label: 'Liters refueled', data: logs.slice(0,10).reverse().map(l => l.liters), borderColor: '#16a34a' }] } });
     }
 
-    // ---------- HISTORY & RECENT (unchanged) ----------
+    // ---------- HISTORY & RECENT ----------
     async function loadHistory() {
       let history = await localDB.tripHistory.reverse().toArray();
       let container = document.getElementById('historyList');
@@ -2068,7 +2064,7 @@
       }
     }
 
-    // ---------- TRIP PLANNER (mostly unchanged but uses combined stations) ----------
+    // ---------- TRIP PLANNER (FULL) ----------
     function resetTripPlanner() {
       currentStep = 1;
       showStep(1);
@@ -2108,7 +2104,7 @@
       try {
         const start = actualUserLocation;
         const end = destCoordinates;
-        const distTotal = haversine(start.lat, start.lng, end.lat, end.lng);
+        const distTotal = haversine(start.lat, start.lng, end.lat, end.lon);
         let along = stations.filter(s => {
           const d1 = haversine(start.lat, start.lng, s.lat, s.lon);
           const d2 = haversine(s.lat, s.lon, end.lat, end.lon);
@@ -2123,7 +2119,7 @@
           document.getElementById('carNameStep2').innerText = activeVehicle ? activeVehicle.name : 'your car';
           container.innerHTML = stationsAlongRoute.map(s => {
             let amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-            let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+            let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
             return `
             <div class="floating-card station-select-item" data-station-id="${s.id}">
               <div class="flex-between"><strong>${s.name} ${verifiedBadge}</strong><span class="station-distance">${s.distance.toFixed(1)} km from start</span></div>
@@ -2151,7 +2147,6 @@
     }
 
     async function loadFunPlaces() {
-      // unchanged from original
       if (!destCoordinates || !actualUserLocation) return;
       const loadingDiv = document.getElementById('loadingFun');
       const container = document.getElementById('funPlacesStep3');
@@ -2290,10 +2285,8 @@
         document.getElementById('profileName').value = userProfile.name || '';
         document.getElementById('profileEmail').value = user.email || '';
         document.getElementById('profilePhone').value = userProfile.phone || '';
-        
         await performSystemChecks();
         if (mainApp.style.display === 'none') return;
-        
         authOverlay.style.display = 'none';
         mainApp.style.display = 'flex';
         await loadAdminSettings();
@@ -2308,313 +2301,338 @@
       }
     });
 
-    // ---------- EVENT LISTENERS (abbreviated but included in full code) ----------
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const isLogin = tab.dataset.tab === 'login';
-        document.getElementById('loginForm').classList.toggle('hide', !isLogin);
-        document.getElementById('registerForm').classList.toggle('hide', isLogin);
-      });
-    });
-
-    document.getElementById('regProfilePicBtn').onclick = () => {
-      cloudinary.createUploadWidget({
-        cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'],
-        cropping: true, croppingAspectRatio: 1, folder: 'profiles'
-      }, (error, result) => {
-        if (!error && result.event === 'success') {
-          tempProfilePicUrl = result.info.secure_url;
-          document.getElementById('regProfilePicPreview').src = tempProfilePicUrl;
-        }
-      }).open();
-    };
-
-    document.getElementById('registerBtn').onclick = async function(e) {
-      const btn = this;
-      setButtonLoading(btn, true);
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const phone = document.getElementById('regPhone').value.trim();
-      const password = document.getElementById('regPassword').value;
-      if (!name || !email || !password) {
-        showToast('Fill required fields', true);
-        setButtonLoading(btn, false);
-        return;
-      }
-      try {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        const uid = cred.user.uid;
-        const fullPhone = userPhoneCode + phone;
-        await rtdb.ref('users/' + uid).set({
-          name, email, phone: fullPhone, photoURL: tempProfilePicUrl || '',
-          country: userCountryCode, currency: userCurrency, createdAt: Date.now()
+    // ---------- EVENT LISTENERS ----------
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auth tabs
+      document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const isLogin = tab.dataset.tab === 'login';
+          document.getElementById('loginForm').classList.toggle('hide', !isLogin);
+          document.getElementById('registerForm').classList.toggle('hide', isLogin);
         });
-        authOverlay.style.display = 'none';
-      } catch(e) { showToast(e.message, true); setButtonLoading(btn, false); }
-    };
+      });
 
-    document.getElementById('loginBtn').onclick = function(e) {
-      const btn = this;
-      setButtonLoading(btn, true);
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPassword').value;
-      auth.signInWithEmailAndPassword(email, pass)
-        .catch(e => { showToast(e.message, true); setButtonLoading(btn, false); });
-    };
-
-    document.getElementById('logoutSidebar').onclick = () => auth.signOut();
-    document.getElementById('updateProfileBtn').onclick = async () => {
-      const name = document.getElementById('profileName').value;
-      const phone = document.getElementById('profilePhone').value;
-      await rtdb.ref('users/'+currentUser.uid).update({ name, phone });
-      showToast('Profile updated');
-    };
-    document.getElementById('changePhotoBtn').onclick = () => {
-      cloudinary.createUploadWidget({
-        cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'],
-        cropping: true, croppingAspectRatio: 1, folder: 'profiles'
-      }, async (error, result) => {
-        if (!error && result.event === 'success') {
-          const url = result.info.secure_url;
-          await rtdb.ref('users/'+currentUser.uid).update({ photoURL: url });
-          document.getElementById('userProfilePicHeader').src = url;
-          document.getElementById('profilePicLarge').src = url;
-        }
-      }).open();
-    };
-
-    // Vehicle image uploads (simplified)
-    let tempAddFront='', tempAddBack='', tempAddSide='';
-    document.getElementById('addFrontUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddFront = r.info.secure_url; }).open();
-    document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddBack = r.info.secure_url; }).open();
-    document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddSide = r.info.secure_url; }).open();
-
-    document.getElementById('saveVehicleBtn').onclick = async function() {
-      const btn = this;
-      const spinner = btn.querySelector('.spinner');
-      const span = btn.querySelector('span');
-      btn.disabled = true;
-      spinner.style.display = 'inline-block';
-      span.style.opacity = '0.7';
-      const name = document.getElementById('newVehicleName').value;
-      const license = document.getElementById('newLicensePlate').value;
-      const tank = parseFloat(document.getElementById('newTankCapacity').value);
-      const cons = parseFloat(document.getElementById('newConsumption').value);
-      const fuel = document.getElementById('newFuelType').value;
-      if (name && tank && cons) {
-        const vehicleData = { name, licensePlate: license, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, images: { front: tempAddFront, back: tempAddBack, side: tempAddSide }, isActive: true, ownerId: currentUser.uid };
-        await rtdb.ref('vehicles/' + currentUser.uid).push(vehicleData);
-        await localDB.vehicles.add(vehicleData);
-        activeVehicle = vehicleData;
-        updateActiveVehicleUI();
-        renderVehicleList();
-        document.getElementById('addVehicleForm').style.display = 'none';
-        tempAddFront = tempAddBack = tempAddSide = '';
-        showToast('Vehicle saved!');
-        closePage('garagePage');
-      }
-      btn.disabled = false;
-      spinner.style.display = 'none';
-      span.style.opacity = '1';
-    };
-
-    document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
-    document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
-    document.getElementById('submitLogBtn').onclick = async () => {
-      if (!activeVehicle) return;
-      let date = document.getElementById('logDate').value;
-      let liters = parseFloat(document.getElementById('logLiters').value);
-      let price = parseFloat(document.getElementById('logPricePerLiter').value);
-      let odo = parseFloat(document.getElementById('logOdometer').value);
-      if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
-      document.getElementById('addLogForm').style.display = 'none';
-    };
-
-    document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
-    document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateCounters(); updateGreenSuggestion(); }; });
-    document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateCounters(); updateGreenSuggestion(); };
-    document.getElementById('sortSelect').onchange = () => { renderMarkers(); updateGreenSuggestion(); };
-    document.getElementById('nearMeBtn').onclick = async () => {
-      if (!actualUserLocation) { showToast("Getting location...", true); locateAndFetch(); return; }
-      showLoading(true);
-      let nearby = stations.filter(s => s.distance <= radiusKm).sort((a,b) => a.distance - b.distance).slice(0,5);
-      showLoading(false);
-      if (nearby.length === 0) { showToast("No stations found nearby."); return; }
-      let popupContent = `<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>`;
-      nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation('${s.id}')">Navigate</button></div>`; });
-      popupContent += `</div>`;
-      L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent).openOn(map);
-      window.navigateToStation = (id) => { const station = stations.find(s => s.id == id); if (station) startNavigationWithMessage(station); map.closePopup(); };
-    };
-    document.getElementById('startTripBtn').onclick = () => {
-      const panel = document.getElementById('turnByTurnPanel');
-      if (currentRouteInstructions.length) {
-        panel.innerHTML = '<strong>🔄 Turn-by-Turn Directions:</strong><br>' + currentRouteInstructions.map((inst, idx) => `${idx+1}. ${inst}`).join('<br>');
-        panel.style.display = 'block';
-        if (currentRouteInstructions[0]) showToast(`🚦 First step: ${currentRouteInstructions[0]}`);
-      } else { showToast("No active route."); }
-    };
-    document.getElementById('clearRouteBtn').onclick = () => {
-      if (routingControl) { map.removeControl(routingControl); routingControl = null; }
-      document.getElementById('clearRouteBtn').style.display = 'none';
-      document.getElementById('startTripBtn').style.display = 'none';
-      document.getElementById('turnByTurnPanel').style.display = 'none';
-      currentRouteInstructions = [];
-      showToast("Route cleared");
-    };
-    document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
-    document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
-    document.getElementById('overlayMapBtn').onclick = () => { document.getElementById('mapWrapper').requestFullscreen?.(); };
-
-    // Sidebar
-    const sidebar = document.getElementById('sidebarOverlay');
-    document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
-    document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
-    sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      if (item.id === 'darkModeSidebar') {
-        item.onclick = () => { document.body.classList.toggle('dark'); sidebar.classList.remove('open'); };
-      } else if (item.id === 'logoutSidebar') {} 
-      else if (item.dataset.page) {
-        item.onclick = (e) => { 
-          e.preventDefault();
-          const page = item.dataset.page;
-          if (page === 'map') {
-            document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
-            sidebar.classList.remove('open');
-          } else {
-            openPage(page + 'Page');
-            sidebar.classList.remove('open');
+      // Profile pic upload
+      document.getElementById('regProfilePicBtn').onclick = () => {
+        cloudinary.createUploadWidget({
+          cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'],
+          cropping: true, croppingAspectRatio: 1, folder: 'profiles'
+        }, (error, result) => {
+          if (!error && result.event === 'success') {
+            tempProfilePicUrl = result.info.secure_url;
+            document.getElementById('regProfilePicPreview').src = tempProfilePicUrl;
           }
-        };
-      }
-    });
+        }).open();
+      };
 
-    document.querySelectorAll('.close-page-btn').forEach(btn => { btn.onclick = () => closePage(btn.dataset.close); });
-    document.getElementById('floatingFuelBtn').onclick = () => openPage('reportPage');
-    document.getElementById('searchBoxTrigger').onclick = () => openPage('searchPage');
-    document.getElementById('globalSearchInput').addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
-      const results = stations.filter(s => s.name.toLowerCase().includes(query) || s.address.toLowerCase().includes(query));
-      const container = document.getElementById('globalSearchResults');
-      container.innerHTML = results.map(s => {
-        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
-        return `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name} ${verifiedBadge}</strong><br>${s.address}<br>📍 ${s.distance?.toFixed(1)} km</div>`;
-      }).join('');
-      container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
-    });
-
-    // Trip Planner navigation
-    document.getElementById('nextStep').onclick = async () => {
-      if (currentStep === 1) { if (!destCoordinates) { showToast("Select destination", true); return; } await loadStationsAlongRoute(); showStep(2); }
-      else if (currentStep === 2) { if (!selectedStation) { showToast("Select station", true); return; } await loadFunPlaces(); showStep(3); }
-      else if (currentStep === 3) { showStep(4); }
-    };
-    document.getElementById('prevStep').onclick = () => { if (currentStep > 1) showStep(currentStep - 1); };
-    document.getElementById('skipFunStop').onclick = () => { selectedFunPlaces = []; showStep(4); };
-    document.getElementById('drawRouteBtn').onclick = async () => {
-      if (!actualUserLocation || !destCoordinates || !selectedStation) { showToast("Missing data", true); return; }
-      const btn = document.getElementById('drawRouteBtn');
-      const spinner = btn.querySelector('.spinner');
-      const msgDiv = document.getElementById('drawingRouteMsg');
-      btn.disabled = true;
-      spinner.style.display = 'inline-block';
-      msgDiv.style.display = 'block';
-      try {
-        if (routingControl) map.removeControl(routingControl);
-        let waypoints = [L.latLng(actualUserLocation.lat, actualUserLocation.lng)];
-        waypoints.push(L.latLng(selectedStation.lat, selectedStation.lon));
-        selectedFunPlaces.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
-        waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
-        const allPoints = [actualUserLocation, selectedStation, ...selectedFunPlaces, destCoordinates];
-        for (let i = 0; i < allPoints.length - 1; i++) {
-          const start = allPoints[i];
-          const end = allPoints[i+1];
-          const color = i === 0 ? '#dc2626' : (i === allPoints.length-2 ? '#3b82f6' : '#10b981');
-          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`);
-          const data = await res.json();
-          if (data.routes && data.routes[0]) {
-            const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-            L.polyline(coords, { color, weight: 5 }).addTo(map);
-          }
+      // Register
+      document.getElementById('registerBtn').onclick = async function(e) {
+        const btn = this;
+        setButtonLoading(btn, true);
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const password = document.getElementById('regPassword').value;
+        if (!name || !email || !password) {
+          showToast('Fill required fields', true);
+          setButtonLoading(btn, false);
+          return;
         }
-        routingControl = L.Routing.control({ waypoints, routeWhileDragging: false, lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] } }).addTo(map);
-        document.getElementById('clearRouteBtn').style.display = 'flex';
-        document.getElementById('startTripBtn').style.display = 'flex';
-        map.fitBounds(waypoints);
-        await localDB.tripHistory.add({ destination: destName, stationName: selectedStation.name, date: new Date().toISOString(), distance: haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon).toFixed(1), fuelNeeded: ((haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon)/100)*activeVehicle.consumptionLper100km).toFixed(1) });
-        closePage('tripPlannerPage');
-        showToast('Route drawn with color segments!');
-      } catch(e) { showToast('Error drawing route', true); } 
-      finally {
+        try {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const uid = cred.user.uid;
+          const fullPhone = userPhoneCode + phone;
+          await rtdb.ref('users/' + uid).set({
+            name, email, phone: fullPhone, photoURL: tempProfilePicUrl || '',
+            country: userCountryCode, currency: userCurrency, createdAt: Date.now()
+          });
+          authOverlay.style.display = 'none';
+        } catch(e) { showToast(e.message, true); setButtonLoading(btn, false); }
+      };
+
+      // Login
+      document.getElementById('loginBtn').onclick = function(e) {
+        const btn = this;
+        setButtonLoading(btn, true);
+        const email = document.getElementById('loginEmail').value.trim();
+        const pass = document.getElementById('loginPassword').value;
+        auth.signInWithEmailAndPassword(email, pass)
+          .catch(e => { showToast(e.message, true); setButtonLoading(btn, false); });
+      };
+
+      // Logout
+      document.getElementById('logoutSidebar').onclick = () => auth.signOut();
+      document.getElementById('updateProfileBtn').onclick = async () => {
+        const name = document.getElementById('profileName').value;
+        const phone = document.getElementById('profilePhone').value;
+        await rtdb.ref('users/'+currentUser.uid).update({ name, phone });
+        showToast('Profile updated');
+      };
+      document.getElementById('changePhotoBtn').onclick = () => {
+        cloudinary.createUploadWidget({
+          cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local', 'camera'],
+          cropping: true, croppingAspectRatio: 1, folder: 'profiles'
+        }, async (error, result) => {
+          if (!error && result.event === 'success') {
+            const url = result.info.secure_url;
+            await rtdb.ref('users/'+currentUser.uid).update({ photoURL: url });
+            document.getElementById('userProfilePicHeader').src = url;
+            document.getElementById('profilePicLarge').src = url;
+          }
+        }).open();
+      };
+
+      // Vehicle image uploads
+      let tempAddFront='', tempAddBack='', tempAddSide='';
+      document.getElementById('addFrontUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddFront = r.info.secure_url; }).open();
+      document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddBack = r.info.secure_url; }).open();
+      document.getElementById('addSideUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddSide = r.info.secure_url; }).open();
+
+      document.getElementById('saveVehicleBtn').onclick = async function() {
+        const btn = this;
+        const spinner = btn.querySelector('.spinner');
+        const span = btn.querySelector('span');
+        btn.disabled = true;
+        spinner.style.display = 'inline-block';
+        span.style.opacity = '0.7';
+        const name = document.getElementById('newVehicleName').value;
+        const license = document.getElementById('newLicensePlate').value;
+        const tank = parseFloat(document.getElementById('newTankCapacity').value);
+        const cons = parseFloat(document.getElementById('newConsumption').value);
+        const fuel = document.getElementById('newFuelType').value;
+        if (name && tank && cons) {
+          const vehicleData = { name, licensePlate: license, tankCapacity: tank, consumptionLper100km: cons, fuelType: fuel, images: { front: tempAddFront, back: tempAddBack, side: tempAddSide }, isActive: true, ownerId: currentUser.uid };
+          await rtdb.ref('vehicles/' + currentUser.uid).push(vehicleData);
+          await localDB.vehicles.add(vehicleData);
+          activeVehicle = vehicleData;
+          updateActiveVehicleUI();
+          renderVehicleList();
+          document.getElementById('addVehicleForm').style.display = 'none';
+          tempAddFront = tempAddBack = tempAddSide = '';
+          showToast('Vehicle saved!');
+          closePage('garagePage');
+        }
         btn.disabled = false;
         spinner.style.display = 'none';
-        msgDiv.style.display = 'none';
-      }
-    };
+        span.style.opacity = '1';
+      };
 
-    let destSearchTimeout;
-    document.getElementById('destSearch').addEventListener('input', function() {
-      clearTimeout(destSearchTimeout);
-      const query = this.value.trim();
-      if (query.length < 3) { document.getElementById('destSuggestions').style.display = 'none'; return; }
-      destSearchTimeout = setTimeout(async () => {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
-        const data = await res.json();
-        const suggestionsDiv = document.getElementById('destSuggestions');
-        suggestionsDiv.innerHTML = '';
-        if (data.length === 0) { suggestionsDiv.style.display = 'none'; return; }
-        data.forEach(place => {
-          const div = document.createElement('div');
-          div.className = 'place-suggestion-item';
-          const distance = actualUserLocation ? haversine(actualUserLocation.lat, actualUserLocation.lng, parseFloat(place.lat), parseFloat(place.lon)).toFixed(1) : '?';
-          div.innerHTML = `<span><i class="fas fa-location-dot"></i> ${place.display_name}</span><span class="place-suggestion-distance">${distance} km</span>`;
-          div.onclick = () => {
-            destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
-            destName = place.display_name;
-            document.getElementById('destSearch').value = place.display_name;
-            suggestionsDiv.style.display = 'none';
-            document.getElementById('step1Info').innerHTML = `✅ Destination set: ${destName}`;
-            document.getElementById('nextStep').disabled = false;
+      document.getElementById('addVehicleBtn').onclick = () => document.getElementById('addVehicleForm').style.display = 'block';
+      document.getElementById('addLogBtn').onclick = () => document.getElementById('addLogForm').style.display = 'block';
+      document.getElementById('submitLogBtn').onclick = async () => {
+        if (!activeVehicle) return;
+        let date = document.getElementById('logDate').value;
+        let liters = parseFloat(document.getElementById('logLiters').value);
+        let price = parseFloat(document.getElementById('logPricePerLiter').value);
+        let odo = parseFloat(document.getElementById('logOdometer').value);
+        if (date && liters && price) await addFuelLog(activeVehicle.id, date, liters, price, odo);
+        document.getElementById('addLogForm').style.display = 'none';
+      };
+
+      // Radius slider
+      document.getElementById('radiusSlider').oninput = (e) => { radiusKm = parseFloat(e.target.value); document.getElementById('radiusDisplay').innerText = radiusKm + ' km'; if (activeLocation) loadStationsAndRefresh(false); };
+
+      // Filter chips
+      document.querySelectorAll('.chip').forEach(chip => { chip.onclick = () => { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentFilter = chip.dataset.filter; renderMarkers(); updateCounters(); updateGreenSuggestion(); }; });
+
+      // Clear search
+      document.getElementById('clearSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; searchQuery = ''; renderMarkers(); updateCounters(); updateGreenSuggestion(); };
+
+      // Sort select
+      document.getElementById('sortSelect').onchange = () => { renderMarkers(); updateGreenSuggestion(); };
+
+      // Near me button
+      document.getElementById('nearMeBtn').onclick = async () => {
+        if (!actualUserLocation) { showToast("Getting location...", true); locateAndFetch(); return; }
+        showLoading(true);
+        let nearby = stations.filter(s => s.distance <= radiusKm).sort((a,b) => a.distance - b.distance).slice(0,5);
+        showLoading(false);
+        if (nearby.length === 0) { showToast("No stations found nearby."); return; }
+        let popupContent = `<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>`;
+        nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation('${s.id}')">Navigate</button></div>`; });
+        popupContent += `</div>`;
+        L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent).openOn(map);
+        window.navigateToStation = (id) => { const station = stations.find(s => s.id == id); if (station) startNavigationWithMessage(station); map.closePopup(); };
+      };
+
+      // Route controls
+      document.getElementById('startTripBtn').onclick = () => {
+        const panel = document.getElementById('turnByTurnPanel');
+        if (currentRouteInstructions.length) {
+          panel.innerHTML = '<strong>🔄 Turn-by-Turn Directions:</strong><br>' + currentRouteInstructions.map((inst, idx) => `${idx+1}. ${inst}`).join('<br>');
+          panel.style.display = 'block';
+          if (currentRouteInstructions[0]) showToast(`🚦 First step: ${currentRouteInstructions[0]}`);
+        } else { showToast("No active route."); }
+      };
+      document.getElementById('clearRouteBtn').onclick = () => {
+        if (routingControl) { map.removeControl(routingControl); routingControl = null; }
+        document.getElementById('clearRouteBtn').style.display = 'none';
+        document.getElementById('startTripBtn').style.display = 'none';
+        document.getElementById('turnByTurnPanel').style.display = 'none';
+        currentRouteInstructions = [];
+        showToast("Route cleared");
+      };
+
+      // Map float buttons
+      document.getElementById('floatLocateBtn').onclick = () => { if (activeLocation) map.setView([activeLocation.lat, activeLocation.lng], 15); else locateAndFetch(); };
+      document.getElementById('floatRefreshBtn').onclick = () => { if (activeLocation) loadStationsAndRefresh(true); };
+      document.getElementById('overlayMapBtn').onclick = () => { document.getElementById('mapWrapper').requestFullscreen?.(); };
+
+      // Sidebar
+      const sidebar = document.getElementById('sidebarOverlay');
+      document.getElementById('menuBtn').onclick = () => sidebar.classList.add('open');
+      document.getElementById('closeSidebarBtn').onclick = () => sidebar.classList.remove('open');
+      sidebar.addEventListener('click', e => { if (e.target === sidebar) sidebar.classList.remove('open'); });
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        if (item.id === 'darkModeSidebar') {
+          item.onclick = () => { document.body.classList.toggle('dark'); sidebar.classList.remove('open'); };
+        } else if (item.id === 'logoutSidebar') {} 
+        else if (item.dataset.page) {
+          item.onclick = (e) => { 
+            e.preventDefault();
+            const page = item.dataset.page;
+            if (page === 'map') {
+              document.querySelectorAll('.page-overlay').forEach(p => p.classList.remove('show'));
+              sidebar.classList.remove('open');
+            } else {
+              openPage(page + 'Page');
+              sidebar.classList.remove('open');
+            }
           };
-          suggestionsDiv.appendChild(div);
-        });
-        suggestionsDiv.style.display = 'block';
-      }, 500);
+        }
+      });
+
+      // Close page buttons
+      document.querySelectorAll('.close-page-btn').forEach(btn => { btn.onclick = () => closePage(btn.dataset.close); });
+
+      // Floating fuel button
+      document.getElementById('floatingFuelBtn').onclick = () => openPage('reportPage');
+
+      // Search page
+      document.getElementById('searchBoxTrigger').onclick = () => openPage('searchPage');
+      document.getElementById('globalSearchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const results = stations.filter(s => s.name.toLowerCase().includes(query) || s.address.toLowerCase().includes(query));
+        const container = document.getElementById('globalSearchResults');
+        container.innerHTML = results.map(s => {
+          let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
+          return `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name} ${verifiedBadge}</strong><br>${s.address}<br>📍 ${s.distance?.toFixed(1)} km</div>`;
+        }).join('');
+        container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
+      });
+
+      // Trip Planner navigation
+      document.getElementById('nextStep').onclick = async () => {
+        if (currentStep === 1) { if (!destCoordinates) { showToast("Select destination", true); return; } await loadStationsAlongRoute(); showStep(2); }
+        else if (currentStep === 2) { if (!selectedStation) { showToast("Select station", true); return; } await loadFunPlaces(); showStep(3); }
+        else if (currentStep === 3) { showStep(4); }
+      };
+      document.getElementById('prevStep').onclick = () => { if (currentStep > 1) showStep(currentStep - 1); };
+      document.getElementById('skipFunStop').onclick = () => { selectedFunPlaces = []; showStep(4); };
+      document.getElementById('drawRouteBtn').onclick = async () => {
+        if (!actualUserLocation || !destCoordinates || !selectedStation) { showToast("Missing data", true); return; }
+        const btn = document.getElementById('drawRouteBtn');
+        const spinner = btn.querySelector('.spinner');
+        const msgDiv = document.getElementById('drawingRouteMsg');
+        btn.disabled = true;
+        spinner.style.display = 'inline-block';
+        msgDiv.style.display = 'block';
+        try {
+          if (routingControl) map.removeControl(routingControl);
+          let waypoints = [L.latLng(actualUserLocation.lat, actualUserLocation.lng)];
+          waypoints.push(L.latLng(selectedStation.lat, selectedStation.lon));
+          selectedFunPlaces.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
+          waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
+          const allPoints = [actualUserLocation, selectedStation, ...selectedFunPlaces, destCoordinates];
+          for (let i = 0; i < allPoints.length - 1; i++) {
+            const start = allPoints[i];
+            const end = allPoints[i+1];
+            const color = i === 0 ? '#dc2626' : (i === allPoints.length-2 ? '#3b82f6' : '#10b981');
+            const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`);
+            const data = await res.json();
+            if (data.routes && data.routes[0]) {
+              const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+              L.polyline(coords, { color, weight: 5 }).addTo(map);
+            }
+          }
+          routingControl = L.Routing.control({ waypoints, routeWhileDragging: false, lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] } }).addTo(map);
+          document.getElementById('clearRouteBtn').style.display = 'flex';
+          document.getElementById('startTripBtn').style.display = 'flex';
+          map.fitBounds(waypoints);
+          await localDB.tripHistory.add({ destination: destName, stationName: selectedStation.name, date: new Date().toISOString(), distance: haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon).toFixed(1), fuelNeeded: ((haversine(actualUserLocation.lat, actualUserLocation.lng, destCoordinates.lat, destCoordinates.lon)/100)*activeVehicle.consumptionLper100km).toFixed(1) });
+          closePage('tripPlannerPage');
+          showToast('Route drawn with color segments!');
+        } catch(e) { showToast('Error drawing route', true); } 
+        finally {
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          msgDiv.style.display = 'none';
+        }
+      };
+
+      // Destination search
+      let destSearchTimeout;
+      document.getElementById('destSearch').addEventListener('input', function() {
+        clearTimeout(destSearchTimeout);
+        const query = this.value.trim();
+        if (query.length < 3) { document.getElementById('destSuggestions').style.display = 'none'; return; }
+        destSearchTimeout = setTimeout(async () => {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+          const data = await res.json();
+          const suggestionsDiv = document.getElementById('destSuggestions');
+          suggestionsDiv.innerHTML = '';
+          if (data.length === 0) { suggestionsDiv.style.display = 'none'; return; }
+          data.forEach(place => {
+            const div = document.createElement('div');
+            div.className = 'place-suggestion-item';
+            const distance = actualUserLocation ? haversine(actualUserLocation.lat, actualUserLocation.lng, parseFloat(place.lat), parseFloat(place.lon)).toFixed(1) : '?';
+            div.innerHTML = `<span><i class="fas fa-location-dot"></i> ${place.display_name}</span><span class="place-suggestion-distance">${distance} km</span>`;
+            div.onclick = () => {
+              destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(place.lon) };
+              destName = place.display_name;
+              document.getElementById('destSearch').value = place.display_name;
+              suggestionsDiv.style.display = 'none';
+              document.getElementById('step1Info').innerHTML = `✅ Destination set: ${destName}`;
+              document.getElementById('nextStep').disabled = false;
+            };
+            suggestionsDiv.appendChild(div);
+          });
+          suggestionsDiv.style.display = 'block';
+        }, 500);
+      });
+
+      // Export functions
+      window.downloadBlob = (content, fileName, mimeType) => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([content], { type: mimeType }));
+        a.download = fileName;
+        a.click();
+      };
+      document.getElementById('exportLogsBtn').onclick = async () => {
+        let logs = await localDB.fuelLogs.where('vehicleId').equals(activeVehicle?.id).toArray();
+        let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
+        downloadBlob(csv, 'fuel_logs.csv', 'text/csv');
+      };
+      document.getElementById('exportFavsBtn').onclick = () => downloadBlob(JSON.stringify(favoriteIds), 'favorites.json', 'application/json');
+      document.getElementById('exportReportsBtn').onclick = async () => { let reports = await localDB.userReports.toArray(); downloadBlob(JSON.stringify(reports), 'reports.json', 'application/json'); };
+      document.getElementById('exportHistoryBtn').onclick = async () => { let hist = await localDB.tripHistory.toArray(); downloadBlob(JSON.stringify(hist), 'trip_history.json', 'application/json'); };
+      document.getElementById('clearHistoryBtn').onclick = async () => { await localDB.tripHistory.clear(); loadHistory(); showToast("History cleared"); };
+      document.getElementById('clearRecentBtn').onclick = async () => { await localDB.recentStations.clear(); loadRecentStations(); showToast("Recent cleared"); };
+      document.getElementById('calcTripBtnCalc').onclick = () => {
+        if (!activeVehicle) return;
+        let distance = parseFloat(document.getElementById('tripDistanceCalc').value);
+        if (isNaN(distance)) return;
+        let fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
+        let pricePerLiter = (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
+        let cost = fuelNeeded * pricePerLiter;
+        let eta = calculateETA(distance);
+        document.getElementById('fuelNeededCalc').innerText = fuelNeeded.toFixed(1) + ' L';
+        document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
+        document.getElementById('etaCalc').innerText = eta;
+      };
     });
-
-    // Export functions
-    function downloadBlob(content, fileName, mimeType) {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([content], { type: mimeType }));
-      a.download = fileName;
-      a.click();
-    }
-    document.getElementById('exportLogsBtn').onclick = async () => {
-      let logs = await localDB.fuelLogs.where('vehicleId').equals(activeVehicle?.id).toArray();
-      let csv = "Date,Liters,PricePerLiter,TotalCost,Odometer\n" + logs.map(l => `${l.date},${l.liters},${l.pricePerLiter},${l.totalCost},${l.odometer}`).join("\n");
-      downloadBlob(csv, 'fuel_logs.csv', 'text/csv');
-    };
-    document.getElementById('exportFavsBtn').onclick = () => downloadBlob(JSON.stringify(favoriteIds), 'favorites.json', 'application/json');
-    document.getElementById('exportReportsBtn').onclick = async () => { let reports = await localDB.userReports.toArray(); downloadBlob(JSON.stringify(reports), 'reports.json', 'application/json'); };
-    document.getElementById('exportHistoryBtn').onclick = async () => { let hist = await localDB.tripHistory.toArray(); downloadBlob(JSON.stringify(hist), 'trip_history.json', 'application/json'); };
-    document.getElementById('clearHistoryBtn').onclick = async () => { await localDB.tripHistory.clear(); loadHistory(); showToast("History cleared"); };
-    document.getElementById('clearRecentBtn').onclick = async () => { await localDB.recentStations.clear(); loadRecentStations(); showToast("Recent cleared"); };
-    document.getElementById('calcTripBtnCalc').onclick = () => {
-      if (!activeVehicle) return;
-      let distance = parseFloat(document.getElementById('tripDistanceCalc').value);
-      if (isNaN(distance)) return;
-      let fuelNeeded = (distance / 100) * activeVehicle.consumptionLper100km;
-      let pricePerLiter = (activeVehicle.fuelType === 'petrol' ? currentPrices.petrol : currentPrices.diesel);
-      let cost = fuelNeeded * pricePerLiter;
-      let eta = calculateETA(distance);
-      document.getElementById('fuelNeededCalc').innerText = fuelNeeded.toFixed(1) + ' L';
-      document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
-      document.getElementById('etaCalc').innerText = eta;
-    };
-
   })();
 </script>
 </body>
