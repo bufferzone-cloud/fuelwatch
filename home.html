@@ -69,6 +69,40 @@
       background: #1e1e1e;
     }
 
+    /* ---------- SYSTEM OVERLAY (Maintenance / Blocked) ---------- */
+    #systemOverlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #0a0f0a;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .system-message {
+      max-width: 400px;
+      background: #1e1e1e;
+      border-radius: 36px;
+      padding: 40px 30px;
+      border: 1px solid #16a34a;
+    }
+    .system-message i {
+      font-size: 64px;
+      color: #16a34a;
+      margin-bottom: 20px;
+    }
+    .system-message h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .system-message p {
+      color: #ccc;
+      margin-bottom: 24px;
+    }
+
     /* ---------- AUTH OVERLAY ---------- */
     #authOverlay {
       position: fixed;
@@ -580,7 +614,7 @@
     }
     body.dark .turn-by-turn-panel { background: #2c2c2c; color: white; }
 
-    /* ---------- SIDEBAR (SCROLLABLE) ---------- */
+    /* ---------- SIDEBAR ---------- */
     .sidebar-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -750,6 +784,14 @@
       font-size: 18px;
       display: flex;
       justify-content: space-between;
+    }
+    .verified-badge {
+      background: #fbbf24;
+      color: #000;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 30px;
+      margin-left: 8px;
     }
     .station-address {
       font-size: 12px;
@@ -967,6 +1009,16 @@
 </head>
 <body>
 
+<!-- SYSTEM OVERLAY (Maintenance / Blocked) -->
+<div id="systemOverlay" style="display: none;">
+  <div class="system-message">
+    <i class="fas fa-tools" id="systemIcon"></i>
+    <h2 id="systemTitle">System Unavailable</h2>
+    <p id="systemMessage">We're currently performing maintenance. Please check back later.</p>
+    <button id="systemRetryBtn" class="auth-btn" style="display: none;">Retry</button>
+  </div>
+</div>
+
 <!-- AUTH OVERLAY -->
 <div id="authOverlay">
   <div class="auth-card">
@@ -1034,7 +1086,7 @@
     <div class="warning-sentence" id="warningSentence"><i class="fas fa-info-circle"></i> Tap a station → Navigate or Report.</div>
     <div class="radius-row">
       <span class="radius-label"><i class="fas fa-car"></i> radius</span>
-      <div class="slider-container"><input type="range" min="1" max="8" step="0.5" value="3" class="car-slider" id="radiusSlider"></div>
+      <div class="slider-container"><input type="range" min="1" max="20" step="0.5" value="3" class="car-slider" id="radiusSlider"></div>
       <span class="radius-value" id="radiusDisplay">3 km</span>
     </div>
   </div>
@@ -1278,7 +1330,7 @@
       <hr>
       <h4 style="color:#16a34a;">🚀 About FuelRadar</h4>
       <p>FuelRadar is your ultimate fuel companion – designed by drivers for drivers. We combine live fuel station data from OpenStreetMap, intelligent route planning with fuel cost estimation, and community reports.</p>
-      <p><i class="fas fa-gas-pump"></i> <strong>Version 3.1</strong> | Built with ❤️ for the driving community.</p>
+      <p><i class="fas fa-gas-pump"></i> <strong>Version 3.3</strong> | Built with ❤️ for the driving community.</p>
     </div>
   </div>
 </div>
@@ -1332,7 +1384,8 @@
     let currentUser = null;
     let userProfile = null;
     let activeVehicle = null;
-    let stations = [];
+    let stations = [];                 // Combined OSM + registered stations
+    let registeredStations = [];       // Cache of registered stations from Firebase
     let activeLocation = null;
     let actualUserLocation = null;
     let currentFilter = 'all';
@@ -1349,6 +1402,7 @@
     let currentRouteInstructions = [];
     let currentRoutingControl = null;
     let initialLocationSet = false;
+    let blockedStationIds = new Set();  // IDs of blocked stations (OSM IDs + Firebase station IDs)
 
     // Trip planner state
     let destCoordinates = null;
@@ -1369,6 +1423,7 @@
     // UI Elements
     const authOverlay = document.getElementById('authOverlay');
     const mainApp = document.getElementById('mainAppContainer');
+    const systemOverlay = document.getElementById('systemOverlay');
 
     // ---------- HELPER FUNCTIONS ----------
     function showToast(msg, isError = false) {
@@ -1391,6 +1446,135 @@
         btn.classList.remove('loading');
         btn.disabled = false;
       }
+    }
+
+    // ---------- SYSTEM CHECKS (Maintenance / Blocked) ----------
+    async function performSystemChecks() {
+      if (!currentUser) return;
+      try {
+        const maintSnap = await rtdb.ref('maintenance/userApp').once('value');
+        const maintenanceActive = maintSnap.val() === true;
+        const blockedSnap = await rtdb.ref(`blocked/users/${currentUser.uid}`).once('value');
+        const userBlocked = blockedSnap.val() === true;
+        if (maintenanceActive || userBlocked) {
+          showSystemOverlay(maintenanceActive, userBlocked);
+        } else {
+          hideSystemOverlay();
+        }
+      } catch (e) {
+        console.warn('System check failed', e);
+      }
+    }
+
+    function showSystemOverlay(maintenance, blocked) {
+      const overlay = document.getElementById('systemOverlay');
+      const icon = document.getElementById('systemIcon');
+      const title = document.getElementById('systemTitle');
+      const message = document.getElementById('systemMessage');
+      const retryBtn = document.getElementById('systemRetryBtn');
+      if (maintenance) {
+        icon.className = 'fas fa-tools';
+        title.innerText = 'Under Maintenance';
+        message.innerText = 'FuelRadar is currently undergoing scheduled maintenance. We\'ll be back shortly!';
+        retryBtn.style.display = 'block';
+      } else if (blocked) {
+        icon.className = 'fas fa-ban';
+        title.innerText = 'Account Blocked';
+        message.innerText = 'Your account has been suspended. Please contact support.';
+        retryBtn.style.display = 'none';
+      }
+      overlay.style.display = 'flex';
+      mainApp.style.display = 'none';
+      retryBtn.onclick = async () => { await performSystemChecks(); };
+    }
+
+    function hideSystemOverlay() {
+      document.getElementById('systemOverlay').style.display = 'none';
+      if (currentUser) mainApp.style.display = 'flex';
+    }
+
+    // ---------- FETCH ADMIN SETTINGS ----------
+    async function loadAdminSettings() {
+      try {
+        const snap = await rtdb.ref('adminSettings').once('value');
+        const settings = snap.val() || {};
+        if (settings.defaultRadius) {
+          radiusKm = settings.defaultRadius;
+          document.getElementById('radiusSlider').value = radiusKm;
+          document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
+        }
+        if (settings.defaultPetrolPrice) currentPrices.petrol = settings.defaultPetrolPrice;
+        if (settings.defaultDieselPrice) currentPrices.diesel = settings.defaultDieselPrice;
+        updatePriceDisplay();
+      } catch(e) {}
+    }
+
+    // ---------- FETCH BLOCKED STATIONS ----------
+    async function loadBlockedStations() {
+      try {
+        const snap = await rtdb.ref('blocked/stations').once('value');
+        const blocked = snap.val() || {};
+        blockedStationIds = new Set(Object.keys(blocked).filter(k => blocked[k] === true));
+      } catch(e) {}
+    }
+
+    // ---------- FETCH REGISTERED STATIONS FROM FIREBASE ----------
+    async function fetchRegisteredStations(lat, lon, radKm) {
+      try {
+        const snap = await rtdb.ref('stationOwners').once('value');
+        const stations = [];
+        snap.forEach(s => {
+          const data = s.val();
+          // Skip if blocked
+          if (blockedStationIds.has(s.key)) return;
+          // Calculate distance
+          if (data.location && data.location.lat && data.location.lng) {
+            const dist = haversine(lat, lon, data.location.lat, data.location.lng);
+            if (dist <= radKm) {
+              // Build amenities array from data.amenities
+              const amenities = (data.amenities || []).map(a => ({ icon: 'fa-check-circle', name: a }));
+              // Determine fuel availability
+              const fuel = data.fuelTypes || { petrol: true, diesel: true };
+              const station = {
+                id: 'reg_' + s.key,        // Prefix to distinguish from OSM IDs
+                firebaseId: s.key,
+                name: data.stationName,
+                address: data.location.address || 'Registered station',
+                lat: data.location.lat,
+                lon: data.location.lng,
+                fuel: {
+                  petrol: fuel.petrol ? 'yes' : null,
+                  diesel: fuel.diesel ? 'yes' : null
+                },
+                status: (fuel.petrol || fuel.diesel) ? 'available' : 'unknown',
+                amenities: amenities.length ? amenities : [{ icon: 'fa-gas-pump', name: 'Fuel' }],
+                pricePetrol: data.prices?.petrol ? `${userCurrency} ${data.prices.petrol.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.petrol.toFixed(2)}`,
+                priceDiesel: data.prices?.diesel ? `${userCurrency} ${data.prices.diesel.toFixed(2)}` : `${currentPrices.currency} ${currentPrices.diesel.toFixed(2)}`,
+                distance: dist,
+                favorite: favoriteIds.includes('reg_' + s.key),
+                phone: data.managerPhone || '',
+                openingHours: '',
+                isRegistered: true,
+                photos: data.photos || []
+              };
+              stations.push(station);
+            }
+          }
+        });
+        return stations;
+      } catch(e) {
+        console.warn('Failed to fetch registered stations', e);
+        return [];
+      }
+    }
+
+    // ---------- SYNC USER LOCATION TO FIREBASE ----------
+    function syncUserLocation(lat, lng) {
+      if (!currentUser) return;
+      rtdb.ref(`locations/${currentUser.uid}`).set({
+        lat, lng,
+        timestamp: Date.now()
+      }).catch(console.warn);
     }
 
     // Country detection
@@ -1487,8 +1671,7 @@
       return amenities;
     }
 
-    async function fetchStations(lat, lon, rad) {
-      showLoading(true);
+    async function fetchOSMStations(lat, lon, rad) {
       const query = `[out:json];(node["amenity"="fuel"](around:${rad*1000},${lat},${lon});way["amenity"="fuel"](around:${rad*1000},${lat},${lon}););out body;`;
       try {
         const controller = new AbortController();
@@ -1497,8 +1680,11 @@
         clearTimeout(timeoutId);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        let newStations = [];
+        let osmStations = [];
         for (let el of data.elements) {
+          // Skip if blocked
+          if (blockedStationIds.has(String(el.id))) continue;
+          
           let name = el.tags?.name || el.tags?.brand || "Fuel station";
           let stationLat = el.lat || (el.center?.lat);
           let stationLon = el.lon || (el.center?.lon);
@@ -1510,19 +1696,36 @@
           let amenities = extractAllAmenities(el.tags || {});
           let priceP = `${currentPrices.currency} ${(currentPrices.petrol + (Math.random()*0.4-0.2)).toFixed(2)}`;
           let priceD = `${currentPrices.currency} ${(currentPrices.diesel + (Math.random()*0.4-0.2)).toFixed(2)}`;
-          newStations.push({
-            id: el.id, name, address: addr, lat: stationLat, lon: stationLon,
+          osmStations.push({
+            id: el.id,
+            name, address: addr, lat: stationLat, lon: stationLon,
             fuel: { petrol: fuelPetrol, diesel: fuelDiesel },
             status, amenities, pricePetrol: priceP, priceDiesel: priceD,
             distance: haversine(lat, lon, stationLat, stationLon),
             favorite: favoriteIds.includes(el.id),
-            phone: el.tags?.phone || '', openingHours: el.tags?.opening_hours || ''
+            phone: el.tags?.phone || '', openingHours: el.tags?.opening_hours || '',
+            isRegistered: false
           });
         }
-        return newStations;
+        return osmStations;
       } catch(err) {
-        if (!stationsLoaded) showToast("Failed to load stations.", true);
-        return stations.length ? stations : [];
+        console.warn('OSM fetch failed', err);
+        return [];
+      }
+    }
+
+    async function fetchAllStations(lat, lon, rad) {
+      showLoading(true);
+      try {
+        const [osmStations, regStations] = await Promise.all([
+          fetchOSMStations(lat, lon, rad),
+          fetchRegisteredStations(lat, lon, rad)
+        ]);
+        registeredStations = regStations;
+        const combined = [...osmStations, ...regStations];
+        // Sort by distance
+        combined.sort((a,b) => a.distance - b.distance);
+        return combined;
       } finally {
         showLoading(false);
         stationsLoaded = true;
@@ -1573,7 +1776,7 @@
         document.getElementById('greenSuggestion').innerHTML = '<i class="fas fa-gas-pump"></i> No stations found.';
         return;
       }
-      const names = nearest.map(s => s.name).join(', ');
+      const names = nearest.map(s => s.name + (s.isRegistered ? ' ⭐' : '')).join(', ');
       document.getElementById('greenSuggestion').innerHTML = `<i class="fas fa-star-of-life"></i> Stations near you: ${names}`;
     }
 
@@ -1582,16 +1785,26 @@
       clusterGroup.clearLayers();
       const filtered = getFilteredStations();
       filtered.forEach(s => {
-        let color = s.status === 'available' ? '#16a34a' : '#3b82f6';
+        let color = s.isRegistered ? '#fbbf24' : (s.status === 'available' ? '#16a34a' : '#3b82f6');
+        let iconHtml = s.isRegistered 
+          ? `<i class="fas fa-crown" style="color:${color}; font-size:28px;"></i>`
+          : `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`;
         let icon = L.divIcon({
-          html: `<i class="fas fa-gas-pump" style="color:${color}; font-size:28px;"></i>`,
+          html: iconHtml,
           iconSize: [28,28],
           className: 'fuel-marker'
         });
         const distanceKm = s.distance ? s.distance.toFixed(1) : '?';
         const eta = s.distance ? calculateETA(s.distance) : '?';
         const amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
-        const popupContent = `<div style="min-width:260px;"><div style="font-weight:800;">${s.name}</div><div>${s.address}</div><div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div><div>${amenitiesHtml}</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div></div>`;
+        const verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+        const popupContent = `<div style="min-width:260px;">
+          <div style="font-weight:800;">${s.name} ${verifiedBadge}</div>
+          <div>${s.address}</div>
+          <div><span class="station-distance">${distanceKm} km</span> <span class="station-distance">${eta}</span> <span class="station-distance">${s.pricePetrol}/${s.priceDiesel}</span></div>
+          <div>${amenitiesHtml}</div>
+          <div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm btn-report" data-report-id="${s.id}">Report</button></div>
+        </div>`;
         let marker = L.marker([s.lat, s.lon], { icon }).bindPopup(popupContent);
         clusterGroup.addLayer(marker);
       });
@@ -1609,7 +1822,7 @@
           node.querySelectorAll('.btn-report[data-report-id]').forEach(btn => {
             btn.onclick = (ev) => {
               ev.stopPropagation();
-              openReportForStation(parseInt(btn.dataset.reportId));
+              openReportForStation(btn.dataset.reportId);
             };
           });
         }
@@ -1626,7 +1839,8 @@
 
     async function loadStationsAndRefresh(showMsg = true) {
       if (!activeLocation) return;
-      const newStations = await fetchStations(activeLocation.lat, activeLocation.lng, radiusKm);
+      await loadBlockedStations();
+      const newStations = await fetchAllStations(activeLocation.lat, activeLocation.lng, radiusKm);
       if (newStations.length) stations = newStations;
       renderMarkers();
       updateCounters();
@@ -1668,9 +1882,10 @@
       if (!container) return;
       container.innerHTML = sorted.map(s => {
         let amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
+        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
         return `
         <div class="station-card" id="reportStation_${s.id}">
-          <div class="station-name">${s.name}</div>
+          <div class="station-name">${s.name} ${verifiedBadge}</div>
           <div class="station-address">${s.address}</div>
           <div class="station-distance">📍 ${s.distance?.toFixed(1)} km away</div>
           <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
@@ -1688,18 +1903,26 @@
       `}).join('');
       document.querySelectorAll('[data-submit-report]').forEach(btn => {
         btn.onclick = async () => {
-          let sid = parseInt(btn.dataset.submitReport);
+          let sid = btn.dataset.submitReport;
           let type = document.getElementById(`reportType_${sid}`).value;
           let comment = document.getElementById(`reportComment_${sid}`).value;
           let priceReport = document.getElementById(`reportPrice_${sid}`).value;
           await localDB.userReports.add({ stationId: sid, type, comment, timestamp: Date.now(), priceReport });
+          rtdb.ref('reports').push({
+            stationId: sid,
+            type,
+            comment,
+            priceReport,
+            timestamp: Date.now(),
+            userId: currentUser.uid
+          });
           showToast(`Report submitted!`);
         };
       });
     }
 
     function toggleFavorite(id) {
-      let s = stations.find(s => s.id === id);
+      let s = stations.find(s => s.id == id);
       if (s) {
         s.favorite = !s.favorite;
         if (s.favorite) { if (!favoriteIds.includes(id)) favoriteIds.push(id); }
@@ -1712,11 +1935,14 @@
     function updateFavPage() {
       let favStations = stations.filter(s => favoriteIds.includes(s.id));
       let container = document.getElementById('favStationsList');
-      if (container) container.innerHTML = favStations.map(s => `<div class="station-card"><div class="station-name">${s.name}</div><div class="station-distance">📍 ${s.distance?.toFixed(1)} km</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm" data-fav-remove="${s.id}">Remove</button></div></div>`).join('');
-      container.querySelectorAll('[data-fav-remove]').forEach(btn => { btn.onclick = () => toggleFavorite(parseInt(btn.dataset.favRemove)); });
+      if (container) container.innerHTML = favStations.map(s => {
+        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+        return `<div class="station-card"><div class="station-name">${s.name} ${verifiedBadge}</div><div class="station-distance">📍 ${s.distance?.toFixed(1)} km</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="${s.id}">Navigate</button><button class="btn-sm" data-fav-remove="${s.id}">Remove</button></div></div>`;
+      }).join('');
+      container.querySelectorAll('[data-fav-remove]').forEach(btn => { btn.onclick = () => toggleFavorite(btn.dataset.favRemove); });
     }
 
-    // ---------- VEHICLE MANAGEMENT ----------
+    // ---------- VEHICLE MANAGEMENT (unchanged) ----------
     async function loadUserVehicles() {
       if (!currentUser) return;
       const snap = await rtdb.ref('vehicles/' + currentUser.uid).once('value');
@@ -1772,7 +1998,7 @@
       });
     }
 
-    // ---------- FUEL LOGS ----------
+    // ---------- FUEL LOGS (unchanged) ----------
     async function addFuelLog(vehicleId, date, liters, pricePerLiter, odometer) {
       let totalCost = liters * pricePerLiter;
       await localDB.fuelLogs.add({ vehicleId, date, liters, pricePerLiter, totalCost, odometer });
@@ -1791,7 +2017,7 @@
       chartInstance = new Chart(ctx, { type: 'line', data: { labels: logs.slice(0,10).reverse().map(l => l.date), datasets: [{ label: 'Liters refueled', data: logs.slice(0,10).reverse().map(l => l.liters), borderColor: '#16a34a' }] } });
     }
 
-    // ---------- HISTORY & RECENT ----------
+    // ---------- HISTORY & RECENT (unchanged) ----------
     async function loadHistory() {
       let history = await localDB.tripHistory.reverse().toArray();
       let container = document.getElementById('historyList');
@@ -1824,17 +2050,6 @@
       userMarker = L.marker([lat, lng], { icon: carIcon }).addTo(map).bindPopup('You are here');
     }
 
-    async function reverseGeocode(lat, lng) {
-      try {
-        let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
-        let data = await res.json();
-        let road = data.address?.road || data.address?.suburb || 'local road';
-        document.getElementById('roadLocation').innerHTML = road.substring(0,30);
-        let city = data.address?.city || data.address?.town || 'World';
-        document.getElementById('cityDisplay').innerHTML = city;
-      } catch(e) {}
-    }
-
     function locateAndFetch() {
       if (navigator.geolocation) {
         if (watchId) navigator.geolocation.clearWatch(watchId);
@@ -1843,8 +2058,8 @@
           actualUserLocation = { lat: latitude, lng: longitude };
           activeLocation = { lat: latitude, lng: longitude };
           updateUserMarker(latitude, longitude, heading || userHeading);
+          syncUserLocation(latitude, longitude);
           if (!stationsLoaded) loadStationsAndRefresh(true);
-          reverseGeocode(latitude, longitude);
           if (!initialLocationSet) {
             map.setView([latitude, longitude], 14);
             initialLocationSet = true;
@@ -1853,7 +2068,7 @@
       }
     }
 
-    // ---------- TRIP PLANNER (ENHANCED) ----------
+    // ---------- TRIP PLANNER (mostly unchanged but uses combined stations) ----------
     function resetTripPlanner() {
       currentStep = 1;
       showStep(1);
@@ -1893,7 +2108,7 @@
       try {
         const start = actualUserLocation;
         const end = destCoordinates;
-        const distTotal = haversine(start.lat, start.lng, end.lat, end.lon);
+        const distTotal = haversine(start.lat, start.lng, end.lat, end.lng);
         let along = stations.filter(s => {
           const d1 = haversine(start.lat, start.lng, s.lat, s.lon);
           const d2 = haversine(s.lat, s.lon, end.lat, end.lon);
@@ -1902,15 +2117,16 @@
         }).sort((a,b) => a.distance - b.distance);
         stationsAlongRoute = along.slice(0, Math.max(10, along.length));
         if (stationsAlongRoute.length === 0) {
-          container.innerHTML = '<p>No fuel stations along this route. Please try a different destination.</p>';
+          container.innerHTML = '<p>No fuel stations along this route.</p>';
           document.getElementById('nextStep').disabled = true;
         } else {
           document.getElementById('carNameStep2').innerText = activeVehicle ? activeVehicle.name : 'your car';
           container.innerHTML = stationsAlongRoute.map(s => {
             let amenitiesHtml = s.amenities.map(a => `<span class="amenity-badge"><i class="fas ${a.icon}"></i> ${a.name}</span>`).join('');
+            let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
             return `
             <div class="floating-card station-select-item" data-station-id="${s.id}">
-              <div class="flex-between"><strong>${s.name}</strong><span class="station-distance">${s.distance.toFixed(1)} km from start</span></div>
+              <div class="flex-between"><strong>${s.name} ${verifiedBadge}</strong><span class="station-distance">${s.distance.toFixed(1)} km from start</span></div>
               <div class="small-text">${s.address}</div>
               <div><span class="fuel-badge">${s.pricePetrol}</span><span class="fuel-badge">${s.priceDiesel}</span></div>
               <div class="amenities-list">${amenitiesHtml}</div>
@@ -1920,9 +2136,8 @@
             el.onclick = () => {
               document.querySelectorAll('.station-select-item').forEach(item => item.classList.remove('selected-card'));
               el.classList.add('selected-card');
-              selectedStation = stations.find(s => s.id == parseInt(el.dataset.stationId));
+              selectedStation = stations.find(s => s.id == el.dataset.stationId);
               document.getElementById('nextStep').disabled = false;
-              // Scroll to Next button and pulse
               const nextBtn = document.getElementById('nextStep');
               nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
               nextBtn.classList.add('pulse-animation');
@@ -1936,6 +2151,7 @@
     }
 
     async function loadFunPlaces() {
+      // unchanged from original
       if (!destCoordinates || !actualUserLocation) return;
       const loadingDiv = document.getElementById('loadingFun');
       const container = document.getElementById('funPlacesStep3');
@@ -1945,10 +2161,9 @@
         const start = actualUserLocation;
         const end = destCoordinates;
         const distTotal = haversine(start.lat, start.lng, end.lat, end.lon);
-        // Fetch various POIs near the route
         const midLat = (start.lat + end.lat) / 2;
         const midLon = (start.lng + end.lon) / 2;
-        const radius = distTotal * 1000 * 0.8; // search around route corridor
+        const radius = distTotal * 1000 * 0.8;
         const queries = [
           `node["amenity"="restaurant"](around:${radius},${midLat},${midLon});`,
           `node["tourism"="attraction"](around:${radius},${midLat},${midLon});`,
@@ -1970,7 +2185,6 @@
           type: el.tags?.amenity || el.tags?.tourism || el.tags?.historic || el.tags?.shop || 'place',
           description: el.tags?.description || ''
         }));
-        // Filter places that are reasonably along the route (cross-track distance < 5km)
         places = places.filter(p => {
           const d1 = haversine(start.lat, start.lng, p.lat, p.lon);
           const d2 = haversine(p.lat, p.lon, end.lat, end.lon);
@@ -1979,7 +2193,7 @@
         });
         places = places.slice(0, 20);
         if (places.length === 0) {
-          container.innerHTML = '<p>No fun stops found along your route. You can skip this step.</p>';
+          container.innerHTML = '<p>No fun stops found.</p>';
         } else {
           container.innerHTML = places.map(p => `
             <div class="floating-card fun-card" data-lat="${p.lat}" data-lon="${p.lon}" data-name="${p.name}" data-type="${p.type}">
@@ -2002,7 +2216,7 @@
                 card.classList.add('selected-card');
                 btn.innerText = 'Selected ✓';
                 btn.disabled = true;
-                showToast(`Added ${name} to trip`);
+                showToast(`Added ${name}`);
               }
             };
           });
@@ -2076,18 +2290,25 @@
         document.getElementById('profileName').value = userProfile.name || '';
         document.getElementById('profileEmail').value = user.email || '';
         document.getElementById('profilePhone').value = userProfile.phone || '';
+        
+        await performSystemChecks();
+        if (mainApp.style.display === 'none') return;
+        
         authOverlay.style.display = 'none';
         mainApp.style.display = 'flex';
+        await loadAdminSettings();
+        await loadBlockedStations();
         await loadUserVehicles();
         initMap();
         locateAndFetch();
       } else {
         authOverlay.style.display = 'flex';
         mainApp.style.display = 'none';
+        systemOverlay.style.display = 'none';
       }
     });
 
-    // ---------- EVENT LISTENERS ----------
+    // ---------- EVENT LISTENERS (abbreviated but included in full code) ----------
     document.querySelectorAll('.auth-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -2164,6 +2385,7 @@
       }).open();
     };
 
+    // Vehicle image uploads (simplified)
     let tempAddFront='', tempAddBack='', tempAddSide='';
     document.getElementById('addFrontUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddFront = r.info.secure_url; }).open();
     document.getElementById('addBackUpload').onclick = () => cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET }, (e,r) => { if (!e && r.event === 'success') tempAddBack = r.info.secure_url; }).open();
@@ -2221,10 +2443,10 @@
       showLoading(false);
       if (nearby.length === 0) { showToast("No stations found nearby."); return; }
       let popupContent = `<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>`;
-      nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation(${s.id})">Navigate</button></div>`; });
+      nearby.forEach(s => { popupContent += `<div style="margin-top:8px;"><b>${s.name}</b><br>${s.address}<br>📏 ${s.distance.toFixed(1)} km | 💰 ${s.pricePetrol}/${s.priceDiesel}<br><button class="btn-sm btn-nav" onclick="window.navigateToStation('${s.id}')">Navigate</button></div>`; });
       popupContent += `</div>`;
       L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent).openOn(map);
-      window.navigateToStation = (id) => { const station = stations.find(s => s.id === id); if (station) startNavigationWithMessage(station); map.closePopup(); };
+      window.navigateToStation = (id) => { const station = stations.find(s => s.id == id); if (station) startNavigationWithMessage(station); map.closePopup(); };
     };
     document.getElementById('startTripBtn').onclick = () => {
       const panel = document.getElementById('turnByTurnPanel');
@@ -2277,7 +2499,10 @@
       const query = e.target.value.toLowerCase();
       const results = stations.filter(s => s.name.toLowerCase().includes(query) || s.address.toLowerCase().includes(query));
       const container = document.getElementById('globalSearchResults');
-      container.innerHTML = results.map(s => `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name}</strong><br>${s.address}<br>📍 ${s.distance?.toFixed(1)} km</div>`).join('');
+      container.innerHTML = results.map(s => {
+        let verifiedBadge = s.isRegistered ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : '';
+        return `<div class="search-result-item" data-station-id="${s.id}"><strong>${s.name} ${verifiedBadge}</strong><br>${s.address}<br>📍 ${s.distance?.toFixed(1)} km</div>`;
+      }).join('');
       container.querySelectorAll('.search-result-item').forEach(el => { el.onclick = () => { const st = stations.find(s => s.id == el.dataset.stationId); if(st) { map.setView([st.lat, st.lon], 16); closePage('searchPage'); } }; });
     });
 
@@ -2303,7 +2528,6 @@
         waypoints.push(L.latLng(selectedStation.lat, selectedStation.lon));
         selectedFunPlaces.forEach(f => waypoints.push(L.latLng(f.lat, f.lon)));
         waypoints.push(L.latLng(destCoordinates.lat, destCoordinates.lon));
-        // Color-coded segments
         const allPoints = [actualUserLocation, selectedStation, ...selectedFunPlaces, destCoordinates];
         for (let i = 0; i < allPoints.length - 1; i++) {
           const start = allPoints[i];
@@ -2390,6 +2614,7 @@
       document.getElementById('tripCostCalc').innerText = currentPrices.currency + ' ' + cost.toFixed(2);
       document.getElementById('etaCalc').innerText = eta;
     };
+
   })();
 </script>
 </body>
