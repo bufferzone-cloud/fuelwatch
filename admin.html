@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
   <title>FuelRadar · Admin</title>
   
-  <!-- PWA Manifest (admin specific) -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="admin-manifest.json">
   
-  <!-- iOS meta tags -->
+  <!-- iOS meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FR Admin">
   <link rel="apple-touch-icon" href="logo.png">
   
-  <!-- Theme color -->
   <meta name="theme-color" content="#0a0f0a">
   
   <!-- Font Awesome, Leaflet, Firebase, Cloudinary -->
@@ -27,14 +26,12 @@
   <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
   
   <style>
-    /* ---------- GLOBAL RESET ---------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
     body {
       background: #0a0f0a;
       display: flex;
@@ -44,7 +41,6 @@
       color: #e0e0e0;
       padding: 8px;
     }
-    
     .admin-container {
       max-width: 500px;
       width: 100%;
@@ -57,23 +53,17 @@
       flex-direction: column;
       height: 95vh;
     }
-    
-    /* ---------- AUTH OVERLAY ---------- */
     #authOverlay {
       padding: 32px 20px;
       text-align: center;
     }
-    
     .auth-card {
       background: #1e1e1e;
       border-radius: 28px;
       padding: 24px 20px;
       border: 1px solid #2e5a2e;
     }
-    
-    .fuel-green { color: #16a34a; }
-    .radar-red { color: #dc2626; }
-    
+    .fuel-green { color: #16a34a; } .radar-red { color: #dc2626; }
     .auth-slogan {
       background: #1a2a1a;
       border-radius: 40px;
@@ -84,7 +74,6 @@
       color: #4ade80;
       margin: 12px 0 20px;
     }
-    
     .pill-input {
       background: #2c2c2c;
       border: 1.5px solid #3a5a3a;
@@ -96,9 +85,7 @@
       outline: none;
       color: white;
     }
-    
     .pill-input:focus { border-color: #16a34a; }
-    
     .auth-btn {
       background: #16a34a;
       color: white;
@@ -114,7 +101,6 @@
       justify-content: center;
       gap: 8px;
     }
-    
     .spinner {
       display: none;
       width: 18px;
@@ -124,16 +110,12 @@
       border-top-color: white;
       animation: spin 0.8s linear infinite;
     }
-    
     .auth-btn.loading .spinner { display: inline-block; }
-    
-    /* ---------- MAIN DASHBOARD ---------- */
     #mainDashboard {
       display: none;
       flex-direction: column;
       height: 100%;
     }
-    
     .dashboard-header {
       padding: 14px 16px;
       background: #0f1a0f;
@@ -142,12 +124,7 @@
       align-items: center;
       justify-content: space-between;
     }
-    
-    .dashboard-header h1 {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    
+    .dashboard-header h1 { font-size: 18px; font-weight: 700; }
     .admin-badge {
       background: #16a34a;
       padding: 4px 12px;
@@ -155,7 +132,6 @@
       font-size: 12px;
       font-weight: 600;
     }
-    
     .country-filter-bar {
       padding: 10px 16px;
       background: #0f1a0f;
@@ -164,12 +140,7 @@
       align-items: center;
       gap: 10px;
     }
-    
-    .country-filter-bar label {
-      font-size: 13px;
-      color: #9ccc9c;
-    }
-    
+    .country-filter-bar label { font-size: 13px; color: #9ccc9c; }
     .country-filter-bar select {
       flex: 1;
       background: #2c2c2c;
@@ -179,21 +150,17 @@
       color: white;
       font-size: 13px;
     }
-    
     .content-panel {
       flex: 1;
       padding: 16px;
       overflow-y: auto;
     }
-    
-    /* ---------- BOTTOM NAVIGATION ---------- */
     .bottom-nav {
       display: flex;
       background: #0c140c;
       border-top: 1px solid #2a4a2a;
       padding: 6px 4px;
     }
-    
     .nav-item {
       flex: 1;
       display: flex;
@@ -206,44 +173,22 @@
       border-radius: 20px;
       transition: 0.2s;
     }
-    
-    .nav-item i {
-      font-size: 20px;
-      margin-bottom: 3px;
-    }
-    
-    .nav-item.active {
-      color: #16a34a;
-      background: #1a2e1a;
-    }
-    
-    /* ---------- STATS & CARDS ---------- */
+    .nav-item i { font-size: 20px; margin-bottom: 3px; }
+    .nav-item.active { color: #16a34a; background: #1a2e1a; }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       margin-bottom: 16px;
     }
-    
     .stat-card {
       background: #1e2a1e;
       border-radius: 20px;
       padding: 16px 12px;
       border: 1px solid #2e4a2e;
     }
-    
-    .stat-value {
-      font-size: 28px;
-      font-weight: 800;
-      color: #4ade80;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: #9cb09c;
-      margin-top: 4px;
-    }
-    
+    .stat-value { font-size: 28px; font-weight: 800; color: #4ade80; }
+    .stat-label { font-size: 12px; color: #9cb09c; margin-top: 4px; }
     .data-table {
       width: 100%;
       background: #1a241a;
@@ -251,7 +196,6 @@
       overflow: hidden;
       font-size: 13px;
     }
-    
     .data-table th {
       background: #0f1a0f;
       padding: 10px 8px;
@@ -259,50 +203,34 @@
       font-weight: 600;
       color: #9ccc9c;
     }
-    
     .data-table td {
       padding: 10px 8px;
       border-bottom: 1px solid #2a3a2a;
     }
-    
     .clickable-row {
       cursor: pointer;
       transition: background 0.2s;
     }
-    
-    .clickable-row:hover {
-      background: #1e3a1e;
-    }
-    
+    .clickable-row:hover { background: #1e3a1e; }
     .badge {
       background: #2a4a2a;
       border-radius: 30px;
       padding: 2px 8px;
       font-size: 11px;
     }
+    .badge.blocked { background: #7f1d1d; }
     
-    .badge.blocked {
-      background: #7f1d1d;
-    }
-    
-    /* ---------- MODALS (compact, mobile-first) ---------- */
+    /* Modals */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.85);
       z-index: 5000;
       display: none;
       align-items: flex-end;
       justify-content: center;
     }
-    
-    .modal-overlay.show {
-      display: flex;
-    }
-    
+    .modal-overlay.show { display: flex; }
     .modal-card {
       background: #1e1e1e;
       border-radius: 28px 28px 0 0;
@@ -314,19 +242,13 @@
       border-top: 3px solid #16a34a;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
     }
-    
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
-    
-    .modal-header h3 {
-      font-size: 18px;
-      color: #16a34a;
-    }
-    
+    .modal-header h3 { font-size: 18px; color: #16a34a; }
     .close-modal {
       background: none;
       border: none;
@@ -335,25 +257,14 @@
       cursor: pointer;
       padding: 0 8px;
     }
-    
     .detail-row {
       display: flex;
       padding: 8px 0;
       border-bottom: 1px solid #2a2a2a;
       font-size: 14px;
     }
-    
-    .detail-label {
-      width: 100px;
-      color: #9ccc9c;
-      font-weight: 600;
-    }
-    
-    .detail-value {
-      flex: 1;
-      color: #fff;
-    }
-    
+    .detail-label { width: 100px; color: #9ccc9c; font-weight: 600; }
+    .detail-value { flex: 1; color: #fff; }
     .vehicle-thumb {
       width: 70px;
       height: 70px;
@@ -362,7 +273,6 @@
       border: 1px solid #16a34a;
       margin-right: 8px;
     }
-    
     .vehicle-row {
       display: flex;
       align-items: center;
@@ -371,26 +281,19 @@
       border-radius: 20px;
       padding: 8px;
     }
-    
-    .vehicle-info {
-      flex: 1;
-      font-size: 13px;
-    }
-    
+    .vehicle-info { flex: 1; font-size: 13px; }
     .map-container {
       height: 180px;
       border-radius: 20px;
       margin: 16px 0;
       border: 2px solid #16a34a;
     }
-    
     .photo-strip {
       display: flex;
       gap: 8px;
       margin: 12px 0;
       overflow-x: auto;
     }
-    
     .photo-strip img {
       width: 90px;
       height: 70px;
@@ -398,18 +301,8 @@
       border-radius: 16px;
       border: 1px solid #16a34a;
     }
-    
-    .edit-field {
-      margin-bottom: 14px;
-    }
-    
-    .edit-field label {
-      display: block;
-      margin-bottom: 4px;
-      color: #9ccc9c;
-      font-size: 13px;
-    }
-    
+    .edit-field { margin-bottom: 14px; }
+    .edit-field label { display: block; margin-bottom: 4px; color: #9ccc9c; font-size: 13px; }
     .action-btn {
       background: none;
       border: 1px solid #3a5a3a;
@@ -420,17 +313,8 @@
       font-size: 12px;
       margin-right: 6px;
     }
-    
-    .action-btn.danger {
-      border-color: #7f1d1d;
-      color: #fca5a5;
-    }
-    
-    .action-btn.success {
-      border-color: #16a34a;
-      color: #4ade80;
-    }
-    
+    .action-btn.danger { border-color: #7f1d1d; color: #fca5a5; }
+    .action-btn.success { border-color: #16a34a; color: #4ade80; }
     .toast {
       position: fixed;
       bottom: 20px;
@@ -445,10 +329,7 @@
       display: none;
       font-size: 14px;
     }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -457,18 +338,12 @@
   <div id="authOverlay">
     <div class="auth-card">
       <div class="auth-logo">
-        <h2 style="font-size:28px;">
-          <span class="fuel-green">Fuel</span><span class="radar-red">Radar</span>
-        </h2>
-        <div class="auth-slogan">
-          <i class="fas fa-shield-alt"></i> Admin
-        </div>
+        <h2 style="font-size:28px;"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
+        <div class="auth-slogan"><i class="fas fa-shield-alt"></i> Admin</div>
       </div>
       <input type="email" id="adminEmail" class="pill-input" placeholder="Admin Email" value="admin@fuelradar.com">
       <input type="password" id="adminPassword" class="pill-input" placeholder="Password" value="123456">
-      <button class="auth-btn" id="loginBtn">
-        <span>Sign In</span> <span class="spinner"></span>
-      </button>
+      <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
       <p id="loginError" style="color:#ef4444; margin-top:12px; font-size:13px;"></p>
     </div>
   </div>
@@ -476,46 +351,25 @@
   <!-- MAIN DASHBOARD -->
   <div id="mainDashboard">
     <div class="dashboard-header">
-      <h1>
-        <span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> · Admin
-      </h1>
+      <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> · Admin</h1>
       <div style="display:flex; gap:8px; align-items:center;">
         <span class="admin-badge"><i class="fas fa-user-shield"></i></span>
-        <button id="logoutBtn" style="background:none; border:1px solid #3a5a3a; border-radius:40px; padding:6px 12px; color:#ccc; font-size:12px;">
-          <i class="fas fa-sign-out-alt"></i>
-        </button>
+        <button id="logoutBtn" style="background:none; border:1px solid #3a5a3a; border-radius:40px; padding:6px 12px; color:#ccc; font-size:12px;"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
 
-    <!-- Country Filter Bar -->
     <div class="country-filter-bar" id="countryFilterBar" style="display: none;">
       <label><i class="fas fa-globe"></i></label>
-      <select id="countryFilterSelect">
-        <option value="all">All Countries</option>
-      </select>
+      <select id="countryFilterSelect"><option value="all">All Countries</option></select>
     </div>
 
-    <!-- Content Panel (changes with bottom nav) -->
     <div class="content-panel" id="dynamicContentPanel">
-      <!-- Default: Overview -->
       <div id="overviewContent">
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value" id="totalUsers">-</div>
-            <div class="stat-label">Users</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="totalStations">-</div>
-            <div class="stat-label">Stations</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="totalReports">-</div>
-            <div class="stat-label">Reports</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="pendingPayments">-</div>
-            <div class="stat-label">Pending</div>
-          </div>
+          <div class="stat-card"><div class="stat-value" id="totalUsers">-</div><div class="stat-label">Users</div></div>
+          <div class="stat-card"><div class="stat-value" id="totalStations">-</div><div class="stat-label">Stations</div></div>
+          <div class="stat-card"><div class="stat-value" id="totalReports">-</div><div class="stat-label">Reports</div></div>
+          <div class="stat-card"><div class="stat-value" id="pendingPayments">-</div><div class="stat-label">Pending</div></div>
         </div>
         <div style="background:#1a241a; border-radius:20px; padding:16px;">
           <h4 style="margin-bottom:12px;"><i class="fas fa-clock"></i> Recent Activity</h4>
@@ -524,57 +378,27 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <div class="nav-item active" data-nav="overview">
-        <i class="fas fa-chart-pie"></i>
-        <span>Overview</span>
-      </div>
-      <div class="nav-item" data-nav="users">
-        <i class="fas fa-users"></i>
-        <span>Users</span>
-      </div>
-      <div class="nav-item" data-nav="stations">
-        <i class="fas fa-gas-pump"></i>
-        <span>Stations</span>
-      </div>
-      <div class="nav-item" data-nav="reports">
-        <i class="fas fa-flag"></i>
-        <span>Reports</span>
-      </div>
-      <div class="nav-item" data-nav="payments">
-        <i class="fas fa-credit-card"></i>
-        <span>Payments</span>
-      </div>
-      <div class="nav-item" data-nav="settings">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
-      </div>
+      <div class="nav-item active" data-nav="overview"><i class="fas fa-chart-pie"></i><span>Overview</span></div>
+      <div class="nav-item" data-nav="users"><i class="fas fa-users"></i><span>Users</span></div>
+      <div class="nav-item" data-nav="stations"><i class="fas fa-gas-pump"></i><span>Stations</span></div>
+      <div class="nav-item" data-nav="reports"><i class="fas fa-flag"></i><span>Reports</span></div>
+      <div class="nav-item" data-nav="payments"><i class="fas fa-credit-card"></i><span>Payments</span></div>
+      <div class="nav-item" data-nav="settings"><i class="fas fa-cog"></i><span>Settings</span></div>
     </div>
   </div>
 </div>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="userDetailModal">
-  <div class="modal-card" id="userDetailContent"></div>
-</div>
-<div class="modal-overlay" id="stationDetailModal">
-  <div class="modal-card" id="stationDetailContent"></div>
-</div>
-<div class="modal-overlay" id="editUserModal">
-  <div class="modal-card" id="editUserContent"></div>
-</div>
-<div class="modal-overlay" id="editStationModal">
-  <div class="modal-card" id="editStationContent"></div>
-</div>
-<div class="modal-overlay" id="addVehicleModal">
-  <div class="modal-card" id="addVehicleContent"></div>
-</div>
+<div class="modal-overlay" id="userDetailModal"><div class="modal-card" id="userDetailContent"></div></div>
+<div class="modal-overlay" id="stationDetailModal"><div class="modal-card" id="stationDetailContent"></div></div>
+<div class="modal-overlay" id="editUserModal"><div class="modal-card" id="editUserContent"></div></div>
+<div class="modal-overlay" id="editStationModal"><div class="modal-card" id="editStationContent"></div></div>
+<div class="modal-overlay" id="addVehicleModal"><div class="modal-card" id="addVehicleContent"></div></div>
 
 <div id="toastMessage" class="toast"></div>
 
 <script>
-  // Register Admin Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('admin-sw.js')
@@ -588,7 +412,6 @@
   (function(){
     "use strict";
     
-    // ---------- FIREBASE CONFIG ----------
     const firebaseConfig = {
       apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
       authDomain: "dmkl-8ea2c.firebaseapp.com",
@@ -602,13 +425,10 @@
     const auth = firebase.auth();
     const rtdb = firebase.database();
     
-    // Cloudinary config
     const CLOUD_NAME = 'dd3lcymrk';
     const UPLOAD_PRESET = 'h3eyhc2o';
-    
     const ADMIN_EMAIL = 'admin@fuelradar.com';
     
-    // ---------- GLOBAL STATE ----------
     let currentUser = null;
     let allUsers = [];
     let allStations = [];
@@ -616,9 +436,8 @@
     let selectedCountryFilter = 'all';
     let availableCountries = new Set();
     
-    // ---------- HELPER FUNCTIONS ----------
+    const toast = document.getElementById('toastMessage');
     function showToast(msg, good = true) {
-      const toast = document.getElementById('toastMessage');
       toast.textContent = msg;
       toast.style.backgroundColor = good ? '#1e3a1e' : '#7f1d1d';
       toast.style.display = 'block';
@@ -626,13 +445,8 @@
     }
     
     function setButtonLoading(btn, loading) {
-      if (loading) {
-        btn.classList.add('loading');
-        btn.disabled = true;
-      } else {
-        btn.classList.remove('loading');
-        btn.disabled = false;
-      }
+      if (loading) { btn.classList.add('loading'); btn.disabled = true; }
+      else { btn.classList.remove('loading'); btn.disabled = false; }
     }
     
     function getFlagEmoji(countryCode) {
@@ -641,19 +455,14 @@
       return String.fromCodePoint(...codePoints);
     }
     
-    // Open Cloudinary upload widget
     function openUploadWidget(callback, options = {}) {
       cloudinary.createUploadWidget({
-        cloudName: CLOUD_NAME,
-        uploadPreset: UPLOAD_PRESET,
-        sources: ['local', 'camera'],
-        cropping: true,
+        cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET,
+        sources: ['local', 'camera'], cropping: true,
         croppingAspectRatio: options.aspectRatio || 1,
         folder: options.folder || 'admin'
       }, (error, result) => {
-        if (!error && result.event === 'success') {
-          callback(result.info.secure_url);
-        }
+        if (!error && result.event === 'success') callback(result.info.secure_url);
       }).open();
     }
     
@@ -661,23 +470,16 @@
     document.getElementById('loginBtn').addEventListener('click', async () => {
       const email = document.getElementById('adminEmail').value.trim();
       const pass = document.getElementById('adminPassword').value;
-      if (email !== ADMIN_EMAIL) {
-        document.getElementById('loginError').textContent = 'Admin only.';
-        return;
-      }
+      if (email !== ADMIN_EMAIL) { document.getElementById('loginError').textContent = 'Admin only.'; return; }
       const btn = document.getElementById('loginBtn');
       setButtonLoading(btn, true);
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-      } catch (e) {
-        document.getElementById('loginError').textContent = e.message;
-        setButtonLoading(btn, false);
-      }
+      try { await auth.signInWithEmailAndPassword(email, pass); }
+      catch(e) { document.getElementById('loginError').textContent = e.message; setButtonLoading(btn, false); }
     });
     
     document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
     
-    auth.onAuthStateChanged(async (user) => {
+    auth.onAuthStateChanged(async user => {
       if (user && user.email === ADMIN_EMAIL) {
         currentUser = user;
         document.getElementById('authOverlay').style.display = 'none';
@@ -691,13 +493,8 @@
       }
     });
     
-    // ---------- LOAD ALL DATA ----------
     async function loadAllData() {
-      await Promise.all([
-        loadUsers(),
-        loadStations(),
-        loadOverviewStats()
-      ]);
+      await Promise.all([loadUsers(), loadStations(), loadOverviewStats()]);
       updateCountryFilter();
     }
     
@@ -706,55 +503,41 @@
       const stationsSnap = await rtdb.ref('stationOwners').once('value');
       const reportsSnap = await rtdb.ref('reports').once('value');
       const paymentsSnap = await rtdb.ref('payments').orderByChild('status').equalTo('pending').once('value');
-      
       document.getElementById('totalUsers').innerText = usersSnap.numChildren();
       document.getElementById('totalStations').innerText = stationsSnap.numChildren();
       document.getElementById('totalReports').innerText = reportsSnap.numChildren();
       document.getElementById('pendingPayments').innerText = paymentsSnap.numChildren();
       
-      // Recent activity
-      const users = [];
-      usersSnap.forEach(u => users.push({ ...u.val(), id: u.key }));
-      const stations = [];
-      stationsSnap.forEach(s => stations.push({ ...s.val(), id: s.key }));
-      
+      const users = []; usersSnap.forEach(u => users.push({...u.val(), id: u.key}));
+      const stations = []; stationsSnap.forEach(s => stations.push({...s.val(), id: s.key}));
       const recent = [
-        ...users.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 2).map(u => ({ type: 'user', name: u.name || u.email, time: u.createdAt })),
-        ...stations.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 2).map(s => ({ type: 'station', name: s.stationName, time: s.createdAt }))
-      ].sort((a, b) => (b.time || 0) - (a.time || 0)).slice(0, 4);
-      
-      const activityDiv = document.getElementById('recentActivity');
-      activityDiv.innerHTML = recent.map(r => `
-        <div style="padding:6px 0; border-bottom:1px solid #2a3a2a; font-size:13px;">
-          <i class="fas fa-${r.type === 'user' ? 'user' : 'store'}" style="color:#16a34a;"></i>
-          ${r.name}
-          <span style="float:right;">${r.time ? new Date(r.time).toLocaleDateString() : ''}</span>
-        </div>
-      `).join('') || '<p>No activity</p>';
+        ...users.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,2).map(u=>({type:'user',name:u.name||u.email,time:u.createdAt})),
+        ...stations.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,2).map(s=>({type:'station',name:s.stationName,time:s.createdAt}))
+      ].sort((a,b)=>(b.time||0)-(a.time||0)).slice(0,4);
+      document.getElementById('recentActivity').innerHTML = recent.map(r=>`<div style="padding:6px 0;border-bottom:1px solid #2a3a2a;font-size:13px;"><i class="fas fa-${r.type==='user'?'user':'store'}" style="color:#16a34a;"></i> ${r.name} <span style="float:right;">${r.time?new Date(r.time).toLocaleDateString():''}</span></div>`).join('')||'<p>No activity</p>';
     }
     
     async function loadUsers() {
       const snap = await rtdb.ref('users').once('value');
       allUsers = [];
-      snap.forEach(u => allUsers.push({ id: u.key, ...u.val() }));
+      snap.forEach(u => allUsers.push({id: u.key, ...u.val()}));
       availableCountries.clear();
       allUsers.forEach(u => { if (u.country) availableCountries.add(u.country); });
-      renderUsersList();
+      if (currentNav === 'users') renderUsersList();
     }
     
     async function loadStations() {
       const snap = await rtdb.ref('stationOwners').once('value');
       allStations = [];
-      snap.forEach(s => allStations.push({ id: s.key, ...s.val() }));
+      snap.forEach(s => allStations.push({id: s.key, ...s.val()}));
       allStations.forEach(s => { if (s.country) availableCountries.add(s.country); });
-      renderStationsList();
+      if (currentNav === 'stations') renderStationsList();
     }
     
     function updateCountryFilter() {
       const select = document.getElementById('countryFilterSelect');
       select.innerHTML = '<option value="all">All Countries</option>';
-      const sorted = Array.from(availableCountries).sort();
-      sorted.forEach(code => {
+      Array.from(availableCountries).sort().forEach(code => {
         const option = document.createElement('option');
         option.value = code;
         option.textContent = `${getFlagEmoji(code)} ${code}`;
@@ -763,7 +546,6 @@
       select.value = selectedCountryFilter;
     }
     
-    // ---------- RENDER LISTS WITH COUNTRY FILTER (simplified) ----------
     function getFilteredUsers() {
       if (selectedCountryFilter === 'all') return allUsers;
       return allUsers.filter(u => u.country === selectedCountryFilter);
@@ -778,27 +560,20 @@
       const users = getFilteredUsers();
       const blockedSnap = await rtdb.ref('blocked/users').once('value');
       const blocked = blockedSnap.val() || {};
-      
       const container = document.getElementById('dynamicContentPanel');
       if (currentNav !== 'users') return;
-      
-      if (!users.length) {
-        container.innerHTML = '<p>No users found.</p>';
-        return;
-      }
-      
+      if (!users.length) { container.innerHTML = '<p>No users found.</p>'; return; }
       let html = `<table class="data-table"><tr><th>User</th><th>Status</th></tr>`;
       users.forEach(u => {
         const isBlocked = blocked[u.id] === true;
         const flag = u.country ? getFlagEmoji(u.country) : '🌍';
         html += `<tr class="clickable-row" data-viewuser="${u.id}">
-          <td>${flag} ${u.name || '-'}<br><small>${u.email}</small></td>
+          <td>${flag} ${u.name || '—'}<br><small>${u.email}</small></td>
           <td>${isBlocked ? '<span class="badge blocked">Blocked</span>' : '<span class="badge">Active</span>'}</td>
         </tr>`;
       });
       html += '</table>';
       container.innerHTML = html;
-      
       container.querySelectorAll('[data-viewuser]').forEach(row => {
         row.addEventListener('click', () => showUserDetail(row.dataset.viewuser));
       });
@@ -808,15 +583,9 @@
       const stations = getFilteredStations();
       const blockedSnap = await rtdb.ref('blocked/stations').once('value');
       const blocked = blockedSnap.val() || {};
-      
       const container = document.getElementById('dynamicContentPanel');
       if (currentNav !== 'stations') return;
-      
-      if (!stations.length) {
-        container.innerHTML = '<p>No stations found.</p>';
-        return;
-      }
-      
+      if (!stations.length) { container.innerHTML = '<p>No stations found.</p>'; return; }
       let html = `<table class="data-table"><tr><th>Station</th><th>Status</th></tr>`;
       stations.forEach(s => {
         const isBlocked = blocked[s.id] === true;
@@ -828,7 +597,6 @@
       });
       html += '</table>';
       container.innerHTML = html;
-      
       container.querySelectorAll('[data-viewstation]').forEach(row => {
         row.addEventListener('click', () => showStationDetail(row.dataset.viewstation));
       });
@@ -839,89 +607,66 @@
       const snap = await ref.once('value');
       await ref.set(!snap.val());
       showToast(`${snap.val() ? 'Unblocked' : 'Blocked'}`);
-      if (type === 'users') renderUsersList();
-      else renderStationsList();
+      if (type === 'users') renderUsersList(); else renderStationsList();
     }
     
-    // ---------- USER DETAIL MODAL (with actions inside) ----------
+    // ---------- USER DETAIL ----------
     async function showUserDetail(uid) {
       const userSnap = await rtdb.ref(`users/${uid}`).once('value');
       const user = userSnap.val();
       const vehiclesSnap = await rtdb.ref(`vehicles/${uid}`).once('value');
-      const vehicles = [];
-      vehiclesSnap.forEach(v => vehicles.push(v.val()));
+      const vehicles = []; vehiclesSnap.forEach(v => vehicles.push(v.val()));
       const blockedSnap = await rtdb.ref(`blocked/users/${uid}`).once('value');
       const isBlocked = blockedSnap.val() === true;
-      
       const modal = document.getElementById('userDetailModal');
       const content = document.getElementById('userDetailContent');
-      
       let vehicleHtml = '';
       vehicles.forEach(v => {
-        vehicleHtml += `
-          <div class="vehicle-row">
-            <img src="${v.images?.front || 'driver.png'}" class="vehicle-thumb" onerror="this.src='driver.png'">
-            <div class="vehicle-info">
-              <strong>${v.name}</strong><br>
-              ${v.licensePlate || ''}<br>
-              ⛽ ${v.tankCapacity}L · ${v.consumptionLper100km}L/100km · ${v.fuelType}
-            </div>
-          </div>
-        `;
+        vehicleHtml += `<div class="vehicle-row"><img src="${v.images?.front || 'driver.png'}" class="vehicle-thumb" onerror="this.src='driver.png'"><div class="vehicle-info"><strong>${v.name}</strong><br>${v.licensePlate||''}<br>⛽ ${v.tankCapacity}L · ${v.consumptionLper100km}L/100km · ${v.fuelType}</div></div>`;
       });
-      
       const flag = user.country ? getFlagEmoji(user.country) : '🌍';
       const countryDisplay = user.country ? `${flag} ${user.country}` : 'Unknown';
-      
       content.innerHTML = `
-        <div class="modal-header">
-          <h3>${user.name || user.email}</h3>
-          <button class="close-modal" onclick="document.getElementById('userDetailModal').classList.remove('show')">&times;</button>
-        </div>
+        <div class="modal-header"><h3>${user.name || user.email}</h3><button class="close-modal" onclick="document.getElementById('userDetailModal').classList.remove('show')">&times;</button></div>
         <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${user.email}</span></div>
-        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${user.phone || 'N/A'}</span></div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${user.phone||'N/A'}</span></div>
         <div class="detail-row"><span class="detail-label">Country</span><span class="detail-value">${countryDisplay}</span></div>
-        <div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}</span></div>
+        <div class="detail-row"><span class="detail-label">Joined</span><span class="detail-value">${user.createdAt?new Date(user.createdAt).toLocaleDateString():'-'}</span></div>
         <h4 style="margin:16px 0 8px;">Vehicles (${vehicles.length})</h4>
         ${vehicleHtml || '<p>No vehicles</p>'}
         <div id="userLiveMap" class="map-container"></div>
         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;">
-          <button class="action-btn" id="refreshUserLocationBtn" data-uid="${uid}"><i class="fas fa-sync-alt"></i> Refresh Location</button>
-          <button class="action-btn" id="updateUserPhotoBtn" data-uid="${uid}"><i class="fas fa-camera"></i> Update Photo</button>
-          <button class="action-btn" id="editUserBtn" data-uid="${uid}"><i class="fas fa-edit"></i> Edit</button>
-          <button class="action-btn" id="addVehicleBtn" data-uid="${uid}"><i class="fas fa-car"></i> Add Vehicle</button>
-          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockBtn" data-uid="${uid}">${isBlocked ? 'Unblock' : 'Block'}</button>
+          <button class="action-btn" id="refreshUserLocationBtn"><i class="fas fa-sync-alt"></i> Refresh Location</button>
+          <button class="action-btn" id="updateUserPhotoBtn"><i class="fas fa-camera"></i> Update Photo</button>
+          <button class="action-btn" id="editUserBtn"><i class="fas fa-edit"></i> Edit</button>
+          <button class="action-btn" id="addVehicleBtn"><i class="fas fa-car"></i> Add Vehicle</button>
+          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockBtn">${isBlocked ? 'Unblock' : 'Block'}</button>
         </div>
       `;
       modal.classList.add('show');
       
-      // Map
       setTimeout(async () => {
         const locSnap = await rtdb.ref(`locations/${uid}`).once('value');
         const loc = locSnap.val();
-        const map = L.map('userLiveMap').setView([0, 0], 2);
+        const map = L.map('userLiveMap').setView([0,0], 2);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
         if (loc && loc.lat) {
           map.setView([loc.lat, loc.lng], 14);
           L.marker([loc.lat, loc.lng]).addTo(map).bindPopup('User location');
           const rad = 5;
-          const query = `[out:json];node["amenity"="fuel"](around:${rad * 1000},${loc.lat},${loc.lng});out;`;
+          const query = `[out:json];node["amenity"="fuel"](around:${rad*1000},${loc.lat},${loc.lng});out;`;
           try {
             const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
             const data = await res.json();
-            data.elements.forEach(el => L.marker([el.lat, el.lon], { icon: L.divIcon({ html: '⛽', className: 'fuel-icon' }) }).addTo(map));
-          } catch (e) {}
+            data.elements.forEach(el => L.marker([el.lat, el.lon], {icon: L.divIcon({html:'⛽'})}).addTo(map));
+          } catch(e) {}
         }
       }, 100);
       
-      // Action buttons inside modal
       document.getElementById('refreshUserLocationBtn').onclick = async () => {
         const newLocSnap = await rtdb.ref(`locations/${uid}`).once('value');
         const newLoc = newLocSnap.val();
-        if (newLoc) {
-          const map = L.map('userLiveMap');
-          map.setView([newLoc.lat, newLoc.lng], 14);
-        }
+        if (newLoc) { const map = L.map('userLiveMap'); map.setView([newLoc.lat, newLoc.lng], 14); }
         showToast('Location refreshed');
       };
       document.getElementById('updateUserPhotoBtn').onclick = () => {
@@ -930,35 +675,22 @@
           showToast('Profile picture updated');
         }, { folder: 'profiles' });
       };
-      document.getElementById('editUserBtn').onclick = () => {
-        modal.classList.remove('show');
-        showEditUser(uid);
-      };
-      document.getElementById('addVehicleBtn').onclick = () => {
-        modal.classList.remove('show');
-        showAddVehicle(uid);
-      };
-      document.getElementById('toggleBlockBtn').onclick = async () => {
-        await toggleBlock('users', uid);
-        modal.classList.remove('show');
-      };
+      document.getElementById('editUserBtn').onclick = () => { modal.classList.remove('show'); showEditUser(uid); };
+      document.getElementById('addVehicleBtn').onclick = () => { modal.classList.remove('show'); showAddVehicle(uid); };
+      document.getElementById('toggleBlockBtn').onclick = async () => { await toggleBlock('users', uid); modal.classList.remove('show'); };
     }
     
-    // ---------- EDIT USER ----------
     async function showEditUser(uid) {
       const snap = await rtdb.ref(`users/${uid}`).once('value');
       const user = snap.val();
       const modal = document.getElementById('editUserModal');
       const content = document.getElementById('editUserContent');
       content.innerHTML = `
-        <div class="modal-header">
-          <h3>Edit User</h3>
-          <button class="close-modal" onclick="document.getElementById('editUserModal').classList.remove('show')">&times;</button>
-        </div>
-        <div class="edit-field"><label>Name</label><input id="editUserName" class="pill-input" value="${user.name || ''}"></div>
-        <div class="edit-field"><label>Phone</label><input id="editUserPhone" class="pill-input" value="${user.phone || ''}"></div>
-        <div class="edit-field"><label>Country Code</label><input id="editUserCountry" class="pill-input" value="${user.country || ''}" placeholder="e.g., US"></div>
-        <button class="auth-btn" id="saveUserEdit" data-uid="${uid}">Save</button>
+        <div class="modal-header"><h3>Edit User</h3><button class="close-modal" onclick="document.getElementById('editUserModal').classList.remove('show')">&times;</button></div>
+        <div class="edit-field"><label>Name</label><input id="editUserName" class="pill-input" value="${user.name||''}"></div>
+        <div class="edit-field"><label>Phone</label><input id="editUserPhone" class="pill-input" value="${user.phone||''}"></div>
+        <div class="edit-field"><label>Country Code</label><input id="editUserCountry" class="pill-input" value="${user.country||''}" placeholder="e.g., US"></div>
+        <button class="auth-btn" id="saveUserEdit">Save</button>
       `;
       modal.classList.add('show');
       document.getElementById('saveUserEdit').onclick = async () => {
@@ -973,67 +705,43 @@
       };
     }
     
-    // ---------- ADD VEHICLE ----------
     function showAddVehicle(uid) {
       const modal = document.getElementById('addVehicleModal');
       const content = document.getElementById('addVehicleContent');
       content.innerHTML = `
-        <div class="modal-header">
-          <h3>Add Vehicle</h3>
-          <button class="close-modal" onclick="document.getElementById('addVehicleModal').classList.remove('show')">&times;</button>
-        </div>
+        <div class="modal-header"><h3>Add Vehicle</h3><button class="close-modal" onclick="document.getElementById('addVehicleModal').classList.remove('show')">&times;</button></div>
         <div class="edit-field"><label>Vehicle Name</label><input id="newVehicleName" class="pill-input" placeholder="e.g., Toyota Camry"></div>
         <div class="edit-field"><label>License Plate</label><input id="newLicensePlate" class="pill-input" placeholder="Optional"></div>
         <div class="edit-field"><label>Tank Capacity (L)</label><input id="newTankCapacity" class="pill-input" type="number" step="0.1"></div>
         <div class="edit-field"><label>Consumption (L/100km)</label><input id="newConsumption" class="pill-input" type="number" step="0.1"></div>
         <div class="edit-field"><label>Fuel Type</label><select id="newFuelType" class="pill-input"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select></div>
-        <div class="edit-field">
-          <label>Vehicle Picture</label>
-          <button class="auth-btn" id="uploadVehiclePicBtn" style="background:#3b82f6; margin-top:4px;" type="button">
-            <i class="fas fa-camera"></i> Upload Picture
-          </button>
-          <input type="hidden" id="vehiclePicUrl" value="">
-        </div>
-        <button class="auth-btn" id="saveVehicleBtn" data-uid="${uid}">Add Vehicle</button>
+        <div class="edit-field"><label>Vehicle Picture</label><button class="auth-btn" id="uploadVehiclePicBtn" style="background:#3b82f6; margin-top:4px;" type="button"><i class="fas fa-camera"></i> Upload</button><input type="hidden" id="vehiclePicUrl" value=""></div>
+        <button class="auth-btn" id="saveVehicleBtn">Add Vehicle</button>
       `;
-      
       let tempPicUrl = '';
       document.getElementById('uploadVehiclePicBtn').onclick = () => {
-        openUploadWidget((url) => {
-          tempPicUrl = url;
-          document.getElementById('vehiclePicUrl').value = url;
-          showToast('Picture uploaded');
-        }, { folder: 'vehicles', aspectRatio: 1.5 });
+        openUploadWidget((url) => { tempPicUrl = url; document.getElementById('vehiclePicUrl').value = url; showToast('Picture uploaded'); }, { folder: 'vehicles', aspectRatio: 1.5 });
       };
-      
       document.getElementById('saveVehicleBtn').onclick = async () => {
         const name = document.getElementById('newVehicleName').value;
         const tank = parseFloat(document.getElementById('newTankCapacity').value);
         const cons = parseFloat(document.getElementById('newConsumption').value);
-        if (!name || !tank || !cons) {
-          showToast('Fill required fields', false);
-          return;
-        }
-        const vehicleData = {
-          name,
-          licensePlate: document.getElementById('newLicensePlate').value,
-          tankCapacity: tank,
-          consumptionLper100km: cons,
+        if (!name || !tank || !cons) { showToast('Fill required fields', false); return; }
+        await rtdb.ref(`vehicles/${uid}`).push({
+          name, licensePlate: document.getElementById('newLicensePlate').value,
+          tankCapacity: tank, consumptionLper100km: cons,
           fuelType: document.getElementById('newFuelType').value,
           images: { front: tempPicUrl || 'driver.png' },
-          isActive: false,
-          ownerId: uid
-        };
-        await rtdb.ref(`vehicles/${uid}`).push(vehicleData);
+          isActive: false, ownerId: uid
+        });
         showToast('Vehicle added');
         modal.classList.remove('show');
         loadUsers();
       };
-      
       modal.classList.add('show');
     }
     
-    // ---------- STATION DETAIL MODAL (with actions inside) ----------
+    // ---------- STATION DETAIL ----------
     async function showStationDetail(sid) {
       const snap = await rtdb.ref(`stationOwners/${sid}`).once('value');
       const station = snap.val();
@@ -1041,43 +749,36 @@
       const isBlocked = blockedSnap.val() === true;
       const modal = document.getElementById('stationDetailModal');
       const content = document.getElementById('stationDetailContent');
-      
       const amenities = station.amenities || [];
       const fuel = station.fuelTypes || {};
       const photos = station.photos || [];
       const flag = station.country ? getFlagEmoji(station.country) : '🌍';
       const countryDisplay = station.country ? `${flag} ${station.country}` : 'Unknown';
-      
       content.innerHTML = `
-        <div class="modal-header">
-          <h3>${station.stationName}</h3>
-          <button class="close-modal" onclick="document.getElementById('stationDetailModal').classList.remove('show')">&times;</button>
-        </div>
+        <div class="modal-header"><h3>${station.stationName}</h3><button class="close-modal" onclick="document.getElementById('stationDetailModal').classList.remove('show')">&times;</button></div>
         <div class="detail-row"><span class="detail-label">Manager</span><span class="detail-value">${station.managerName}</span></div>
         <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${station.email}</span></div>
         <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${station.managerPhone}</span></div>
         <div class="detail-row"><span class="detail-label">Country</span><span class="detail-value">${countryDisplay}</span></div>
-        <div class="detail-row"><span class="detail-label">Subscription</span><span class="detail-value">${station.subscription?.plan || 'trial'} · ${station.subscription?.expires ? new Date(station.subscription.expires).toLocaleDateString() : 'N/A'}</span></div>
+        <div class="detail-row"><span class="detail-label">Subscription</span><span class="detail-value">${station.subscription?.plan||'trial'} · ${station.subscription?.expires?new Date(station.subscription.expires).toLocaleDateString():'N/A'}</span></div>
         <div class="detail-row"><span class="detail-label">Amenities</span><span class="detail-value">${amenities.join(', ')}</span></div>
-        <div class="detail-row"><span class="detail-label">Fuel Types</span><span class="detail-value">${Object.entries(fuel).filter(([k, v]) => v).map(([k]) => k).join(', ')}</span></div>
-        ${photos.length ? `<div class="photo-strip">${photos.map(p => `<img src="${p}" onerror="this.src='station_placeholder.png'">`).join('')}</div>` : ''}
+        <div class="detail-row"><span class="detail-label">Fuel Types</span><span class="detail-value">${Object.entries(fuel).filter(([k,v])=>v).map(([k])=>k).join(', ')}</span></div>
+        ${photos.length ? `<div class="photo-strip">${photos.map(p=>`<img src="${p}" onerror="this.src='station_placeholder.png'">`).join('')}</div>` : ''}
         <div id="stationDetailMap" class="map-container"></div>
         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;">
-          <button class="action-btn success" id="approveSubscriptionBtn" data-sid="${sid}">Approve</button>
-          <button class="action-btn danger" id="revokeSubscriptionBtn" data-sid="${sid}">Revoke</button>
-          <button class="action-btn" id="updateStationPhotosBtn" data-sid="${sid}"><i class="fas fa-images"></i> Update Photos</button>
-          <button class="action-btn" id="editStationBtn" data-sid="${sid}"><i class="fas fa-edit"></i> Edit</button>
-          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockStationBtn" data-sid="${sid}">${isBlocked ? 'Unblock' : 'Block'}</button>
+          <button class="action-btn success" id="approveSubscriptionBtn">Approve</button>
+          <button class="action-btn danger" id="revokeSubscriptionBtn">Revoke</button>
+          <button class="action-btn" id="updateStationPhotosBtn"><i class="fas fa-images"></i> Update Photos</button>
+          <button class="action-btn" id="editStationBtn"><i class="fas fa-edit"></i> Edit</button>
+          <button class="action-btn ${isBlocked ? 'success' : 'danger'}" id="toggleBlockStationBtn">${isBlocked ? 'Unblock' : 'Block'}</button>
         </div>
       `;
       modal.classList.add('show');
-      
       setTimeout(() => {
         const map = L.map('stationDetailMap').setView([station.location.lat, station.location.lng], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
         L.marker([station.location.lat, station.location.lng]).addTo(map);
       }, 100);
-      
       document.getElementById('approveSubscriptionBtn').onclick = () => approveSubscription(sid);
       document.getElementById('revokeSubscriptionBtn').onclick = () => revokeSubscription(sid);
       document.getElementById('updateStationPhotosBtn').onclick = () => {
@@ -1090,14 +791,8 @@
           setTimeout(() => showStationDetail(sid), 100);
         }, { folder: 'stations' });
       };
-      document.getElementById('editStationBtn').onclick = () => {
-        modal.classList.remove('show');
-        showEditStation(sid);
-      };
-      document.getElementById('toggleBlockStationBtn').onclick = async () => {
-        await toggleBlock('stations', sid);
-        modal.classList.remove('show');
-      };
+      document.getElementById('editStationBtn').onclick = () => { modal.classList.remove('show'); showEditStation(sid); };
+      document.getElementById('toggleBlockStationBtn').onclick = async () => { await toggleBlock('stations', sid); modal.classList.remove('show'); };
     }
     
     async function approveSubscription(sid) {
@@ -1105,35 +800,30 @@
       const snap = await ref.once('value');
       const sub = snap.val() || {};
       sub.plan = 'paid';
-      sub.expires = Date.now() + 30 * 24 * 3600 * 1000;
+      sub.expires = Date.now() + 30*24*3600*1000;
       await ref.set(sub);
       showToast('Subscription approved');
       loadStations();
       document.getElementById('stationDetailModal').classList.remove('show');
     }
-    
     async function revokeSubscription(sid) {
-      await rtdb.ref(`stationOwners/${sid}/subscription`).set({ plan: 'trial', expires: Date.now() });
+      await rtdb.ref(`stationOwners/${sid}/subscription`).set({plan:'trial', expires: Date.now()});
       showToast('Subscription revoked');
       loadStations();
     }
     
-    // ---------- EDIT STATION ----------
     async function showEditStation(sid) {
       const snap = await rtdb.ref(`stationOwners/${sid}`).once('value');
       const s = snap.val();
       const modal = document.getElementById('editStationModal');
       const content = document.getElementById('editStationContent');
       content.innerHTML = `
-        <div class="modal-header">
-          <h3>Edit Station</h3>
-          <button class="close-modal" onclick="document.getElementById('editStationModal').classList.remove('show')">&times;</button>
-        </div>
+        <div class="modal-header"><h3>Edit Station</h3><button class="close-modal" onclick="document.getElementById('editStationModal').classList.remove('show')">&times;</button></div>
         <div class="edit-field"><label>Station Name</label><input id="editStationName" class="pill-input" value="${s.stationName}"></div>
         <div class="edit-field"><label>Manager Name</label><input id="editManagerName" class="pill-input" value="${s.managerName}"></div>
         <div class="edit-field"><label>Phone</label><input id="editManagerPhone" class="pill-input" value="${s.managerPhone}"></div>
-        <div class="edit-field"><label>Country Code</label><input id="editStationCountry" class="pill-input" value="${s.country || ''}" placeholder="e.g., US"></div>
-        <button class="auth-btn" id="saveStationEdit" data-sid="${sid}">Save</button>
+        <div class="edit-field"><label>Country Code</label><input id="editStationCountry" class="pill-input" value="${s.country||''}" placeholder="e.g., US"></div>
+        <button class="auth-btn" id="saveStationEdit">Save</button>
       `;
       modal.classList.add('show');
       document.getElementById('saveStationEdit').onclick = async () => {
@@ -1149,19 +839,15 @@
       };
     }
     
-    // ---------- REPORTS & PAYMENTS (unchanged) ----------
+    // ---------- REPORTS & PAYMENTS ----------
     async function renderReportsList() {
       const snap = await rtdb.ref('reports').once('value');
-      const reports = [];
-      snap.forEach(r => reports.push({ id: r.key, ...r.val() }));
+      const reports = []; snap.forEach(r => reports.push({id: r.key, ...r.val()}));
       const container = document.getElementById('dynamicContentPanel');
       if (currentNav !== 'reports') return;
-      if (!reports.length) {
-        container.innerHTML = '<p>No reports</p>';
-        return;
-      }
+      if (!reports.length) { container.innerHTML = '<p>No reports</p>'; return; }
       let html = `<table class="data-table"><tr><th>Station</th><th>Type</th><th>Action</th></tr>`;
-      reports.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)).forEach(r => {
+      reports.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)).forEach(r => {
         html += `<tr><td>${r.stationId}</td><td>${r.type}</td><td><button class="action-btn danger" data-deletereport="${r.id}">Delete</button></td></tr>`;
       });
       html += '</table>';
@@ -1176,19 +862,14 @@
     
     async function renderPaymentsList() {
       const snap = await rtdb.ref('payments').orderByChild('status').equalTo('pending').once('value');
-      const payments = [];
-      snap.forEach(p => payments.push({ id: p.key, ...p.val() }));
+      const payments = []; snap.forEach(p => payments.push({id: p.key, ...p.val()}));
       const container = document.getElementById('dynamicContentPanel');
       if (currentNav !== 'payments') return;
-      if (!payments.length) {
-        container.innerHTML = '<p>No pending payments</p>';
-        return;
-      }
+      if (!payments.length) { container.innerHTML = '<p>No pending payments</p>'; return; }
       let html = `<table class="data-table"><tr><th>Station</th><th>Amount</th><th>Actions</th></tr>`;
       payments.forEach(p => {
-        html += `<tr><td>${p.stationName || p.stationId}</td><td>${p.currency} ${p.amount}</td>
-          <td><button class="action-btn success" data-approve="${p.id}">Approve</button>
-          <button class="action-btn danger" data-reject="${p.id}">Reject</button></td></tr>`;
+        html += `<tr><td>${p.stationName||p.stationId}</td><td>${p.currency} ${p.amount}</td>
+          <td><button class="action-btn success" data-approve="${p.id}">Approve</button><button class="action-btn danger" data-reject="${p.id}">Reject</button></td></tr>`;
       });
       html += '</table>';
       container.innerHTML = html;
@@ -1199,20 +880,19 @@
     async function approvePayment(pid) {
       const snap = await rtdb.ref(`payments/${pid}`).once('value');
       const payment = snap.val();
-      await rtdb.ref(`payments/${pid}`).update({ status: 'approved' });
+      await rtdb.ref(`payments/${pid}`).update({status:'approved'});
       const stationRef = rtdb.ref(`stationOwners/${payment.stationId}/subscription`);
       const subSnap = await stationRef.once('value');
       const sub = subSnap.val() || {};
       sub.plan = payment.plan || 'paid';
-      sub.expires = Date.now() + (payment.months || 1) * 30 * 24 * 3600 * 1000;
+      sub.expires = Date.now() + (payment.months||1)*30*24*3600*1000;
       await stationRef.set(sub);
       showToast('Payment approved');
       renderPaymentsList();
       loadOverviewStats();
     }
-    
     async function rejectPayment(pid) {
-      await rtdb.ref(`payments/${pid}`).update({ status: 'rejected' });
+      await rtdb.ref(`payments/${pid}`).update({status:'rejected'});
       showToast('Payment rejected');
       renderPaymentsList();
     }
@@ -1225,43 +905,20 @@
       const s = snap.val() || {};
       const maintSnap = await rtdb.ref('maintenance').once('value');
       const m = maintSnap.val() || {};
-      
       container.innerHTML = `
-        <h4 style="margin-bottom:16px;">Global Settings</h4>
+        <h4>Global Settings</h4>
         <div style="background:#1a241a; border-radius:20px; padding:16px; margin-bottom:20px;">
-          <div style="margin-bottom:16px;">
-            <label>Default Fuel Prices (USD)</label>
-            <div style="display:flex; gap:8px; margin-top:6px;">
-              <input id="defaultPetrolPrice" class="pill-input" step="0.01" placeholder="Petrol" value="${s.defaultPetrolPrice || 1.5}">
-              <input id="defaultDieselPrice" class="pill-input" step="0.01" placeholder="Diesel" value="${s.defaultDieselPrice || 1.4}">
-            </div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <label>Default Radius (km)</label>
-            <input id="defaultRadius" class="pill-input" value="${s.defaultRadius || 3}" min="1" max="20" step="0.5">
-          </div>
-          <button id="saveSettingsBtn" class="auth-btn" style="padding:10px;">Save Settings</button>
+          <div style="margin-bottom:16px;"><label>Default Fuel Prices (USD)</label><div style="display:flex; gap:8px; margin-top:6px;"><input id="defaultPetrolPrice" class="pill-input" step="0.01" value="${s.defaultPetrolPrice||1.5}"><input id="defaultDieselPrice" class="pill-input" step="0.01" value="${s.defaultDieselPrice||1.4}"></div></div>
+          <div style="margin-bottom:16px;"><label>Default Radius (km)</label><input id="defaultRadius" class="pill-input" value="${s.defaultRadius||3}" min="1" max="20" step="0.5"></div>
+          <button id="saveSettingsBtn" class="auth-btn" style="padding:10px;">Save</button>
         </div>
-        <h4>Maintenance Mode</h4>
+        <h4>Maintenance</h4>
         <div style="background:#1a241a; border-radius:20px; padding:16px;">
-          <div style="margin-bottom:12px;">
-            <label>User App</label>
-            <select id="maintenanceUserSelect" class="pill-input">
-              <option value="false" ${m.userApp ? '' : 'selected'}>Online</option>
-              <option value="true" ${m.userApp ? 'selected' : ''}>Maintenance</option>
-            </select>
-          </div>
-          <div style="margin-bottom:12px;">
-            <label>Station App</label>
-            <select id="maintenanceStationSelect" class="pill-input">
-              <option value="false" ${m.stationApp ? '' : 'selected'}>Online</option>
-              <option value="true" ${m.stationApp ? 'selected' : ''}>Maintenance</option>
-            </select>
-          </div>
+          <div style="margin-bottom:12px;"><label>User App</label><select id="maintenanceUserSelect" class="pill-input"><option value="false" ${m.userApp?'':'selected'}>Online</option><option value="true" ${m.userApp?'selected':''}>Maintenance</option></select></div>
+          <div style="margin-bottom:12px;"><label>Station App</label><select id="maintenanceStationSelect" class="pill-input"><option value="false" ${m.stationApp?'':'selected'}>Online</option><option value="true" ${m.stationApp?'selected':''}>Maintenance</option></select></div>
           <button id="saveMaintenanceBtn" class="auth-btn" style="padding:10px;">Apply</button>
         </div>
       `;
-      
       document.getElementById('saveSettingsBtn').onclick = async () => {
         await rtdb.ref('adminSettings').set({
           defaultPetrolPrice: +document.getElementById('defaultPetrolPrice').value,
@@ -1270,7 +927,6 @@
         });
         showToast('Settings saved');
       };
-      
       document.getElementById('saveMaintenanceBtn').onclick = async () => {
         await rtdb.ref('maintenance').set({
           userApp: document.getElementById('maintenanceUserSelect').value === 'true',
@@ -1280,16 +936,14 @@
       };
     }
     
-    // ---------- BOTTOM NAVIGATION ----------
+    // ---------- NAVIGATION ----------
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', async () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         currentNav = item.dataset.nav;
-        
         const filterBar = document.getElementById('countryFilterBar');
         filterBar.style.display = (currentNav === 'users' || currentNav === 'stations') ? 'flex' : 'none';
-        
         if (currentNav === 'overview') {
           document.getElementById('dynamicContentPanel').innerHTML = document.getElementById('overviewContent').innerHTML;
           await loadOverviewStats();
@@ -1313,13 +967,7 @@
       else if (currentNav === 'stations') renderStationsList();
     });
     
-    document.querySelectorAll('.modal-overlay').forEach(m => {
-      m.addEventListener('click', (e) => {
-        if (e.target === m) m.classList.remove('show');
-      });
-    });
-    
-    document.getElementById('countryFilterBar').style.display = 'none';
+    document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if(e.target === m) m.classList.remove('show'); }));
   })();
 </script>
 </body>
