@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
   <title>FuelRadar · Admin</title>
   
+  <!-- PWA Manifest (admin specific) -->
+  <link rel="manifest" href="admin-manifest.json">
+  
+  <!-- iOS meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FR Admin">
+  <link rel="apple-touch-icon" href="logo.png">
+  
+  <!-- Theme color -->
+  <meta name="theme-color" content="#0a0f0a">
+  
   <!-- Font Awesome, Leaflet, Firebase, Cloudinary -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -564,6 +576,17 @@
 <div id="toastMessage" class="toast"></div>
 
 <script>
+  // Register Admin Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('admin-sw.js')
+        .then(reg => console.log('Admin SW registered'))
+        .catch(err => console.error('Admin SW registration failed', err));
+    });
+  }
+</script>
+
+<script>
   (function(){
     "use strict";
     
@@ -1114,12 +1137,13 @@
       };
     }
     
-    // ---------- REPORTS & PAYMENTS (abbreviated, similar to previous) ----------
+    // ---------- REPORTS & PAYMENTS ----------
     async function renderReportsList() {
       const snap = await rtdb.ref('reports').once('value');
       const reports = [];
       snap.forEach(r => reports.push({ id: r.key, ...r.val() }));
       const container = document.getElementById('dynamicContentPanel');
+      if (currentNav !== 'reports') return;
       if (!reports.length) {
         container.innerHTML = '<p>No reports</p>';
         return;
@@ -1143,6 +1167,7 @@
       const payments = [];
       snap.forEach(p => payments.push({ id: p.key, ...p.val() }));
       const container = document.getElementById('dynamicContentPanel');
+      if (currentNav !== 'payments') return;
       if (!payments.length) {
         container.innerHTML = '<p>No pending payments</p>';
         return;
@@ -1183,6 +1208,7 @@
     // ---------- SETTINGS ----------
     async function renderSettings() {
       const container = document.getElementById('dynamicContentPanel');
+      if (currentNav !== 'settings') return;
       const snap = await rtdb.ref('adminSettings').once('value');
       const s = snap.val() || {};
       const maintSnap = await rtdb.ref('maintenance').once('value');
