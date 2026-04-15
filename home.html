@@ -1637,11 +1637,7 @@
         'AU': { petrol: 1.95, diesel: 2.05 },
         'CA': { petrol: 1.65, diesel: 1.75 }
       };
-      // These prices are already in local currency for some countries (IN, ZA, ZM, NG, KE)
-      // For others, they are in USD. We'll standardise: store base USD internally.
-      // For simplicity, we'll treat all as USD base and convert later.
       if (priceMap[countryCode]) {
-        // Assume the map gives approximate USD equivalents
         currentPrices.petrol = priceMap[countryCode].petrol;
         currentPrices.diesel = priceMap[countryCode].diesel;
       } else {
@@ -1718,8 +1714,6 @@
               const amenities = (data.amenities || []).map(a => ({ icon: 'fa-check-circle', name: a }));
               const fuel = data.fuelTypes || { petrol: true, diesel: true };
               
-              // Registered stations may store prices in their local currency already.
-              // We'll assume they are in USD for consistency, or convert if needed.
               let petrolUSD = data.prices?.petrol || currentPrices.petrol;
               let dieselUSD = data.prices?.diesel || currentPrices.diesel;
               let petrolLocal = convertFromUSD(petrolUSD);
@@ -2120,7 +2114,7 @@
       }
     }
 
-    // ---------- TRIP PLANNER (FULL) ----------
+    // ---------- TRIP PLANNER ----------
     function resetTripPlanner() {
       currentStep = 1;
       showStep(1);
