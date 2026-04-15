@@ -25,7 +25,6 @@
       box-sizing: border-box;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-
     body {
       background: #000000;
       display: flex;
@@ -35,7 +34,6 @@
       padding: 0;
       color: #ffffff;
     }
-
     .app {
       max-width: 600px;
       width: 100%;
@@ -44,26 +42,58 @@
       position: relative;
       padding-bottom: 100px;
     }
+    body.dark { background: #000; }
+    body.dark .app { background: #000; }
+
+    /* ========== SYSTEM OVERLAY ========== */
+    #systemOverlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #0a0f0a;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .system-message {
+      max-width: 400px;
+      background: #1e1e1e;
+      border-radius: 36px;
+      padding: 40px 30px;
+      border: 1px solid #16a34a;
+    }
+    .system-message i {
+      font-size: 64px;
+      color: #16a34a;
+      margin-bottom: 20px;
+    }
+    .system-message h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .system-message p {
+      color: #ccc;
+      margin-bottom: 24px;
+    }
 
     /* ========== AUTH VIEW ========== */
     #authView {
       padding: 28px 20px;
       color: #fff;
     }
-
     .auth-header {
       text-align: center;
       margin-bottom: 24px;
     }
-
     .auth-header h1 {
       font-size: 32px;
       font-weight: 800;
     }
-
     .fuel-green { color: #16a34a; }
     .radar-red { color: #dc2626; }
-
     .slogan {
       background: #1a1a1a;
       border-radius: 40px;
@@ -74,7 +104,6 @@
       color: #ccc;
       margin-top: 8px;
     }
-
     .country-badge {
       background: #111;
       border-radius: 30px;
@@ -85,13 +114,11 @@
       color: #ccc;
       border: 1px solid #16a34a;
     }
-
     .auth-tabs {
       display: flex;
       gap: 10px;
       margin-bottom: 28px;
     }
-
     .auth-tab {
       flex: 1;
       text-align: center;
@@ -103,16 +130,13 @@
       cursor: pointer;
       border: 1px solid #333;
     }
-
     .auth-tab.active {
       background: #16a34a;
       color: #fff;
       border-color: #16a34a;
     }
-
     .auth-form { display: block; }
     .auth-form.hide { display: none; }
-
     .input-pill {
       background: #1a1a1a;
       border: 1.5px solid #333;
@@ -124,11 +148,8 @@
       outline: none;
       color: #fff;
     }
-
     .input-pill:focus { border-color: #16a34a; }
-
     .phone-row { display: flex; gap: 8px; }
-
     .country-code {
       background: #111;
       border: 1.5px solid #16a34a;
@@ -139,9 +160,7 @@
       font-weight: 700;
       color: #fff;
     }
-
     .photo-row { display: flex; gap: 16px; margin: 18px 0; }
-
     .photo-box {
       flex: 1;
       background: #1a1a1a;
@@ -158,9 +177,7 @@
       background-size: cover;
       background-position: center;
     }
-
     .amenities-editor { margin: 10px 0; }
-
     .amenity-chip {
       display: inline-block;
       background: #1a1a1a;
@@ -171,7 +188,6 @@
       border: 1px solid #16a34a;
       color: #ccc;
     }
-
     .location-picker {
       background: #111;
       border-radius: 28px;
@@ -179,14 +195,12 @@
       margin: 18px 0;
       border: 1px solid #333;
     }
-
     #registerMap {
       height: 180px;
       border-radius: 24px;
       margin-bottom: 14px;
       border: 2px solid #16a34a;
     }
-
     .auth-btn {
       background: #16a34a;
       color: #fff;
@@ -203,7 +217,6 @@
       justify-content: center;
       gap: 8px;
     }
-
     .spinner {
       display: none;
       width: 22px;
@@ -213,25 +226,21 @@
       border-top-color: #fff;
       animation: spin 0.8s linear infinite;
     }
-
     .auth-btn.loading .spinner { display: inline-block; }
 
     /* ========== DASHBOARD ========== */
     #dashboardView { display: none; }
-
     .photo-container {
       position: relative;
       width: 100%;
       height: 50vh;
     }
-
     .station-photo {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
-
     .photo-gradient {
       position: absolute;
       bottom: 0;
@@ -241,22 +250,18 @@
       background: linear-gradient(to bottom, transparent, #000000);
       pointer-events: none;
     }
-
     .title-section {
       padding: 20px 20px 0;
     }
-
     .main-title {
       font-size: 28px;
       font-weight: 800;
       line-height: 1.3;
       text-transform: uppercase;
     }
-
     .main-title .highlight {
       color: #16a34a;
     }
-
     .subtitle-row {
       display: flex;
       align-items: center;
@@ -265,20 +270,17 @@
       color: #888;
       font-size: 14px;
     }
-
     .editable-name {
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
     }
-
     .editable-name i {
       color: #16a34a;
       font-size: 16px;
       opacity: 0.7;
     }
-
     .menu-btn {
       position: absolute;
       top: 20px;
@@ -292,76 +294,50 @@
       font-weight: 700;
       font-size: 18px;
       cursor: pointer;
-      z-index: 50;
+      z-index: 10;
     }
-
     .toggle-scroll-area {
-      max-height: calc(100vh - 50vh - 120px);
-      overflow-y: auto;
-      padding: 0 16px 20px;
-      margin-bottom: 20px;
+      padding: 20px 16px;
     }
-
     .toggle-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      padding: 10px 0;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
-
-    .toggle-separator {
-      margin: 20px 0 10px;
-      border-top: 2px solid #16a34a;
-      text-align: center;
-      position: relative;
-    }
-
-    .toggle-separator span {
-      background: #000;
-      padding: 0 16px;
-      color: #16a34a;
-      font-weight: 700;
-      font-size: 14px;
-      position: relative;
-      top: -10px;
-    }
-
     .toggle-card {
       background: #1a1a1a;
-      border-radius: 20px;
-      padding: 20px 12px;
+      border-radius: 24px;
+      padding: 16px;
+      border: 1px solid #2a4a2a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      border: 1px solid #333;
-      transition: all 0.2s;
     }
-
     .toggle-card.active {
-      background: #16a34a;
       border-color: #16a34a;
+      background: #0f2a0f;
     }
-
     .toggle-card i {
       font-size: 28px;
+      color: #16a34a;
       margin-bottom: 8px;
-      display: block;
     }
-
     .toggle-card .label {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: 700;
       margin-bottom: 12px;
     }
-
-    /* iOS Switch */
     .switch {
       position: relative;
       display: inline-block;
       width: 52px;
       height: 28px;
     }
-
-    .switch input { opacity: 0; width: 0; height: 0; }
-
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
     .slider {
       position: absolute;
       cursor: pointer;
@@ -369,11 +345,10 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #444;
-      transition: .2s;
+      background-color: #333;
+      transition: .3s;
       border-radius: 34px;
     }
-
     .slider:before {
       position: absolute;
       content: "";
@@ -382,363 +357,334 @@
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: .2s;
+      transition: .3s;
       border-radius: 50%;
     }
-
-    input:checked + .slider { background-color: #ffffff; }
-    input:checked + .slider:before {
-      transform: translateX(24px);
+    input:checked + .slider {
       background-color: #16a34a;
     }
-
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    .toggle-separator {
+      text-align: center;
+      margin: 24px 0 16px;
+      color: #16a34a;
+      font-weight: 700;
+    }
     .floating-details-btn {
       position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #e74c5e;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #16a34a;
       color: white;
       border: none;
       border-radius: 60px;
-      padding: 18px 36px;
+      padding: 18px;
       font-weight: 800;
       font-size: 18px;
-      letter-spacing: 2px;
-      box-shadow: 0 10px 30px rgba(231, 76, 94, 0.5);
       cursor: pointer;
-      z-index: 100;
-      border: 2px solid #ff8a9f;
-      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      z-index: 500;
     }
 
     /* ========== DETAILS OVERLAY ========== */
     .details-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #0a0f0a;
       z-index: 2000;
       display: none;
       flex-direction: column;
       overflow-y: auto;
-      color: #fff;
     }
-
     .details-overlay.show { display: flex; }
-
     .details-header {
       padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #333;
+      align-items: center;
+      border-bottom: 1px solid #2a4a2a;
     }
-
     .details-header h2 { color: #16a34a; }
-
     .close-details {
       background: none;
       border: none;
+      font-size: 32px;
       color: #fff;
-      font-size: 28px;
       cursor: pointer;
     }
-
-    .map-half { height: 40vh; width: 100%; }
-
+    .map-half {
+      height: 200px;
+      background: #1a1a1a;
+    }
     .prices-row {
       display: flex;
-      justify-content: space-around;
+      gap: 12px;
       padding: 20px;
-      background: #111;
-      margin: 10px 0;
     }
-
-    .price-box { text-align: center; }
-    .price-box .fuel-type { font-size: 14px; color: #aaa; }
-    .price-box .price-value { font-size: 32px; font-weight: 800; color: #16a34a; }
-
-    .info-section { padding: 20px; }
-
+    .price-box {
+      flex: 1;
+      background: #1a1a1a;
+      border-radius: 24px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid #16a34a;
+    }
+    .fuel-type {
+      font-size: 14px;
+      color: #aaa;
+    }
+    .price-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: #4ade80;
+    }
+    .info-section {
+      padding: 20px;
+    }
     .info-row {
       display: flex;
-      padding: 12px 0;
-      border-bottom: 1px solid #222;
-    }
-
-    .info-label { width: 120px; color: #888; }
-    .info-value { flex: 1; color: #fff; }
-
-    /* ========== PAGE OVERLAYS ========== */
-    .page-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      z-index: 5000;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
-      color: #fff;
-    }
-
-    .page-overlay.show { display: flex; }
-
-    .page-header {
-      display: flex;
-      align-items: center;
-      padding: 20px;
-      border-bottom: 1px solid #333;
-    }
-
-    .page-header h2 { flex: 1; font-weight: 800; }
-
-    .close-page {
-      background: none;
-      border: none;
-      font-size: 32px;
-      color: #16a34a;
-      cursor: pointer;
-    }
-
-    .page-content { padding: 24px; }
-
-    .card-premium {
-      background: #1a1a1a;
-      border-radius: 32px;
-      padding: 20px;
-      margin-bottom: 18px;
-      border: 1px solid #333;
-    }
-
-    .manager-item {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
       padding: 12px 0;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .info-label {
+      color: #888;
+    }
+    .info-value {
+      font-weight: 600;
     }
 
-    .manager-item-left {
+    /* ========== TRIAL POPUP ========== */
+    .modal-popup {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-popup.show { display: flex; }
+    .modal-card {
+      background: #1e1e1e;
+      border-radius: 36px;
+      padding: 28px;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid #16a34a;
+    }
+    .trial-benefit {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #2a2a2a;
     }
-
-    .remove-btn {
-      background: #e74c5e;
-      border: none;
-      border-radius: 30px;
-      padding: 8px 16px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
+    .trial-benefit i {
+      width: 30px;
+      color: #16a34a;
     }
 
     /* ========== SIDEBAR ========== */
     .sidebar-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 6000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2500;
       visibility: hidden;
       opacity: 0;
       transition: 0.2s;
     }
-
     .sidebar-overlay.open { visibility: visible; opacity: 1; }
-
     .sidebar-panel {
       position: fixed;
       top: 0;
       right: -300px;
       width: 280px;
       height: 100%;
-      background: #111;
-      z-index: 6001;
+      background: #121212;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+      z-index: 2501;
       transition: right 0.25s;
+      display: flex;
+      flex-direction: column;
       padding: 20px 0;
-      overflow-y: auto;
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      border-left: 1px solid #2a4a2a;
     }
-
     .sidebar-overlay.open .sidebar-panel { right: 0; }
-
     .sidebar-header {
-      padding: 12px 20px 20px;
-      font-size: 22px;
+      padding: 12px 20px;
+      font-size: 18px;
       font-weight: 800;
       color: #16a34a;
+      border-bottom: 1px solid #2a4a2a;
     }
-
     .sidebar-item {
-      padding: 16px 24px;
+      padding: 14px 24px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      font-size: 15px;
       font-weight: 600;
-      cursor: pointer;
       color: #ccc;
+      cursor: pointer;
     }
-
     .sidebar-item i { width: 24px; color: #16a34a; }
+    .sidebar-item:hover { background: #1a2e1a; }
 
-    /* ========== TOAST & MODALS ========== */
-    .toast-message {
+    /* ========== PAGE OVERLAYS ========== */
+    .page-overlay {
       position: fixed;
-      bottom: 30px;
-      left: 20px;
-      right: 20px;
-      background: #16a34a;
-      color: #fff;
-      padding: 14px;
-      border-radius: 60px;
-      text-align: center;
-      z-index: 9999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #0a0f0a;
+      z-index: 2100;
       display: none;
-      max-width: 500px;
-      margin: 0 auto;
+      flex-direction: column;
+      overflow-y: auto;
     }
-
-    .modal-popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(4px);
+    .page-overlay.show { display: flex; }
+    .page-header {
+      padding: 20px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      z-index: 7000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
+      border-bottom: 1px solid #2a4a2a;
     }
-
-    .modal-popup.show { visibility: visible; opacity: 1; }
-
-    .modal-card {
+    .page-header h2 { color: #16a34a; }
+    .close-page {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .page-content { padding: 20px; flex: 1; }
+    .card-premium {
       background: #1a1a1a;
-      border-radius: 48px;
-      padding: 28px 24px;
-      max-width: 360px;
-      text-align: center;
-      border: 2px solid #16a34a;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #2a4a2a;
+    }
+    .manager-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .remove-btn {
+      background: none;
+      border: 1px solid #7f1d1d;
+      color: #fca5a5;
+      border-radius: 30px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    .photo-thumb {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .sub-option {
+      background: #1a1a1a;
+      border-radius: 24px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #2a4a2a;
+      cursor: pointer;
+    }
+    .sub-option.selected {
+      border-color: #16a34a;
+      background: #0f2a0f;
     }
 
+    /* Payment Modal */
     .payment-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(6px);
-      z-index: 8000;
-      display: flex;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 3500;
+      display: none;
       align-items: center;
       justify-content: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
+      padding: 20px;
     }
-
-    .payment-modal.show { visibility: visible; opacity: 1; }
-
+    .payment-modal.show { display: flex; }
     .payment-card {
-      background: #1a1a1a;
-      border-radius: 48px;
-      padding: 28px 24px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
-      border: 2px solid #16a34a;
+      background: #1e1e1e;
+      border-radius: 36px;
+      padding: 28px;
+      max-width: 450px;
+      width: 100%;
+      border: 1px solid #16a34a;
     }
-
     .card-input {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 30px;
-      padding: 16px;
-      font-size: 16px;
+      background: #2c2c2c;
+      border: 1px solid #3a5a3a;
+      border-radius: 40px;
+      padding: 14px 18px;
       width: 100%;
       margin-bottom: 16px;
-      color: #fff;
+      color: white;
     }
-
-    .card-row { display: flex; gap: 12px; }
-
+    .card-row {
+      display: flex;
+      gap: 12px;
+    }
     .pay-btn {
       background: #16a34a;
       color: white;
       border: none;
-      border-radius: 60px;
+      border-radius: 40px;
       padding: 16px;
       font-weight: 800;
       width: 100%;
-      margin-top: 12px;
       cursor: pointer;
     }
 
-    .trial-benefit {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 16px 0;
-      text-align: left;
+    .toast-message {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e3a1e;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 60px;
+      font-weight: 600;
+      z-index: 9999;
+      display: none;
     }
-
-    .trial-benefit i { width: 28px; color: #16a34a; font-size: 20px; }
-
-    .section-card {
-      background: #1a1a1a;
-      border-radius: 24px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid #333;
-    }
-
-    .section-title {
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #16a34a;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .photo-grid { display: flex; gap: 12px; flex-wrap: wrap; }
-
-    .photo-thumb {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
-      object-fit: cover;
-      border: 2px solid #16a34a;
-    }
-
-    .sub-option { cursor: pointer; transition: all 0.2s; }
-    .sub-option:hover { background: #2a2a2a; border-color: #16a34a; }
-
+    .small-note { color: #888; font-size: 12px; margin-top: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .small-note { font-size: 13px; color: #888; margin-top: 8px; }
-    .flex-row { display: flex; gap: 8px; align-items: center; }
   </style>
 </head>
 <body>
 <div class="app">
-  <!-- ========== AUTH VIEW ========== -->
+  <!-- SYSTEM OVERLAY -->
+  <div id="systemOverlay" style="display: none;">
+    <div class="system-message">
+      <i class="fas fa-tools" id="systemIcon"></i>
+      <h2 id="systemTitle">System Unavailable</h2>
+      <p id="systemMessage">We're currently performing maintenance.</p>
+      <button id="systemRetryBtn" class="auth-btn" style="display: none;">Retry</button>
+    </div>
+  </div>
+
+  <!-- AUTH VIEW -->
   <div id="authView">
     <div class="auth-header">
       <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span> ⛽</h1>
@@ -783,13 +729,13 @@
           <input type="text" id="locationSearchInput" placeholder="Search address" class="input-pill" style="margin:0;">
           <button id="locateMeBtn" class="auth-btn" style="width:auto; margin:0; padding:14px 18px;"><i class="fas fa-location-dot"></i></button>
         </div>
-        <small>📍 Pin your exact location (accuracy ~10m)</small>
+        <small>📍 Pin your exact location</small>
       </div>
       <button class="auth-btn" id="registerBtn"><span>Register Station</span> <span class="spinner"></span></button>
     </div>
   </div>
 
-  <!-- ========== DASHBOARD VIEW ========== -->
+  <!-- DASHBOARD VIEW -->
   <div id="dashboardView">
     <div class="photo-container">
       <img class="station-photo" id="mainStationPhoto" src="station_placeholder.png" alt="Station">
@@ -816,7 +762,7 @@
   </div>
 </div>
 
-<!-- ========== DETAILS OVERLAY ========== -->
+<!-- DETAILS OVERLAY -->
 <div class="details-overlay" id="detailsOverlay">
   <div class="details-header">
     <h2><i class="fas fa-gas-pump"></i> Station Details</h2>
@@ -830,7 +776,7 @@
   <div class="info-section" id="detailsInfoSection"></div>
 </div>
 
-<!-- ========== TRIAL POPUP ========== -->
+<!-- TRIAL POPUP -->
 <div class="modal-popup" id="trialPopup">
   <div class="modal-card">
     <div style="text-align:center"><i class="fas fa-gift" style="font-size:48px;color:#16a34a;margin-bottom:16px;"></i><h3 style="color:#16a34a;font-size:28px;">Welcome!</h3><p style="font-size:20px;margin:8px 0;">Hello <span id="popupManagerName"></span>,</p></div>
@@ -842,7 +788,7 @@
   </div>
 </div>
 
-<!-- ========== SIDEBAR ========== -->
+<!-- SIDEBAR -->
 <div class="sidebar-overlay" id="sidebarOverlay">
   <div class="sidebar-panel">
     <div class="sidebar-header">⚡ Manager</div>
@@ -859,7 +805,7 @@
   </div>
 </div>
 
-<!-- ========== PAGE OVERLAYS ========== -->
+<!-- PAGE OVERLAYS -->
 <div id="fuelManagerPage" class="page-overlay"><div class="page-header"><h2>⛽ Fuel Types</h2><button class="close-page" data-close="fuelManagerPage">&times;</button></div><div class="page-content"><div class="card-premium"><h3>Available Fuel Types</h3><div id="fuelManagerList"></div><div style="margin-top:20px;"><label>Add new fuel type:</label><select id="newFuelSelect" class="input-pill" style="margin-bottom:10px;"><option value="">-- Select --</option><option value="cng">CNG</option><option value="ethanol">Ethanol</option><option value="biodiesel">Biodiesel</option></select><button id="addFuelTypeBtn" class="auth-btn" style="margin-top:0;">Add Fuel Type</button></div></div></div></div>
 <div id="amenitiesManagerPage" class="page-overlay"><div class="page-header"><h2>🧼 Amenities</h2><button class="close-page" data-close="amenitiesManagerPage">&times;</button></div><div class="page-content"><div class="card-premium"><h3>Manage Amenities</h3><div id="amenitiesManagerList"></div><div style="margin-top:20px;"><input type="text" id="newAmenityInput" class="input-pill" placeholder="e.g., Free WiFi"><button id="addAmenityBtn" class="auth-btn">Add Amenity</button></div></div></div></div>
 <div id="stationDetailsPage" class="page-overlay"><div class="page-header"><h2>📋 Station Profile</h2><button class="close-page" data-close="stationDetailsPage">&times;</button></div><div class="page-content" id="stationDetailsContent"></div></div>
@@ -901,6 +847,7 @@
     const rtdb = firebase.database();
     const CLOUD_NAME = 'dd3lcymrk', UPLOAD_PRESET = 'h3eyhc2o';
 
+    // Country fuel prices (fallback)
     const countryFuelPrices = {
       US: { petrol: 1.02, diesel: 1.15 }, GB: { petrol: 1.45, diesel: 1.55 },
       DE: { petrol: 1.85, diesel: 1.75 }, FR: { petrol: 1.90, diesel: 1.80 },
@@ -918,6 +865,66 @@
     let customAmenities = [], defaultAmenities = ['Toilet', 'ATM', 'Shop', 'Car Wash'];
     let notificationsEnabled = true;
     let visitChart, fuelChart;
+    let adminSettings = { defaultPetrolPrice: 1.50, defaultDieselPrice: 1.40 };
+
+    // System checks
+    async function performSystemChecks() {
+      if (!currentUser || !stationData) return;
+      try {
+        const maintSnap = await rtdb.ref('maintenance/stationApp').once('value');
+        const maintenanceActive = maintSnap.val() === true;
+        const blockedSnap = await rtdb.ref(`blocked/stations/${currentUser.uid}`).once('value');
+        const stationBlocked = blockedSnap.val() === true;
+        const subExpired = stationData.subscription?.expires && stationData.subscription.expires < Date.now();
+        
+        if (maintenanceActive || stationBlocked || subExpired) {
+          showSystemOverlay(maintenanceActive, stationBlocked, subExpired);
+        } else {
+          hideSystemOverlay();
+        }
+      } catch (e) {}
+    }
+
+    function showSystemOverlay(maintenance, blocked, expired) {
+      const overlay = document.getElementById('systemOverlay');
+      const icon = document.getElementById('systemIcon');
+      const title = document.getElementById('systemTitle');
+      const message = document.getElementById('systemMessage');
+      const retryBtn = document.getElementById('systemRetryBtn');
+      if (maintenance) {
+        icon.className = 'fas fa-tools';
+        title.innerText = 'Under Maintenance';
+        message.innerText = 'The station manager is undergoing maintenance. Please check back later.';
+        retryBtn.style.display = 'block';
+      } else if (blocked) {
+        icon.className = 'fas fa-ban';
+        title.innerText = 'Station Blocked';
+        message.innerText = 'Your station has been blocked. Please contact support.';
+        retryBtn.style.display = 'none';
+      } else if (expired) {
+        icon.className = 'fas fa-clock';
+        title.innerText = 'Subscription Expired';
+        message.innerText = 'Your subscription has ended. Please renew to continue managing your station.';
+        retryBtn.style.display = 'block';
+      }
+      overlay.style.display = 'flex';
+      document.getElementById('dashboardView').style.display = 'none';
+      retryBtn.onclick = async () => { await performSystemChecks(); };
+    }
+
+    function hideSystemOverlay() {
+      document.getElementById('systemOverlay').style.display = 'none';
+      if (currentUser) document.getElementById('dashboardView').style.display = 'block';
+    }
+
+    async function loadAdminSettings() {
+      try {
+        const snap = await rtdb.ref('adminSettings').once('value');
+        const s = snap.val() || {};
+        adminSettings.defaultPetrolPrice = s.defaultPetrolPrice || 1.50;
+        adminSettings.defaultDieselPrice = s.defaultDieselPrice || 1.40;
+      } catch(e) {}
+    }
 
     function showToast(msg, good=true) {
       const t = document.getElementById('toastMessage');
@@ -932,10 +939,9 @@
     }
     function getFlagEmoji(c) { return c ? String.fromCodePoint(...c.toUpperCase().split('').map(x => 127397 + x.charCodeAt())) : '🇺🇸'; }
     function getLocalFuelPrice(type) {
-      if (countryFuelPrices[userCountry.code]) return countryFuelPrices[userCountry.code][type] || (type==='petrol'?1.50:1.40);
-      return type==='petrol'?1.50:1.40;
+      if (countryFuelPrices[userCountry.code]) return countryFuelPrices[userCountry.code][type] || adminSettings[`default${type.charAt(0).toUpperCase()+type.slice(1)}Price`];
+      return adminSettings[`default${type.charAt(0).toUpperCase()+type.slice(1)}Price`] || 1.50;
     }
-    function convertPrice(usd) { return (usd * (exchangeRates[userCountry.currency] || 1)).toFixed(2); }
 
     async function detectCountry() {
       try {
@@ -991,7 +997,7 @@
     function loadDashboard() {
       if (!stationData) return;
       document.getElementById('mainStationPhoto').src = stationData.photos?.[0] || 'station_placeholder.png';
-      document.getElementById('stationNameDisplay').innerText = stationData.stationName.toUpperCase();
+      document.getElementById('stationNameDisplay').innerText = (stationData.stationName || 'STATION').toUpperCase();
       document.getElementById('countryNameDisplay').innerText = userCountry.name.toUpperCase();
       renderToggles();
     }
@@ -1039,7 +1045,7 @@
         detailsMap = L.map('detailsMap').setView([stationData.location.lat, stationData.location.lng], 15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(detailsMap);
         L.marker([stationData.location.lat, stationData.location.lng]).addTo(detailsMap);
-      } else detailsMap.invalidateSize();
+      } else { detailsMap.invalidateSize(); }
       const prices = stationData.prices || { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') };
       document.getElementById('detailPetrolPrice').innerText = `${userCountry.currency} ${prices.petrol.toFixed(2)}`;
       document.getElementById('detailDieselPrice').innerText = `${userCountry.currency} ${prices.diesel.toFixed(2)}`;
@@ -1048,11 +1054,11 @@
         <div class="info-row"><span class="info-label">Manager</span><span class="info-value">${stationData.managerName}</span></div>
         <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${stationData.managerPhone}</span></div>
         <div class="info-row"><span class="info-label">Email</span><span class="info-value">${stationData.email}</span></div>
-        <div class="info-row"><span class="info-label">Location</span><span class="info-value">${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}</span></div>`;
+        <div class="info-row"><span class="info-label">Location</span><span class="info-value">${stationData.location.lat.toFixed(4)}, ${stationData.location.lng.toFixed(4)}</span></div>
+        <div class="info-row"><span class="info-label">Subscription</span><span class="info-value">${stationData.subscription?.plan || 'trial'} · expires ${stationData.subscription?.expires ? new Date(stationData.subscription.expires).toLocaleDateString() : 'N/A'}</span></div>`;
     });
     document.getElementById('closeDetailsBtn').addEventListener('click', () => document.getElementById('detailsOverlay').classList.remove('show'));
 
-    // Edit station name
     document.getElementById('editStationNameBtn').addEventListener('click', () => {
       const newName = prompt('Enter new station name:', stationData.stationName);
       if (newName && newName.trim()) {
@@ -1121,11 +1127,11 @@
       const c = document.getElementById('stationDetailsContent');
       const photos = stationData.photos || [];
       c.innerHTML = `
-        <div class="section-card"><div class="section-title"><i class="fas fa-user-circle"></i>Manager</div><p><strong>${stationData.managerName}</strong><br>📞 ${stationData.managerPhone}<br>📧 ${stationData.email}</p><button id="editManagerBtn" class="auth-btn" style="margin-top:12px;">Edit Manager Info</button></div>
-        <div class="section-card"><div class="section-title"><i class="fas fa-gas-pump"></i>Fuel Types</div><div>${Object.entries(stationData.fuelTypes||{}).filter(e=>e[1]).map(e=>`<span class="amenity-chip">${e[0]}</span>`).join('')}</div></div>
-        <div class="section-card"><div class="section-title"><i class="fas fa-concierge-bell"></i>Amenities</div><div>${(stationData.amenities||[]).map(a=>`<span class="amenity-chip">${a}</span>`).join('')}</div></div>
-        <div class="section-card"><div class="section-title"><i class="fas fa-map-marker-alt"></i>Location</div><p>Lat: ${stationData.location.lat.toFixed(6)}<br>Lng: ${stationData.location.lng.toFixed(6)}</p><button id="updateLocationBtn" class="auth-btn" style="margin-top:12px;background:#3b82f6;">Update Location</button></div>
-        <div class="section-card"><div class="section-title"><i class="fas fa-images"></i>Station Pictures</div><div class="photo-grid">${photos[0]?`<img src="${photos[0]}" class="photo-thumb">`:'<div class="photo-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;">No photo</div>'}${photos[1]?`<img src="${photos[1]}" class="photo-thumb">`:'<div class="photo-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;">No photo</div>'}</div><button id="updatePhotosBtn" class="auth-btn" style="margin-top:16px;background:#8b5cf6;">Update Pictures</button></div>`;
+        <div class="card-premium"><div class="section-title"><i class="fas fa-user-circle"></i>Manager</div><p><strong>${stationData.managerName}</strong><br>📞 ${stationData.managerPhone}<br>📧 ${stationData.email}</p><button id="editManagerBtn" class="auth-btn" style="margin-top:12px;">Edit Manager Info</button></div>
+        <div class="card-premium"><div class="section-title"><i class="fas fa-gas-pump"></i>Fuel Types</div><div>${Object.entries(stationData.fuelTypes||{}).filter(e=>e[1]).map(e=>`<span class="amenity-chip">${e[0]}</span>`).join('')}</div></div>
+        <div class="card-premium"><div class="section-title"><i class="fas fa-concierge-bell"></i>Amenities</div><div>${(stationData.amenities||[]).map(a=>`<span class="amenity-chip">${a}</span>`).join('')}</div></div>
+        <div class="card-premium"><div class="section-title"><i class="fas fa-map-marker-alt"></i>Location</div><p>Lat: ${stationData.location.lat.toFixed(6)}<br>Lng: ${stationData.location.lng.toFixed(6)}</p><button id="updateLocationBtn" class="auth-btn" style="margin-top:12px;background:#3b82f6;">Update Location</button></div>
+        <div class="card-premium"><div class="section-title"><i class="fas fa-images"></i>Station Pictures</div><div class="photo-grid">${photos[0]?`<img src="${photos[0]}" class="photo-thumb">`:'<div class="photo-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;">No photo</div>'}${photos[1]?`<img src="${photos[1]}" class="photo-thumb">`:'<div class="photo-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;">No photo</div>'}</div><button id="updatePhotosBtn" class="auth-btn" style="margin-top:16px;background:#8b5cf6;">Update Pictures</button></div>`;
       document.getElementById('editManagerBtn').onclick = () => {
         const nn = prompt('Manager name:', stationData.managerName);
         const np = prompt('Manager phone:', stationData.managerPhone);
@@ -1171,7 +1177,7 @@
 
     async function renderReports() {
       const c = document.getElementById('reportsContent');
-      const snap = await rtdb.ref('userReports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
+      const snap = await rtdb.ref('reports').orderByChild('stationId').equalTo(currentUser.uid).once('value');
       const reps = []; snap.forEach(r => reps.push(r.val()));
       c.innerHTML = reps.length ? reps.map(r => `<div class="card-premium"><strong>${r.type}</strong><br>${r.comment||''}<br><small>${new Date(r.timestamp).toLocaleString()}</small></div>`).join('') : '<p>No reports yet.</p>';
     }
@@ -1185,11 +1191,13 @@
       document.getElementById('subscriptionContent').innerHTML = `
         <div class="card-premium" style="padding:24px;"><div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;"><i class="fas fa-crown" style="font-size:32px;color:#fbbf24;"></i><div><h3>${plan.charAt(0).toUpperCase()+plan.slice(1)} Plan</h3><p>Expires: ${exp}</p></div></div><div class="trial-benefit"><i class="fas fa-map-pin"></i>Station visible on map</div><div class="trial-benefit"><i class="fas fa-clock"></i>Real‑time price updates</div><div class="trial-benefit"><i class="fas fa-headset"></i>Priority support</div></div>
         <div style="margin:24px 0 16px;"><i class="fas fa-credit-card"></i> Choose a plan:</div>
-        <div class="toggle-item sub-option" data-plan="1month" data-price="${m1}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 1 Month</span> <strong>${cur} ${m1}</strong></div>
-        <div class="toggle-item sub-option" data-plan="5months" data-price="${m5}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 5 Months</span> <strong>${cur} ${m5}</strong></div>
-        <div class="toggle-item sub-option" data-plan="12months" data-price="${m12}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 12 Months</span> <strong>${cur} ${m12}</strong></div>
-        <p class="small-note" style="margin-top:20px;"><i class="fas fa-lock"></i> Secure payment · Cancel anytime</p>`;
+        <div class="sub-option" data-plan="1month" data-price="${m1}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 1 Month</span> <strong>${cur} ${m1}</strong></div>
+        <div class="sub-option" data-plan="5months" data-price="${m5}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 5 Months</span> <strong>${cur} ${m5}</strong></div>
+        <div class="sub-option" data-plan="12months" data-price="${m12}" style="padding:18px;"><span><i class="fas fa-calendar-alt"></i> 12 Months</span> <strong>${cur} ${m12}</strong></div>
+        <p class="small-note"><i class="fas fa-lock"></i> Secure payment · Cancel anytime</p>`;
       document.querySelectorAll('.sub-option').forEach(o => o.onclick = () => {
+        document.querySelectorAll('.sub-option').forEach(x => x.classList.remove('selected'));
+        o.classList.add('selected');
         document.getElementById('selectedPlanDisplay').innerText = o.dataset.plan;
         document.getElementById('selectedPriceDisplay').innerText = `${cur} ${o.dataset.price}`;
         document.getElementById('cardPaymentModal').classList.add('show');
@@ -1210,6 +1218,9 @@
         if (!stationData) { auth.signOut(); return; }
         if (!stationData.prices) stationData.prices = { petrol: getLocalFuelPrice('petrol'), diesel: getLocalFuelPrice('diesel') };
         if (!stationData.fuelTypes) stationData.fuelTypes = { diesel: true, petrol: true, lpg: false, unleaded95: false };
+        await loadAdminSettings();
+        await performSystemChecks();
+        if (document.getElementById('systemOverlay').style.display === 'flex') return;
         document.getElementById('authView').style.display = 'none';
         document.getElementById('dashboardView').style.display = 'block';
         loadDashboard();
@@ -1281,11 +1292,13 @@
         setButtonLoading(btn, false);
       };
       document.getElementById('loginBtn').onclick = () => auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value).catch(e => showToast(e.message, false));
+      
       const sidebar = document.getElementById('sidebarOverlay');
       document.getElementById('dashboardMenuBtn').onclick = () => sidebar.classList.add('open');
       sidebar.addEventListener('click', e => { if (e.target===sidebar) sidebar.classList.remove('open'); });
       document.querySelectorAll('[data-page]').forEach(el => el.onclick = () => { openPage(el.dataset.page); sidebar.classList.remove('open'); });
       document.querySelectorAll('.close-page').forEach(b => b.onclick = () => b.closest('.page-overlay').classList.remove('show'));
+      
       document.getElementById('addFuelTypeBtn').onclick = async () => {
         const sel = document.getElementById('newFuelSelect');
         const nf = sel.value;
@@ -1330,7 +1343,9 @@
         if (document.getElementById('cardNumber').value.length < 15) { showToast('Invalid card', false); return; }
         showToast('Payment successful (demo)');
         document.getElementById('cardPaymentModal').classList.remove('show');
-        stationData.subscription = { plan: 'paid', expires: Date.now() + 30*24*3600*1000 };
+        const selectedPlan = document.querySelector('.sub-option.selected');
+        const months = selectedPlan?.dataset.plan === '1month' ? 1 : (selectedPlan?.dataset.plan === '5months' ? 5 : 12);
+        stationData.subscription = { plan: 'paid', expires: Date.now() + months*30*24*3600*1000 };
         rtdb.ref(`stationOwners/${currentUser.uid}/subscription`).set(stationData.subscription);
         renderSubscription();
       };
