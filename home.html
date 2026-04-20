@@ -1473,7 +1473,7 @@
 </div>
 
 <script>
-  // ==================== AI CHAT FUNCTIONALITY ====================
+  // ==================== AI CHAT FUNCTIONALITY (with fixed tap/drag on mobile) ====================
   const AI_WORKER_URL = 'https://zynapse-ai-worker.jubelmobz19.workers.dev/ask-ai';
   const aiBtn = document.getElementById('aiFloatingBtn');
   const aiModal = document.getElementById('aiChatModal');
@@ -1486,6 +1486,7 @@
   let isDragging = false;
   let dragStartX = 0, dragStartY = 0, btnStartLeft = 0, btnStartTop = 0;
   let hasMoved = false;
+  const DRAG_THRESHOLD = 5; // pixels
   
   // Dragging logic
   function startDrag(e) {
@@ -1509,6 +1510,10 @@
     const clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0);
     const dx = clientX - dragStartX;
     const dy = clientY - dragStartY;
+    const distance = Math.hypot(dx, dy);
+    if (distance > DRAG_THRESHOLD) {
+      hasMoved = true;
+    }
     let newLeft = btnStartLeft + dx;
     let newTop = btnStartTop + dy;
     const maxX = window.innerWidth - aiBtn.offsetWidth;
@@ -1520,14 +1525,12 @@
     aiBtn.style.top = newTop + 'px';
     aiBtn.style.right = 'auto';
     aiBtn.style.bottom = 'auto';
-    hasMoved = true;
   }
   function stopDrag() {
     if (isDragging) {
       isDragging = false;
       aiBtn.style.transition = '';
       aiBtn.style.cursor = 'grab';
-      setTimeout(() => { aiBtn.style.cursor = 'grab'; }, 50);
     }
   }
   aiBtn.addEventListener('mousedown', startDrag);
@@ -1537,10 +1540,16 @@
   document.addEventListener('mouseup', stopDrag);
   document.addEventListener('touchend', stopDrag);
   
-  // Open/Close modal
+  // Open modal on tap/click only if not dragged
+  aiBtn.addEventListener('click', (e) => {
+    if (!hasMoved) {
+      openAIModal();
+    }
+    hasMoved = false; // reset for next interaction
+  });
+  
   function openAIModal() { aiModal.classList.add('active'); aiInput.focus(); }
   function closeAIModal() { aiModal.classList.remove('active'); }
-  aiBtn.addEventListener('click', (e) => { if (!hasMoved) openAIModal(); hasMoved = false; });
   closeModalBtn.addEventListener('click', closeAIModal);
   aiModal.addEventListener('click', (e) => { if (e.target === aiModal) closeAIModal(); });
   
@@ -1601,7 +1610,7 @@
 </script>
 
 <script>
-  // ==================== ORIGINAL FUELRADAR FULL CODE (preserved exactly as in original) ====================
+  // ==================== ORIGINAL FUELRADAR FULL CODE (preserved exactly) ====================
   (function(){
     "use strict";
     const firebaseConfig = {
