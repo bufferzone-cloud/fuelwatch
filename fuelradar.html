@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuelRadar AI - Smart Fuel Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .fuel-icon {
+            font-size: 2.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .assistant .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            gap: 10px;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .input-area input:focus {
+            border-color: #667eea;
+        }
+        
+        .input-area button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.3s;
+        }
+        
+        .input-area button:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .tips-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .tips-panel h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .tips-panel ul {
+            list-style: none;
+        }
+        
+        .tips-panel li {
+            padding: 8px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-area button {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="fuel-icon">⛽</span>
+                FuelRadar AI
+                <span class="fuel-icon">🤖</span>
+            </h1>
+            <p>Your intelligent fuel price assistant - Ask me anything about fuel prices, saving tips, and more!</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        Hello! I'm FuelRadar AI 👋<br>
+                        I can help you with:<br>
+                        • Finding cheapest fuel prices<br>
+                        • Saving tips and fuel efficiency<br>
+                        • Price prediction and trends<br>
+                        • Route optimization advice<br><br>
+                        How can I help you today?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <input 
+                    type="text" 
+                    id="userInput" 
+                    placeholder="Ask me about fuel prices, saving tips, or anything fuel-related..."
+                    onkeypress="if(event.key === 'Enter') sendMessage()"
+                >
+                <button id="sendBtn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        
+        <div class="tips-panel">
+            <h3>💡 Quick Fuel Saving Tips</h3>
+            <ul>
+                <li>⛽ Fill up on Mondays or Tuesdays for best prices</li>
+                <li>🚗 Check fuel prices before leaving home</li>
+                <li>📱 Use loyalty programs and fuel discounts</li>
+                <li>🔧 Keep tires properly inflated for better mileage</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Your deployed Cloudflare Worker URL
+        const API_URL = 'https://deepseek-proxy.jubelmobz19.workers.dev';
+        
+        // Get DOM elements
+        const messagesContainer = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        // System prompt with 3-sentence limit
+        const SYSTEM_PROMPT = `You are FuelRadar AI, a helpful assistant specialized in fuel prices, fuel efficiency, and saving money on petrol. You help users find the best fuel prices, provide fuel-saving tips, analyze price trends, and offer route optimization advice. Be friendly and practical. CRITICAL: Your entire response MUST be three sentences or less. Never exceed three sentences.`;
+        
+        // Store conversation history
+        let conversationHistory = [
+            { role: 'system', content: SYSTEM_PROMPT }
+        ];
+        
+        // Function to truncate response to max 3 sentences (fallback safety)
+        function enforceThreeSentenceLimit(text) {
+            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+            if (sentences.length <= 3) return text;
+            return sentences.slice(0, 3).join(' ').trim();
+        }
+        
+        // Function to add message to chat
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `<div class="message-content">${formatMessage(content)}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            if (role !== 'system') {
+                conversationHistory.push({ role: role, content: content });
+            }
+        }
+        
+        // Simple markdown formatting
+        function formatMessage(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>')
+                .replace(/•/g, '&nbsp;&nbsp;•');
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'message assistant';
+            indicator.id = 'typingIndicator';
+            indicator.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(indicator);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Remove typing indicator
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+        
+        // Send message to Cloudflare Worker proxy
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            sendBtn.disabled = true;
+            userInput.disabled = true;
+            addMessage('user', message);
+            userInput.value = '';
+            showTypingIndicator();
+            
+            try {
+                const requestBody = {
+                    model: 'deepseek-chat',
+                    messages: [
+                        ...conversationHistory,
+                        { role: 'user', content: message }
+                    ],
+                    stream: false,
+                    max_tokens: 150, // limit length further
+                    temperature: 0.5,
+                    top_p: 0.9
+                };
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) throw new Error('API request failed');
+                
+                const data = await response.json();
+                let aiResponse = data.choices[0].message.content;
+                aiResponse = enforceThreeSentenceLimit(aiResponse);
+                
+                removeTypingIndicator();
+                addMessage('assistant', aiResponse);
+                
+            } catch (error) {
+                console.error(error);
+                removeTypingIndicator();
+                addMessage('assistant', `⚠️ Error: ${error.message}. Please try again.`);
+            } finally {
+                sendBtn.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+            }
+        }
+        
+        sendBtn.addEventListener('click', sendMessage);
+    </script>
+</body>
+</html>
