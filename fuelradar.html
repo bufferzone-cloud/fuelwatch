@@ -365,7 +365,12 @@
                 if (!response.ok) throw new Error('API request failed');
                 
                 const data = await response.json();
-                let aiResponse = data.choices[0].message.content;
+console.log('Full response:', data); // Check console for actual error
+
+if (!data.choices || !data.choices[0]) {
+    throw new Error(data.error || data.message || 'Invalid API response');
+}
+let aiResponse = data.choices[0].message.content;
                 aiResponse = enforceThreeSentenceLimit(aiResponse);
                 
                 removeTypingIndicator();
