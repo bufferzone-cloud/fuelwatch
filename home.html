@@ -1348,6 +1348,384 @@
 
 <div id="dynamicToast" class="message-toast"></div>
 
+<!-- ========== FUEL RADAR AI FLOATING BUTTON + CHAT MODAL (ADDED) ========== -->
+<style>
+  /* Draggable Floating AI Button - Red/Green theme */
+  .ai-float-btn-fuel {
+    position: fixed;
+    bottom: 90px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #dc2626, #16a34a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 26px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    cursor: grab;
+    z-index: 1100;
+    transition: transform 0.1s, box-shadow 0.2s;
+    touch-action: none;
+    user-select: none;
+  }
+  .ai-float-btn-fuel:active {
+    cursor: grabbing;
+    transform: scale(0.96);
+  }
+  .ai-float-btn-fuel.dragging {
+    transition: none;
+  }
+  /* AI Modal - FuelRadar style */
+  .ai-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .ai-modal-overlay.active {
+    display: flex;
+  }
+  .ai-modal-content {
+    width: 90%;
+    max-width: 400px;
+    background: var(--bg-white, #fff);
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    max-height: 70vh;
+    border: 1px solid rgba(22,163,74,0.3);
+  }
+  body.dark .ai-modal-content {
+    background: #1e1e1e;
+    color: #e0e0e0;
+  }
+  .ai-modal-header {
+    background: linear-gradient(135deg, #dc2626, #16a34a);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .ai-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ai-close-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .ai-messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 300px;
+  }
+  .ai-message {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 22px;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+  .ai-message.user {
+    align-self: flex-end;
+    background: #dc2626;
+    color: white;
+    border-bottom-right-radius: 6px;
+  }
+  .ai-message.ai {
+    align-self: flex-start;
+    background: #eef5e8;
+    color: #1e3a1e;
+    border-bottom-left-radius: 6px;
+  }
+  body.dark .ai-message.ai {
+    background: #2c2c2c;
+    color: #e0e0e0;
+  }
+  .ai-message .timestamp {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 5px;
+    text-align: right;
+  }
+  .ai-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #e2e8f0;
+    background: #f9fafb;
+  }
+  body.dark .ai-input-area {
+    background: #2c2c2c;
+    border-top-color: #4ade80;
+  }
+  .ai-input-area input {
+    flex: 1;
+    border-radius: 40px;
+    border: 1px solid #16a34a;
+    padding: 10px 16px;
+    font-size: 14px;
+    background: white;
+  }
+  body.dark .ai-input-area input {
+    background: #1e1e1e;
+    color: white;
+    border-color: #4ade80;
+  }
+  .ai-send-btn {
+    background: #16a34a;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 44px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ai-typing {
+    display: none;
+    padding: 8px 16px;
+    gap: 6px;
+    align-items: center;
+    font-size: 12px;
+    color: #16a34a;
+  }
+  .ai-typing.active {
+    display: flex;
+  }
+  .ai-typing-dots span {
+    width: 6px;
+    height: 6px;
+    background: #16a34a;
+    border-radius: 50%;
+    display: inline-block;
+    animation: aiTypingAnim 1.4s infinite;
+  }
+  @keyframes aiTypingAnim {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+</style>
+
+<div id="aiFloatingBtn" class="ai-float-btn-fuel" style="cursor:grab;">
+  <i class="fas fa-robot"></i>
+</div>
+
+<div id="aiChatModal" class="ai-modal-overlay">
+  <div class="ai-modal-content">
+    <div class="ai-modal-header">
+      <h3><i class="fas fa-charging-station"></i> FuelRadar AI</h3>
+      <button class="ai-close-modal" id="closeAIModalBtn">&times;</button>
+    </div>
+    <div class="ai-messages-container" id="aiMessagesList">
+      <div class="ai-message ai">
+        <div>I love it! 🚀 I'm FuelRadar AI, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.</div>
+        <div class="timestamp">Just now</div>
+      </div>
+    </div>
+    <div class="ai-typing" id="aiTypingIndicator">
+      <div class="ai-typing-dots"><span>.</span><span>.</span><span>.</span></div>
+      <span>AI is thinking...</span>
+    </div>
+    <div class="ai-input-area">
+      <input type="text" id="aiMessageInput" placeholder="Ask FuelRadar AI..." autocomplete="off">
+      <button class="ai-send-btn" id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+    // ---------- AI CHAT FUNCTIONALITY (preserves original code) ----------
+    const AI_WORKER_URL = 'https://zynapse-ai-worker.jubelmobz19.workers.dev/ask-ai';
+    const aiBtn = document.getElementById('aiFloatingBtn');
+    const aiModal = document.getElementById('aiChatModal');
+    const closeModalBtn = document.getElementById('closeAIModalBtn');
+    const aiMessagesContainer = document.getElementById('aiMessagesList');
+    const aiInput = document.getElementById('aiMessageInput');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+    const aiTyping = document.getElementById('aiTypingIndicator');
+    
+    let isDragging = false;
+    let dragStartX, dragStartY, btnStartX, btnStartY;
+    
+    // Dragging logic for floating button
+    aiBtn.addEventListener('mousedown', startDrag);
+    aiBtn.addEventListener('touchstart', startDrag, {passive: false});
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('touchmove', onDrag, {passive: false});
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchend', stopDrag);
+    
+    function startDrag(e) {
+      e.preventDefault();
+      isDragging = true;
+      const clientX = e.clientX ?? e.touches[0].clientX;
+      const clientY = e.clientY ?? e.touches[0].clientY;
+      dragStartX = clientX;
+      dragStartY = clientY;
+      const rect = aiBtn.getBoundingClientRect();
+      btnStartX = rect.left;
+      btnStartY = rect.top;
+      aiBtn.style.transition = 'none';
+    }
+    
+    function onDrag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      const clientX = e.clientX ?? e.touches[0].clientX;
+      const clientY = e.clientY ?? e.touches[0].clientY;
+      let dx = clientX - dragStartX;
+      let dy = clientY - dragStartY;
+      let newLeft = btnStartX + dx;
+      let newTop = btnStartY + dy;
+      const maxX = window.innerWidth - aiBtn.offsetWidth;
+      const maxY = window.innerHeight - aiBtn.offsetHeight;
+      newLeft = Math.min(Math.max(0, newLeft), maxX);
+      newTop = Math.min(Math.max(0, newTop), maxY);
+      aiBtn.style.position = 'fixed';
+      aiBtn.style.left = newLeft + 'px';
+      aiBtn.style.top = newTop + 'px';
+      aiBtn.style.right = 'auto';
+      aiBtn.style.bottom = 'auto';
+    }
+    
+    function stopDrag() {
+      if (isDragging) {
+        isDragging = false;
+        aiBtn.style.transition = '';
+        // small delay to avoid click after drag
+        setTimeout(() => { aiBtn.style.cursor = 'grab'; }, 50);
+      }
+    }
+    
+    // Open/Close modal
+    function openAIModal() {
+      aiModal.classList.add('active');
+      aiInput.focus();
+    }
+    function closeAIModal() {
+      aiModal.classList.remove('active');
+    }
+    aiBtn.addEventListener('click', (e) => {
+      if (!isDragging) openAIModal();
+    });
+    closeModalBtn.addEventListener('click', closeAIModal);
+    aiModal.addEventListener('click', (e) => {
+      if (e.target === aiModal) closeAIModal();
+    });
+    
+    // Helper: format message (bold)
+    function formatMessageText(text) {
+      let escaped = (text || '').replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+      escaped = escaped.replace(/\*\*\*(.*?)\*\*\*/g, '<b>$1</b>');
+      escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+      return escaped;
+    }
+    
+    function addAIMessage(role, text, timestamp = new Date()) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `ai-message ${role}`;
+      const formattedTime = timestamp.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+      msgDiv.innerHTML = `
+        <div>${formatMessageText(text)}</div>
+        <div class="timestamp">${formattedTime}</div>
+      `;
+      aiMessagesContainer.appendChild(msgDiv);
+      aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
+    }
+    
+    async function sendToAI(prompt) {
+      aiTyping.classList.add('active');
+      aiSendBtn.disabled = true;
+      try {
+        const response = await fetch(AI_WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const aiReply = data.text || "I'm not sure, could you rephrase?";
+        addAIMessage('ai', aiReply);
+      } catch (err) {
+        console.error('AI error:', err);
+        addAIMessage('ai', "Sorry, I'm having trouble connecting. Please try again later.");
+      } finally {
+        aiTyping.classList.remove('active');
+        aiSendBtn.disabled = false;
+      }
+    }
+    
+    async function handleUserMessage() {
+      const text = aiInput.value.trim();
+      if (!text) return;
+      aiInput.value = '';
+      addAIMessage('user', text);
+      await sendToAI(text);
+      aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
+    }
+    
+    aiSendBtn.addEventListener('click', handleUserMessage);
+    aiInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleUserMessage();
+      }
+    });
+  })();
+</script>
+
+<script>
+  (function(){
+    "use strict";
+    // ---------- ORIGINAL FUELRADAR CODE (unchanged, just wrapped for safety) ----------
+    // All original script logic remains exactly as provided.
+    // To avoid duplication, we keep the entire original script block as is.
+    // The original script already contains all Firebase, map, stations, etc.
+    // We only need to ensure that the AI additions do not conflict.
+    // Since the original script uses its own event listeners and globals, we leave it untouched.
+    // The AI code above is appended and will run after original initialization.
+    // This ensures no modifications to original behavior.
+  })();
+</script>
+
+<!-- The original massive script block follows (unchanged). -->
 <script>
   (function(){
     "use strict";
@@ -1408,7 +1786,7 @@
     let userMarker = null;
     let userHeading = 0;
     let favoriteIds = JSON.parse(localStorage.getItem('fuelFavs')) || [];
-    let currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' }; // base USD
+    let currentPrices = { petrol: 1.50, diesel: 1.40, currency: 'USD' };
     let watchId = null;
     let chartInstance = null;
     let stationsLoaded = false;
@@ -2685,5 +3063,6 @@
     });
   })();
 </script>
+
 </body>
 </html>
