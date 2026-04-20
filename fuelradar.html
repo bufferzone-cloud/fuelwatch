@@ -2,392 +2,815 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FuelRadar AI - Smart Fuel Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Fuel Radar AI — Intelligent Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ==================== FUEL RADAR AI — iOS INSPIRED ==================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
         }
-        
+
+        :root {
+            --white: #ffffff;
+            --white-98: #fafafa;
+            --gray-50: #f8f8f8;
+            --gray-100: #f0f0f0;
+            --gray-150: #e8e8e8;
+            --gray-200: #e0e0e0;
+            --gray-300: #d1d1d6;
+            --gray-400: #c7c7cc;
+            --gray-500: #8e8e93;
+            --gray-600: #6d6d72;
+            --gray-700: #48484a;
+            --gray-800: #3a3a3c;
+            --gray-900: #2c2c2e;
+            --black: #000000;
+            --red: #ff3b30;
+            --blue: #007aff;
+            --blue-light: rgba(0, 122, 255, 0.1);
+            --green: #34c759;
+            
+            --shadow-subtle: 0 2px 6px rgba(0, 0, 0, 0.08);
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.12);
+            
+            --radius-sm: 10px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --radius-circle: 50%;
+            --radius-pill: 9999px;
+            
+            --font-sf: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            
+            --transition-fast: 100ms ease;
+            --transition-normal: 200ms ease;
+            --z-toast: 1080;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: var(--font-sf);
+            background: var(--white);
+            color: var(--gray-900);
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            position: fixed;
+            touch-action: manipulation;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+
+        .app-container {
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
         }
-        
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
+
+        /* ========== HEADER (FUEL RADAR AI) ========== */
+        .app-header {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-150);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            box-shadow: var(--shadow-light);
+            z-index: 10;
         }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-icon {
+            background: linear-gradient(135deg, var(--red), var(--blue));
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            color: white;
+            font-size: 20px;
+            box-shadow: var(--shadow-subtle);
         }
-        
-        .fuel-icon {
-            font-size: 2.5rem;
+
+        .title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.3px;
         }
-        
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.95;
+
+        .title p {
+            font-size: 12px;
+            color: var(--gray-600);
+            font-weight: 500;
         }
-        
-        .chat-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--gray-700);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-circle);
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: var(--gray-100);
+            color: var(--red);
+        }
+
+        /* ========== MAIN CHAT AREA ========== */
+        .main-chat {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 600px;
+            overflow: hidden;
+            background: var(--white);
+            position: relative;
         }
-        
-        .messages {
+
+        .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        
-        .message {
-            margin-bottom: 15px;
+            padding: 20px 16px;
             display: flex;
-            animation: fadeIn 0.3s ease-in;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
         }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        /* Message bubbles (identical to Zyn AI style) */
+        .message-wrapper {
+            display: flex;
+            max-width: 85%;
+            align-self: flex-start;
         }
-        
-        .message.user {
-            justify-content: flex-end;
+
+        .message-wrapper.user {
+            align-self: flex-end;
         }
-        
-        .message-content {
-            max-width: 70%;
+
+        .message-bubble {
             padding: 12px 16px;
-            border-radius: 18px;
-            word-wrap: break-word;
+            border-radius: 22px;
+            word-break: break-word;
+            line-height: 1.45;
+            position: relative;
+            box-shadow: var(--shadow-subtle);
         }
-        
-        .user .message-content {
-            background: #667eea;
+
+        .message-wrapper.user .message-bubble {
+            background: linear-gradient(135deg, var(--red), #ff2d55);
             color: white;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 6px;
         }
-        
-        .assistant .message-content {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        .message-wrapper.ai .message-bubble {
+            background: var(--gray-100);
+            color: var(--black);
+            border-bottom-left-radius: 6px;
         }
-        
+
+        .message-content {
+            font-size: 15px;
+            white-space: pre-wrap;
+        }
+
+        .message-content b {
+            font-weight: 700;
+        }
+
+        .message-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .message-wrapper.user .message-footer {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message-wrapper.ai .message-footer {
+            color: var(--gray-600);
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 5px;
+            border-radius: var(--radius-pill);
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Typing indicator */
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 12px 16px;
+            gap: 6px;
+            background: var(--gray-100);
+            padding: 10px 16px;
+            border-radius: 24px;
+            width: fit-content;
+            margin-top: 6px;
         }
-        
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: #999;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out;
-        }
-        
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-        
-        .input-area {
+
+        .typing-dots {
             display: flex;
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            gap: 10px;
+            gap: 4px;
         }
-        
-        .input-area input {
-            flex: 1;
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--gray-600);
+            border-radius: 50%;
+            animation: typingAnim 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnim {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        /* Input bar */
+        .input-area {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--gray-150);
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
         }
-        
-        .input-area input:focus {
-            border-color: #667eea;
-        }
-        
-        .input-area button {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: transform 0.2s, background 0.3s;
-        }
-        
-        .input-area button:hover:not(:disabled) {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-        
-        .input-area button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .tips-panel {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .tips-panel h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .tips-panel ul {
-            list-style: none;
-        }
-        
-        .tips-panel li {
-            padding: 8px 0;
-            color: #666;
+
+        .input-wrapper {
+            flex: 1;
+            background: var(--gray-50);
+            border-radius: 28px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 4px 12px;
         }
-        
-        @media (max-width: 768px) {
-            .message-content {
-                max-width: 85%;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .input-area button {
-                padding: 12px 20px;
-            }
+
+        .input-wrapper:focus-within {
+            border-color: var(--red);
+            background: white;
+            box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.1);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            font-size: 16px;
+            font-family: var(--font-sf);
+            resize: none;
+            max-height: 100px;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--red), var(--blue));
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(255, 59, 48, 0.2);
+            flex-shrink: 0;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* Empty / welcome state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            color: var(--gray-300);
+        }
+
+        .empty-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: var(--gray-700);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--gray-900);
+            color: white;
+            padding: 10px 16px;
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-deep);
+            animation: slideUp 0.2s ease;
+        }
+
+        .toast.success { background: linear-gradient(135deg, var(--green), #2c9e48); }
+        .toast.error { background: linear-gradient(135deg, var(--red), #dc2626); }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Scrollbar */
+        .messages-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .messages-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .messages-container::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        /* Dark mode override */
+        body.dark {
+            --white: #000000;
+            --white-98: #0a0a0a;
+            --gray-50: #1c1c1e;
+            --gray-100: #2c2c2e;
+            --gray-150: #3a3a3c;
+            --gray-200: #48484a;
+            --gray-300: #636366;
+            --gray-500: #aeaeb2;
+            --gray-600: #c7c7cc;
+            --gray-700: #d1d1d6;
+            --gray-800: #e5e5ea;
+            --gray-900: #f2f2f7;
+            --black: #ffffff;
+        }
+
+        body.dark .message-wrapper.ai .message-bubble {
+            background: #2c2c2e;
+            color: #f0f0f0;
+        }
+
+        @media (max-width: 480px) {
+            .message-wrapper { max-width: 92%; }
+            .app-header { padding: 10px 16px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>
-                <span class="fuel-icon">⛽</span>
-                FuelRadar AI
-                <span class="fuel-icon">🤖</span>
-            </h1>
-            <p>Your intelligent fuel price assistant - Ask me anything about fuel prices, saving tips, and more!</p>
-        </div>
-        
-        <div class="chat-container">
-            <div class="messages" id="messages">
-                <div class="message assistant">
-                    <div class="message-content">
-                        Hello! I'm FuelRadar AI 👋<br>
-                        I can help you with:<br>
-                        • Finding cheapest fuel prices<br>
-                        • Saving tips and fuel efficiency<br>
-                        • Price prediction and trends<br>
-                        • Route optimization advice<br><br>
-                        How can I help you today?
-                    </div>
-                </div>
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo-area">
+            <div class="ai-icon">
+                <i class="fas fa-charging-station"></i>
             </div>
-            
-            <div class="input-area">
-                <input 
-                    type="text" 
-                    id="userInput" 
-                    placeholder="Ask me about fuel prices, saving tips, or anything fuel-related..."
-                    onkeypress="if(event.key === 'Enter') sendMessage()"
-                >
-                <button id="sendBtn" onclick="sendMessage()">Send</button>
+            <div class="title">
+                <h1>Fuel Radar AI</h1>
+                <p>Intelligent assistant · always ready</p>
             </div>
         </div>
-        
-        <div class="tips-panel">
-            <h3>💡 Quick Fuel Saving Tips</h3>
-            <ul>
-                <li>⛽ Fill up on Mondays or Tuesdays for best prices</li>
-                <li>🚗 Check fuel prices before leaving home</li>
-                <li>📱 Use loyalty programs and fuel discounts</li>
-                <li>🔧 Keep tires properly inflated for better mileage</li>
-            </ul>
+        <div class="header-actions">
+            <button class="icon-btn" id="clearChatBtn" title="New conversation">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="icon-btn" id="themeToggleBtn" title="Dark / Light mode">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
-    </div>
-    
-    <script>
-        // Your deployed Cloudflare Worker URL
-        const API_URL = 'https://deepseek-proxy.jubelmobz19.workers.dev';
-        
-        // Get DOM elements
-        const messagesContainer = document.getElementById('messages');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        
-        // System prompt with 3-sentence limit
-        const SYSTEM_PROMPT = `You are FuelRadar AI, a helpful assistant specialized in fuel prices, fuel efficiency, and saving money on petrol. You help users find the best fuel prices, provide fuel-saving tips, analyze price trends, and offer route optimization advice. Be friendly and practical. CRITICAL: Your entire response MUST be three sentences or less. Never exceed three sentences.`;
-        
-        // Store conversation history
-        let conversationHistory = [
-            { role: 'system', content: SYSTEM_PROMPT }
-        ];
-        
-        // Function to truncate response to max 3 sentences (fallback safety)
-        function enforceThreeSentenceLimit(text) {
-            const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-            if (sentences.length <= 3) return text;
-            return sentences.slice(0, 3).join(' ').trim();
-        }
-        
-        // Function to add message to chat
-        function addMessage(role, content) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
-            messageDiv.innerHTML = `<div class="message-content">${formatMessage(content)}</div>`;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            if (role !== 'system') {
-                conversationHistory.push({ role: role, content: content });
-            }
-        }
-        
-        // Simple markdown formatting
-        function formatMessage(text) {
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/\n/g, '<br>')
-                .replace(/•/g, '&nbsp;&nbsp;•');
-        }
-        
-        // Show typing indicator
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'message assistant';
-            indicator.id = 'typingIndicator';
-            indicator.innerHTML = `
-                <div class="message-content">
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            `;
-            messagesContainer.appendChild(indicator);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
-        // Remove typing indicator
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) {
-                indicator.remove();
-            }
-        }
-        
-        // Send message to Cloudflare Worker proxy
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-            
-            sendBtn.disabled = true;
-            userInput.disabled = true;
-            addMessage('user', message);
-            userInput.value = '';
-            showTypingIndicator();
-            
-            try {
-                const requestBody = {
-                    model: 'deepseek-chat',
-                    messages: [
-                        ...conversationHistory,
-                        { role: 'user', content: message }
-                    ],
-                    stream: false,
-                    max_tokens: 150, // limit length further
-                    temperature: 0.5,
-                    top_p: 0.9
-                };
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-                
-                if (!response.ok) throw new Error('API request failed');
-                
-                const data = await response.json();
-console.log('Full response:', data); // Check console for actual error
+    </header>
 
-if (!data.choices || !data.choices[0]) {
-    throw new Error(data.error || data.message || 'Invalid API response');
-}
-let aiResponse = data.choices[0].message.content;
-                aiResponse = enforceThreeSentenceLimit(aiResponse);
-                
-                removeTypingIndicator();
-                addMessage('assistant', aiResponse);
-                
-            } catch (error) {
-                console.error(error);
-                removeTypingIndicator();
-                addMessage('assistant', `⚠️ Error: ${error.message}. Please try again.`);
-            } finally {
-                sendBtn.disabled = false;
-                userInput.disabled = false;
-                userInput.focus();
-            }
+    <!-- Main chat interface -->
+    <main class="main-chat">
+        <div class="messages-container" id="messagesContainer">
+            <!-- dynamic messages appear here -->
+            <div class="empty-state" id="emptyStatePlaceholder">
+                <div class="empty-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="empty-title">Fuel Radar AI</div>
+                <div style="font-size: 13px;">Ask me anything — insights, analytics, creative tasks, or just chat.</div>
+            </div>
+        </div>
+
+        <!-- Typing indicator (hidden by default) -->
+        <div id="typingIndicator" style="display: none; padding: 0 16px 8px 16px;">
+            <div class="typing-indicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <span style="font-size: 13px; color: var(--gray-700);">AI is thinking...</span>
+            </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea class="chat-input" id="messageInput" rows="1" placeholder="Ask Fuel Radar AI..."></textarea>
+            </div>
+            <button class="send-btn" id="sendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </main>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+    // ==================== FUEL RADAR AI — STANDALONE AI CHAT ====================
+    // Cloudflare Worker endpoint (same as Zyn-AI)
+    const AI_SERVER_URL = 'https://zynapse-ai-worker.jubelmobz19.workers.dev';
+
+    // DOM elements
+    const messagesContainer = document.getElementById('messagesContainer');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const clearChatBtn = document.getElementById('clearChatBtn');
+    const themeToggle = document.getElementById('themeToggleBtn');
+    const typingIndicatorDiv = document.getElementById('typingIndicator');
+    const emptyStatePlaceholder = document.getElementById('emptyStatePlaceholder');
+
+    // Conversation storage (localStorage)
+    let conversationHistory = [];   // { role, text, timestamp, id? }
+
+    // Helper: load from localStorage
+    function loadConversation() {
+        const stored = localStorage.getItem('fuelradar_conversation');
+        if (stored) {
+            try {
+                conversationHistory = JSON.parse(stored);
+                if (Array.isArray(conversationHistory) && conversationHistory.length > 0) {
+                    renderAllMessages();
+                    return;
+                }
+            } catch(e) {}
+        }
+        // default welcome message from AI
+        conversationHistory = [{
+            role: 'ai',
+            text: 'Hello! I’m **Fuel Radar AI**. I can help you with data insights, fuel price analysis, technical queries, or anything you need. What’s on your mind?',
+            timestamp: new Date().toISOString(),
+            id: 'welcome'
+        }];
+        saveConversation();
+        renderAllMessages();
+    }
+
+    function saveConversation() {
+        localStorage.setItem('fuelradar_conversation', JSON.stringify(conversationHistory));
+    }
+
+    // Render all messages to DOM (preserve scroll)
+    function renderAllMessages() {
+        // hide empty state placeholder if messages exist
+        if (conversationHistory.length > 0 && emptyStatePlaceholder) {
+            emptyStatePlaceholder.style.display = 'none';
+        } else if (emptyStatePlaceholder) {
+            emptyStatePlaceholder.style.display = 'block';
         }
         
-        sendBtn.addEventListener('click', sendMessage);
-    </script>
+        messagesContainer.innerHTML = '';
+        conversationHistory.forEach(msg => {
+            appendMessageElement(msg.role, msg.text, msg.timestamp, msg.id);
+        });
+        scrollToBottom();
+    }
+
+    // Append a single message element (no re-render all)
+    function appendMessageElement(role, text, timestamp, messageId) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${role}`;
+        
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        // Apply markdown bold conversion (same as Zyn AI)
+        contentDiv.innerHTML = formatMessageText(text);
+        
+        const footer = document.createElement('div');
+        footer.className = 'message-footer';
+        const timeSpan = document.createElement('span');
+        const formattedTime = timestamp ? formatTime(timestamp) : formatTime(new Date().toISOString());
+        timeSpan.textContent = formattedTime;
+        footer.appendChild(timeSpan);
+        
+        if (role === 'ai') {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-btn';
+            copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            copyButton.onclick = (e) => {
+                e.stopPropagation();
+                copyToClipboard(text);
+            };
+            footer.appendChild(copyButton);
+        }
+        
+        bubble.appendChild(contentDiv);
+        bubble.appendChild(footer);
+        wrapper.appendChild(bubble);
+        messagesContainer.appendChild(wrapper);
+    }
+    
+    // Helper to convert markdown bold (*** or **)
+    function formatMessageText(text) {
+        let escaped = escapeHtml(text);
+        escaped = escaped.replace(/\*\*\*(.*?)\*\*\*/g, '<b>$1</b>');
+        escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        return escaped;
+    }
+    
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+    
+    function formatTime(isoString) {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTyping() {
+        typingIndicatorDiv.style.display = 'block';
+        scrollToBottom();
+    }
+    
+    function hideTyping() {
+        typingIndicatorDiv.style.display = 'none';
+    }
+    
+    // Show toast
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        let icon = 'fas fa-info-circle';
+        if (type === 'success') icon = 'fas fa-check-circle';
+        if (type === 'error') icon = 'fas fa-exclamation-circle';
+        toast.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+        }, 2800);
+    }
+    
+    async function copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast('Response copied', 'success');
+        } catch (err) {
+            showToast('Copy failed', 'error');
+        }
+    }
+    
+    // Add a new message to conversation history and render only the new one
+    function addMessageToHistory(role, text, timestamp = null) {
+        const id = Date.now() + '-' + Math.random();
+        const newMsg = {
+            role: role,
+            text: text,
+            timestamp: timestamp || new Date().toISOString(),
+            id: id
+        };
+        conversationHistory.push(newMsg);
+        saveConversation();
+        // hide empty state if it's the first message
+        if (conversationHistory.length > 0 && emptyStatePlaceholder) {
+            emptyStatePlaceholder.style.display = 'none';
+        }
+        appendMessageElement(role, text, newMsg.timestamp, id);
+        scrollToBottom();
+        return newMsg;
+    }
+    
+    // Core AI send logic
+    async function sendUserMessage() {
+        const userText = messageInput.value.trim();
+        if (!userText) return;
+        
+        // Disable send button while processing
+        sendBtn.disabled = true;
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        
+        // 1. Append user message
+        addMessageToHistory('user', userText);
+        
+        // 2. Show typing indicator
+        showTyping();
+        
+        // 3. Call Cloudflare worker AI endpoint
+        try {
+            const response = await fetch(`${AI_SERVER_URL}/ask-ai`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: userText })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Server error (${response.status})`);
+            }
+            
+            const data = await response.json();
+            const aiReply = data.text || 'Sorry, I could not generate a response. Please try again.';
+            
+            // Hide typing then add AI response
+            hideTyping();
+            addMessageToHistory('ai', aiReply);
+            
+        } catch (err) {
+            console.error('AI request failed:', err);
+            hideTyping();
+            const errorMsg = '⚠️ AI service unavailable. Please check your connection or try later.';
+            addMessageToHistory('ai', errorMsg);
+            showToast('Failed to reach AI assistant', 'error');
+        } finally {
+            sendBtn.disabled = false;
+            messageInput.focus();
+        }
+    }
+    
+    // Clear conversation (new chat)
+    function clearConversation() {
+        if (conversationHistory.length > 0 && !confirm('Start a fresh conversation? All history will be cleared.')) return;
+        conversationHistory = [{
+            role: 'ai',
+            text: 'Conversation reset. How can I assist you today?',
+            timestamp: new Date().toISOString(),
+            id: 'reset-' + Date.now()
+        }];
+        saveConversation();
+        // re-render everything
+        if (emptyStatePlaceholder) emptyStatePlaceholder.style.display = 'none';
+        messagesContainer.innerHTML = '';
+        conversationHistory.forEach(msg => {
+            appendMessageElement(msg.role, msg.text, msg.timestamp, msg.id);
+        });
+        scrollToBottom();
+        showToast('New conversation started', 'success');
+    }
+    
+    // Dark / Light mode toggle (consistent with Zyn UI)
+    function initTheme() {
+        const savedTheme = localStorage.getItem('fuelradar_theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            document.body.classList.remove('dark');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    }
+    
+    function toggleTheme() {
+        if (document.body.classList.contains('dark')) {
+            document.body.classList.remove('dark');
+            localStorage.setItem('fuelradar_theme', 'light');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem('fuelradar_theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+    
+    // Auto-resize textarea
+    function autoResizeTextarea() {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+    }
+    
+    // Event listeners
+    sendBtn.addEventListener('click', sendUserMessage);
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!sendBtn.disabled && messageInput.value.trim()) {
+                sendUserMessage();
+            }
+        }
+    });
+    messageInput.addEventListener('input', autoResizeTextarea);
+    clearChatBtn.addEventListener('click', clearConversation);
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Initial load
+    loadConversation();
+    initTheme();
+    messageInput.focus();
+    
+    // Additional helper: If the messages container is empty (edge case), ensure empty state visible
+    window.addEventListener('load', () => {
+        if (conversationHistory.length === 0) {
+            if (emptyStatePlaceholder) emptyStatePlaceholder.style.display = 'block';
+        }
+    });
+</script>
 </body>
 </html>
