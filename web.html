@@ -1,2047 +1,2600 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>FuelRadar · Global · Never Run Out</title>
-  
-  <!-- Font Awesome & Google Fonts -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Leaflet & Plugins -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  
-  <style>
-    /* ========== RESET & GLOBAL ========== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #fff;
-      color: #1e1e1e;
-      line-height: 1.5;
-      scroll-behavior: smooth;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>FuelRadar · Global · Never Run Out</title>
 
-    /* ========== NAVIGATION ========== */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 24px;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .logo-area img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
-    
-    .brand-name {
-      font-size: 22px;
-      font-weight: 800;
-    }
-    
-    .fuel-green {
-      color: #16a34a;
-    }
-    
-    .radar-red {
-      color: #dc2626;
-    }
-    
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      font-weight: 600;
-    }
-    
-    .nav-links a {
-      text-decoration: none;
-      color: #1e293b;
-      transition: color 0.2s;
-    }
-    
-    .nav-links a:hover {
-      color: #16a34a;
-    }
-    
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-    }
-    
-    .btn-outline {
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-weight: 600;
-      background: transparent;
-      border: 1.5px solid #16a34a;
-      color: #16a34a;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    
-    .btn-outline:hover {
-      background: #16a34a;
-      color: white;
-    }
-    
-    .btn-primary {
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: 700;
-      background: #16a34a;
-      border: none;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #14532d;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #14532d;
-    }
-    
-    .menu-toggle {
-      display: none;
-      font-size: 24px;
-      background: none;
-      border: none;
-      color: #16a34a;
-    }
+    <!-- Font Awesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    /* ========== SIDEBAR ========== */
-    .sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.3);
-      z-index: 3000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-    }
-    
-    .sidebar-overlay.open {
-      visibility: visible;
-      opacity: 1;
-    }
-    
-    .sidebar-panel {
-      position: fixed;
-      top: 0;
-      right: -280px;
-      width: 260px;
-      height: 100%;
-      background: white;
-      box-shadow: -4px 0 24px rgba(0,0,0,0.2);
-      z-index: 3001;
-      transition: right 0.25s;
-      display: flex;
-      flex-direction: column;
-      padding: 20px 0;
-    }
-    
-    .sidebar-overlay.open .sidebar-panel {
-      right: 0;
-    }
-    
-    .sidebar-header {
-      padding: 12px 20px;
-      border-bottom: 1px solid #e0f0e0;
-      display: flex;
-      justify-content: space-between;
-    }
-    
-    .sidebar-menu {
-      flex: 1;
-      padding: 16px 0;
-    }
-    
-    .sidebar-item {
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1e3a1e;
-      cursor: pointer;
-    }
-    
-    .sidebar-item i {
-      width: 24px;
-      color: #16a34a;
-    }
+    <!-- Leaflet & Plugins -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js">
+    </script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js">
+    </script>
 
-    /* ========== HERO ========== */
-    .hero-wrapper {
-      background: linear-gradient(135deg, #0a0a0a 0%, #064e3b 100%);
-      border-radius: 0 0 40px 40px;
-      padding: 50px 0;
-    }
-    
-    .hero {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-    }
-    
-    .hero-content {
-      flex: 1;
-      color: white;
-      text-align: center;
-    }
-    
-    .hero h1 {
-      font-size: 44px;
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 20px;
-    }
-    
-    .hero h1 span {
-      color: #4ade80;
-    }
-    
-    .hero p {
-      font-size: 16px;
-      color: #e2e8f0;
-      margin-bottom: 28px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .hero-buttons {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    .hero .btn-primary {
-      background: white;
-      color: #16a34a;
-      box-shadow: 0 4px 0 #15803d;
-    }
-    
-    .hero .btn-outline {
-      border-color: white;
-      color: white;
-    }
-    
-    .hero .btn-outline:hover {
-      background: white;
-      color: #16a34a;
-    }
-    
-    .feature-icons {
-      display: flex;
-      justify-content: center;
-      margin-top: 40px;
-      flex-wrap: wrap;
-      gap: 24px;
-    }
-    
-    .feature-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      font-weight: 600;
-      color: white;
-      font-size: 14px;
-    }
-    
-    .feature-item i {
-      font-size: 28px;
-      color: #4ade80;
-      background: rgba(255,255,255,0.15);
-      padding: 10px;
-      border-radius: 50%;
-      backdrop-filter: blur(4px);
-    }
-    
-    .phone-mockup {
-      flex: 0 0 280px;
-      background: #111;
-      border-radius: 36px;
-      padding: 10px;
-      box-shadow: 0 30px 50px rgba(0,0,0,0.5);
-      border: 2px solid #333;
-    }
-    
-    .phone-screen {
-      background: #f0fdf4;
-      border-radius: 28px;
-      overflow: hidden;
-      height: 560px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .phone-screen img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    <style>
+        :root {
+            --green: #00ff88;
+            --cyan: #00e5ff;
+            --red: #dc2626;
+            --gold: #ffd700;
+            --purple: #b347ea;
+            --bg: #030507;
+            --card-bg: rgba(15, 20, 30, 0.65);
+            --surface: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
-    /* ========== SECTIONS ========== */
-    section {
-      padding: 60px 0;
-    }
-    
-    .section-title {
-      font-size: 32px;
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    
-    .section-subtitle {
-      text-align: center;
-      color: #4b5563;
-      max-width: 600px;
-      margin: 0 auto 40px;
-      font-size: 16px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* 3x3 Grid */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 32px;
-    }
-    
-    .feature-card {
-      background: white;
-      padding: 24px 12px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-      text-align: center;
-      border: 1.5px solid #dc2626;
-      transition: all 0.3s;
-    }
-    
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 30px rgba(220,38,38,0.1);
-    }
-    
-    .feature-card i {
-      font-size: 36px;
-      color: #16a34a;
-      margin-bottom: 16px;
-      background: #f0fdf4;
-      padding: 12px;
-      border-radius: 16px;
-    }
-    
-    .feature-card h3 {
-      margin-bottom: 8px;
-      font-size: 18px;
-    }
-    
-    .feature-card p {
-      font-size: 13px;
-      color: #4b5563;
-    }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: #e2e8f0;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            cursor: none;
+            background: radial-gradient(ellipse at 50% 0%, #0f1a1a 0%, #030507 60%, #000 100%);
+        }
 
-    /* Monitoring section */
-    .monitoring-bg {
-      background: url('https://images.pexels.com/photos/977213/pexels-photo-977213.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
-      position: relative;
-      border-radius: 32px;
-      overflow: hidden;
-      color: white;
-      padding: 60px 40px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    
-    .monitoring-bg::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(6, 78, 59, 0.9);
-      z-index: 0;
-    }
-    
-    .monitoring-content {
-      position: relative;
-      z-index: 2;
-      max-width: 550px;
-    }
-    
-    .monitoring-content h2 {
-      font-size: 36px;
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-    
-    .check-list {
-      list-style: none;
-      margin: 28px 0;
-    }
-    
-    .check-list li {
-      margin: 16px 0;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    
-    .check-list i {
-      color: #fbbf24;
-      font-size: 26px;
-    }
+        /* ── CUSTOM CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
+        }
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--cyan);
+            background: rgba(0, 229, 255, 0.12);
+            mix-blend-mode: normal;
+            animation: cursorPulse 0.7s ease-out infinite;
+        }
+        .cursor-dot.hover {
+            width: 10px;
+            height: 10px;
+            background: var(--cyan);
+            box-shadow: 0 0 20px var(--cyan), 0 0 50px var(--cyan);
+        }
+        @keyframes cursorPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--cyan), 0 0 25px var(--cyan);
+            }
+            50% {
+                box-shadow: 0 0 25px var(--cyan), 0 0 60px var(--cyan);
+            }
+        }
 
-    /* Car background */
-    .car-bg-section {
-      background: url('https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
-      position: relative;
-      border-radius: 32px;
-      overflow: hidden;
-      color: white;
-      padding: 60px 40px;
-      margin: 40px 0;
-    }
-    
-    .car-bg-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 0;
-    }
-    
-    .car-bg-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-    
-    .driver-station-card {
-      flex: 1;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      border-radius: 28px;
-      padding: 36px 28px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .driver-station-card h3 {
-      font-size: 26px;
-      margin-bottom: 24px;
-      color: #4ade80;
-    }
-    
-    .driver-station-card ul {
-      list-style: none;
-    }
-    
-    .driver-station-card li {
-      margin: 14px 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 16px;
-    }
+        /* ── CANVAS PARTICLES ── */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-    /* Benefits */
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-    }
-    
-    .benefit-card {
-      background: #ffffff;
-      border-radius: 28px;
-      padding: 36px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-      border-top: 8px solid #16a34a;
-      transition: transform 0.3s;
-    }
-    
-    .benefit-card:hover {
-      transform: translateY(-6px);
-    }
-    
-    .benefit-card h3 {
-      font-size: 26px;
-      margin-bottom: 28px;
-      color: #16a34a;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .benefit-list {
-      list-style: none;
-    }
-    
-    .benefit-list li {
-      margin: 22px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-    }
-    
-    .benefit-list i {
-      color: #16a34a;
-      font-size: 24px;
-      background: #f0fdf4;
-      padding: 8px;
-      border-radius: 14px;
-    }
-    
-    .benefit-list strong {
-      display: block;
-      font-size: 17px;
-      margin-bottom: 4px;
-    }
+        /* ── BLOB ORCHESTRA ── */
+        .blob-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(90px);
+            opacity: 0.22;
+            mix-blend-mode: screen;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff88, #00e5ff, #ff0033, #ffd700, #b347ea);
+            background-size: 600% 600%;
+            animation: blobFloat 16s infinite alternate ease-in-out,
+                blobColor 10s infinite linear,
+                blobMorph 8s infinite alternate;
+            will-change: transform, border-radius;
+        }
+        .blob:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            top: -120px;
+            left: -80px;
+            animation-delay: 0s;
+        }
+        .blob:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -60px;
+            animation-delay: -3s;
+        }
+        .blob:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            top: 60%;
+            left: 70%;
+            animation-delay: -6s;
+        }
+        .blob:nth-child(4) {
+            width: 280px;
+            height: 280px;
+            top: 30%;
+            left: 10%;
+            animation-delay: -9s;
+        }
+        @keyframes blobFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(150px, 80px) scale(1.3);
+            }
+            50% {
+                transform: translate(-50px, 120px) scale(1.1);
+            }
+            75% {
+                transform: translate(-130px, 40px) scale(1.4);
+            }
+        }
+        @keyframes blobColor {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 600% 50%;
+            }
+        }
+        @keyframes blobMorph {
+            0%,
+            100% {
+                border-radius: 40% 60% 45% 55%;
+            }
+            50% {
+                border-radius: 55% 35% 60% 40%;
+            }
+        }
 
-    /* Tech section */
-    .tech-section {
-      background: white;
-      border-radius: 40px;
-      padding: 50px;
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      border: 1px solid #e2e8f0;
-    }
-    
-    .tech-content {
-      flex: 1;
-    }
-    
-    .tech-content h2 {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 20px;
-      color: #064e3b;
-    }
-    
-    .tech-content p {
-      font-size: 16px;
-      color: #334155;
-      margin-bottom: 24px;
-    }
-    
-    .tech-features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 24px;
-    }
-    
-    .tech-feature {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f8fafc;
-      padding: 10px 20px;
-      border-radius: 40px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-      font-size: 14px;
-      border: 1px solid #e2e8f0;
-    }
-    
-    .tech-feature i {
-      color: #16a34a;
-      font-size: 20px;
-    }
-    
-    .floating-logo {
-      flex: 0 0 200px;
-      text-align: center;
-    }
-    
-    .floating-logo img {
-      max-width: 100%;
-      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-      100% { transform: translateY(0); }
-    }
+        /* ── LIGHT RAYS ── */
+        .light-rays {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: repeating-conic-gradient(rgba(0, 255, 136, 0.015) 0%,
+                    transparent 3%,
+                    transparent 7%,
+                    rgba(0, 229, 255, 0.012) 10%);
+            animation: raySpin 45s linear infinite;
+            opacity: 0.4;
+        }
+        @keyframes raySpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-    /* Partners Dropdown + PULSING */
-    .partner-dropdown-section {
-      background: #f8fafc;
-      border-radius: 40px;
-      margin-top: 30px;
-      border: 1px solid #e2efe2;
-      overflow: hidden;
-      animation: pulseBorder 2s infinite;
-    }
-    
-    @keyframes pulseBorder {
-      0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.3); }
-      70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
-    }
-    
-    .partner-dropdown-header {
-      padding: 24px 32px;
-      font-size: 24px;
-      font-weight: 700;
-      color: #16a34a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      background: #f0fdf4;
-    }
-    
-    .partner-dropdown-content {
-      padding: 0 32px;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease-out;
-    }
-    
-    .partner-dropdown-section.open .partner-dropdown-content {
-      max-height: 600px;
-      padding: 32px;
-    }
+        /* ── FLOATING ORBS ── */
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: orbFloat 7s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+        @keyframes orbFloat {
+            0%,
+            100% {
+                transform: translateY(0) translateX(0) scale(1);
+            }
+            25% {
+                transform: translateY(-35px) translateX(18px) scale(1.2);
+            }
+            50% {
+                transform: translateY(10px) translateX(-22px) scale(0.9);
+            }
+            75% {
+                transform: translateY(-42px) translateX(8px) scale(1.15);
+            }
+        }
 
-    .partners-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      align-items: center;
-    }
-    
-    .partner-card {
-      background: white;
-      border-radius: 24px;
-      padding: 28px 36px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-      border: 1px solid #e2efe2;
-      text-align: center;
-    }
-    
-    .partner-card h4 {
-      font-size: 22px;
-      color: #1e293b;
-    }
+        /* ── NAVIGATION ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(5, 8, 15, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-area img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px var(--green));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 12px var(--green));
+            }
+            50% {
+                filter: drop-shadow(0 0 28px var(--green)) drop-shadow(0 0 50px var(--cyan));
+            }
+        }
+        .brand-name {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+        .fuel-green {
+            background: linear-gradient(to right, #00ff88, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .radar-red {
+            background: linear-gradient(to right, #ff0033, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            font-weight: 600;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5e1;
+            transition: all 0.3s;
+            position: relative;
+            cursor: none;
+        }
+        .nav-links a:hover {
+            color: var(--green);
+            text-shadow: 0 0 20px var(--green);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--green);
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--green);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-outline {
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: transparent;
+            border: 1.5px solid var(--green);
+            color: var(--green);
+            cursor: none;
+            transition: 0.3s;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-outline:hover {
+            background: var(--green);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4), 0 0 60px rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ff88, #00c9a7);
+            border: none;
+            color: #000;
+            cursor: none;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.35), 0 4px 0 #14532d;
+            transition: 0.3s;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.55), 0 8px 0 #14532d;
+        }
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3), 0 2px 0 #14532d;
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: var(--green);
+            cursor: none;
+        }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #1e293b;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 14px 20px;
-      border-radius: 40px;
-      border: 1.5px solid #bbf7d0;
-      font-size: 15px;
-      background: white;
-    }
-    
-    .form-group textarea {
-      border-radius: 24px;
-    }
+        /* ── SIDEBAR ── */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .sidebar-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        .sidebar-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(10, 15, 20, 0.95);
+            backdrop-filter: blur(25px);
+            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 3001;
+            transition: right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            border-left: 1px solid var(--border);
+        }
+        .sidebar-overlay.open .sidebar-panel {
+            right: 0;
+        }
+        .sidebar-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            color: var(--green);
+            font-weight: 800;
+        }
+        .sidebar-menu {
+            flex: 1;
+            padding: 16px 0;
+        }
+        .sidebar-item {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #cbd5e1;
+            cursor: none;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .sidebar-item:hover {
+            color: var(--green);
+            background: rgba(0, 255, 136, 0.05);
+            text-shadow: 0 0 15px var(--green);
+        }
+        .sidebar-item i {
+            width: 24px;
+            color: var(--green);
+        }
 
-    /* Contact improved — hero style with smaller phone */
-    .contact-hero-card {
-      background: linear-gradient(135deg, #0a0a0a 0%, #064e3b 100%);
-      border-radius: 40px;
-      padding: 40px;
-      display: flex;
-      align-items: center;
-      gap: 30px;
-      color: white;
-    }
-    
-    .contact-info {
-      flex: 2;
-    }
-    
-    .contact-info h2 {
-      font-size: 32px;
-      margin-bottom: 16px;
-    }
-    
-    .phone-large {
-      font-size: 32px;
-      font-weight: 800;
-      color: #4ade80;
-      margin: 20px 0;
-    }
-    
-    .contact-methods {
-      display: flex;
-      gap: 24px;
-      margin: 24px 0;
-      flex-wrap: wrap;
-    }
-    
-    .contact-method {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .contact-method i {
-      font-size: 24px;
-      color: #4ade80;
-      background: rgba(255,255,255,0.15);
-      padding: 10px;
-      border-radius: 50%;
-    }
-    
-    .social-links {
-      display: flex;
-      gap: 16px;
-      margin-top: 20px;
-    }
-    
-    .social-links a {
-      color: #4ade80;
-      font-size: 24px;
-    }
-    
-    .contact-form {
-      flex: 1.5;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-    
-    .contact-form input,
-    .contact-form textarea {
-      padding: 14px 20px;
-      border-radius: 60px;
-      border: 2px solid #bbf7d0;
-      font-size: 15px;
-    }
-    
-    .small-phone-mockup {
-      flex: 0 0 200px;
-      background: #111;
-      border-radius: 28px;
-      padding: 8px;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.5);
-      border: 2px solid #333;
-    }
-    
-    .small-phone-screen {
-      background: #f0fdf4;
-      border-radius: 20px;
-      overflow: hidden;
-      height: 380px;
-    }
-    
-    .small-phone-screen img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        /* ── HERO ── */
+        .hero-wrapper {
+            background: transparent;
+            position: relative;
+            z-index: 1;
+            padding: 60px 0 80px;
+        }
+        .hero-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(0, 255, 136, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(0, 229, 255, 0.04) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            position: relative;
+            z-index: 2;
+        }
+        .hero {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .hero-content {
+            flex: 1;
+            text-align: center;
+            min-width: 280px;
+        }
+        .hero-content h1 {
+            font-size: clamp(36px, 6vw, 52px);
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .hero-content h1 span {
+            background: linear-gradient(135deg, #00ff88, #00e5ff, #ffd700);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: heroGradient 4s linear infinite;
+            filter: drop-shadow(0 0 25px rgba(0, 255, 136, 0.5));
+        }
+        @keyframes heroGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+        .hero-content p {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 28px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .hero .btn-primary {
+            background: white;
+            color: #064e3b;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 4px 0 #15803d;
+            font-size: 15px;
+            padding: 12px 28px;
+        }
+        .hero .btn-outline {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            font-size: 15px;
+            padding: 12px 28px;
+        }
+        .hero .btn-outline:hover {
+            background: white;
+            color: #064e3b;
+        }
+        .feature-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            gap: 28px;
+        }
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+        .feature-item i {
+            font-size: 30px;
+            color: var(--green);
+            background: rgba(0, 255, 136, 0.1);
+            padding: 12px;
+            border-radius: 50%;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            transition: 0.3s;
+        }
+        .feature-item:hover i {
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+            transform: scale(1.1);
+        }
+        .phone-mockup {
+            flex: 0 0 260px;
+            background: #111;
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 255, 136, 0.08);
+            border: 2px solid #333;
+            animation: phoneFloat 5s ease-in-out infinite;
+        }
+        @keyframes phoneFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+        .phone-screen {
+            background: #f0fdf4;
+            border-radius: 28px;
+            overflow: hidden;
+            height: 520px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal-content {
-      background: white;
-      max-width: 480px;
-      width: 90%;
-      border-radius: 40px;
-      padding: 36px;
-      position: relative;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    
-    .close-modal {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #16a34a;
-    }
+        /* ── SECTIONS ── */
+        section {
+            padding: 70px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .section-title {
+            font-size: clamp(28px, 5vw, 38px);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
+            letter-spacing: -0.5px;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 16px;
+        }
 
-    /* Rating popup form */
-    .rating-popup {
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-    }
-    
-    .star-rating i {
-      font-size: 24px;
-      color: #ccc;
-      cursor: pointer;
-      margin-right: 4px;
-    }
-    
-    .star-rating i.active {
-      color: #fbbf24;
-    }
+        /* ── CARDS ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+        }
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 28px 16px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.04) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 255, 136, 0.1);
+        }
+        .feature-card i {
+            font-size: 38px;
+            color: var(--green);
+            margin-bottom: 16px;
+            background: rgba(0, 255, 136, 0.08);
+            padding: 14px;
+            border-radius: 18px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+        .feature-card h3 {
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #f1f5f9;
+        }
+        .feature-card p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 28px;
-      color: #6b7280;
-      border-top: 1px solid #e2e8f0;
-    }
+        /* ── MONITORING ── */
+        .monitoring-bg {
+            background: url('https://images.pexels.com/photos/977213/pexels-photo-977213.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
+            position: relative;
+            border-radius: 36px;
+            overflow: hidden;
+            color: white;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+        }
+        .monitoring-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(6, 30, 25, 0.9);
+            z-index: 0;
+        }
+        .monitoring-content {
+            position: relative;
+            z-index: 2;
+            max-width: 550px;
+        }
+        .monitoring-content h2 {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+        .check-list {
+            list-style: none;
+            margin: 28px 0;
+        }
+        .check-list li {
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .check-list i {
+            color: var(--gold);
+            font-size: 26px;
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
 
-    /* ========== MAP & TRIP PLANNER ========== */
-    .map-header {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin: 20px 0;
-      align-items: center;
-    }
-    
-    .selector-pill {
-      background: white;
-      border-radius: 40px;
-      padding: 4px 8px 4px 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: 1.5px solid #bbf7d0;
-    }
-    
-    .selector-pill select {
-      background: transparent;
-      border: none;
-      padding: 10px 20px 10px 8px;
-      font-size: 14px;
-      outline: none;
-      color: inherit;
-    }
-    
-    #mapContainer {
-      height: 500px;
-      width: 100%;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      border: 2px solid #e2efe2;
-    }
-    
-    .filter-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 12px 0;
-    }
-    
-    .chip {
-      background: white;
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid #bbf7d0;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    
-    .chip.active {
-      background: #16a34a;
-      color: white;
-    }
-    
-    .chip .count-badge {
-      background: #16a34a;
-      color: white;
-      border-radius: 20px;
-      padding: 2px 8px;
-      margin-left: 6px;
-      font-size: 11px;
-    }
-    
-    .chip.active .count-badge {
-      background: white;
-      color: #16a34a;
-    }
-    
-    .planner-card {
-      background: #f8fafc;
-      border-radius: 32px;
-      padding: 30px;
-      margin: 40px 0;
-    }
-    
-    .step-container {
-      margin-bottom: 24px;
-    }
-    
-    .step-header {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #16a34a;
-    }
-    
-    .search-pill {
-      background: white;
-      border-radius: 48px;
-      padding: 6px 6px 6px 20px;
-      display: flex;
-      align-items: center;
-      border: 1.5px solid #bbf7d0;
-    }
-    
-    .search-pill input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 10px 0;
-      font-size: 14px;
-      outline: none;
-      color: inherit;
-    }
-    
-    .suggestions {
-      background: white;
-      border-radius: 20px;
-      margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    
-    .suggestion-item {
-      padding: 12px 16px;
-      border-bottom: 1px solid #e2efe2;
-      cursor: pointer;
-      font-size: 14px;
-      color: #16a34a;
-    }
-    
-    .suggestion-item:hover {
-      background: #f0fdf4;
-    }
-    
-    /* Loading overlay */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255,255,255,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      backdrop-filter: blur(4px);
-    }
-    
-    .spinner {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #16a34a;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        /* ── CAR BG ── */
+        .car-bg-section {
+            background: url('https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') center/cover no-repeat;
+            position: relative;
+            border-radius: 36px;
+            overflow: hidden;
+            color: white;
+            padding: 60px 40px;
+            margin: 40px 0;
+            border: 1px solid var(--border);
+        }
+        .car-bg-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 0;
+        }
+        .car-bg-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .driver-station-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 36px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: 0.3s;
+        }
+        .driver-station-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+        .driver-station-card h3 {
+            font-size: 26px;
+            margin-bottom: 24px;
+            color: var(--green);
+        }
+        .driver-station-card ul {
+            list-style: none;
+        }
+        .driver-station-card li {
+            margin: 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            color: #e2e8f0;
+        }
 
-    .station-list-item,
-    .fun-stop-item {
-      background: white;
-      border-radius: 20px;
-      padding: 14px;
-      margin-bottom: 8px;
-      border: 1px solid #e2efe2;
-      cursor: pointer;
-    }
-    
-    .station-list-item.selected,
-    .fun-stop-item.selected {
-      border: 2px solid #16a34a;
-      background: #f0fdf4;
-    }
+        /* ── BENEFITS ── */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .benefit-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 36px;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--green);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .benefit-card:hover::before {
+            opacity: 1;
+        }
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(0, 255, 136, 0.1);
+        }
+        .benefit-card h3 {
+            font-size: 26px;
+            margin-bottom: 28px;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .benefit-list {
+            list-style: none;
+        }
+        .benefit-list li {
+            margin: 22px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .benefit-list i {
+            color: var(--green);
+            font-size: 24px;
+            background: rgba(0, 255, 136, 0.08);
+            padding: 8px;
+            border-radius: 14px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.15);
+        }
+        .benefit-list strong {
+            display: block;
+            font-size: 17px;
+            margin-bottom: 4px;
+            color: #f1f5f9;
+        }
+        .benefit-list div {
+            color: #94a3b8;
+        }
 
-    .popup-content {
-      min-width: 250px;
-    }
-    
-    .amenity-badge {
-      background: #f3f4f6;
-      border-radius: 40px;
-      padding: 4px 10px;
-      font-size: 11px;
-      display: inline-block;
-      margin-right: 6px;
-    }
-    
-    /* Responsive */
-    @media (max-width: 900px) {
-      .hero {
-        flex-direction: column;
-      }
-      .phone-mockup {
-        flex: 0 0 auto;
-        width: 260px;
-      }
-      .benefits-grid {
-        grid-template-columns: 1fr;
-      }
-      .tech-section {
-        flex-direction: column;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-      .contact-hero-card {
-        flex-direction: column;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .navbar {
-        flex-wrap: wrap;
-      }
-      .nav-links,
-      .nav-buttons {
-        display: none;
-      }
-      .menu-toggle {
-        display: block;
-      }
-    }
-  </style>
+        /* ── TECH ── */
+        .tech-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 50px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .tech-section:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.05);
+        }
+        .tech-content {
+            flex: 1;
+        }
+        .tech-content h2 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--green);
+        }
+        .tech-content p {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+        .tech-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .tech-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            color: #cbd5e1;
+            transition: 0.3s;
+        }
+        .tech-feature:hover {
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+        .tech-feature i {
+            color: var(--green);
+            font-size: 20px;
+        }
+        .floating-logo {
+            flex: 0 0 200px;
+            text-align: center;
+        }
+        .floating-logo img {
+            max-width: 100%;
+            filter: drop-shadow(0 20px 40px rgba(0, 255, 136, 0.3));
+            animation: floatLogo 3s ease-in-out infinite;
+        }
+        @keyframes floatLogo {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+
+        /* ── PARTNER DROPDOWN ── */
+        .partners-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+        .partner-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 28px 36px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .partner-card:hover {
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+        .partner-card h4 {
+            font-size: 22px;
+            color: #f1f5f9;
+        }
+        .partner-dropdown-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            margin-top: 30px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            animation: pulseBorder 2s infinite;
+        }
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.2);
+            }
+            70% {
+                box-shadow: 0 0 0 12px rgba(0, 255, 136, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+            }
+        }
+        .partner-dropdown-header {
+            padding: 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: none;
+            background: rgba(0, 255, 136, 0.03);
+        }
+        .partner-dropdown-content {
+            padding: 0 32px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .partner-dropdown-section.open .partner-dropdown-content {
+            max-height: 600px;
+            padding: 32px;
+        }
+
+        /* ── FORM ── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(0, 255, 136, 0.2);
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #e2e8f0;
+            transition: 0.3s;
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+        .form-group textarea {
+            border-radius: 24px;
+        }
+
+        /* ── CONTACT HERO ── */
+        .contact-hero-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .contact-hero-card:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+        }
+        .contact-info {
+            flex: 2;
+        }
+        .contact-info h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-weight: 900;
+        }
+        .phone-large {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--green);
+            margin: 20px 0;
+            text-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        .contact-methods {
+            display: flex;
+            gap: 24px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+        }
+        .contact-method i {
+            font-size: 24px;
+            color: var(--green);
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .social-links a {
+            color: var(--green);
+            font-size: 24px;
+            transition: 0.3s;
+            cursor: none;
+        }
+        .social-links a:hover {
+            color: var(--cyan);
+            text-shadow: 0 0 20px var(--cyan);
+            transform: scale(1.2);
+        }
+        .contact-form {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #e2e8f0;
+            transition: 0.3s;
+            outline: none;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+        .contact-form textarea {
+            border-radius: 24px;
+        }
+        .small-phone-mockup {
+            flex: 0 0 180px;
+            background: #111;
+            border-radius: 28px;
+            padding: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 136, 0.06);
+            border: 2px solid #333;
+        }
+        .small-phone-screen {
+            background: #f0fdf4;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 340px;
+        }
+        .small-phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ── MAP ── */
+        .map-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        .selector-pill {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 50px;
+            padding: 4px 8px 4px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid rgba(0, 255, 136, 0.2);
+            transition: 0.3s;
+        }
+        .selector-pill:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+        .selector-pill select {
+            background: transparent;
+            border: none;
+            padding: 10px 20px 10px 8px;
+            font-size: 14px;
+            outline: none;
+            color: #e2e8f0;
+            cursor: none;
+        }
+        .selector-pill select option {
+            background: #1a1f2b;
+            color: #e2e8f0;
+        }
+        #mapContainer {
+            height: 500px;
+            width: 100%;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(0, 255, 136, 0.15);
+        }
+        .filter-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 0;
+        }
+        .chip {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: none;
+            white-space: nowrap;
+            color: #94a3b8;
+            transition: 0.3s;
+        }
+        .chip:hover {
+            border-color: var(--green);
+            color: #e2e8f0;
+        }
+        .chip.active {
+            background: var(--green);
+            color: #000;
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+        .chip .count-badge {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--green);
+            border-radius: 20px;
+            padding: 2px 8px;
+            margin-left: 6px;
+            font-size: 11px;
+        }
+        .chip.active .count-badge {
+            background: rgba(0, 0, 0, 0.2);
+            color: #000;
+        }
+
+        /* ── PLANNER ── */
+        .planner-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid var(--border);
+        }
+        .step-container {
+            margin-bottom: 24px;
+        }
+        .step-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--green);
+        }
+        .search-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50px;
+            padding: 6px 6px 6px 20px;
+            display: flex;
+            align-items: center;
+            border: 1.5px solid rgba(0, 255, 136, 0.2);
+            transition: 0.3s;
+        }
+        .search-pill:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+        .search-pill input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            font-size: 14px;
+            outline: none;
+            color: #e2e8f0;
+        }
+        .suggestions {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin-top: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+        .suggestion-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: none;
+            font-size: 14px;
+            color: var(--green);
+            transition: 0.2s;
+        }
+        .suggestion-item:hover {
+            background: rgba(0, 255, 136, 0.06);
+        }
+        .station-list-item,
+        .fun-stop-item {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            cursor: none;
+            transition: 0.3s;
+            color: #e2e8f0;
+        }
+        .station-list-item:hover,
+        .fun-stop-item:hover {
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+        .station-list-item.selected,
+        .fun-stop-item.selected {
+            border: 2px solid var(--green);
+            background: rgba(0, 255, 136, 0.08);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        /* ── MODAL ── */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            max-width: 480px;
+            width: 90%;
+            border-radius: 40px;
+            padding: 36px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            cursor: none;
+            color: var(--green);
+            transition: 0.3s;
+        }
+        .close-modal:hover {
+            color: var(--cyan);
+            text-shadow: 0 0 15px var(--cyan);
+        }
+        .rating-popup {
+            background: transparent;
+            border-radius: 24px;
+            padding: 5px;
+        }
+        .star-rating i {
+            font-size: 24px;
+            color: #555;
+            cursor: none;
+            margin-right: 4px;
+            transition: 0.2s;
+        }
+        .star-rating i.active,
+        .star-rating i.fas {
+            color: var(--gold);
+            text-shadow: 0 0 12px var(--gold);
+        }
+        .popup-content {
+            min-width: 250px;
+            color: #1e1e1e;
+        }
+        .amenity-badge {
+            background: #f3f4f6;
+            border-radius: 40px;
+            padding: 4px 10px;
+            font-size: 11px;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* ── LOADING ── */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 5, 7, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+        }
+        .spinner {
+            border: 6px solid rgba(255, 255, 255, 0.08);
+            border-top: 6px solid var(--green);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: #64748b;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── BUTTON RIPPLE ── */
+        .btn-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleEffect 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+            }
+            .phone-mockup {
+                flex: 0 0 auto;
+                width: 220px;
+            }
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            .tech-section {
+                flex-direction: column;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-hero-card {
+                flex-direction: column;
+            }
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+            }
+            .nav-links,
+            .nav-buttons {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav class="navbar">
-  <div class="logo-area">
-    <img src="logo.png" alt="FuelRadar Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-    <div class="brand-name"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></div>
-  </div>
-  <div class="nav-links">
-    <a href="#home">Home</a>
-    <a href="#features">Features</a>
-    <a href="#mapSection">Map</a>
-    <a href="#drivers">Drivers</a>
-    <a href="#stations">Stations</a>
-    <a href="#partners">Partners</a>
-    <a href="#contact">Contact</a>
-  </div>
-  <div class="nav-buttons">
-    <button class="btn-primary" id="openCalcBtn"><i class="fas fa-calculator"></i> Calculator</button>
-    <button class="btn-primary" id="openPlannerBtn"><i class="fas fa-route"></i> Trip Planner</button>
-    <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-outline"><i class="fas fa-download"></i> Get App</a>
-  </div>
-  <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-</nav>
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
 
-<!-- Sidebar -->
-<div id="sidebarOverlay" class="sidebar-overlay">
-  <div class="sidebar-panel">
-    <div class="sidebar-header">
-      <span style="font-weight:800;">FuelRadar</span>
-      <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px;">&times;</button>
-    </div>
-    <div class="sidebar-menu">
-      <a href="#home" class="sidebar-item"><i class="fas fa-home"></i> Home</a>
-      <a href="#features" class="sidebar-item"><i class="fas fa-th-large"></i> Features</a>
-      <a href="#mapSection" class="sidebar-item"><i class="fas fa-map-marked-alt"></i> Map</a>
-      <a href="#drivers" class="sidebar-item"><i class="fas fa-user"></i> Drivers</a>
-      <a href="#stations" class="sidebar-item"><i class="fas fa-store"></i> Stations</a>
-      <a href="#partners" class="sidebar-item"><i class="fas fa-handshake"></i> Partners</a>
-      <a href="#contact" class="sidebar-item"><i class="fas fa-envelope"></i> Contact</a>
-    </div>
-  </div>
-</div>
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
 
-<!-- Hero -->
-<section id="home" class="hero-wrapper">
-  <div class="container hero">
-    <div class="hero-content">
-      <h1>NEVER RUN OUT OF<br><span>FUEL AGAIN.</span></h1>
-      <p>Check real‑time fuel availability worldwide. Choose country & city to find stations, compare prices, and plan smarter.</p>
-      <div class="hero-buttons">
-        <button class="btn-primary" onclick="document.getElementById('mapSection').scrollIntoView({behavior:'smooth'})">Find Stations</button>
-        <button class="btn-outline" id="heroPartnerBtn">Partner with Us</button>
-        <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-primary" style="background:#4ade80;">Get the App</a>
-      </div>
-      <div class="feature-icons">
-        <div class="feature-item"><i class="fas fa-globe"></i> 190+ Countries</div>
-        <div class="feature-item"><i class="fas fa-microchip"></i> Smart monitoring</div>
-        <div class="feature-item"><i class="fas fa-route"></i> Trip Planner</div>
-      </div>
+    <!-- Blob Orchestra -->
+    <div class="blob-stage">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
     </div>
-    <div class="phone-mockup">
-      <div class="phone-screen">
-        <img src="app.jpeg" alt="FuelRadar app screenshot" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Features 3x3 -->
-<section id="features">
-  <div class="container">
-    <h2 class="section-title">How FuelRadar Works</h2>
-    <p class="section-subtitle">Find stations near you instantly</p>
-    <div class="card-grid">
-      <div class="feature-card"><i class="fas fa-map-marked-alt"></i><h3>Live Map</h3><p>See all fuel stations around you in real time.</p></div>
-      <div class="feature-card"><i class="fas fa-search"></i><h3>Smart Search</h3><p>Search by name, address, or amenities.</p></div>
-      <div class="feature-card"><i class="fas fa-filter"></i><h3>Fuel Filters</h3><p>Petrol, diesel, shops, ATM – filter easily.</p></div>
-      <div class="feature-card"><i class="fas fa-route"></i><h3>Trip Planner</h3><p>Plan routes with fuel stops & fun places.</p></div>
-      <div class="feature-card"><i class="fas fa-chart-line"></i><h3>Price Comparison</h3><p>Compare petrol/diesel prices instantly.</p></div>
-      <div class="feature-card"><i class="fas fa-star"></i><h3>Ratings & Reports</h3><p>Rate stations and report live conditions.</p></div>
-      <div class="feature-card"><i class="fas fa-flag"></i><h3>Community Reports</h3><p>Report availability, queues, or prices.</p></div>
-      <div class="feature-card"><i class="fas fa-heart"></i><h3>Favorites</h3><p>Save your go‑to stations.</p></div>
-      <div class="feature-card"><i class="fas fa-calculator"></i><h3>Fuel Calculator</h3><p>Estimate cost and fuel needed for trips.</p></div>
-    </div>
-  </div>
-</section>
+    <!-- Light Rays -->
+    <div class="light-rays"></div>
 
-<!-- Real-time Monitoring -->
-<section>
-  <div class="container">
-    <div class="monitoring-bg">
-      <div class="monitoring-content">
-        <h2>Real‑time station monitoring</h2>
-        <p style="font-size:16px; margin-bottom:20px;">Updated by stations and smart monitoring systems.</p>
-        <ul class="check-list">
-          <li><i class="fas fa-check-circle"></i> Live available indicators</li>
-          <li><i class="fas fa-check-circle"></i> Radius search</li>
-          <li><i class="fas fa-check-circle"></i> Filter by fuel type</li>
-          <li><i class="fas fa-check-circle"></i> Save favourite stations</li>
-        </ul>
-        <button class="btn-primary" style="background:white; color:#064e3b;" id="monitorPartnerBtn">Become a partner →</button>
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- Floating Orbs -->
+    <div class="floating-orb" style="width:22px;height:22px;background:#00ff88;top:12%;left:8%;box-shadow:0 0 40px #00ff88;animation-delay:0s;"></div>
+    <div class="floating-orb" style="width:14px;height:14px;background:#ff0033;top:20%;right:14%;box-shadow:0 0 30px #ff0033;animation-delay:-1s;"></div>
+    <div class="floating-orb" style="width:18px;height:18px;background:#ffd700;bottom:18%;left:10%;box-shadow:0 0 35px #ffd700;animation-delay:-2.5s;"></div>
+    <div class="floating-orb" style="width:10px;height:10px;background:#00e5ff;bottom:22%;right:10%;box-shadow:0 0 25px #00e5ff;animation-delay:-4s;"></div>
+    <div class="floating-orb" style="width:16px;height:16px;background:#b347ea;top:55%;left:16%;box-shadow:0 0 28px #b347ea;animation-delay:-5.5s;"></div>
 
-<!-- MAP SECTION -->
-<section id="mapSection">
-  <div class="container">
-    <h2 class="section-title">🌍 Find Fuel Worldwide</h2>
-    <p class="section-subtitle">Select country and region/city to see stations</p>
-    <div class="map-header">
-      <div class="selector-pill">
-        <i class="fas fa-globe"></i>
-        <select id="countrySelect"></select>
-      </div>
-      <div class="selector-pill">
-        <i class="fas fa-location-dot"></i>
-        <select id="regionSelect" disabled>
-          <option>Select region/city</option>
-        </select>
-      </div>
-      <button class="btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
-    </div>
-    
-    <div class="filter-scroll" id="filterBar">
-      <span class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></span>
-      <span class="chip" data-filter="petrol">Petrol <span class="count-badge" id="countPetrol">0</span></span>
-      <span class="chip" data-filter="diesel">Diesel <span class="count-badge" id="countDiesel">0</span></span>
-      <span class="chip" data-filter="shop">Shop <span class="count-badge" id="countShop">0</span></span>
-      <span class="chip" data-filter="atm">ATM <span class="count-badge" id="countAtm">0</span></span>
-      <span class="chip" data-filter="car_wash">Car wash <span class="count-badge" id="countCarWash">0</span></span>
-      <span class="chip" data-filter="tyres">Tyre pump <span class="count-badge" id="countTyres">0</span></span>
-      <span class="chip" data-filter="restaurant">Restaurant <span class="count-badge" id="countRestaurant">0</span></span>
-      <span class="chip" data-filter="pharmacy">Pharmacy <span class="count-badge" id="countPharmacy">0</span></span>
-    </div>
-    
-    <div id="mapContainer"></div>
-    <p id="mapStatus" style="margin-top:10px; text-align:center;"></p>
-  </div>
-</section>
-
-<!-- Car at gas station -->
-<section>
-  <div class="container car-bg-section">
-    <div class="car-bg-content">
-      <div class="driver-station-card">
-        <h3><i class="fas fa-user"></i> For Drivers</h3>
-        <ul>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Find fuel fast</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Avoid empty stations</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Plan your route</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Save time and money</li>
-        </ul>
-      </div>
-      <div class="driver-station-card">
-        <h3><i class="fas fa-store"></i> For Fuel Stations</h3>
-        <ul>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Increase daily customers</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Real‑time visibility</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Boost customer trust</li>
-          <li><i class="fas fa-check-circle" style="color:#4ade80;"></i> Digital presence</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Driver Benefits -->
-<section id="drivers">
-  <div class="container">
-    <h2 class="section-title">Why Drivers Love FuelRadar</h2>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <h3><i class="fas fa-car-side"></i> Never Get Stranded</h3>
-        <ul class="benefit-list">
-          <li><i class="fas fa-map-pin"></i><div><strong>Real-time availability</strong>Know which stations have fuel.</div></li>
-          <li><i class="fas fa-route"></i><div><strong>Smart route planning</strong>Find the best fuel stops.</div></li>
-          <li><i class="fas fa-chart-bar"></i><div><strong>Price comparison</strong>Save money.</div></li>
-        </ul>
-      </div>
-      <div class="benefit-card">
-        <h3><i class="fas fa-mobile-alt"></i> All-in-One App</h3>
-        <ul class="benefit-list">
-          <li><i class="fas fa-gas-pump"></i><div><strong>Fuel logs & garage</strong>Track consumption.</div></li>
-          <li><i class="fas fa-users"></i><div><strong>Community reports</strong>Live updates.</div></li>
-          <li><i class="fas fa-bell"></i><div><strong>Favorite stations</strong>Quick access.</div></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Station Benefits -->
-<section id="stations">
-  <div class="container">
-    <h2 class="section-title">Grow Your Station with FuelRadar</h2>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <h3><i class="fas fa-chart-line"></i> Increased Visibility</h3>
-        <ul class="benefit-list">
-          <li><i class="fas fa-eye"></i><div><strong>Real-time dashboard</strong>Update fuel availability.</div></li>
-          <li><i class="fas fa-map-marked-alt"></i><div><strong>Appear in searches</strong>Drivers find you.</div></li>
-          <li><i class="fas fa-star"></i><div><strong>Customer trust</strong>Verified status.</div></li>
-        </ul>
-      </div>
-      <div class="benefit-card">
-        <h3><i class="fas fa-hand-holding-usd"></i> Business Growth</h3>
-        <ul class="benefit-list">
-          <li><i class="fas fa-users"></i><div><strong>Attract customers</strong>Reach active drivers.</div></li>
-          <li><i class="fas fa-chart-pie"></i><div><strong>Analytics & insights</strong>Understand demand.</div></li>
-          <li><i class="fas fa-ad"></i><div><strong>Promote offers</strong>Highlight discounts.</div></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Advanced Technology -->
-<section>
-  <div class="container tech-section">
-    <div class="tech-content">
-      <h2>Secure & Technologically Advanced</h2>
-      <p>FuelRadar is built on cutting‑edge infrastructure with real‑time data synchronization, end‑to‑end encryption, and AI‑powered predictions.</p>
-      <div class="tech-features">
-        <div class="tech-feature"><i class="fas fa-shield-alt"></i> 256-bit Encryption</div>
-        <div class="tech-feature"><i class="fas fa-cloud-upload-alt"></i> Real‑time Sync</div>
-        <div class="tech-feature"><i class="fas fa-robot"></i> AI Predictions</div>
-        <div class="tech-feature"><i class="fas fa-history"></i> 99.9% Uptime</div>
-      </div>
-    </div>
-    <div class="floating-logo">
-      <img src="logo.png" alt="FuelRadar logo" style="width:180px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-    </div>
-  </div>
-</section>
-
-<!-- Trip Planner Section -->
-<section id="planner">
-  <div class="container">
-    <h2 class="section-title">Plan a Fun Trip</h2>
-    <div class="planner-card">
-      <div class="step-container">
-        <div class="step-header"><i class="fas fa-map-pin"></i> Your location</div>
-        <div class="search-pill">
-          <i class="fas fa-home"></i>
-          <input type="text" id="userLocationInput" placeholder="Detecting your location..." readonly>
-          <button class="btn-outline" id="detectLocationBtn" style="border:none;"><i class="fas fa-crosshairs"></i></button>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <img src="logo.png" alt="FuelRadar Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%2316a34a%27%3E%3Cpath d=%27M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z%27/%3E%3C/svg%3E';">
+            <div class="brand-name"><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></div>
         </div>
-        <p id="locationDetails" style="margin-top:8px;"></p>
-      </div>
-      
-      <div class="step-container">
-        <div class="step-header"><i class="fas fa-flag-checkered"></i> Where to?</div>
-        <div class="search-pill">
-          <i class="fas fa-search"></i>
-          <input type="text" id="destSearchInput" placeholder="Enter destination">
-          <button class="btn-primary" id="searchDestBtn">Search</button>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#mapSection">Map</a>
+            <a href="#drivers">Drivers</a>
+            <a href="#stations">Stations</a>
+            <a href="#partners">Partners</a>
+            <a href="#contact">Contact</a>
         </div>
-        <div id="destSuggestions" class="suggestions"></div>
-        <p id="selectedDestDisplay" style="margin-top:8px;"></p>
-      </div>
-      
-      <div id="stationSelectionContainer" style="display:none;">
-        <div class="step-header"><i class="fas fa-gas-pump"></i> <span id="stationLoadingMsg">Locating five nearest fuel stations...</span></div>
-        <div id="stationListContainer"></div>
-      </div>
-      
-      <div id="funStopsContainer" style="display:none;">
-        <div class="step-header"><i class="fas fa-camera"></i> <span id="funLoadingMsg">Locating fun stops...</span></div>
-        <div id="funStopsList"></div>
-      </div>
-      
-      <div id="tripOptionsContainer" style="display:none;">
-        <div class="step-header"><i class="fas fa-car"></i> Vehicle details</div>
-        <div style="display:grid; gap:12px;">
-          <input type="number" id="tankCapacity" placeholder="Tank capacity (L)" value="50">
-          <input type="number" id="fuelConsumption" placeholder="Consumption (L/100km)" value="7.5">
-          <select id="fuelTypeSelect">
-            <option value="petrol">Petrol</option>
-            <option value="diesel">Diesel</option>
-          </select>
-          <button class="btn-primary" id="calculateAndDrawRoute">Calculate & Draw Route</button>
+        <div class="nav-buttons">
+            <button class="btn-primary" id="openCalcBtn"><i class="fas fa-calculator"></i> Calculator</button>
+            <button class="btn-primary" id="openPlannerBtn"><i class="fas fa-route"></i> Trip Planner</button>
+            <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-outline"><i class="fas fa-download"></i> Get App</a>
         </div>
-        <div id="tripSummary" style="margin-top:16px;"></div>
-      </div>
-    </div>
-  </div>
-</section>
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    </nav>
 
-<!-- Partners Dropdown (Pulsing) -->
-<section id="partners">
-  <div class="container">
-    <h2 class="section-title">Our Partners</h2>
-    <div class="partners-grid">
-      <div class="partner-card">
-        <i class="fas fa-paint-brush" style="font-size:44px; color:#16a34a;"></i>
-        <h4>BUFFER ZONE</h4>
-        <p>Graphics & Tech Solutions</p>
-      </div>
-      <div>
-        <p>Join the network of trusted fuel stations.</p>
-        <button class="btn-primary" id="partnerFormBtn">Apply to Become a Partner</button>
-      </div>
+    <!-- Sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay">
+        <div class="sidebar-panel">
+            <div class="sidebar-header">
+                <span>FuelRadar</span>
+                <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px; color:var(--green); cursor:none;">&times;</button>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#home" class="sidebar-item"><i class="fas fa-home"></i> Home</a>
+                <a href="#features" class="sidebar-item"><i class="fas fa-th-large"></i> Features</a>
+                <a href="#mapSection" class="sidebar-item"><i class="fas fa-map-marked-alt"></i> Map</a>
+                <a href="#drivers" class="sidebar-item"><i class="fas fa-user"></i> Drivers</a>
+                <a href="#stations" class="sidebar-item"><i class="fas fa-store"></i> Stations</a>
+                <a href="#partners" class="sidebar-item"><i class="fas fa-handshake"></i> Partners</a>
+                <a href="#contact" class="sidebar-item"><i class="fas fa-envelope"></i> Contact</a>
+            </div>
+        </div>
     </div>
-    <div class="partner-dropdown-section" id="partnerDropdown">
-      <div class="partner-dropdown-header">
-        <span><i class="fas fa-handshake"></i> Partner Application Form</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
-      <div class="partner-dropdown-content">
-        <form onsubmit="alert('Application submitted!'); return false;">
-          <div class="form-grid">
-            <div class="form-group"><label>Business Name *</label><input required></div>
-            <div class="form-group"><label>Contact Person *</label><input required></div>
-            <div class="form-group"><label>Email *</label><input type="email" required></div>
-            <div class="form-group"><label>Phone *</label><input type="tel" required></div>
-          </div>
-          <div class="form-group">
-            <label>Business Type *</label>
-            <select required>
-              <option>Fuel Station</option>
-              <option>Service Provider</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Tell us about your business</label>
-            <textarea rows="3"></textarea>
-          </div>
-          <button type="submit" class="btn-primary">Submit Application</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Contact improved: hero style with smaller phone -->
-<section id="contact">
-  <div class="container contact-hero-card">
-    <div class="contact-info">
-      <h2>📞 Contact us</h2>
-      <p>We're here to help 24/7</p>
-      <div class="phone-large"><i class="fas fa-phone-alt"></i> 0972454724</div>
-      <div class="contact-methods">
-        <div class="contact-method"><i class="fas fa-envelope"></i> hello@fuelradar.global</div>
-        <div class="contact-method"><i class="fas fa-map-marker-alt"></i> Lusaka, Zambia · Global</div>
-      </div>
-      <div class="social-links">
-        <a href="#"><i class="fab fa-facebook"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin"></i></a>
-      </div>
-    </div>
-    <div class="contact-form">
-      <input type="text" placeholder="Your name">
-      <input type="email" placeholder="Email address">
-      <textarea rows="3" placeholder="Your message"></textarea>
-      <button class="btn-primary" style="width:fit-content;">Send Message</button>
-    </div>
-    <div class="small-phone-mockup">
-      <div class="small-phone-screen">
-        <img src="app.jpeg" alt="FuelRadar contact" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';">
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- Hero -->
+    <section id="home" class="hero-wrapper">
+        <div class="container hero">
+            <div class="hero-content">
+                <h1>NEVER RUN OUT OF<br><span>FUEL AGAIN.</span></h1>
+                <p>Check real‑time fuel availability worldwide. Choose country & city to find stations, compare prices, and plan smarter.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('mapSection').scrollIntoView({behavior:'smooth'})">Find Stations</button>
+                    <button class="btn-outline" id="heroPartnerBtn">Partner with Us</button>
+                    <a href="https://bufferzone-cloud.github.io/fuelwatch/home.html" target="_blank" class="btn-primary" style="background:var(--green);">Get the App</a>
+                </div>
+                <div class="feature-icons">
+                    <div class="feature-item"><i class="fas fa-globe"></i> 190+ Countries</div>
+                    <div class="feature-item"><i class="fas fa-microchip"></i> Smart monitoring</div>
+                    <div class="feature-item"><i class="fas fa-route"></i> Trip Planner</div>
+                </div>
+            </div>
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <img src="app.jpeg" alt="FuelRadar app screenshot" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%2316a34a%27%3E%3Cpath d=%27M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z%27/%3E%3C/svg%3E';">
+                </div>
+            </div>
+        </div>
+    </section>
 
-<footer>© 2026 FuelRadar. All rights reserved. · Built for the World</footer>
+    <!-- Features 3x3 -->
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">How FuelRadar Works</h2>
+            <p class="section-subtitle">Find stations near you instantly</p>
+            <div class="card-grid">
+                <div class="feature-card"><i class="fas fa-map-marked-alt"></i><h3>Live Map</h3><p>See all fuel stations around you in real time.</p></div>
+                <div class="feature-card"><i class="fas fa-search"></i><h3>Smart Search</h3><p>Search by name, address, or amenities.</p></div>
+                <div class="feature-card"><i class="fas fa-filter"></i><h3>Fuel Filters</h3><p>Petrol, diesel, shops, ATM – filter easily.</p></div>
+                <div class="feature-card"><i class="fas fa-route"></i><h3>Trip Planner</h3><p>Plan routes with fuel stops & fun places.</p></div>
+                <div class="feature-card"><i class="fas fa-chart-line"></i><h3>Price Comparison</h3><p>Compare petrol/diesel prices instantly.</p></div>
+                <div class="feature-card"><i class="fas fa-star"></i><h3>Ratings & Reports</h3><p>Rate stations and report live conditions.</p></div>
+                <div class="feature-card"><i class="fas fa-flag"></i><h3>Community Reports</h3><p>Report availability, queues, or prices.</p></div>
+                <div class="feature-card"><i class="fas fa-heart"></i><h3>Favorites</h3><p>Save your go‑to stations.</p></div>
+                <div class="feature-card"><i class="fas fa-calculator"></i><h3>Fuel Calculator</h3><p>Estimate cost and fuel needed for trips.</p></div>
+            </div>
+        </div>
+    </section>
 
-<!-- Partner Modal -->
-<div id="partnerModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closePartnerModal()">&times;</span>
-    <h2 style="color:#16a34a;">Partner Application</h2>
-    <form onsubmit="alert('Submitted!'); closePartnerModal(); return false;">
-      <input type="text" placeholder="Business Name" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
-      <input type="email" placeholder="Email" required style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
-      <button type="submit" class="btn-primary" style="width:100%;">Submit</button>
-    </form>
-  </div>
-</div>
+    <!-- Real-time Monitoring -->
+    <section>
+        <div class="container">
+            <div class="monitoring-bg">
+                <div class="monitoring-content">
+                    <h2>Real‑time station monitoring</h2>
+                    <p style="font-size:16px; margin-bottom:20px; color:#cbd5e1;">Updated by stations and smart monitoring systems.</p>
+                    <ul class="check-list">
+                        <li><i class="fas fa-check-circle"></i> Live available indicators</li>
+                        <li><i class="fas fa-check-circle"></i> Radius search</li>
+                        <li><i class="fas fa-check-circle"></i> Filter by fuel type</li>
+                        <li><i class="fas fa-check-circle"></i> Save favourite stations</li>
+                    </ul>
+                    <button class="btn-primary" style="background:white; color:#064e3b;" id="monitorPartnerBtn">Become a partner →</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Calculator Modal -->
-<div id="calcModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeCalcModal()">&times;</span>
-    <h2 style="color:#16a34a;">Fuel Calculator</h2>
-    <div style="margin-bottom: 16px;">
-      <label>Using currency: <strong id="calcCurrencyDisplay">USD ($)</strong></label>
+    <!-- MAP SECTION -->
+    <section id="mapSection">
+        <div class="container">
+            <h2 class="section-title">🌍 Find Fuel Worldwide</h2>
+            <p class="section-subtitle">Select country and region/city to see stations</p>
+            <div class="map-header">
+                <div class="selector-pill">
+                    <i class="fas fa-globe" style="color:var(--green);"></i>
+                    <select id="countrySelect"></select>
+                </div>
+                <div class="selector-pill">
+                    <i class="fas fa-location-dot" style="color:var(--green);"></i>
+                    <select id="regionSelect" disabled>
+                        <option>Select region/city</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="loadMapBtn"><i class="fas fa-search"></i> Show Stations</button>
+            </div>
+            <div class="filter-scroll" id="filterBar">
+                <span class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></span>
+                <span class="chip" data-filter="petrol">Petrol <span class="count-badge" id="countPetrol">0</span></span>
+                <span class="chip" data-filter="diesel">Diesel <span class="count-badge" id="countDiesel">0</span></span>
+                <span class="chip" data-filter="shop">Shop <span class="count-badge" id="countShop">0</span></span>
+                <span class="chip" data-filter="atm">ATM <span class="count-badge" id="countAtm">0</span></span>
+                <span class="chip" data-filter="car_wash">Car wash <span class="count-badge" id="countCarWash">0</span></span>
+                <span class="chip" data-filter="tyres">Tyre pump <span class="count-badge" id="countTyres">0</span></span>
+                <span class="chip" data-filter="restaurant">Restaurant <span class="count-badge" id="countRestaurant">0</span></span>
+                <span class="chip" data-filter="pharmacy">Pharmacy <span class="count-badge" id="countPharmacy">0</span></span>
+            </div>
+            <div id="mapContainer"></div>
+            <p id="mapStatus" style="margin-top:10px; text-align:center; color:#94a3b8;"></p>
+        </div>
+    </section>
+
+    <!-- Car at gas station -->
+    <section>
+        <div class="container car-bg-section">
+            <div class="car-bg-content">
+                <div class="driver-station-card">
+                    <h3><i class="fas fa-user"></i> For Drivers</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Find fuel fast</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Avoid empty stations</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Plan your route</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Save time and money</li>
+                    </ul>
+                </div>
+                <div class="driver-station-card">
+                    <h3><i class="fas fa-store"></i> For Fuel Stations</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Increase daily customers</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Real‑time visibility</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Boost customer trust</li>
+                        <li><i class="fas fa-check-circle" style="color:var(--green);"></i> Digital presence</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Driver Benefits -->
+    <section id="drivers">
+        <div class="container">
+            <h2 class="section-title">Why Drivers Love FuelRadar</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h3><i class="fas fa-car-side"></i> Never Get Stranded</h3>
+                    <ul class="benefit-list">
+                        <li><i class="fas fa-map-pin"></i><div><strong>Real-time availability</strong>Know which stations have fuel.</div></li>
+                        <li><i class="fas fa-route"></i><div><strong>Smart route planning</strong>Find the best fuel stops.</div></li>
+                        <li><i class="fas fa-chart-bar"></i><div><strong>Price comparison</strong>Save money.</div></li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <h3><i class="fas fa-mobile-alt"></i> All-in-One App</h3>
+                    <ul class="benefit-list">
+                        <li><i class="fas fa-gas-pump"></i><div><strong>Fuel logs & garage</strong>Track consumption.</div></li>
+                        <li><i class="fas fa-users"></i><div><strong>Community reports</strong>Live updates.</div></li>
+                        <li><i class="fas fa-bell"></i><div><strong>Favorite stations</strong>Quick access.</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Station Benefits -->
+    <section id="stations">
+        <div class="container">
+            <h2 class="section-title">Grow Your Station with FuelRadar</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h3><i class="fas fa-chart-line"></i> Increased Visibility</h3>
+                    <ul class="benefit-list">
+                        <li><i class="fas fa-eye"></i><div><strong>Real-time dashboard</strong>Update fuel availability.</div></li>
+                        <li><i class="fas fa-map-marked-alt"></i><div><strong>Appear in searches</strong>Drivers find you.</div></li>
+                        <li><i class="fas fa-star"></i><div><strong>Customer trust</strong>Verified status.</div></li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <h3><i class="fas fa-hand-holding-usd"></i> Business Growth</h3>
+                    <ul class="benefit-list">
+                        <li><i class="fas fa-users"></i><div><strong>Attract customers</strong>Reach active drivers.</div></li>
+                        <li><i class="fas fa-chart-pie"></i><div><strong>Analytics & insights</strong>Understand demand.</div></li>
+                        <li><i class="fas fa-ad"></i><div><strong>Promote offers</strong>Highlight discounts.</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Technology -->
+    <section>
+        <div class="container tech-section">
+            <div class="tech-content">
+                <h2>Secure & Technologically Advanced</h2>
+                <p>FuelRadar is built on cutting‑edge infrastructure with real‑time data synchronization, end‑to‑end encryption, and AI‑powered predictions.</p>
+                <div class="tech-features">
+                    <div class="tech-feature"><i class="fas fa-shield-alt"></i> 256-bit Encryption</div>
+                    <div class="tech-feature"><i class="fas fa-cloud-upload-alt"></i> Real‑time Sync</div>
+                    <div class="tech-feature"><i class="fas fa-robot"></i> AI Predictions</div>
+                    <div class="tech-feature"><i class="fas fa-history"></i> 99.9% Uptime</div>
+                </div>
+            </div>
+            <div class="floating-logo">
+                <img src="logo.png" alt="FuelRadar logo" style="width:180px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%2316a34a%27%3E%3Cpath d=%27M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z%27/%3E%3C/svg%3E';">
+            </div>
+        </div>
+    </section>
+
+    <!-- Trip Planner Section -->
+    <section id="planner">
+        <div class="container">
+            <h2 class="section-title">Plan a Fun Trip</h2>
+            <div class="planner-card">
+                <div class="step-container">
+                    <div class="step-header"><i class="fas fa-map-pin"></i> Your location</div>
+                    <div class="search-pill">
+                        <i class="fas fa-home" style="color:var(--green);"></i>
+                        <input type="text" id="userLocationInput" placeholder="Detecting your location..." readonly>
+                        <button class="btn-outline" id="detectLocationBtn" style="border:none;"><i class="fas fa-crosshairs"></i></button>
+                    </div>
+                    <p id="locationDetails" style="margin-top:8px; color:#94a3b8;"></p>
+                </div>
+                <div class="step-container">
+                    <div class="step-header"><i class="fas fa-flag-checkered"></i> Where to?</div>
+                    <div class="search-pill">
+                        <i class="fas fa-search" style="color:var(--green);"></i>
+                        <input type="text" id="destSearchInput" placeholder="Enter destination">
+                        <button class="btn-primary" id="searchDestBtn">Search</button>
+                    </div>
+                    <div id="destSuggestions" class="suggestions"></div>
+                    <p id="selectedDestDisplay" style="margin-top:8px; color:#94a3b8;"></p>
+                </div>
+                <div id="stationSelectionContainer" style="display:none;">
+                    <div class="step-header"><i class="fas fa-gas-pump"></i> <span id="stationLoadingMsg">Locating five nearest fuel stations...</span></div>
+                    <div id="stationListContainer"></div>
+                </div>
+                <div id="funStopsContainer" style="display:none;">
+                    <div class="step-header"><i class="fas fa-camera"></i> <span id="funLoadingMsg">Locating fun stops...</span></div>
+                    <div id="funStopsList"></div>
+                </div>
+                <div id="tripOptionsContainer" style="display:none;">
+                    <div class="step-header"><i class="fas fa-car"></i> Vehicle details</div>
+                    <div style="display:grid; gap:12px;">
+                        <input type="number" id="tankCapacity" placeholder="Tank capacity (L)" value="50" style="padding:12px;border-radius:50px;border:1.5px solid rgba(0,255,136,0.2);background:rgba(255,255,255,0.03);color:#e2e8f0;outline:none;">
+                        <input type="number" id="fuelConsumption" placeholder="Consumption (L/100km)" value="7.5" style="padding:12px;border-radius:50px;border:1.5px solid rgba(0,255,136,0.2);background:rgba(255,255,255,0.03);color:#e2e8f0;outline:none;">
+                        <select id="fuelTypeSelect" style="padding:12px;border-radius:50px;border:1.5px solid rgba(0,255,136,0.2);background:rgba(255,255,255,0.03);color:#e2e8f0;outline:none;">
+                            <option value="petrol">Petrol</option>
+                            <option value="diesel">Diesel</option>
+                        </select>
+                        <button class="btn-primary" id="calculateAndDrawRoute">Calculate & Draw Route</button>
+                    </div>
+                    <div id="tripSummary" style="margin-top:16px; color:#e2e8f0;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Dropdown -->
+    <section id="partners">
+        <div class="container">
+            <h2 class="section-title">Our Partners</h2>
+            <div class="partners-grid">
+                <div class="partner-card">
+                    <i class="fas fa-paint-brush" style="font-size:44px; color:var(--green);"></i>
+                    <h4>BUFFER ZONE</h4>
+                    <p style="color:#94a3b8;">Graphics & Tech Solutions</p>
+                </div>
+                <div>
+                    <p style="color:#cbd5e1;">Join the network of trusted fuel stations.</p>
+                    <button class="btn-primary" id="partnerFormBtn">Apply to Become a Partner</button>
+                </div>
+            </div>
+            <div class="partner-dropdown-section" id="partnerDropdown">
+                <div class="partner-dropdown-header">
+                    <span><i class="fas fa-handshake"></i> Partner Application Form</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="partner-dropdown-content">
+                    <form onsubmit="alert('Application submitted!'); return false;">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Business Name *</label><input required></div>
+                            <div class="form-group"><label>Contact Person *</label><input required></div>
+                            <div class="form-group"><label>Email *</label><input type="email" required></div>
+                            <div class="form-group"><label>Phone *</label><input type="tel" required></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Business Type *</label>
+                            <select required>
+                                <option>Fuel Station</option>
+                                <option>Service Provider</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tell us about your business</label>
+                            <textarea rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Submit Application</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container contact-hero-card">
+            <div class="contact-info">
+                <h2>📞 Contact us</h2>
+                <p style="color:#94a3b8;">We're here to help 24/7</p>
+                <div class="phone-large"><i class="fas fa-phone-alt"></i> 0972454724</div>
+                <div class="contact-methods">
+                    <div class="contact-method"><i class="fas fa-envelope"></i> hello@fuelradar.global</div>
+                    <div class="contact-method"><i class="fas fa-map-marker-alt"></i> Lusaka, Zambia · Global</div>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="contact-form">
+                <input type="text" placeholder="Your name">
+                <input type="email" placeholder="Email address">
+                <textarea rows="3" placeholder="Your message"></textarea>
+                <button class="btn-primary" style="width:fit-content;">Send Message</button>
+            </div>
+            <div class="small-phone-mockup">
+                <div class="small-phone-screen">
+                    <img src="app.jpeg" alt="FuelRadar contact" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27%2316a34a%27%3E%3Cpath d=%27M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z%27/%3E%3C/svg%3E';">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>© 2026 FuelRadar. All rights reserved. · Built for the World</footer>
+
+    <!-- Partner Modal -->
+    <div id="partnerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePartnerModal()">&times;</span>
+            <h2 style="color:var(--green);">Partner Application</h2>
+            <form onsubmit="alert('Submitted!'); closePartnerModal(); return false;">
+                <input type="text" placeholder="Business Name" required style="width:100%; padding:14px; border-radius:50px; border:1.5px solid rgba(0,255,136,0.2); background:rgba(255,255,255,0.03); color:#e2e8f0; margin-bottom:16px; outline:none;">
+                <input type="email" placeholder="Email" required style="width:100%; padding:14px; border-radius:50px; border:1.5px solid rgba(0,255,136,0.2); background:rgba(255,255,255,0.03); color:#e2e8f0; margin-bottom:16px; outline:none;">
+                <button type="submit" class="btn-primary" style="width:100%;">Submit</button>
+            </form>
+        </div>
     </div>
-    <input type="number" id="calcDist" placeholder="Distance (km)" value="100" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
-    <input type="number" id="calcCons" placeholder="Consumption (L/100km)" value="7.0" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:16px;">
-    <input type="number" id="calcPrice" placeholder="Price per liter" value="1.50" style="width:100%; padding:14px; border-radius:40px; border:1.5px solid #bbf7d0; margin-bottom:20px;">
-    <button class="btn-primary" id="runCalc" style="width:100%;">Calculate</button>
-    <p id="calcResult" style="margin-top:16px; font-weight:600;"></p>
-  </div>
-</div>
 
-<!-- Rating & Report Popup Modal -->
-<div id="ratingReportModal" class="modal">
-  <div class="modal-content rating-popup">
-    <span class="close-modal" onclick="closeRatingModal()">&times;</span>
-    <h3 id="stationNameTitle">Station Name</h3>
-    <div class="star-rating" id="starRatingWidget">
-      <i class="far fa-star" data-value="1"></i>
-      <i class="far fa-star" data-value="2"></i>
-      <i class="far fa-star" data-value="3"></i>
-      <i class="far fa-star" data-value="4"></i>
-      <i class="far fa-star" data-value="5"></i>
+    <!-- Calculator Modal -->
+    <div id="calcModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCalcModal()">&times;</span>
+            <h2 style="color:var(--green);">Fuel Calculator</h2>
+            <div style="margin-bottom: 16px; color:#94a3b8;">
+                <label>Using currency: <strong id="calcCurrencyDisplay">USD ($)</strong></label>
+            </div>
+            <input type="number" id="calcDist" placeholder="Distance (km)" value="100" style="width:100%; padding:14px; border-radius:50px; border:1.5px solid rgba(0,255,136,0.2); background:rgba(255,255,255,0.03); color:#e2e8f0; margin-bottom:16px; outline:none;">
+            <input type="number" id="calcCons" placeholder="Consumption (L/100km)" value="7.0" style="width:100%; padding:14px; border-radius:50px; border:1.5px solid rgba(0,255,136,0.2); background:rgba(255,255,255,0.03); color:#e2e8f0; margin-bottom:16px; outline:none;">
+            <input type="number" id="calcPrice" placeholder="Price per liter" value="1.50" style="width:100%; padding:14px; border-radius:50px; border:1.5px solid rgba(0,255,136,0.2); background:rgba(255,255,255,0.03); color:#e2e8f0; margin-bottom:20px; outline:none;">
+            <button class="btn-primary" id="runCalc" style="width:100%;">Calculate</button>
+            <p id="calcResult" style="margin-top:16px; font-weight:600; color:#e2e8f0;"></p>
+        </div>
     </div>
-    <div style="margin:16px 0;">
-      <label><input type="checkbox" id="reportAvailable"> Fuel available</label>
-      <label style="margin-left:12px;"><input type="checkbox" id="reportQueue"> Long queue</label>
-      <label style="margin-left:12px;"><input type="checkbox" id="reportPrice"> Price update</label>
-      <label style="margin-left:12px;"><input type="checkbox" id="reportStore"> Convenience store</label>
-    </div>
-    <textarea id="reportComment" placeholder="Add a comment..." rows="2" style="width:100%; border-radius:20px; padding:10px;"></textarea>
-    <button class="btn-primary" id="submitRatingReport" style="margin-top:16px;">Submit</button>
-  </div>
-</div>
 
-<script>
-  (function(){
-    "use strict";
-    
-    // ---------- SIDEBAR ----------
-    const sidebar = document.getElementById('sidebarOverlay');
-    document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.add('open'));
-    document.getElementById('closeSidebarBtn').addEventListener('click', () => sidebar.classList.remove('open'));
-    document.querySelectorAll('.sidebar-item').forEach(i => i.addEventListener('click', () => sidebar.classList.remove('open')));
-    
-    // ---------- PARTNER DROPDOWN ----------
-    const partnerDropdown = document.getElementById('partnerDropdown');
-    partnerDropdown.querySelector('.partner-dropdown-header').addEventListener('click', () => partnerDropdown.classList.toggle('open'));
-    
-    // ---------- MODALS ----------
-    const partnerModal = document.getElementById('partnerModal');
-    window.openPartnerModal = () => partnerModal.style.display = 'flex';
-    window.closePartnerModal = () => partnerModal.style.display = 'none';
-    document.getElementById('heroPartnerBtn').onclick = openPartnerModal;
-    document.getElementById('monitorPartnerBtn').onclick = openPartnerModal;
-    document.getElementById('partnerFormBtn').onclick = openPartnerModal;
-    
-    const calcModal = document.getElementById('calcModal');
-    window.closeCalcModal = () => calcModal.style.display = 'none';
-    document.getElementById('openCalcBtn').onclick = () => {
-      updateCalcCurrencyDisplay();
-      calcModal.style.display = 'flex';
-    };
-    
-    // Update calculator currency display based on selected country
-    function updateCalcCurrencyDisplay() {
-      const displayEl = document.getElementById('calcCurrencyDisplay');
-      if (displayEl) {
-        displayEl.innerText = `${countryCurrency} (${currencySymbol})`;
-      }
-    }
-    
-    document.getElementById('runCalc').onclick = () => {
-      const d = +document.getElementById('calcDist').value || 0;
-      const c = +document.getElementById('calcCons').value || 0;
-      const p = +document.getElementById('calcPrice').value || 0;
-      const fuel = (d / 100) * c;
-      const cost = fuel * p;
-      document.getElementById('calcResult').innerText = `Fuel needed: ${fuel.toFixed(1)} L · Estimated cost: ${currencySymbol}${cost.toFixed(2)}`;
-    };
-    
-    // Rating modal
-    const ratingModal = document.getElementById('ratingReportModal');
-    let currentStationForRating = null;
-    window.closeRatingModal = () => ratingModal.style.display = 'none';
-    
-    function openRatingModal(station) {
-      currentStationForRating = station;
-      document.getElementById('stationNameTitle').innerText = station.name;
-      document.querySelectorAll('#starRatingWidget i').forEach(s => s.className = 'far fa-star');
-      ratingModal.style.display = 'flex';
-    }
-    
-    document.querySelectorAll('#starRatingWidget i').forEach((star, idx) => {
-      star.addEventListener('click', () => {
-        const val = idx + 1;
-        document.querySelectorAll('#starRatingWidget i').forEach((s, i) => {
-          s.className = i < val ? 'fas fa-star' : 'far fa-star';
-        });
-      });
-    });
-    
-    document.getElementById('submitRatingReport').addEventListener('click', () => {
-      if (!currentStationForRating) return;
-      const stars = document.querySelectorAll('#starRatingWidget i.fas').length;
-      const report = {
-        available: document.getElementById('reportAvailable').checked,
-        queue: document.getElementById('reportQueue').checked,
-        price: document.getElementById('reportPrice').checked,
-        store: document.getElementById('reportStore').checked,
-        comment: document.getElementById('reportComment').value
-      };
-      if (stars > 0) {
-        const ratings = JSON.parse(localStorage.getItem(`ratings_${currentStationForRating.id}`) || '[]');
-        ratings.push(stars);
-        localStorage.setItem(`ratings_${currentStationForRating.id}`, JSON.stringify(ratings));
-      }
-      const reports = JSON.parse(localStorage.getItem(`reports_${currentStationForRating.id}`) || '[]');
-      reports.push({...report, date: new Date().toISOString()});
-      localStorage.setItem(`reports_${currentStationForRating.id}`, JSON.stringify(reports));
-      alert('Thank you! Rating & report submitted.');
-      closeRatingModal();
-    });
-    
-    // ---------- MAP & GLOBAL STATE ----------
-    let map, markerCluster, routingControl = null;
-    let currentStations = [], currentFilter = 'all';
-    let countryCurrency = 'USD', currencySymbol = '$';
-    let userCoords = null, destCoords = null, selectedStation = null, funStops = [];
-    let selectedFunStop = null;
-    let destName = '';
-    
-    const countryPriceBase = {
-      US: {petrol: 0.95, diesel: 1.05},
-      GB: {petrol: 1.45, diesel: 1.55},
-      ZM: {petrol: 24.5, diesel: 23.0},
-      ZA: {petrol: 23.0, diesel: 22.0},
-      NG: {petrol: 650, diesel: 700},
-      IN: {petrol: 106, diesel: 94}
-    };
-    
-    function initMap() {
-      map = L.map('mapContainer').setView([20, 0], 2);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
-      markerCluster = L.markerClusterGroup();
-      map.addLayer(markerCluster);
-      addMapFabs();
-    }
-    
-    function addMapFabs() {
-      const container = document.getElementById('mapContainer');
-      if (!container) return;
-      container.style.position = 'relative';
-      const fabDiv = document.createElement('div');
-      fabDiv.style.position = 'absolute';
-      fabDiv.style.bottom = '16px';
-      fabDiv.style.right = '16px';
-      fabDiv.style.zIndex = '900';
-      fabDiv.innerHTML = `
-        <button class="btn-icon" id="locateBtn" style="background:white; border-radius:50%; width:44px; height:44px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer; margin-right:8px;"><i class="fas fa-crosshairs"></i></button>
-        <button class="btn-icon" id="refreshMapBtn" style="background:white; border-radius:50%; width:44px; height:44px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer;"><i class="fas fa-arrows-rotate"></i></button>
-      `;
-      container.appendChild(fabDiv);
-      document.getElementById('locateBtn').addEventListener('click', () => {
-        navigator.geolocation?.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos.coords.longitude], 14));
-      });
-      document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
-    }
-    
-    async function loadCountries() {
-      const sel = document.getElementById('countrySelect');
-      try {
-        const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,currencies');
-        const data = await res.json();
-        data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-        sel.innerHTML = '<option value="">Select country</option>';
-        data.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.cca2;
-          opt.dataset.currency = c.currencies ? Object.keys(c.currencies)[0] : 'USD';
-          opt.textContent = c.name.common;
-          sel.appendChild(opt);
-        });
-      } catch (e) {
-        console.warn('Country load error');
-      }
-    }
-    
-    document.getElementById('countrySelect').addEventListener('change', async (e) => {
-      const code = e.target.value;
-      const opt = e.target.selectedOptions[0];
-      if (opt && opt.dataset.currency) {
-        countryCurrency = opt.dataset.currency;
-        currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency === 'EUR' ? '€' : countryCurrency);
-        updateCalcCurrencyDisplay();
-      }
-      const regionSel = document.getElementById('regionSelect');
-      regionSel.innerHTML = '<option>Loading...</option>';
-      regionSel.disabled = true;
-      if (!code) return;
-      try {
-        const query = `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
-        const resp = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-        const data = await resp.json();
-        const items = data.elements.map(el => {
-          const tags = el.tags || {};
-          const name = tags.name || tags['name:en'] || 'Unknown';
-          let lat, lon;
-          if (el.lat && el.lon) {
-            lat = el.lat;
-            lon = el.lon;
-          } else if (el.center) {
-            lat = el.center.lat;
-            lon = el.center.lon;
-          } else {
-            return null;
-          }
-          return { name, lat, lon };
-        }).filter(i => i);
-        const unique = [];
-        const seen = new Set();
-        items.forEach(it => {
-          if (!seen.has(it.name.toLowerCase())) {
-            seen.add(it.name.toLowerCase());
-            unique.push(it);
-          }
-        });
-        unique.sort((a, b) => a.name.localeCompare(b.name));
-        regionSel.innerHTML = unique.length
-          ? '<option value="">Select region/city</option>' + unique.map(it => `<option value="${it.lat},${it.lon}">${it.name}</option>`).join('')
-          : '<option>No regions</option>';
-        if (unique.length) map.setView([unique[0].lat, unique[0].lon], 6);
-        regionSel.disabled = false;
-      } catch (e) {
-        regionSel.innerHTML = '<option>Error</option>';
-      }
-    });
-    
-    document.getElementById('regionSelect').addEventListener('change', (e) => {
-      const val = e.target.value;
-      if (val) {
-        const [lat, lon] = val.split(',').map(Number);
-        map.setView([lat, lon], 10);
-      }
-    });
-    
-    document.getElementById('loadMapBtn').addEventListener('click', async () => {
-      const val = document.getElementById('regionSelect').value;
-      if (!val) return alert('Select a region');
-      const [lat, lon] = val.split(',').map(Number);
-      map.setView([lat, lon], 12);
-      document.getElementById('mapStatus').innerHTML = 'Loading stations...';
-      currentStations = await fetchStations(lat, lon);
-      updateFilterCounts();
-      applyFilter();
-      document.getElementById('mapStatus').innerHTML = `${currentStations.length} stations found.`;
-    });
-    
-    async function fetchStations(lat, lon, radius = 10000) {
-      const query = `[out:json];(node["amenity"="fuel"](around:${radius},${lat},${lon});way["amenity"="fuel"](around:${radius},${lat},${lon}););out center;`;
-      try {
-        const r = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-        const d = await r.json();
-        const countryCode = document.getElementById('countrySelect').value;
-        const base = countryPriceBase[countryCode] || {petrol: 1.5, diesel: 1.6};
-        return d.elements.map(el => {
-          const t = el.tags || {};
-          let lat, lon;
-          if (el.lat && el.lon) {
-            lat = el.lat;
-            lon = el.lon;
-          } else if (el.center) {
-            lat = el.center.lat;
-            lon = el.center.lon;
-          } else {
-            return null;
-          }
-          return {
-            id: el.id,
-            name: t.name || t.brand || 'Fuel Station',
-            lat, lon,
-            petrol: t['fuel:petrol'] === 'yes',
-            diesel: t['fuel:diesel'] === 'yes',
-            pricePetrol: (base.petrol * (0.9 + Math.random() * 0.3)).toFixed(2),
-            priceDiesel: (base.diesel * (0.9 + Math.random() * 0.3)).toFixed(2),
-            amenities: {
-              shop: !!t.shop,
-              atm: t.atm === 'yes',
-              car_wash: !!t.car_wash,
-              tyres: t['compressed_air'] === 'yes',
-              restaurant: t.amenity === 'restaurant',
-              pharmacy: t.amenity === 'pharmacy'
+    <!-- Rating & Report Popup Modal -->
+    <div id="ratingReportModal" class="modal">
+        <div class="modal-content rating-popup">
+            <span class="close-modal" onclick="closeRatingModal()">&times;</span>
+            <h3 id="stationNameTitle" style="color:var(--green);">Station Name</h3>
+            <div class="star-rating" id="starRatingWidget">
+                <i class="far fa-star" data-value="1"></i>
+                <i class="far fa-star" data-value="2"></i>
+                <i class="far fa-star" data-value="3"></i>
+                <i class="far fa-star" data-value="4"></i>
+                <i class="far fa-star" data-value="5"></i>
+            </div>
+            <div style="margin:16px 0; color:#cbd5e1;">
+                <label><input type="checkbox" id="reportAvailable"> Fuel available</label>
+                <label style="margin-left:12px;"><input type="checkbox" id="reportQueue"> Long queue</label>
+                <label style="margin-left:12px;"><input type="checkbox" id="reportPrice"> Price update</label>
+                <label style="margin-left:12px;"><input type="checkbox" id="reportStore"> Convenience store</label>
+            </div>
+            <textarea id="reportComment" placeholder="Add a comment..." rows="2" style="width:100%; border-radius:20px; padding:10px; background:rgba(255,255,255,0.03); border:1.5px solid rgba(0,255,136,0.2); color:#e2e8f0; outline:none;"></textarea>
+            <button class="btn-primary" id="submitRatingReport" style="margin-top:16px;">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ── CUSTOM CURSOR ──
+            const cursorEl = document.getElementById('cursor');
+            const cursorDot = document.getElementById('cursorDot');
+            let mouseX = window.innerWidth / 2,
+                mouseY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => { mouseX = e.clientX;
+                mouseY = e.clientY; });
+            const hoverTargets = document.querySelectorAll(
+                'a, button, .btn-primary, .btn-outline, .chip, .card, .feature-card, .benefit-card, .partner-card, .station-list-item, .fun-stop-item, .suggestion-item, .sidebar-item, input, select, textarea, .close-modal, .star-rating i, .partner-dropdown-header'
+                );
+            hoverTargets.forEach(el => {
+                el.addEventListener('mouseenter', () => { cursorEl.classList.add('hover');
+                    cursorDot.classList.add('hover'); });
+                el.addEventListener('mouseleave', () => { cursorEl.classList.remove('hover');
+                    cursorDot.classList.remove('hover'); });
+            });
+
+            function animateCursor() {
+                cursorEl.style.left = mouseX + 'px';
+                cursorEl.style.top = mouseY + 'px';
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+                requestAnimationFrame(animateCursor);
             }
-          };
-        }).filter(s => s !== null);
-      } catch {
-        return [];
-      }
-    }
-    
-    function updateFilterCounts() {
-      const counts = {
-        all: currentStations.length,
-        petrol: 0,
-        diesel: 0,
-        shop: 0,
-        atm: 0,
-        car_wash: 0,
-        tyres: 0,
-        restaurant: 0,
-        pharmacy: 0
-      };
-      currentStations.forEach(s => {
-        if (s.petrol) counts.petrol++;
-        if (s.diesel) counts.diesel++;
-        if (s.amenities.shop) counts.shop++;
-        if (s.amenities.atm) counts.atm++;
-        if (s.amenities.car_wash) counts.car_wash++;
-        if (s.amenities.tyres) counts.tyres++;
-        if (s.amenities.restaurant) counts.restaurant++;
-        if (s.amenities.pharmacy) counts.pharmacy++;
-      });
-      Object.keys(counts).forEach(k => {
-        const el = document.getElementById('count' + k.charAt(0).toUpperCase() + k.slice(1));
-        if (el) el.innerText = counts[k];
-      });
-    }
-    
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        currentFilter = chip.dataset.filter;
-        applyFilter();
-      });
-    });
-    
-    function applyFilter() {
-      let filtered = currentStations.filter(s => {
-        if (currentFilter === 'all') return true;
-        if (currentFilter === 'petrol') return s.petrol;
-        if (currentFilter === 'diesel') return s.diesel;
-        return s.amenities[currentFilter] === true;
-      });
-      renderMarkers(filtered);
-    }
-    
-    function renderMarkers(stations) {
-      markerCluster.clearLayers();
-      stations.forEach(s => {
-        const icon = L.divIcon({
-          html: `<i class="fas fa-gas-pump" style="color:#16a34a; font-size:28px;"></i>`,
-          iconSize: [28, 28]
-        });
-        const marker = L.marker([s.lat, s.lon], { icon });
-        marker.bindPopup(() => {
-          const ratings = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
-          const avg = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : '—';
-          const div = document.createElement('div');
-          div.className = 'popup-content';
-          div.innerHTML = `
-            <h4>${s.name}</h4>
-            <div>⛽ Petrol: ${currencySymbol}${s.pricePetrol}  🛢️ Diesel: ${currencySymbol}${s.priceDiesel}</div>
-            <div>⭐ ${avg} (${ratings.length})</div>
-            <button class="btn-outline rate-report-btn" data-id="${s.id}" style="margin-top:8px;">⭐ Rate & Report</button>
+            animateCursor();
+
+            // ── PARTICLE CANVAS ──
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const maxParticles = 60;
+
+            function resizeCanvas() { canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight; }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.35;
+                    this.speedY = (Math.random() - 0.5) * 0.35;
+                    this.opacity = Math.random() * 0.45 + 0.15;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                    if (this.y > canvas.height) this.y = 0;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0,255,136,${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+            for (let i = 0; i < maxParticles; i++) particles.push(new Particle());
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(0,229,255,${(1-dist/100)*0.12})`;
+                            ctx.lineWidth = 0.4;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            // ── MOUSE PARALLAX ON BLOBS ──
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX - window.innerWidth / 2) * 0.012;
+                const y = (e.clientY - window.innerHeight / 2) * 0.012;
+                document.querySelectorAll('.blob').forEach((blob, i) => {
+                    const factor = (i + 1) * 0.35;
+                    blob.style.transform = `translate(${x*factor}px, ${y*factor}px)`;
+                });
+                document.querySelectorAll('.floating-orb').forEach((orb, i) => {
+                    const factor = (i + 1) * 0.2;
+                    orb.style.transform = `translate(${x*factor*1.5}px, ${y*factor*1.5}px)`;
+                });
+            });
+
+            // ── BUTTON RIPPLE & PARTICLE BURST ──
+            document.querySelectorAll('.btn-primary, .btn-outline').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('btn-ripple');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    ripple.style.width = size + 'px';
+                    ripple.style.height = size + 'px';
+                    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                    this.appendChild(ripple);
+                    ripple.addEventListener('animationend', () => ripple.remove());
+
+                    // Particle burst
+                    for (let i = 0; i < 18; i++) {
+                        const p = document.createElement('div');
+                        p.style.cssText =
+                            `position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:5px;height:5px;background:hsl(${140+Math.random()*40},100%,60%);border-radius:50%;pointer-events:none;z-index:9999;box-shadow:0 0 12px currentColor;`;
+                        document.body.appendChild(p);
+                        const angle = Math.random() * Math.PI * 2;
+                        const vel = Math.random() * 80 + 40;
+                        let opacity = 1;
+                        const interval = setInterval(() => {
+                            opacity -= 0.04;
+                            if (opacity <= 0) { clearInterval(interval);
+                                p.remove(); return; }
+                            p.style.left = parseFloat(p.style.left) + Math.cos(angle) * vel *
+                                0.012 + 'px';
+                            p.style.top = parseFloat(p.style.top) + Math.sin(angle) * vel * 0.012 +
+                                'px';
+                            p.style.opacity = opacity;
+                            p.style.transform = `scale(${opacity})`;
+                        }, 16);
+                    }
+                });
+            });
+
+            // ── SIDEBAR ──
+            const sidebar = document.getElementById('sidebarOverlay');
+            document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.add('open'));
+            document.getElementById('closeSidebarBtn').addEventListener('click', () => sidebar.classList.remove(
+                'open'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.addEventListener('click', () => sidebar.classList
+                .remove('open')));
+
+            // ── PARTNER DROPDOWN ──
+            const partnerDropdown = document.getElementById('partnerDropdown');
+            partnerDropdown.querySelector('.partner-dropdown-header').addEventListener('click', () => partnerDropdown
+                .classList.toggle('open'));
+
+            // ── MODALS ──
+            const partnerModal = document.getElementById('partnerModal');
+            window.openPartnerModal = () => partnerModal.style.display = 'flex';
+            window.closePartnerModal = () => partnerModal.style.display = 'none';
+            document.getElementById('heroPartnerBtn').onclick = openPartnerModal;
+            document.getElementById('monitorPartnerBtn').onclick = openPartnerModal;
+            document.getElementById('partnerFormBtn').onclick = openPartnerModal;
+
+            const calcModal = document.getElementById('calcModal');
+            window.closeCalcModal = () => calcModal.style.display = 'none';
+            document.getElementById('openCalcBtn').onclick = () => {
+                updateCalcCurrencyDisplay();
+                calcModal.style.display = 'flex';
+            };
+
+            function updateCalcCurrencyDisplay() {
+                const displayEl = document.getElementById('calcCurrencyDisplay');
+                if (displayEl) displayEl.innerText = `${countryCurrency} (${currencySymbol})`;
+            }
+
+            document.getElementById('runCalc').onclick = () => {
+                const d = +document.getElementById('calcDist').value || 0;
+                const c = +document.getElementById('calcCons').value || 0;
+                const p = +document.getElementById('calcPrice').value || 0;
+                const fuel = (d / 100) * c;
+                const cost = fuel * p;
+                document.getElementById('calcResult').innerText =
+                    `Fuel needed: ${fuel.toFixed(1)} L · Estimated cost: ${currencySymbol}${cost.toFixed(2)}`;
+            };
+
+            // Rating modal
+            const ratingModal = document.getElementById('ratingReportModal');
+            let currentStationForRating = null;
+            window.closeRatingModal = () => ratingModal.style.display = 'none';
+
+            function openRatingModal(station) {
+                currentStationForRating = station;
+                document.getElementById('stationNameTitle').innerText = station.name;
+                document.querySelectorAll('#starRatingWidget i').forEach(s => s.className = 'far fa-star');
+                ratingModal.style.display = 'flex';
+            }
+
+            document.querySelectorAll('#starRatingWidget i').forEach((star, idx) => {
+                star.addEventListener('click', () => {
+                    const val = idx + 1;
+                    document.querySelectorAll('#starRatingWidget i').forEach((s, i) => {
+                        s.className = i < val ? 'fas fa-star' : 'far fa-star';
+                    });
+                });
+            });
+
+            document.getElementById('submitRatingReport').addEventListener('click', () => {
+                if (!currentStationForRating) return;
+                const stars = document.querySelectorAll('#starRatingWidget i.fas').length;
+                const report = {
+                    available: document.getElementById('reportAvailable').checked,
+                    queue: document.getElementById('reportQueue').checked,
+                    price: document.getElementById('reportPrice').checked,
+                    store: document.getElementById('reportStore').checked,
+                    comment: document.getElementById('reportComment').value
+                };
+                if (stars > 0) {
+                    const ratings = JSON.parse(localStorage.getItem(
+                        `ratings_${currentStationForRating.id}`) || '[]');
+                    ratings.push(stars);
+                    localStorage.setItem(`ratings_${currentStationForRating.id}`, JSON.stringify(ratings));
+                }
+                const reports = JSON.parse(localStorage.getItem(
+                    `reports_${currentStationForRating.id}`) || '[]');
+                reports.push({ ...report, date: new Date().toISOString() });
+                localStorage.setItem(`reports_${currentStationForRating.id}`, JSON.stringify(reports));
+                alert('Thank you! Rating & report submitted.');
+                closeRatingModal();
+            });
+
+            // ── MAP & GLOBAL STATE ──
+            let map, markerCluster, routingControl = null;
+            let currentStations = [],
+                currentFilter = 'all';
+            let countryCurrency = 'USD',
+                currencySymbol = '$';
+            let userCoords = null,
+                destCoords = null,
+                selectedStation = null,
+                funStops = [];
+            let selectedFunStop = null;
+            let destName = '';
+
+            const countryPriceBase = {
+                US: { petrol: 0.95, diesel: 1.05 },
+                GB: { petrol: 1.45, diesel: 1.55 },
+                ZM: { petrol: 24.5, diesel: 23.0 },
+                ZA: { petrol: 23.0, diesel: 22.0 },
+                NG: { petrol: 650, diesel: 700 },
+                IN: { petrol: 106, diesel: 94 }
+            };
+
+            function initMap() {
+                map = L.map('mapContainer').setView([20, 0], 2);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+                markerCluster = L.markerClusterGroup();
+                map.addLayer(markerCluster);
+                addMapFabs();
+            }
+
+            function addMapFabs() {
+                const container = document.getElementById('mapContainer');
+                if (!container) return;
+                container.style.position = 'relative';
+                const fabDiv = document.createElement('div');
+                fabDiv.style.cssText =
+                    'position:absolute;bottom:16px;right:16px;z-index:900;display:flex;gap:8px;';
+                fabDiv.innerHTML = `
+            <button id="locateBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:none;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-crosshairs"></i></button>
+            <button id="refreshMapBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:none;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-arrows-rotate"></i></button>
           `;
-          setTimeout(() => {
-            div.querySelector('.rate-report-btn').onclick = () => openRatingModal(s);
-          }, 50);
-          return div;
-        });
-        markerCluster.addLayer(marker);
-      });
-    }
-    
-    // ---------- TRIP PLANNER ----------
-    function showLoading(show) {
-      let overlay = document.getElementById('globalLoading');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'globalLoading';
-        overlay.className = 'loading-overlay';
-        overlay.innerHTML = '<div class="spinner"></div>';
-        document.body.appendChild(overlay);
-      }
-      overlay.style.display = show ? 'flex' : 'none';
-    }
-    
-    async function detectUserLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lon}&zoom=18`);
-          const data = await res.json();
-          const display = [data.address?.road, data.address?.suburb, data.address?.city].filter(Boolean).join(', ') || 'Current location';
-          document.getElementById('userLocationInput').value = display;
-        }, () => {
-          document.getElementById('userLocationInput').value = 'Lusaka, Zambia';
-        });
-      }
-    }
-    
-    detectUserLocation();
-    document.getElementById('detectLocationBtn').addEventListener('click', detectUserLocation);
-    
-    let destTimeout;
-    document.getElementById('destSearchInput').addEventListener('input', function() {
-      clearTimeout(destTimeout);
-      const q = this.value;
-      if (q.length < 3) return;
-      destTimeout = setTimeout(async () => {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        const sug = document.getElementById('destSuggestions');
-        sug.innerHTML = data.slice(0, 5).map(p => `
-          <div class="suggestion-item" data-lat="${p.lat}" data-lon="${p.lon}" data-display="${p.display_name}">
-            ${p.display_name}
-          </div>
-        `).join('');
-        sug.querySelectorAll('.suggestion-item').forEach(el => {
-          el.addEventListener('click', async () => {
-            destCoords = { lat: +el.dataset.lat, lon: +el.dataset.lon };
-            destName = el.dataset.display;
-            document.getElementById('selectedDestDisplay').innerText = `Destination: ${destName}`;
-            sug.innerHTML = '';
-            document.getElementById('stationSelectionContainer').style.display = 'block';
-            document.getElementById('funStopsContainer').style.display = 'none';
-            document.getElementById('tripOptionsContainer').style.display = 'none';
-            showLoading(true);
-            await loadStationsNearUser();
-            showLoading(false);
-          });
-        });
-      }, 500);
-    });
-    
-    async function loadStationsNearUser() {
-      if (!userCoords) {
-        const fallback = await geocodeAddress(document.getElementById('userLocationInput').value);
-        if (fallback) userCoords = fallback;
-      }
-      if (!destCoords) return;
-      const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
-      const container = document.getElementById('stationListContainer');
-      container.innerHTML = stations.slice(0, 5).map(s => `
-        <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
-          <strong>${s.name}</strong>
-          <div>⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
-        </div>
-      `).join('');
-      document.getElementById('stationLoadingMsg').innerText = 'Select a fuel station:';
-      container.querySelectorAll('.station-list-item').forEach(el => {
-        el.addEventListener('click', async () => {
-          container.querySelectorAll('.station-list-item').forEach(e => e.classList.remove('selected'));
-          el.classList.add('selected');
-          selectedStation = {
-            lat: +el.dataset.lat,
-            lon: +el.dataset.lon,
-            name: el.dataset.name,
-            pricePetrol: el.dataset.petrol,
-            priceDiesel: el.dataset.diesel
-          };
-          document.getElementById('funStopsContainer').style.display = 'block';
-          showLoading(true);
-          await loadFunStops();
-          showLoading(false);
-        });
-      });
-    }
-    
-    async function geocodeAddress(addr) {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
-      const data = await res.json();
-      return data[0] ? { lat: +data[0].lat, lon: +data[0].lon } : null;
-    }
-    
-    async function loadFunStops() {
-      if (!userCoords || !destCoords) return;
-      const midLat = (userCoords.lat + destCoords.lat) / 2;
-      const midLon = (userCoords.lon + destCoords.lon) / 2;
-      const dist = map.distance([userCoords.lat, userCoords.lon], [destCoords.lat, destCoords.lon]) / 1000;
-      const radius = Math.max(dist * 1000 * 0.6, 15000);
-      const funQuery = `[out:json];(node["tourism"~"attraction|museum"](around:${radius},${midLat},${midLon});node["leisure"="park"](around:${radius},${midLat},${midLon}););out body;`;
-      try {
-        const fres = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(funQuery)}`);
-        const fdata = await fres.json();
-        funStops = fdata.elements.map(el => ({
-          name: el.tags.name || 'Fun stop',
-          lat: el.lat,
-          lon: el.lon
-        })).filter(f => f.lat).slice(0, 8);
-      } catch (e) {
-        funStops = [];
-      }
-      const funList = document.getElementById('funStopsList');
-      funList.innerHTML = funStops.map((f, i) => `<div class="fun-stop-item" data-index="${i}">📍 ${f.name}</div>`).join('');
-      funList.querySelectorAll('.fun-stop-item').forEach(el => {
-        el.addEventListener('click', () => {
-          funList.querySelectorAll('.fun-stop-item').forEach(e => e.classList.remove('selected'));
-          el.classList.add('selected');
-          selectedFunStop = funStops[el.dataset.index];
-          document.getElementById('tripOptionsContainer').style.display = 'block';
-        });
-      });
-    }
-    
-    document.getElementById('calculateAndDrawRoute').addEventListener('click', async () => {
-      if (!userCoords) {
-        const addr = await geocodeAddress(document.getElementById('userLocationInput').value);
-        if (addr) userCoords = addr;
-        else return;
-      }
-      if (!destCoords || !selectedStation) return alert('Select a destination and a fuel station first.');
-      
-      const waypoints = [
-        L.latLng(userCoords.lat, userCoords.lon),
-        L.latLng(selectedStation.lat, selectedStation.lon)
-      ];
-      if (selectedFunStop) {
-        waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
-      }
-      waypoints.push(L.latLng(destCoords.lat, destCoords.lon));
-      
-      if (routingControl) map.removeControl(routingControl);
-      routingControl = L.Routing.control({
-        waypoints,
-        lineOptions: { styles: [{ color: '#16a34a', weight: 5 }] }
-      }).addTo(map);
-      
-      map.fitBounds(L.latLngBounds(waypoints));
-      
-      // Scroll to map so user can see the route
-      document.getElementById('mapSection').scrollIntoView({ behavior: 'smooth' });
-      
-      const tank = +document.getElementById('tankCapacity').value || 50;
-      const cons = +document.getElementById('fuelConsumption').value || 7.5;
-      const totalDist = waypoints.reduce((acc, _, i, arr) => {
-        return i ? acc + map.distance(arr[i - 1], arr[i]) / 1000 : 0;
-      }, 0);
-      const fuelNeeded = (totalDist / 100) * cons;
-      const fuelPrice = (document.getElementById('fuelTypeSelect').value === 'petrol' ? selectedStation.pricePetrol : selectedStation.priceDiesel) || 1.5;
-      
-      document.getElementById('tripSummary').innerHTML = `
-        📏 Total distance: ${totalDist.toFixed(1)} km<br>
-        ⛽ Fuel needed: ${fuelNeeded.toFixed(1)} L<br>
-        💰 Estimated cost: ${currencySymbol}${(fuelNeeded * fuelPrice).toFixed(2)}
-      `;
-    });
-    
-    document.getElementById('openPlannerBtn').onclick = () => {
-      document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
-    };
-    
-    initMap();
-    loadCountries();
-  })();
-</script>
+                container.appendChild(fabDiv);
+                document.getElementById('locateBtn').addEventListener('click', () => {
+                    navigator.geolocation?.getCurrentPosition(pos => map.setView([pos.coords.latitude, pos
+                        .coords.longitude
+                    ], 14));
+                });
+                document.getElementById('refreshMapBtn').addEventListener('click', () => applyFilter());
+            }
+
+            async function loadCountries() {
+                const sel = document.getElementById('countrySelect');
+                try {
+                    const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,currencies');
+                    const data = await res.json();
+                    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+                    sel.innerHTML = '<option value="">Select country</option>';
+                    data.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.cca2;
+                        opt.dataset.currency = c.currencies ? Object.keys(c.currencies)[0] : 'USD';
+                        opt.textContent = c.name.common;
+                        sel.appendChild(opt);
+                    });
+                } catch (e) { console.warn('Country load error'); }
+            }
+
+            document.getElementById('countrySelect').addEventListener('change', async (e) => {
+                const code = e.target.value;
+                const opt = e.target.selectedOptions[0];
+                if (opt && opt.dataset.currency) {
+                    countryCurrency = opt.dataset.currency;
+                    currencySymbol = countryCurrency === 'USD' ? '$' : (countryCurrency === 'EUR' ? '€' :
+                        countryCurrency);
+                    updateCalcCurrencyDisplay();
+                }
+                const regionSel = document.getElementById('regionSelect');
+                regionSel.innerHTML = '<option>Loading...</option>';
+                regionSel.disabled = true;
+                if (!code) return;
+                try {
+                    const query =
+                        `[out:json];area["ISO3166-1"="${code}"]->.a;(relation["admin_level"="4"](area.a);relation["admin_level"="5"](area.a);node["place"~"city|town"](area.a););out body;`;
+                    const resp = await fetch(
+                        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+                    const data = await resp.json();
+                    const items = data.elements.map(el => {
+                        const tags = el.tags || {};
+                        const name = tags.name || tags['name:en'] || 'Unknown';
+                        let lat, lon;
+                        if (el.lat && el.lon) { lat = el.lat;
+                            lon = el.lon; } else if (el.center) { lat = el.center.lat;
+                            lon = el.center.lon; } else return null;
+                        return { name, lat, lon };
+                    }).filter(i => i);
+                    const unique = [];
+                    const seen = new Set();
+                    items.forEach(it => { if (!seen.has(it.name.toLowerCase())) { seen.add(it.name.toLowerCase());
+                            unique.push(it); } });
+                    unique.sort((a, b) => a.name.localeCompare(b.name));
+                    regionSel.innerHTML = unique.length ?
+                        '<option value="">Select region/city</option>' + unique.map(it =>
+                            `<option value="${it.lat},${it.lon}">${it.name}</option>`).join('') :
+                        '<option>No regions</option>';
+                    if (unique.length) map.setView([unique[0].lat, unique[0].lon], 6);
+                    regionSel.disabled = false;
+                } catch (e) { regionSel.innerHTML = '<option>Error</option>'; }
+            });
+
+            document.getElementById('regionSelect').addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val) { const [lat, lon] = val.split(',').map(Number);
+                    map.setView([lat, lon], 10); }
+            });
+
+            document.getElementById('loadMapBtn').addEventListener('click', async () => {
+                const val = document.getElementById('regionSelect').value;
+                if (!val) return alert('Select a region');
+                const [lat, lon] = val.split(',').map(Number);
+                map.setView([lat, lon], 12);
+                document.getElementById('mapStatus').innerHTML = 'Loading stations...';
+                currentStations = await fetchStations(lat, lon);
+                updateFilterCounts();
+                applyFilter();
+                document.getElementById('mapStatus').innerHTML = `${currentStations.length} stations found.`;
+            });
+
+            async function fetchStations(lat, lon, radius = 10000) {
+                const query =
+                    `[out:json];(node["amenity"="fuel"](around:${radius},${lat},${lon});way["amenity"="fuel"](around:${radius},${lat},${lon}););out center;`;
+                try {
+                    const r = await fetch(
+                        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+                    const d = await r.json();
+                    const countryCode = document.getElementById('countrySelect').value;
+                    const base = countryPriceBase[countryCode] || { petrol: 1.5, diesel: 1.6 };
+                    return d.elements.map(el => {
+                            const t = el.tags || {};
+                            let lat, lon;
+                            if (el.lat && el.lon) { lat = el.lat;
+                                lon = el.lon; } else if (el.center) { lat = el.center.lat;
+                                lon = el.center.lon; } else return null;
+                            return {
+                                id: el.id,
+                                name: t.name || t.brand || 'Fuel Station',
+                                lat,
+                                lon,
+                                petrol: t['fuel:petrol'] === 'yes',
+                                diesel: t['fuel:diesel'] === 'yes',
+                                pricePetrol: (base.petrol * (0.9 + Math.random() * 0.3)).toFixed(2),
+                                priceDiesel: (base.diesel * (0.9 + Math.random() * 0.3)).toFixed(2),
+                                amenities: {
+                                    shop: !!t.shop,
+                                    atm: t.atm === 'yes',
+                                    car_wash: !!t.car_wash,
+                                    tyres: t['compressed_air'] === 'yes',
+                                    restaurant: t.amenity === 'restaurant',
+                                    pharmacy: t.amenity === 'pharmacy'
+                                }
+                            };
+                        }).filter(s => s !== null);
+                } catch { return []; }
+            }
+
+            function updateFilterCounts() {
+                const counts = { all: currentStations.length, petrol: 0, diesel: 0, shop: 0, atm: 0, car_wash: 0,
+                    tyres: 0, restaurant: 0, pharmacy: 0 };
+                currentStations.forEach(s => {
+                    if (s.petrol) counts.petrol++;
+                    if (s.diesel) counts.diesel++;
+                    if (s.amenities.shop) counts.shop++;
+                    if (s.amenities.atm) counts.atm++;
+                    if (s.amenities.car_wash) counts.car_wash++;
+                    if (s.amenities.tyres) counts.tyres++;
+                    if (s.amenities.restaurant) counts.restaurant++;
+                    if (s.amenities.pharmacy) counts.pharmacy++;
+                });
+                Object.keys(counts).forEach(k => {
+                    const el = document.getElementById('count' + k.charAt(0).toUpperCase() + k.slice(1));
+                    if (el) el.innerText = counts[k];
+                });
+            }
+
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentFilter = chip.dataset.filter;
+                    applyFilter();
+                });
+            });
+
+            function applyFilter() {
+                let filtered = currentStations.filter(s => {
+                    if (currentFilter === 'all') return true;
+                    if (currentFilter === 'petrol') return s.petrol;
+                    if (currentFilter === 'diesel') return s.diesel;
+                    return s.amenities[currentFilter] === true;
+                });
+                renderMarkers(filtered);
+            }
+
+            function renderMarkers(stations) {
+                markerCluster.clearLayers();
+                stations.forEach(s => {
+                    const icon = L.divIcon({
+                        html: `<i class="fas fa-gas-pump" style="color:#00ff88;font-size:26px;filter:drop-shadow(0 0 8px #00ff88);"></i>`,
+                        iconSize: [26, 26],
+                        className: ''
+                    });
+                    const marker = L.marker([s.lat, s.lon], { icon });
+                    marker.bindPopup(() => {
+                        const ratings = JSON.parse(localStorage.getItem(`ratings_${s.id}`) || '[]');
+                        const avg = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings
+                            .length).toFixed(1) : '—';
+                        const div = document.createElement('div');
+                        div.className = 'popup-content';
+                        div.style.cssText =
+                            'min-width:220px;padding:8px;';
+                        div.innerHTML = `
+                <h4 style="margin:0 0 6px;">${s.name}</h4>
+                <div style="font-size:13px;">⛽ Petrol: ${currencySymbol}${s.pricePetrol}  🛢️ Diesel: ${currencySymbol}${s.priceDiesel}</div>
+                <div style="font-size:12px;">⭐ ${avg} (${ratings.length})</div>
+                <button class="rate-report-btn" data-id="${s.id}" style="margin-top:8px;padding:6px 14px;border-radius:20px;border:1.5px solid #00ff88;background:transparent;color:#00ff88;cursor:pointer;font-weight:600;">⭐ Rate & Report</button>
+              `;
+                        setTimeout(() => {
+                            const btn = div.querySelector('.rate-report-btn');
+                            if (btn) btn.onclick = () => openRatingModal(s);
+                        }, 50);
+                        return div;
+                    });
+                    markerCluster.addLayer(marker);
+                });
+            }
+
+            // ── TRIP PLANNER ──
+            function showLoading(show) {
+                let overlay = document.getElementById('globalLoading');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.id = 'globalLoading';
+                    overlay.className = 'loading-overlay';
+                    overlay.innerHTML = '<div class="spinner"></div>';
+                    document.body.appendChild(overlay);
+                }
+                overlay.style.display = show ? 'flex' : 'none';
+            }
+
+            async function detectUserLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                        const res = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords.lat}&lon=${userCoords.lon}&zoom=18`
+                            );
+                        const data = await res.json();
+                        const display = [data.address?.road, data.address?.suburb, data.address?.city].filter(
+                            Boolean).join(', ') || 'Current location';
+                        document.getElementById('userLocationInput').value = display;
+                    }, () => { document.getElementById('userLocationInput').value = 'Lusaka, Zambia'; });
+                }
+            }
+            detectUserLocation();
+            document.getElementById('detectLocationBtn').addEventListener('click', detectUserLocation);
+
+            let destTimeout;
+            document.getElementById('destSearchInput').addEventListener('input', function() {
+                clearTimeout(destTimeout);
+                const q = this.value;
+                if (q.length < 3) return;
+                destTimeout = setTimeout(async () => {
+                    const res = await fetch(
+                        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`
+                        );
+                    const data = await res.json();
+                    const sug = document.getElementById('destSuggestions');
+                    sug.innerHTML = data.slice(0, 5).map(p => `
+              <div class="suggestion-item" data-lat="${p.lat}" data-lon="${p.lon}" data-display="${p.display_name}">${p.display_name}</div>
+            `).join('');
+                    sug.querySelectorAll('.suggestion-item').forEach(el => {
+                        el.addEventListener('click', async () => {
+                            destCoords = { lat: +el.dataset.lat, lon: +el.dataset.lon };
+                            destName = el.dataset.display;
+                            document.getElementById('selectedDestDisplay').innerText =
+                                `Destination: ${destName}`;
+                            sug.innerHTML = '';
+                            document.getElementById('stationSelectionContainer').style.display =
+                                'block';
+                            document.getElementById('funStopsContainer').style.display = 'none';
+                            document.getElementById('tripOptionsContainer').style.display = 'none';
+                            showLoading(true);
+                            await loadStationsNearUser();
+                            showLoading(false);
+                        });
+                    });
+                }, 500);
+            });
+
+            async function loadStationsNearUser() {
+                if (!userCoords) {
+                    const fallback = await geocodeAddress(document.getElementById('userLocationInput').value);
+                    if (fallback) userCoords = fallback;
+                }
+                if (!destCoords) return;
+                const stations = await fetchStations(userCoords.lat, userCoords.lon, 15000);
+                const container = document.getElementById('stationListContainer');
+                container.innerHTML = stations.slice(0, 5).map(s => `
+            <div class="station-list-item" data-id="${s.id}" data-lat="${s.lat}" data-lon="${s.lon}" data-name="${s.name}" data-petrol="${s.pricePetrol}" data-diesel="${s.priceDiesel}">
+              <strong>${s.name}</strong>
+              <div style="font-size:13px;color:#94a3b8;">⛽ ${currencySymbol}${s.pricePetrol} / 🛢️ ${currencySymbol}${s.priceDiesel}</div>
+            </div>
+          `).join('');
+                document.getElementById('stationLoadingMsg').innerText = 'Select a fuel station:';
+                container.querySelectorAll('.station-list-item').forEach(el => {
+                    el.addEventListener('click', async () => {
+                        container.querySelectorAll('.station-list-item').forEach(e => e.classList
+                            .remove('selected'));
+                        el.classList.add('selected');
+                        selectedStation = {
+                            lat: +el.dataset.lat,
+                            lon: +el.dataset.lon,
+                            name: el.dataset.name,
+                            pricePetrol: el.dataset.petrol,
+                            priceDiesel: el.dataset.diesel
+                        };
+                        document.getElementById('funStopsContainer').style.display = 'block';
+                        showLoading(true);
+                        await loadFunStops();
+                        showLoading(false);
+                    });
+                });
+            }
+
+            async function geocodeAddress(addr) {
+                const res = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
+                const data = await res.json();
+                return data[0] ? { lat: +data[0].lat, lon: +data[0].lon } : null;
+            }
+
+            async function loadFunStops() {
+                if (!userCoords || !destCoords) return;
+                const midLat = (userCoords.lat + destCoords.lat) / 2;
+                const midLon = (userCoords.lon + destCoords.lon) / 2;
+                const dist = map.distance([userCoords.lat, userCoords.lon], [destCoords.lat, destCoords.lon]) /
+                1000;
+                const radius = Math.max(dist * 1000 * 0.6, 15000);
+                const funQuery =
+                    `[out:json];(node["tourism"~"attraction|museum"](around:${radius},${midLat},${midLon});node["leisure"="park"](around:${radius},${midLat},${midLon}););out body;`;
+                try {
+                    const fres = await fetch(
+                        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(funQuery)}`);
+                    const fdata = await fres.json();
+                    funStops = fdata.elements.map(el => ({
+                        name: el.tags.name || 'Fun stop',
+                        lat: el.lat,
+                        lon: el.lon
+                    })).filter(f => f.lat).slice(0, 8);
+                } catch (e) { funStops = []; }
+                const funList = document.getElementById('funStopsList');
+                funList.innerHTML = funStops.map((f, i) =>
+                    `<div class="fun-stop-item" data-index="${i}">📍 ${f.name}</div>`).join('');
+                funList.querySelectorAll('.fun-stop-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        funList.querySelectorAll('.fun-stop-item').forEach(e => e.classList.remove(
+                            'selected'));
+                        el.classList.add('selected');
+                        selectedFunStop = funStops[el.dataset.index];
+                        document.getElementById('tripOptionsContainer').style.display = 'block';
+                    });
+                });
+            }
+
+            document.getElementById('calculateAndDrawRoute').addEventListener('click', async () => {
+                if (!userCoords) {
+                    const addr = await geocodeAddress(document.getElementById('userLocationInput').value);
+                    if (addr) userCoords = addr;
+                    else return;
+                }
+                if (!destCoords || !selectedStation) return alert(
+                    'Select a destination and a fuel station first.');
+                const waypoints = [
+                    L.latLng(userCoords.lat, userCoords.lon),
+                    L.latLng(selectedStation.lat, selectedStation.lon)
+                ];
+                if (selectedFunStop) waypoints.push(L.latLng(selectedFunStop.lat, selectedFunStop.lon));
+                waypoints.push(L.latLng(destCoords.lat, destCoords.lon));
+                if (routingControl) map.removeControl(routingControl);
+                routingControl = L.Routing.control({
+                    waypoints,
+                    lineOptions: { styles: [{ color: '#00ff88', weight: 5 }] },
+                    createMarker: function() { return null; }
+                }).addTo(map);
+                map.fitBounds(L.latLngBounds(waypoints));
+                document.getElementById('mapSection').scrollIntoView({ behavior: 'smooth' });
+                const tank = +document.getElementById('tankCapacity').value || 50;
+                const cons = +document.getElementById('fuelConsumption').value || 7.5;
+                const totalDist = waypoints.reduce((acc, _, i, arr) => {
+                    return i ? acc + map.distance(arr[i - 1], arr[i]) / 1000 : 0;
+                }, 0);
+                const fuelNeeded = (totalDist / 100) * cons;
+                const fuelPrice = (document.getElementById('fuelTypeSelect').value === 'petrol' ? selectedStation
+                    .pricePetrol : selectedStation.priceDiesel) || 1.5;
+                document.getElementById('tripSummary').innerHTML = `
+            📏 Total distance: ${totalDist.toFixed(1)} km<br>
+            ⛽ Fuel needed: ${fuelNeeded.toFixed(1)} L<br>
+            💰 Estimated cost: ${currencySymbol}${(fuelNeeded * fuelPrice).toFixed(2)}
+          `;
+            });
+
+            document.getElementById('openPlannerBtn').onclick = () => {
+                document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            // ── SMOOTH SCROLL FOR ALL ANCHOR LINKS ──
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            initMap();
+            loadCountries();
+            console.log('%c⚡ FuelRadar Extreme · All systems go!', 'color:#00ff88;font-size:18px;');
+        })();
+    </script>
 </body>
 </html>
