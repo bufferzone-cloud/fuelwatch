@@ -47,56 +47,8 @@
             line-height: 1.5;
             scroll-behavior: smooth;
             overflow-x: hidden;
-            cursor: none;
+            cursor: default;
             background: radial-gradient(ellipse at 50% 0%, #0f1a1a 0%, #030507 60%, #000 100%);
-        }
-
-        /* ── CUSTOM CURSOR ── */
-        .cursor {
-            position: fixed;
-            width: 28px;
-            height: 28px;
-            border: 2px solid var(--green);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
-            transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
-        }
-        .cursor-dot {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--green);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.2s;
-        }
-        .cursor.hover {
-            width: 60px;
-            height: 60px;
-            border-color: var(--cyan);
-            background: rgba(0, 229, 255, 0.12);
-            mix-blend-mode: normal;
-            animation: cursorPulse 0.7s ease-out infinite;
-        }
-        .cursor-dot.hover {
-            width: 10px;
-            height: 10px;
-            background: var(--cyan);
-            box-shadow: 0 0 20px var(--cyan), 0 0 50px var(--cyan);
-        }
-        @keyframes cursorPulse {
-            0%,
-            100% {
-                box-shadow: 0 0 10px var(--cyan), 0 0 25px var(--cyan);
-            }
-            50% {
-                box-shadow: 0 0 25px var(--cyan), 0 0 60px var(--cyan);
-            }
         }
 
         /* ── CANVAS PARTICLES ── */
@@ -259,16 +211,19 @@
             width: 42px;
             height: 42px;
             object-fit: contain;
+            border-radius: 12px; /* curved edges */
             filter: drop-shadow(0 0 12px var(--green));
-            animation: logoGlow 3s ease-in-out infinite;
+            animation: logoFloat 3s ease-in-out infinite;
         }
-        @keyframes logoGlow {
+        @keyframes logoFloat {
             0%,
             100% {
+                transform: translateY(0);
                 filter: drop-shadow(0 0 12px var(--green));
             }
             50% {
-                filter: drop-shadow(0 0 28px var(--green)) drop-shadow(0 0 50px var(--cyan));
+                transform: translateY(-6px);
+                filter: drop-shadow(0 0 22px var(--green)) drop-shadow(0 0 45px var(--cyan));
             }
         }
         .brand-name {
@@ -299,7 +254,6 @@
             color: #cbd5e1;
             transition: all 0.3s;
             position: relative;
-            cursor: none;
         }
         .nav-links a:hover {
             color: var(--green);
@@ -330,7 +284,7 @@
             background: transparent;
             border: 1.5px solid var(--green);
             color: var(--green);
-            cursor: none;
+            cursor: pointer;
             transition: 0.3s;
             font-size: 13px;
             letter-spacing: 0.5px;
@@ -351,7 +305,7 @@
             background: linear-gradient(135deg, #00ff88, #00c9a7);
             border: none;
             color: #000;
-            cursor: none;
+            cursor: pointer;
             box-shadow: 0 0 25px rgba(0, 255, 136, 0.35), 0 4px 0 #14532d;
             transition: 0.3s;
             font-size: 13px;
@@ -373,7 +327,7 @@
             background: none;
             border: none;
             color: var(--green);
-            cursor: none;
+            cursor: pointer;
         }
 
         /* ── SIDEBAR ── */
@@ -433,7 +387,7 @@
             font-size: 16px;
             font-weight: 600;
             color: #cbd5e1;
-            cursor: none;
+            cursor: pointer;
             text-decoration: none;
             transition: 0.3s;
         }
@@ -568,7 +522,7 @@
             transform: scale(1.1);
         }
         .phone-mockup {
-            flex: 0 0 260px;
+            flex: 0 0 220px;
             background: #111;
             border-radius: 36px;
             padding: 10px;
@@ -589,7 +543,7 @@
             background: #f0fdf4;
             border-radius: 28px;
             overflow: hidden;
-            height: 520px;
+            height: 440px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -644,6 +598,7 @@
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         .feature-card::before {
             content: '';
@@ -769,6 +724,7 @@
             padding: 36px 28px;
             border: 1px solid rgba(255, 255, 255, 0.12);
             transition: 0.3s;
+            cursor: pointer;
         }
         .driver-station-card:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -807,6 +763,7 @@
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         .benefit-card::before {
             content: '';
@@ -924,6 +881,7 @@
         }
         .floating-logo img {
             max-width: 100%;
+            border-radius: 18px;
             filter: drop-shadow(0 20px 40px rgba(0, 255, 136, 0.3));
             animation: floatLogo 3s ease-in-out infinite;
         }
@@ -952,6 +910,7 @@
             border: 1px solid var(--border);
             text-align: center;
             transition: 0.3s;
+            cursor: pointer;
         }
         .partner-card:hover {
             border-color: rgba(0, 255, 136, 0.3);
@@ -989,7 +948,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: none;
+            cursor: pointer;
             background: rgba(0, 255, 136, 0.03);
         }
         .partner-dropdown-content {
@@ -1030,6 +989,7 @@
             color: #e2e8f0;
             transition: 0.3s;
             outline: none;
+            cursor: text;
         }
         .form-group input:focus,
         .form-group select:focus,
@@ -1100,7 +1060,6 @@
             color: var(--green);
             font-size: 24px;
             transition: 0.3s;
-            cursor: none;
         }
         .social-links a:hover {
             color: var(--cyan);
@@ -1123,6 +1082,7 @@
             color: #e2e8f0;
             transition: 0.3s;
             outline: none;
+            cursor: text;
         }
         .contact-form input:focus,
         .contact-form textarea:focus {
@@ -1133,7 +1093,7 @@
             border-radius: 24px;
         }
         .small-phone-mockup {
-            flex: 0 0 180px;
+            flex: 0 0 150px;
             background: #111;
             border-radius: 28px;
             padding: 8px;
@@ -1144,7 +1104,7 @@
             background: #f0fdf4;
             border-radius: 20px;
             overflow: hidden;
-            height: 340px;
+            height: 280px;
         }
         .small-phone-screen img {
             width: 100%;
@@ -1182,7 +1142,7 @@
             font-size: 14px;
             outline: none;
             color: #e2e8f0;
-            cursor: none;
+            cursor: pointer;
         }
         .selector-pill select option {
             background: #1a1f2b;
@@ -1210,7 +1170,7 @@
             font-size: 13px;
             font-weight: 600;
             border: 1px solid var(--border);
-            cursor: none;
+            cursor: pointer;
             white-space: nowrap;
             color: #94a3b8;
             transition: 0.3s;
@@ -1291,7 +1251,7 @@
         .suggestion-item {
             padding: 12px 16px;
             border-bottom: 1px solid var(--border);
-            cursor: none;
+            cursor: pointer;
             font-size: 14px;
             color: var(--green);
             transition: 0.2s;
@@ -1306,7 +1266,7 @@
             padding: 14px;
             margin-bottom: 8px;
             border: 1px solid var(--border);
-            cursor: none;
+            cursor: pointer;
             transition: 0.3s;
             color: #e2e8f0;
         }
@@ -1354,7 +1314,7 @@
             top: 16px;
             right: 20px;
             font-size: 28px;
-            cursor: none;
+            cursor: pointer;
             color: var(--green);
             transition: 0.3s;
         }
@@ -1370,7 +1330,7 @@
         .star-rating i {
             font-size: 24px;
             color: #555;
-            cursor: none;
+            cursor: pointer;
             margin-right: 4px;
             transition: 0.2s;
         }
@@ -1457,7 +1417,7 @@
             }
             .phone-mockup {
                 flex: 0 0 auto;
-                width: 220px;
+                width: 200px;
             }
             .benefits-grid {
                 grid-template-columns: 1fr;
@@ -1493,10 +1453,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Custom Cursor -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-dot" id="cursorDot"></div>
 
     <!-- Particle Canvas -->
     <canvas id="particleCanvas"></canvas>
@@ -1547,7 +1503,7 @@
         <div class="sidebar-panel">
             <div class="sidebar-header">
                 <span>FuelRadar</span>
-                <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px; color:var(--green); cursor:none;">&times;</button>
+                <button id="closeSidebarBtn" style="background:none; border:none; font-size:22px; color:var(--green); cursor:pointer;">&times;</button>
             </div>
             <div class="sidebar-menu">
                 <a href="#home" class="sidebar-item"><i class="fas fa-home"></i> Home</a>
@@ -1938,33 +1894,6 @@
         (function() {
             "use strict";
 
-            // ── CUSTOM CURSOR ──
-            const cursorEl = document.getElementById('cursor');
-            const cursorDot = document.getElementById('cursorDot');
-            let mouseX = window.innerWidth / 2,
-                mouseY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', (e) => { mouseX = e.clientX;
-                mouseY = e.clientY; });
-            const hoverTargets = document.querySelectorAll(
-                'a, button, .btn-primary, .btn-outline, .chip, .card, .feature-card, .benefit-card, .partner-card, .station-list-item, .fun-stop-item, .suggestion-item, .sidebar-item, input, select, textarea, .close-modal, .star-rating i, .partner-dropdown-header'
-                );
-            hoverTargets.forEach(el => {
-                el.addEventListener('mouseenter', () => { cursorEl.classList.add('hover');
-                    cursorDot.classList.add('hover'); });
-                el.addEventListener('mouseleave', () => { cursorEl.classList.remove('hover');
-                    cursorDot.classList.remove('hover'); });
-            });
-
-            function animateCursor() {
-                cursorEl.style.left = mouseX + 'px';
-                cursorEl.style.top = mouseY + 'px';
-                cursorDot.style.left = mouseX + 'px';
-                cursorDot.style.top = mouseY + 'px';
-                requestAnimationFrame(animateCursor);
-            }
-            animateCursor();
-
             // ── PARTICLE CANVAS ──
             const canvas = document.getElementById('particleCanvas');
             const ctx = canvas.getContext('2d');
@@ -2054,7 +1983,6 @@
                     this.appendChild(ripple);
                     ripple.addEventListener('animationend', () => ripple.remove());
 
-                    // Particle burst
                     for (let i = 0; i < 18; i++) {
                         const p = document.createElement('div');
                         p.style.cssText =
@@ -2206,8 +2134,8 @@
                 fabDiv.style.cssText =
                     'position:absolute;bottom:16px;right:16px;z-index:900;display:flex;gap:8px;';
                 fabDiv.innerHTML = `
-            <button id="locateBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:none;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-crosshairs"></i></button>
-            <button id="refreshMapBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:none;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-arrows-rotate"></i></button>
+            <button id="locateBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:pointer;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-crosshairs"></i></button>
+            <button id="refreshMapBtn" style="background:var(--card-bg);backdrop-filter:blur(10px);border-radius:50%;width:44px;height:44px;border:1px solid var(--border);cursor:pointer;color:var(--green);font-size:16px;transition:0.3s;"><i class="fas fa-arrows-rotate"></i></button>
           `;
                 container.appendChild(fabDiv);
                 document.getElementById('locateBtn').addEventListener('click', () => {
@@ -2374,7 +2302,7 @@
                 markerCluster.clearLayers();
                 stations.forEach(s => {
                     const icon = L.divIcon({
-                        html: `<i class="fas fa-gas-pump" style="color:#00ff88;font-size:26px;filter:drop-shadow(0 0 8px #00ff88);"></i>`,
+                        html: `<i class="fas fa-gas-pump" style="color:#00ff88;font-size:26px;filter:drop-shadow(0 0 15px #00ff88) drop-shadow(0 0 30px #00ff88);"></i>`,
                         iconSize: [26, 26],
                         className: ''
                     });
@@ -2385,8 +2313,7 @@
                             .length).toFixed(1) : '—';
                         const div = document.createElement('div');
                         div.className = 'popup-content';
-                        div.style.cssText =
-                            'min-width:220px;padding:8px;';
+                        div.style.cssText = 'min-width:220px;padding:8px;';
                         div.innerHTML = `
                 <h4 style="margin:0 0 6px;">${s.name}</h4>
                 <div style="font-size:13px;">⛽ Petrol: ${currencySymbol}${s.pricePetrol}  🛢️ Diesel: ${currencySymbol}${s.priceDiesel}</div>
@@ -2582,7 +2509,7 @@
                 document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
             };
 
-            // ── SMOOTH SCROLL FOR ALL ANCHOR LINKS ──
+            // Smooth scroll for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -2593,7 +2520,7 @@
 
             initMap();
             loadCountries();
-            console.log('%c⚡ FuelRadar Extreme · All systems go!', 'color:#00ff88;font-size:18px;');
+            console.log('%c⚡ FuelRadar Extreme · Ready', 'color:#00ff88;font-size:18px;');
         })();
     </script>
 </body>
