@@ -1408,9 +1408,6 @@
         }
 
         /* ===== AI CHAT FULL PAGE ===== */
-        #aiChatPage {
-            /* full page overlay */
-        }
         #aiChatPage .ai-messages-container {
             flex: 1;
             overflow-y: auto;
@@ -2054,29 +2051,26 @@
     <!-- ===== TOAST ===== -->
     <div id="dynamicToast" class="message-toast"></div>
 
-    <!-- ===== SIDEBAR (opens from LEFT) ===== -->
-    <div id="sidebarOverlay" class="sidebar-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:3000; visibility:hidden; opacity:0; transition:0.25s;">
-        <div style="position:fixed; top:0; left:-300px; width:280px; height:100%; background:white; box-shadow:4px 0 24px rgba(0,0,0,0.15); z-index:3001; transition:left 0.25s; display:flex; flex-direction:column; padding:20px 0;">
-            <div style="text-align:center; padding:10px 0;">
-                <img id="sidebarCarImage" src="car_placeholder.png" style="width:80px; height:80px; object-fit:cover; border-radius:20px; border:2px solid #16a34a;" onerror="this.src='driver.png';" />
-                <div style="margin-top:8px; font-weight:700; color:#16a34a; background:#eef5e8; padding:6px 12px; border-radius:40px; display:inline-block; font-size:13px;" id="sidebarVehicleNameText">My Car</div>
+    <!-- ===== SIDEBAR (Pop-up Modal) ===== -->
+    <div id="sidebarOverlay" class="sidebar-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3000; display:none; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:32px; max-width:360px; width:90%; padding:28px 20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative; max-height:90vh; overflow-y:auto;">
+            <div style="text-align:center; margin-bottom:8px;">
+                <img id="sidebarCarImage" src="car_placeholder.png" style="width:70px; height:70px; object-fit:cover; border-radius:20px; border:2px solid #16a34a;" onerror="this.src='driver.png';" />
+                <div style="margin-top:6px; font-weight:700; color:#16a34a; background:#eef5e8; padding:4px 12px; border-radius:40px; display:inline-block; font-size:13px;" id="sidebarVehicleNameText">My Car</div>
+                <button id="closeSidebarBtn" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:28px; cursor:pointer; color:#16a34a; line-height:1;">&times;</button>
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; border-bottom:1px solid #eaf4ea; font-weight:800; color:#16a34a; font-size:18px;">
-                <span>⚡ FuelRadar</span>
-                <button id="closeSidebarBtn" style="background:none; border:none; font-size:24px; cursor:pointer; color:#16a34a;">&times;</button>
-            </div>
-            <div style="flex:1; overflow-y:auto; padding:12px 0;">
-                <div class="sidebar-item" data-page="profile" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-user-circle" style="width:24px; color:#16a34a;"></i> Profile</div>
-                <div class="sidebar-item" data-page="garage" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-car" style="width:24px; color:#16a34a;"></i> My Garage</div>
-                <div class="sidebar-item" data-page="calculator" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-calculator" style="width:24px; color:#16a34a;"></i> Fuel Calculator</div>
-                <div class="sidebar-item" data-page="tripPlanner" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-map-marked-alt" style="width:24px; color:#16a34a;"></i> Trip Planner</div>
-                <div class="sidebar-item" data-page="favorites" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-heart" style="width:24px; color:#16a34a;"></i> Favorites</div>
-                <div class="sidebar-item" data-page="history" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-history" style="width:24px; color:#16a34a;"></i> Trip History</div>
-                <div class="sidebar-item" data-page="recent" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-clock" style="width:24px; color:#16a34a;"></i> Recent Stations</div>
-                <div class="sidebar-item" data-page="help" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-question-circle" style="width:24px; color:#16a34a;"></i> Help &amp; About</div>
-                <div class="sidebar-item" data-page="export" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-download" style="width:24px; color:#16a34a;"></i> Export Data</div>
-                <div class="sidebar-item" id="darkModeSidebar" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-moon" style="width:24px; color:#16a34a;"></i> Dark Mode</div>
-                <div class="sidebar-item" id="logoutSidebar" style="padding:12px 24px; display:flex; align-items:center; gap:14px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer;"><i class="fas fa-sign-out-alt" style="width:24px; color:#16a34a;"></i> Logout</div>
+            <div style="border-top:1px solid #eaf4ea; margin:8px 0; padding:8px 0;">
+                <div class="sidebar-item" data-page="profile" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-user-circle" style="width:24px; color:#16a34a;"></i> Profile</div>
+                <div class="sidebar-item" data-page="garage" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-car" style="width:24px; color:#16a34a;"></i> My Garage</div>
+                <div class="sidebar-item" data-page="calculator" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-calculator" style="width:24px; color:#16a34a;"></i> Fuel Calculator</div>
+                <div class="sidebar-item" data-page="tripPlanner" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-map-marked-alt" style="width:24px; color:#16a34a;"></i> Trip Planner</div>
+                <div class="sidebar-item" data-page="favorites" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-heart" style="width:24px; color:#16a34a;"></i> Favorites</div>
+                <div class="sidebar-item" data-page="history" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-history" style="width:24px; color:#16a34a;"></i> Trip History</div>
+                <div class="sidebar-item" data-page="recent" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-clock" style="width:24px; color:#16a34a;"></i> Recent Stations</div>
+                <div class="sidebar-item" data-page="help" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-question-circle" style="width:24px; color:#16a34a;"></i> Help &amp; About</div>
+                <div class="sidebar-item" data-page="export" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-download" style="width:24px; color:#16a34a;"></i> Export Data</div>
+                <div class="sidebar-item" id="darkModeSidebar" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-moon" style="width:24px; color:#16a34a;"></i> Dark Mode</div>
+                <div class="sidebar-item" id="logoutSidebar" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-sign-out-alt" style="width:24px; color:#16a34a;"></i> Logout</div>
             </div>
         </div>
     </div>
@@ -2260,7 +2254,10 @@
     <div id="aiChatPage" class="page-overlay">
         <div class="page-header-bar">
             <h2><i class="fas fa-robot"></i> FuelRadar AI</h2>
-            <button class="close-page-btn" data-close="aiChatPage">&times;</button>
+            <div style="display:flex; gap:8px;">
+                <button id="refreshAIChatBtn" style="background:#f0fdf4; border:none; border-radius:40px; padding:6px 14px; font-weight:600; font-size:12px; cursor:pointer; color:#16a34a; display:flex; align-items:center; gap:4px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="close-page-btn" data-close="aiChatPage">&times;</button>
+            </div>
         </div>
         <div class="ai-messages-container" id="aiMessagesList">
             <!-- Welcome message will be injected by JS -->
@@ -2274,6 +2271,7 @@
             <button class="ai-send-btn" id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
+
 
     <!-- ============================================================ -->
     <!-- ===== JAVASCRIPT – FULL LOGIC ===== -->
@@ -2451,6 +2449,17 @@
                 aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
             }
 
+            function resetAIChat() {
+                aiMessagesContainer.innerHTML = '';
+                addAIMessage('ai',
+                    'I love it! 🚀 I\'m **FuelRadar AI**, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.'
+                    );
+                showToast('Chat refreshed');
+            }
+
+            // Add refresh button listener
+            document.getElementById('refreshAIChatBtn').addEventListener('click', resetAIChat);
+
             addAIMessage('ai',
                 'I love it! 🚀 I\'m **FuelRadar AI**, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.'
                 );
@@ -2623,7 +2632,7 @@
             }
             detectUserCountry();
 
-            // ---------- OSM STATIONS ----------
+            // ---------- OSM STATIONS (with proper address extraction) ----------
             async function fetchOSMStations(lat, lon, rad) {
                 const query = '[out:json];(node["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon +
                     ');way["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon + '););out body;';
@@ -3017,44 +3026,21 @@
                         '</div>' +
                         '</div>';
                 }).join('');
+                // Navigate from report page
                 container.querySelectorAll('[data-nav-id]').forEach(function(btn) {
                     btn.onclick = function() {
                         var st = stations.find(function(x) { return x.id == btn.dataset.navId; });
                         if (st) startNavigationWithMessage(st);
                     };
                 });
+                // Report from report page
                 container.querySelectorAll('[data-report-id]').forEach(function(btn) {
                     btn.onclick = function() {
                         openReportForStation(btn.dataset.reportId);
                     };
                 });
-                // Also allow reporting from the card directly via the button
-                container.querySelectorAll('.btn-report[data-report-id]').forEach(function(btn) {
-                    btn.onclick = function(ev) {
-                        ev.stopPropagation();
-                        openReportForStation(btn.dataset.reportId);
-                    };
-                });
-                // For the report form submission inside each card (if any)
-                container.querySelectorAll('[data-submit-report]').forEach(function(btn) {
-                    btn.onclick = async function() {
-                        var sid = btn.dataset.submitReport;
-                        var type = document.getElementById('reportType_' + sid).value;
-                        var comment = document.getElementById('reportComment_' + sid).value;
-                        var priceReport = document.getElementById('reportPrice_' + sid).value;
-                        var station = stations.find(function(s) { return s.id == sid; });
-                        var reportData = { stationId: sid, stationName: station ? station.name :
-                                'Unknown', type: type, comment: comment, priceReport: priceReport,
-                            timestamp: Date.now(), userId: currentUser.uid };
-                        if (station && !station.isRegistered) {
-                            reportData.location = { lat: station.lat, lng: station.lon };
-                            reportData.address = station.address;
-                        }
-                        await localDB.userReports.add(reportData);
-                        await rtdb.ref('reports').push(reportData);
-                        showToast('Report submitted!');
-                    };
-                });
+                // Also handle the "Report" button in the popup – delegate to openReportForStation
+                // Additional report submission forms (if any) are handled by the popup buttons.
             }
 
             // ---------- FAVORITES ----------
@@ -3504,9 +3490,7 @@
                         // AI chat already active
                     }
                 }
-                document.getElementById('sidebarOverlay').style.visibility = 'hidden';
-                document.getElementById('sidebarOverlay').style.opacity = '0';
-                document.querySelector('#sidebarOverlay > div').style.left = '-300px';
+                document.getElementById('sidebarOverlay').style.display = 'none';
             }
 
             function closePage(pageId) {
@@ -3825,23 +3809,17 @@
                     document.querySelector('.warning-banner').style.display = 'none';
                 };
 
-                // Sidebar (opens from left)
+                // Sidebar (modal popup)
                 var sidebar = document.getElementById('sidebarOverlay');
                 document.getElementById('menuBtn').onclick = function() {
-                    sidebar.style.visibility = 'visible';
-                    sidebar.style.opacity = '1';
-                    document.querySelector(sidebar + ' > div').style.left = '0';
+                    sidebar.style.display = 'flex';
                 };
                 document.getElementById('closeSidebarBtn').onclick = function() {
-                    sidebar.style.visibility = 'hidden';
-                    sidebar.style.opacity = '0';
-                    document.querySelector(sidebar + ' > div').style.left = '-300px';
+                    sidebar.style.display = 'none';
                 };
                 sidebar.addEventListener('click', function(e) {
                     if (e.target === sidebar) {
-                        sidebar.style.visibility = 'hidden';
-                        sidebar.style.opacity = '0';
-                        document.querySelector(sidebar + ' > div').style.left = '-300px';
+                        sidebar.style.display = 'none';
                     }
                 });
 
@@ -3850,9 +3828,7 @@
                     if (item.id === 'darkModeSidebar') {
                         item.onclick = function() {
                             document.body.classList.toggle('dark');
-                            sidebar.style.visibility = 'hidden';
-                            sidebar.style.opacity = '0';
-                            document.querySelector(sidebar + ' > div').style.left = '-300px';
+                            sidebar.style.display = 'none';
                         };
                     } else if (item.id === 'logoutSidebar') {
                         // handled above
@@ -3863,14 +3839,10 @@
                             if (page === 'map') {
                                 document.querySelectorAll('.page-overlay').forEach(function(p) { p.classList
                                         .remove('show'); });
-                                sidebar.style.visibility = 'hidden';
-                                sidebar.style.opacity = '0';
-                                document.querySelector(sidebar + ' > div').style.left = '-300px';
+                                sidebar.style.display = 'none';
                             } else {
                                 openPage(page + 'Page');
-                                sidebar.style.visibility = 'hidden';
-                                sidebar.style.opacity = '0';
-                                document.querySelector(sidebar + ' > div').style.left = '-300px';
+                                sidebar.style.display = 'none';
                             }
                         };
                     }
