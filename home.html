@@ -664,37 +664,26 @@
             display: none;
         }
 
-        /* ===== BEST NEAR ME BUTTON (above view all) ===== */
-        .best-near-wrapper {
-            position: absolute;
-            bottom: 80px;
-            right: 14px;
-            z-index: 1000;
-        }
-        .best-near-btn {
+        /* ===== BEST NEAR ME BUTTON (inside map-floats, below refresh) ===== */
+        .map-float-btn.best-near-float {
             background: #16a34a;
             color: white;
-            width: 56px;
-            height: 56px;
+            font-size: 14px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4);
-            font-size: 22px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
             line-height: 1;
         }
-        .best-near-btn span {
-            font-size: 8px;
+        .map-float-btn.best-near-float span {
+            font-size: 7px;
             font-weight: 700;
             margin-top: 1px;
-        }
-        .best-near-btn:hover {
-            transform: scale(1.05);
         }
 
         /* ===== BOTTOM SHEET (Station Cards) ===== */
@@ -930,14 +919,14 @@
             margin-right: 4px;
         }
 
-        /* ===== BOTTOM NAVIGATION ===== */
+        /* ===== BOTTOM NAVIGATION (increased by 50%) ===== */
         .bottom-nav {
             display: flex;
             align-items: center;
             justify-content: space-around;
             background: #ffffff;
             border-top: 1px solid #eaf4ea;
-            padding: 4px 0 6px 0;
+            padding: 6px 0 10px 0;
             flex-shrink: 0;
             z-index: 100;
         }
@@ -949,18 +938,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1px;
-            font-size: 9px;
+            gap: 3px;
+            font-size: 14px;
+            /* increased 50% from ~9px */
             font-weight: 600;
             color: #6b7280;
             cursor: pointer;
             transition: 0.2s;
-            padding: 2px 10px;
+            padding: 4px 16px;
             border: none;
             background: none;
         }
         .bottom-nav .nav-item i {
-            font-size: 18px;
+            font-size: 27px;
+            /* increased 50% from ~18px */
         }
         .bottom-nav .nav-item.active {
             color: #16a34a;
@@ -1026,9 +1017,206 @@
             color: #16a34a;
             line-height: 1;
         }
-        .page-content {
-            padding: 14px 18px;
-            flex: 1;
+
+        /* ===== POPUP MENU (replaces sidebar) ===== */
+        #menuPopupOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        #menuPopupOverlay.show {
+            display: flex;
+        }
+        .menu-popup {
+            background: white;
+            border-radius: 32px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            padding: 24px 20px 20px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+            overflow-y: auto;
+            position: relative;
+        }
+        body.dark .menu-popup {
+            background: #1e1e1e;
+            border: 1px solid #2c2c2c;
+        }
+        .menu-popup-logo {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eaf4ea;
+            margin-bottom: 14px;
+        }
+        body.dark .menu-popup-logo {
+            border-bottom-color: #2c2c2c;
+        }
+        .menu-popup-logo h2 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .menu-popup-logo .slogan {
+            font-size: 11px;
+            font-weight: 700;
+            color: #16a34a;
+            background: #eef5e8;
+            padding: 2px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        body.dark .menu-popup-logo .slogan {
+            background: #2c2c2c;
+            color: #4ade80;
+        }
+        .menu-popup-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e3a1e;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 2px;
+        }
+        .menu-popup-item:hover {
+            background: #f0fdf4;
+        }
+        body.dark .menu-popup-item {
+            color: #e0e0e0;
+        }
+        body.dark .menu-popup-item:hover {
+            background: #2c2c2c;
+        }
+        .menu-popup-item i {
+            width: 24px;
+            color: #16a34a;
+            font-size: 18px;
+        }
+        .menu-popup-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+            line-height: 1;
+        }
+        body.dark .menu-popup-close {
+            color: #9ca3af;
+        }
+
+        /* ===== TRIP PLANNER - ENHANCED CSS ===== */
+        .trip-planner-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%);
+            border-radius: 20px;
+            padding: 16px 18px;
+            border: 1px solid #eaf4ea;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: 0.2s;
+        }
+        body.dark .trip-planner-card {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2c2c2c 100%);
+            border-color: #4ade80;
+        }
+        .trip-planner-card:hover {
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.1);
+        }
+        .trip-planner-card .card-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #16a34a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .trip-planner-card .card-subtitle {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+        body.dark .trip-planner-card .card-subtitle {
+            color: #9ca3af;
+        }
+        .trip-planner-card .badge-pill {
+            background: #16a34a;
+            color: white;
+            border-radius: 40px;
+            padding: 2px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .trip-planner-card .badge-pill.outline {
+            background: transparent;
+            border: 1px solid #16a34a;
+            color: #16a34a;
+        }
+        .trip-planner-card .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .trip-planner-card .stat-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .trip-planner-card .stat-row .stat {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e3a1e;
+        }
+        body.dark .trip-planner-card .stat-row .stat {
+            color: #86efac;
+        }
+        .trip-planner-card .stat-row .stat i {
+            color: #16a34a;
+            margin-right: 4px;
+        }
+        .step-container .step-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #16a34a;
+            background: rgba(22, 163, 74, 0.08);
+            padding: 8px 14px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+        .step-container .step-content {
+            display: none;
+            animation: fadeInStep 0.3s ease;
+        }
+        .step-container .step-content.active-step {
+            display: block;
+        }
+        @keyframes fadeInStep {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== FULL PAGE STATIONS / REPORT ===== */
@@ -1177,17 +1365,8 @@
         .step-container {
             margin-bottom: 14px;
         }
-        .step-header {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #16a34a;
-        }
-        .step-content {
-            display: none;
-        }
-        .step-content.active-step {
-            display: block;
+        .step-content .pill-input {
+            margin-bottom: 6px;
         }
         .step-buttons {
             display: flex;
@@ -1201,14 +1380,30 @@
             border: none;
             font-weight: 700;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .step-buttons button:active {
+            transform: scale(0.97);
         }
         .step-prev {
             background: #e5e7eb;
             color: #374151;
         }
+        .step-prev:hover {
+            background: #d1d5db;
+        }
         .step-next {
             background: #16a34a;
             color: white;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+        .step-next:hover {
+            background: #15803d;
+        }
+        .step-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         .place-suggestions {
             margin-top: 6px;
@@ -1221,7 +1416,7 @@
         .place-suggestion-item {
             background: #f0fdf4;
             padding: 8px 12px;
-            border-bottom: 1px solid #dc2626;
+            border-bottom: 1px solid #d1fae5;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -1237,7 +1432,7 @@
         }
         body.dark .place-suggestion-item {
             background: #064e3b;
-            border-bottom-color: #f87171;
+            border-bottom-color: #047857;
         }
         body.dark .place-suggestion-item:hover {
             background: #047857;
@@ -1262,6 +1457,7 @@
         }
         body.dark .floating-card {
             background: #2c2c2c;
+            border-left-color: #4ade80;
         }
         .floating-card.selected-card {
             border: 2px solid #16a34a;
@@ -1269,9 +1465,18 @@
         }
         body.dark .floating-card.selected-card {
             background: #064e3b;
+            border-color: #4ade80;
         }
         .floating-card.fun-card {
             border-left-color: #3b82f6;
+        }
+        .floating-card.fun-card.selected-card {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        body.dark .floating-card.fun-card.selected-card {
+            background: #1e3a5f;
+            border-color: #60a5fa;
         }
         .add-fun-btn {
             background: #3b82f6;
@@ -1282,6 +1487,14 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 11px;
+            transition: 0.2s;
+        }
+        .add-fun-btn:hover {
+            background: #2563eb;
+        }
+        .add-fun-btn:disabled {
+            background: #9ca3af;
+            cursor: default;
         }
         .safety-tips {
             background: #fef3c7;
@@ -1353,6 +1566,9 @@
         .full-width-btn:active {
             transform: scale(0.98);
         }
+        .full-width-btn:hover {
+            background: #15803d;
+        }
         .btn-sm {
             background: #f0fdf4;
             border: none;
@@ -1361,14 +1577,25 @@
             font-weight: 600;
             font-size: 11px;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-sm:hover {
+            background: #d1fae5;
         }
         .btn-nav {
             background: #16a34a;
             color: white;
         }
+        .btn-nav:hover {
+            background: #15803d;
+            color: white;
+        }
         .btn-report {
             background: #fee2e2;
             color: #b91c1c;
+        }
+        .btn-report:hover {
+            background: #fecaca;
         }
         .flex-between {
             display: flex;
@@ -1387,6 +1614,120 @@
         }
         .mb-2 {
             margin-bottom: 8px;
+        }
+
+        /* ===== REPORT MODAL ===== */
+        .report-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 4000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .report-modal-overlay.show {
+            display: flex;
+        }
+        .report-modal {
+            background: white;
+            border-radius: 32px;
+            max-width: 400px;
+            width: 92%;
+            padding: 24px 20px 20px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        body.dark .report-modal {
+            background: #1e1e1e;
+            border: 1px solid #4ade80;
+        }
+        .report-modal h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #16a34a;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .report-modal .report-field {
+            margin-bottom: 12px;
+        }
+        .report-modal .report-field label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1e3a1e;
+            display: block;
+            margin-bottom: 4px;
+        }
+        body.dark .report-modal .report-field label {
+            color: #86efac;
+        }
+        .report-modal .report-field select,
+        .report-modal .report-field input,
+        .report-modal .report-field textarea {
+            width: 100%;
+            border-radius: 40px;
+            border: 1.5px solid #d1d5db;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            background: #f9fafb;
+        }
+        body.dark .report-modal .report-field select,
+        body.dark .report-modal .report-field input,
+        body.dark .report-modal .report-field textarea {
+            background: #2c2c2c;
+            border-color: #4ade80;
+            color: white;
+        }
+        .report-modal .report-field select:focus,
+        .report-modal .report-field input:focus,
+        .report-modal .report-field textarea:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        }
+        .report-modal .report-field textarea {
+            border-radius: 16px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .report-modal .report-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .report-modal .report-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .report-modal .report-actions button:active {
+            transform: scale(0.97);
+        }
+        .report-modal .report-actions .btn-submit {
+            background: #16a34a;
+            color: white;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+        .report-modal .report-actions .btn-submit:hover {
+            background: #15803d;
+        }
+        .report-modal .report-actions .btn-cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .report-modal .report-actions .btn-cancel:hover {
+            background: #d1d5db;
         }
 
         /* ===== TOAST ===== */
@@ -1572,11 +1913,11 @@
                 font-size: 12px;
             }
             .bottom-nav .nav-item {
-                font-size: 8px;
-                padding: 0 6px;
+                font-size: 12px;
+                padding: 0 8px;
             }
             .bottom-nav .nav-item i {
-                font-size: 16px;
+                font-size: 23px;
             }
             .page-content {
                 padding: 10px 12px;
@@ -1752,7 +2093,7 @@
             color: #4ade80;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
-        body.dark .best-near-btn {
+        body.dark .map-float-btn.best-near-float {
             background: #4ade80;
             color: #1e3a1e;
             box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
@@ -1854,7 +2195,7 @@
             color: #4ade80;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
-        body.dark .best-near-btn {
+        body.dark .map-float-btn.best-near-float {
             background: #4ade80;
             color: #1e3a1e;
             box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
@@ -1869,6 +2210,32 @@
         }
         body.dark .close-page-btn {
             color: #4ade80;
+        }
+        body.dark .menu-popup {
+            background: #1e1e1e;
+            border-color: #2c2c2c;
+        }
+        body.dark .menu-popup-item {
+            color: #e0e0e0;
+        }
+        body.dark .menu-popup-item:hover {
+            background: #2c2c2c;
+        }
+        body.dark .menu-popup-item i {
+            color: #4ade80;
+        }
+        body.dark .menu-popup-close {
+            color: #9ca3af;
+        }
+        body.dark .report-modal {
+            background: #1e1e1e;
+            border-color: #4ade80;
+        }
+        body.dark .report-modal h3 {
+            color: #4ade80;
+        }
+        body.dark .report-modal .report-field label {
+            color: #86efac;
         }
     </style>
 </head>
@@ -2002,16 +2369,13 @@
             <div class="map-floats">
                 <button class="map-float-btn" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="map-float-btn" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
+                <!-- Best Near Me button now inside map-floats, below refresh -->
+                <button class="map-float-btn best-near-float" id="bestNearBtn">
+                    <i class="fas fa-gas-pump" style="font-size:16px;"></i>
+                    <span>Best</span>
+                </button>
                 <button class="map-float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
                 <button class="map-float-btn start-trip" id="startTripBtn"><i class="fas fa-play"></i></button>
-            </div>
-
-            <!-- Best Near Me Button (above view all) -->
-            <div class="best-near-wrapper">
-                <button class="best-near-btn" id="bestNearBtn">
-                    <i class="fas fa-gas-pump"></i>
-                    <span>Best<br />Near me</span>
-                </button>
             </div>
 
             <!-- Loading Overlay -->
@@ -2051,27 +2415,25 @@
     <!-- ===== TOAST ===== -->
     <div id="dynamicToast" class="message-toast"></div>
 
-    <!-- ===== SIDEBAR (Pop-up Modal) ===== -->
-    <div id="sidebarOverlay" class="sidebar-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3000; display:none; align-items:center; justify-content:center;">
-        <div style="background:white; border-radius:32px; max-width:360px; width:90%; padding:28px 20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative; max-height:90vh; overflow-y:auto;">
-            <div style="text-align:center; margin-bottom:8px;">
-                <img id="sidebarCarImage" src="car_placeholder.png" style="width:70px; height:70px; object-fit:cover; border-radius:20px; border:2px solid #16a34a;" onerror="this.src='driver.png';" />
-                <div style="margin-top:6px; font-weight:700; color:#16a34a; background:#eef5e8; padding:4px 12px; border-radius:40px; display:inline-block; font-size:13px;" id="sidebarVehicleNameText">My Car</div>
-                <button id="closeSidebarBtn" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:28px; cursor:pointer; color:#16a34a; line-height:1;">&times;</button>
+    <!-- ===== POPUP MENU (replaces sidebar) ===== -->
+    <div id="menuPopupOverlay">
+        <div class="menu-popup">
+            <button class="menu-popup-close" id="closeMenuPopup">&times;</button>
+            <div class="menu-popup-logo">
+                <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
+                <div class="slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
             </div>
-            <div style="border-top:1px solid #eaf4ea; margin:8px 0; padding:8px 0;">
-                <div class="sidebar-item" data-page="profile" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-user-circle" style="width:24px; color:#16a34a;"></i> Profile</div>
-                <div class="sidebar-item" data-page="garage" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-car" style="width:24px; color:#16a34a;"></i> My Garage</div>
-                <div class="sidebar-item" data-page="calculator" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-calculator" style="width:24px; color:#16a34a;"></i> Fuel Calculator</div>
-                <div class="sidebar-item" data-page="tripPlanner" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-map-marked-alt" style="width:24px; color:#16a34a;"></i> Trip Planner</div>
-                <div class="sidebar-item" data-page="favorites" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-heart" style="width:24px; color:#16a34a;"></i> Favorites</div>
-                <div class="sidebar-item" data-page="history" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-history" style="width:24px; color:#16a34a;"></i> Trip History</div>
-                <div class="sidebar-item" data-page="recent" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-clock" style="width:24px; color:#16a34a;"></i> Recent Stations</div>
-                <div class="sidebar-item" data-page="help" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-question-circle" style="width:24px; color:#16a34a;"></i> Help &amp; About</div>
-                <div class="sidebar-item" data-page="export" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-download" style="width:24px; color:#16a34a;"></i> Export Data</div>
-                <div class="sidebar-item" id="darkModeSidebar" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-moon" style="width:24px; color:#16a34a;"></i> Dark Mode</div>
-                <div class="sidebar-item" id="logoutSidebar" style="padding:10px 12px; display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600; color:#1e3a1e; cursor:pointer; border-radius:12px; transition:0.2s;"><i class="fas fa-sign-out-alt" style="width:24px; color:#16a34a;"></i> Logout</div>
-            </div>
+            <div class="menu-popup-item" data-page="profile"><i class="fas fa-user-circle"></i> Profile</div>
+            <div class="menu-popup-item" data-page="garage"><i class="fas fa-car"></i> My Garage</div>
+            <div class="menu-popup-item" data-page="calculator"><i class="fas fa-calculator"></i> Fuel Calculator</div>
+            <div class="menu-popup-item" data-page="tripPlanner"><i class="fas fa-map-marked-alt"></i> Trip Planner</div>
+            <div class="menu-popup-item" data-page="favorites"><i class="fas fa-heart"></i> Favorites</div>
+            <div class="menu-popup-item" data-page="history"><i class="fas fa-history"></i> Trip History</div>
+            <div class="menu-popup-item" data-page="recent"><i class="fas fa-clock"></i> Recent Stations</div>
+            <div class="menu-popup-item" data-page="help"><i class="fas fa-question-circle"></i> Help &amp; About</div>
+            <div class="menu-popup-item" data-page="export"><i class="fas fa-download"></i> Export Data</div>
+            <div class="menu-popup-item" id="darkModePopup"><i class="fas fa-moon"></i> Dark Mode</div>
+            <div class="menu-popup-item" id="logoutPopup"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
     </div>
 
@@ -2158,7 +2520,7 @@
         </div>
     </div>
 
-    <!-- Trip Planner Page -->
+    <!-- Trip Planner Page (enhanced) -->
     <div id="tripPlannerPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2><button class="close-page-btn" data-close="tripPlannerPage">&times;</button></div>
         <div class="page-content">
@@ -2230,11 +2592,11 @@
                 <p><strong>2. Navigation:</strong> Click "Navigate" on a station card. The app calculates fuel needed and draws a route.</p>
                 <p><strong>3. Trip Planner:</strong> Enter destination → select fuel station → pick fun stops → review → draw route.</p>
                 <p><strong>4. Garage &amp; Fuel Logs:</strong> Add vehicles, track refueling history, view consumption trends.</p>
-                <p><strong>5. Dark Mode:</strong> Toggle in sidebar for night driving.</p>
+                <p><strong>5. Dark Mode:</strong> Toggle in menu for night driving.</p>
                 <hr style="margin:12px 0;" />
                 <h4 style="color:#16a34a;">🚀 About FuelRadar</h4>
                 <p>Your ultimate fuel companion – live station data, smart route planning, and community reports.</p>
-                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.3</strong> | Built with ❤️</p>
+                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.4</strong> | Built with ❤️</p>
             </div>
         </div>
     </div>
@@ -2250,12 +2612,12 @@
         </div>
     </div>
 
-    <!-- ===== AI CHAT FULL PAGE ===== -->
+    <!-- ===== AI CHAT FULL PAGE (with refresh button) ===== -->
     <div id="aiChatPage" class="page-overlay">
         <div class="page-header-bar">
             <h2><i class="fas fa-robot"></i> FuelRadar AI</h2>
-            <div style="display:flex; gap:8px;">
-                <button id="refreshAIChatBtn" style="background:#f0fdf4; border:none; border-radius:40px; padding:6px 14px; font-weight:600; font-size:12px; cursor:pointer; color:#16a34a; display:flex; align-items:center; gap:4px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button id="aiRefreshBtn" style="background:none; border:none; font-size:20px; cursor:pointer; color:#16a34a;"><i class="fas fa-sync-alt"></i></button>
                 <button class="close-page-btn" data-close="aiChatPage">&times;</button>
             </div>
         </div>
@@ -2272,6 +2634,40 @@
         </div>
     </div>
 
+    <!-- ===== REPORT MODAL ===== -->
+    <div id="reportModalOverlay" class="report-modal-overlay">
+        <div class="report-modal">
+            <h3><i class="fas fa-flag"></i> Report Station</h3>
+            <div id="reportModalBody">
+                <div class="report-field">
+                    <label>Station</label>
+                    <input type="text" id="reportStationName" readonly class="pill-input" />
+                </div>
+                <div class="report-field">
+                    <label>Report Type</label>
+                    <select id="reportTypeSelect" class="pill-input">
+                        <option value="wrong_price">Wrong price</option>
+                        <option value="out_of_stock">Out of stock</option>
+                        <option value="station_closed">Station closed</option>
+                        <option value="incorrect_location">Incorrect location</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="report-field">
+                    <label>Price reported (optional)</label>
+                    <input type="text" id="reportPriceInput" class="pill-input" placeholder="e.g. 1.45" />
+                </div>
+                <div class="report-field">
+                    <label>Comments</label>
+                    <textarea id="reportCommentInput" class="pill-input" placeholder="Describe the issue..."></textarea>
+                </div>
+            </div>
+            <div class="report-actions">
+                <button class="btn-cancel" id="reportCancelBtn">Cancel</button>
+                <button class="btn-submit" id="reportSubmitBtn"><i class="fas fa-paper-plane"></i> Submit Report</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ============================================================ -->
     <!-- ===== JAVASCRIPT – FULL LOGIC ===== -->
@@ -2343,6 +2739,7 @@
                 userCountryFlag = '🇺🇸';
             let tempProfilePicUrl = '';
             let userHeading = 0;
+            let reportModalStationId = null;
 
             // ---------- DOM ELEMENTS ----------
             const authOverlay = document.getElementById('authOverlay');
@@ -2449,16 +2846,12 @@
                 aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
             }
 
-            function resetAIChat() {
+            function clearAIChat() {
                 aiMessagesContainer.innerHTML = '';
                 addAIMessage('ai',
                     'I love it! 🚀 I\'m **FuelRadar AI**, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.'
                     );
-                showToast('Chat refreshed');
             }
-
-            // Add refresh button listener
-            document.getElementById('refreshAIChatBtn').addEventListener('click', resetAIChat);
 
             addAIMessage('ai',
                 'I love it! 🚀 I\'m **FuelRadar AI**, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.'
@@ -2499,6 +2892,12 @@
             aiInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') { e.preventDefault();
                     handleUserMessage(); }
+            });
+
+            // AI Refresh Button
+            document.getElementById('aiRefreshBtn').addEventListener('click', function() {
+                clearAIChat();
+                showToast('AI chat refreshed');
             });
 
             // ---------- SYSTEM CHECKS ----------
@@ -2632,7 +3031,7 @@
             }
             detectUserCountry();
 
-            // ---------- OSM STATIONS (with proper address extraction) ----------
+            // ---------- OSM STATIONS (with improved address extraction) ----------
             async function fetchOSMStations(lat, lon, rad) {
                 const query = '[out:json];(node["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon +
                     ');way["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon + '););out body;';
@@ -2652,11 +3051,15 @@
                         let stationLat = el.lat || (el.center?.lat);
                         let stationLon = el.lon || (el.center?.lon);
                         if (!stationLat || !stationLon) continue;
-                        let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || el.tags?.['addr:state'] || el
-                            .tags?.['addr:postcode'] || '';
-                        if (!addr) {
-                            addr = el.tags?.['addr:housenumber'] || el.tags?.['addr:place'] || 'local road';
-                        }
+                        // Improved address extraction
+                        let addr = el.tags?.['addr:street'] || el.tags?.['addr:road'] || el.tags?.['addr:street_name'] ||
+                            el.tags?.['addr:suburb'] || el.tags?.['addr:district'] || el.tags?.['addr:city'] ||
+                            el.tags?.['addr:town'] || el.tags?.['addr:village'] || el.tags?.['addr:hamlet'] ||
+                            el.tags?.['addr:county'] || el.tags?.['addr:state'] || el.tags?.['addr:postcode'] ||
+                            el.tags?.['addr:place'] || el.tags?.['addr:area'] || el.tags?.['addr:neighbourhood'] ||
+                            el.tags?.['addr:quarter'] || el.tags?.['addr:subdistrict'] || el.tags?.['addr:region'] ||
+                            el.tags?.['addr:province'] || el.tags?.['addr:territory'] || el.tags?.['addr:island'] ||
+                            el.tags?.['addr:continent'] || 'local road';
                         let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : null;
                         let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : null;
                         let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : 'unknown';
@@ -2867,7 +3270,7 @@
                         node.querySelectorAll('.btn-report[data-report-id]').forEach(function(btn) {
                             btn.onclick = function(ev) {
                                 ev.stopPropagation();
-                                openReportForStation(btn.dataset.reportId);
+                                openReportModal(btn.dataset.reportId);
                             };
                         });
                     }
@@ -2992,15 +3395,74 @@
                     lon: station.lon, timestamp: Date.now() });
             }
 
-            function openReportForStation(stationId) {
-                openPage('reportPage');
-                setTimeout(function() {
-                    var el = document.getElementById('reportStation_' + stationId);
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }, 300);
+            // ---------- REPORT MODAL ----------
+            function openReportModal(stationId) {
+                reportModalStationId = stationId;
+                const station = stations.find(s => s.id === stationId);
+                if (!station) { showToast('Station not found', true); return; }
+                document.getElementById('reportStationName').value = station.name + ' (' + station.address + ')';
+                document.getElementById('reportTypeSelect').value = 'wrong_price';
+                document.getElementById('reportPriceInput').value = '';
+                document.getElementById('reportCommentInput').value = '';
+                document.getElementById('reportModalOverlay').classList.add('show');
             }
 
-            async function renderReportStationsList() {
+            function closeReportModal() {
+                document.getElementById('reportModalOverlay').classList.remove('show');
+                reportModalStationId = null;
+            }
+
+            document.getElementById('reportCancelBtn').addEventListener('click', closeReportModal);
+            document.getElementById('reportModalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeReportModal();
+            });
+
+            document.getElementById('reportSubmitBtn').addEventListener('click', async function() {
+                const btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Submitting...';
+                try {
+                    const stationId = reportModalStationId;
+                    if (!stationId) { showToast('No station selected', true);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report'; return; }
+                    const station = stations.find(s => s.id === stationId);
+                    if (!station) { showToast('Station not found', true);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report'; return; }
+                    const type = document.getElementById('reportTypeSelect').value;
+                    const comment = document.getElementById('reportCommentInput').value.trim();
+                    const priceReport = document.getElementById('reportPriceInput').value.trim();
+                    if (!comment && !priceReport) { showToast('Please add a comment or price', true);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report'; return; }
+                    const reportData = {
+                        stationId: stationId,
+                        stationName: station.name,
+                        address: station.address,
+                        type: type,
+                        comment: comment,
+                        priceReport: priceReport,
+                        timestamp: Date.now(),
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        lat: station.lat,
+                        lon: station.lon
+                    };
+                    await localDB.userReports.add(reportData);
+                    await rtdb.ref('reports').push(reportData);
+                    showToast('📋 Report submitted! Thank you for helping the community.');
+                    closeReportModal();
+                } catch (err) {
+                    console.error('Report error:', err);
+                    showToast('Failed to submit report: ' + err.message, true);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                }
+            });
+
+            function renderReportStationsList() {
                 var sorted = getFilteredStations();
                 var container = document.getElementById('reportStationsList');
                 if (!container) return;
@@ -3026,21 +3488,17 @@
                         '</div>' +
                         '</div>';
                 }).join('');
-                // Navigate from report page
                 container.querySelectorAll('[data-nav-id]').forEach(function(btn) {
                     btn.onclick = function() {
                         var st = stations.find(function(x) { return x.id == btn.dataset.navId; });
                         if (st) startNavigationWithMessage(st);
                     };
                 });
-                // Report from report page
                 container.querySelectorAll('[data-report-id]').forEach(function(btn) {
                     btn.onclick = function() {
-                        openReportForStation(btn.dataset.reportId);
+                        openReportModal(btn.dataset.reportId);
                     };
                 });
-                // Also handle the "Report" button in the popup – delegate to openReportForStation
-                // Additional report submission forms (if any) are handled by the popup buttons.
             }
 
             // ---------- FAVORITES ----------
@@ -3448,11 +3906,11 @@
                 var eta = calculateETA(distTotal);
                 var container = document.getElementById('summaryCards');
                 var funStopsHtml = selectedFunPlaces.length ?
-                    selectedFunPlaces.map(function(f) { return '<div>• ' + f.name + ' (' + f.type + ')</div>'; })
-                    .join('') :
-                    '<div>No fun stops selected</div>';
+                    selectedFunPlaces.map(function(f) { return '<div class="small-text">• ' + f.name + ' (' + f
+                            .type + ')</div>'; }).join('') :
+                    '<div class="small-text">No fun stops selected</div>';
                 container.innerHTML =
-                    '<div style="background:#f8fafc; border-radius:16px; padding:12px; border:1px solid #eaf4ea; margin-bottom:10px;"><div class="flex-between"><strong>🚗 Trip Details</strong></div><div class="flex-between mt-2"><span>📍 Destination:</span><strong>' +
+                    '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-map-pin"></i> Trip Details</div><div class="flex-between"><span>📍 Destination:</span><strong>' +
                     destName.substring(0, 40) +
                     '</strong></div><div class="flex-between"><span>📏 Total Distance:</span><strong>' + distTotal
                     .toFixed(1) +
@@ -3462,13 +3920,14 @@
                         cost) +
                     '</strong></div><div class="flex-between"><span>⏱️ ETA:</span><strong>' + eta +
                     '</strong></div></div>' +
-                    '<div style="background:#f8fafc; border-radius:16px; padding:12px; border:1px solid #eaf4ea; margin-bottom:10px;"><div class="flex-between"><strong>⛽ Fuel Station: ' +
-                    selectedStation.name + '</strong></div><div class="small-text mt-2">' + selectedStation
-                    .address + '</div><div><span class="fuel-badge">' + formatPrice(selectedStation
-                        .pricePetrol) + '</span><span class="fuel-badge">' + formatPrice(selectedStation
-                        .priceDiesel) + '</span></div></div>' +
-                    '<div style="background:#f8fafc; border-radius:16px; padding:12px; border:1px solid #eaf4ea;"><div class="flex-between"><strong>🎯 Fun Stops (' +
-                    selectedFunPlaces.length + ')</strong></div>' + funStopsHtml + '</div>';
+                    '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-gas-pump"></i> Fuel Station</div><div class="flex-between"><strong>' +
+                    selectedStation.name + '</strong><span class="badge-pill">' + (selectedStation.isRegistered ?
+                        'Verified' : 'Unverified') + '</span></div><div class="small-text">' + selectedStation
+                    .address + '</div><div class="stat-row"><span class="stat"><i class="fas fa-tag"></i> ' +
+                    formatPrice(selectedStation.pricePetrol) + '</span><span class="stat"><i class="fas fa-tag"></i> ' +
+                    formatPrice(selectedStation.priceDiesel) + '</span></div></div>' +
+                    '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-star"></i> Fun Stops (' +
+                    selectedFunPlaces.length + ')</div>' + funStopsHtml + '</div>';
                 document.getElementById('safetyTips').innerHTML =
                     '<strong>🛡️ Pre-trip checklist:</strong><br>• Check tyre pressure and tread depth<br>• Engine oil level & coolant<br>• Windshield washer fluid<br>• Lights and signals<br>• Keep emergency numbers handy';
             }
@@ -3490,7 +3949,7 @@
                         // AI chat already active
                     }
                 }
-                document.getElementById('sidebarOverlay').style.display = 'none';
+                document.getElementById('menuPopupOverlay').classList.remove('show');
             }
 
             function closePage(pageId) {
@@ -3602,7 +4061,7 @@
                     });
                 };
 
-                document.getElementById('logoutSidebar').onclick = function() { auth.signOut(); };
+                document.getElementById('logoutPopup').onclick = function() { auth.signOut(); };
 
                 // Update profile
                 document.getElementById('updateProfileBtn').onclick = async function() {
@@ -3753,7 +4212,7 @@
                         if (station) startNavigationWithMessage(station);
                         map.closePopup();
                     };
-                });
+                };
 
                 document.getElementById('startTripBtn').onclick = function() {
                     var panel = document.getElementById('turnByTurnPanel');
@@ -3786,6 +4245,7 @@
                     if (activeLocation) loadStationsAndRefresh(true);
                 };
 
+                // Best Near Me button (now inside map-floats)
                 document.getElementById('bestNearBtn').onclick = function() {
                     if (!actualUserLocation) { showToast('Getting location...', true);
                         locateAndFetch(); return; }
@@ -3809,28 +4269,26 @@
                     document.querySelector('.warning-banner').style.display = 'none';
                 };
 
-                // Sidebar (modal popup)
-                var sidebar = document.getElementById('sidebarOverlay');
+                // Popup menu (replaces sidebar)
+                var menuPopup = document.getElementById('menuPopupOverlay');
                 document.getElementById('menuBtn').onclick = function() {
-                    sidebar.style.display = 'flex';
+                    menuPopup.classList.add('show');
                 };
-                document.getElementById('closeSidebarBtn').onclick = function() {
-                    sidebar.style.display = 'none';
+                document.getElementById('closeMenuPopup').onclick = function() {
+                    menuPopup.classList.remove('show');
                 };
-                sidebar.addEventListener('click', function(e) {
-                    if (e.target === sidebar) {
-                        sidebar.style.display = 'none';
-                    }
+                menuPopup.addEventListener('click', function(e) {
+                    if (e.target === menuPopup) menuPopup.classList.remove('show');
                 });
 
-                // Sidebar items
-                document.querySelectorAll('.sidebar-item').forEach(function(item) {
-                    if (item.id === 'darkModeSidebar') {
+                // Menu popup items
+                document.querySelectorAll('.menu-popup-item').forEach(function(item) {
+                    if (item.id === 'darkModePopup') {
                         item.onclick = function() {
                             document.body.classList.toggle('dark');
-                            sidebar.style.display = 'none';
+                            menuPopup.classList.remove('show');
                         };
-                    } else if (item.id === 'logoutSidebar') {
+                    } else if (item.id === 'logoutPopup') {
                         // handled above
                     } else if (item.dataset.page) {
                         item.onclick = function(e) {
@@ -3839,10 +4297,10 @@
                             if (page === 'map') {
                                 document.querySelectorAll('.page-overlay').forEach(function(p) { p.classList
                                         .remove('show'); });
-                                sidebar.style.display = 'none';
+                                menuPopup.classList.remove('show');
                             } else {
                                 openPage(page + 'Page');
-                                sidebar.style.display = 'none';
+                                menuPopup.classList.remove('show');
                             }
                         };
                     }
