@@ -386,11 +386,6 @@
             border: 2px solid #16a34a;
             cursor: pointer;
         }
-        .header-right .bell-icon {
-            font-size: 20px;
-            color: #16a34a;
-            cursor: pointer;
-        }
 
         /* ===== STATS ROW ===== */
         .stats-row {
@@ -636,11 +631,11 @@
             background: #cbd5e1;
         }
 
-        /* ===== MAP FLOATING BUTTONS ===== */
+        /* ===== MAP FLOATING BUTTONS (TOP RIGHT) ===== */
         .map-floats {
             position: absolute;
-            bottom: 24px;
-            right: 14px;
+            top: 12px;
+            right: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -651,7 +646,7 @@
             height: 42px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             border: none;
             color: #16a34a;
             font-size: 18px;
@@ -668,20 +663,38 @@
         .map-float-btn.start-trip {
             display: none;
         }
-        .map-float-btn.best-near {
+
+        /* ===== BEST NEAR ME BUTTON (above view all) ===== */
+        .best-near-wrapper {
+            position: absolute;
+            bottom: 80px;
+            right: 14px;
+            z-index: 1000;
+        }
+        .best-near-btn {
             background: #16a34a;
             color: white;
             width: 56px;
             height: 56px;
-            font-size: 22px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-        .map-float-btn.best-near span {
-            font-size: 8px;
-            display: block;
-            font-weight: 700;
+            font-size: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
             line-height: 1;
+        }
+        .best-near-btn span {
+            font-size: 8px;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+        .best-near-btn:hover {
+            transform: scale(1.05);
         }
 
         /* ===== BOTTOM SHEET (Station Cards) ===== */
@@ -692,14 +705,22 @@
             right: 0;
             background: #ffffff;
             border-radius: 24px 24px 0 0;
-            padding: 14px 16px 8px 16px;
+            padding: 10px 16px 8px 16px;
             box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
             z-index: 900;
             max-height: 45%;
             display: flex;
             flex-direction: column;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.3s ease, transform 0.3s ease;
             border-top: 1px solid #eaf4ea;
+            transform: translateY(0);
+        }
+        .bottom-sheet.collapsed {
+            max-height: 0 !important;
+            padding: 0 16px !important;
+            overflow: hidden;
+            transform: translateY(100%);
+            border-top: none;
         }
         body.dark .bottom-sheet {
             background: #1e1e1e;
@@ -710,17 +731,18 @@
             height: 4px;
             background: #d1d5db;
             border-radius: 10px;
-            margin: 0 auto 10px auto;
+            margin: 0 auto 8px auto;
             cursor: pointer;
+            flex-shrink: 0;
         }
         .bottom-sheet .sheet-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #1e3a1e;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             flex-shrink: 0;
         }
         body.dark .bottom-sheet .sheet-header {
@@ -750,11 +772,11 @@
         .station-card-compact {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: #fafcfa;
             border-radius: 16px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
             border: 1px solid #eaf4ea;
             transition: 0.2s;
             cursor: pointer;
@@ -768,17 +790,23 @@
         }
         .station-card-compact .logo-col {
             flex-shrink: 0;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #eef5e8;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 10px;
             color: #16a34a;
             border: 2px solid #16a34a;
+            overflow: hidden;
+        }
+        .station-card-compact .logo-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         body.dark .station-card-compact .logo-col {
             background: #064e3b;
@@ -791,10 +819,10 @@
         }
         .station-card-compact .info-col .name {
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             color: #1e3a1e;
         }
         body.dark .station-card-compact .info-col .name {
@@ -803,13 +831,13 @@
         .station-card-compact .info-col .name .best-badge {
             background: #16a34a;
             color: white;
-            font-size: 8px;
-            padding: 1px 8px;
+            font-size: 7px;
+            padding: 1px 6px;
             border-radius: 30px;
             font-weight: 700;
         }
         .station-card-compact .info-col .address {
-            font-size: 11px;
+            font-size: 10px;
             color: #4b5563;
             white-space: nowrap;
             overflow: hidden;
@@ -821,13 +849,13 @@
         .station-card-compact .info-col .tags {
             display: flex;
             gap: 4px;
-            margin-top: 2px;
-            font-size: 9px;
+            margin-top: 1px;
+            font-size: 8px;
             font-weight: 600;
         }
         .station-card-compact .info-col .tags .tag {
             background: #eef5e8;
-            padding: 1px 8px;
+            padding: 1px 6px;
             border-radius: 30px;
             color: #065f46;
         }
@@ -841,7 +869,7 @@
         }
         .station-card-compact .price-col .price {
             font-weight: 800;
-            font-size: 15px;
+            font-size: 13px;
             color: #16a34a;
             display: block;
             line-height: 1.2;
@@ -850,7 +878,7 @@
             color: #4ade80;
         }
         .station-card-compact .price-col .price-label {
-            font-size: 9px;
+            font-size: 8px;
             color: #6b7280;
             font-weight: 600;
         }
@@ -861,19 +889,45 @@
             background: #16a34a;
             border: none;
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
         }
         .station-card-compact .nav-col button:hover {
             transform: scale(1.08);
+        }
+
+        /* ===== EXPAND BUTTON (when collapsed) ===== */
+        .expand-sheet-btn {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 899;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: none;
+            transition: 0.2s;
+        }
+        .expand-sheet-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+        .expand-sheet-btn i {
+            margin-right: 4px;
         }
 
         /* ===== BOTTOM NAVIGATION ===== */
@@ -883,7 +937,7 @@
             justify-content: space-around;
             background: #ffffff;
             border-top: 1px solid #eaf4ea;
-            padding: 6px 0 8px 0;
+            padding: 4px 0 6px 0;
             flex-shrink: 0;
             z-index: 100;
         }
@@ -895,18 +949,18 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            font-size: 10px;
+            gap: 1px;
+            font-size: 9px;
             font-weight: 600;
             color: #6b7280;
             cursor: pointer;
             transition: 0.2s;
-            padding: 2px 12px;
+            padding: 2px 10px;
             border: none;
             background: none;
         }
         .bottom-nav .nav-item i {
-            font-size: 20px;
+            font-size: 18px;
         }
         .bottom-nav .nav-item.active {
             color: #16a34a;
@@ -949,7 +1003,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-bottom: 1px solid #e2efe2;
             background: white;
             position: sticky;
@@ -961,30 +1015,172 @@
             border-bottom-color: #2c2c2c;
         }
         .page-header-bar h2 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
         }
         .close-page-btn {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 26px;
             cursor: pointer;
             color: #16a34a;
             line-height: 1;
         }
         .page-content {
-            padding: 16px 20px;
+            padding: 14px 18px;
             flex: 1;
+        }
+
+        /* ===== FULL PAGE STATIONS / REPORT ===== */
+        .full-station-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #eaf4ea;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        body.dark .full-station-card {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        .full-station-card .logo-col {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #eef5e8;
+            border: 2px solid #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .full-station-card .logo-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .full-station-card .info-col {
+            flex: 1;
+        }
+        .full-station-card .info-col .name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1e3a1e;
+        }
+        body.dark .full-station-card .info-col .name {
+            color: #e0e0e0;
+        }
+        .full-station-card .info-col .address {
+            font-size: 12px;
+            color: #4b5563;
+        }
+        body.dark .full-station-card .info-col .address {
+            color: #9ca3af;
+        }
+        .full-station-card .info-col .prices {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .full-station-card .info-col .prices .petrol {
+            color: #16a34a;
+        }
+        .full-station-card .info-col .prices .diesel {
+            color: #3b82f6;
+        }
+        .full-station-card .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .full-station-card .actions button {
+            border: none;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-weight: 600;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .full-station-card .actions .btn-nav {
+            background: #16a34a;
+            color: white;
+        }
+        .full-station-card .actions .btn-report {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ===== SEARCH RESULTS ===== */
+        .search-result-item {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border: 1px solid #eaf4ea;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-result-item:hover {
+            border-color: #16a34a;
+        }
+        body.dark .search-result-item {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        .search-result-item .logo-col {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #eef5e8;
+            border: 2px solid #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .search-result-item .logo-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .search-result-item .info-col {
+            flex: 1;
+        }
+        .search-result-item .info-col .name {
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .search-result-item .info-col .address {
+            font-size: 11px;
+            color: #4b5563;
+        }
+        body.dark .search-result-item .info-col .address {
+            color: #9ca3af;
+        }
+        .search-result-item .info-col .distance {
+            font-size: 11px;
+            font-weight: 600;
+            color: #16a34a;
         }
 
         /* ===== TRIP PLANNER STEPS ===== */
         .step-container {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .step-header {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #16a34a;
         }
         .step-content {
@@ -996,7 +1192,7 @@
         .step-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 16px;
+            margin-top: 14px;
         }
         .step-buttons button {
             flex: 1;
@@ -1019,19 +1215,19 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            max-height: 260px;
+            max-height: 240px;
             overflow-y: auto;
         }
         .place-suggestion-item {
             background: #f0fdf4;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid #dc2626;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: 0.15s;
-            font-size: 13px;
+            font-size: 12px;
         }
         .place-suggestion-item:last-child {
             border-bottom: none;
@@ -1047,18 +1243,18 @@
             background: #047857;
         }
         .place-suggestion-distance {
-            font-size: 11px;
+            font-size: 10px;
             background: #16a34a;
             color: white;
-            padding: 2px 10px;
+            padding: 2px 8px;
             border-radius: 30px;
             font-weight: 600;
         }
         .floating-card {
             background: white;
             border-radius: 16px;
-            padding: 12px 14px;
-            margin-bottom: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
             border-left: 4px solid #16a34a;
             cursor: pointer;
@@ -1082,18 +1278,18 @@
             color: white;
             border: none;
             border-radius: 40px;
-            padding: 6px 14px;
+            padding: 4px 12px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
         .safety-tips {
             background: #fef3c7;
             border-left: 4px solid #f59e0b;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 12px;
-            font-size: 13px;
-            margin-top: 10px;
+            font-size: 12px;
+            margin-top: 8px;
         }
         body.dark .safety-tips {
             background: #78350f;
@@ -1104,39 +1300,39 @@
         .car-card {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: #f0fdf4;
             border-radius: 20px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border: 1px solid #bbf7d0;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         body.dark .car-card {
             background: #2c2c2c;
             border-color: #4ade80;
         }
         .car-card img {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             object-fit: cover;
-            border-radius: 16px;
+            border-radius: 14px;
             border: 2px solid #16a34a;
         }
         .vehicle-badge {
             background: #16a34a;
             color: white;
             border-radius: 40px;
-            padding: 1px 10px;
-            font-size: 10px;
+            padding: 1px 8px;
+            font-size: 9px;
             font-weight: 700;
         }
         .log-item {
             background: #f8fafc;
-            border-radius: 16px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
             border: 1px solid #eaf4ea;
-            font-size: 13px;
+            font-size: 12px;
         }
         body.dark .log-item {
             background: #2c2c2c;
@@ -1147,10 +1343,10 @@
             color: white;
             border: none;
             border-radius: 40px;
-            padding: 12px;
+            padding: 10px;
             font-weight: 700;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -1160,10 +1356,10 @@
         .btn-sm {
             background: #f0fdf4;
             border: none;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
         }
         .btn-nav {
@@ -1180,17 +1376,17 @@
             align-items: center;
         }
         .small-text {
-            font-size: 12px;
+            font-size: 11px;
             color: #4b5563;
         }
         body.dark .small-text {
             color: #9ca3af;
         }
         .mt-2 {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .mb-2 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         /* ===== TOAST ===== */
@@ -1201,7 +1397,7 @@
             transform: translateX(-50%);
             background: #1e2a1e;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 60px;
             font-weight: 600;
             z-index: 4000;
@@ -1211,68 +1407,201 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
+        /* ===== AI CHAT FULL PAGE ===== */
+        #aiChatPage {
+            /* full page overlay */
+        }
+        #aiChatPage .ai-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ai-message {
+            max-width: 85%;
+            padding: 8px 14px;
+            border-radius: 20px;
+            word-break: break-word;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+        .ai-message.user {
+            align-self: flex-end;
+            background: #dc2626;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message.ai {
+            align-self: flex-start;
+            background: #eef5e8;
+            color: #1e3a1e;
+            border-bottom-left-radius: 4px;
+        }
+        body.dark .ai-message.ai {
+            background: #2c2c2c;
+            color: #e0e0e0;
+        }
+        .ai-message .timestamp {
+            font-size: 9px;
+            opacity: 0.6;
+            margin-top: 4px;
+            text-align: right;
+        }
+        .ai-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 10px 14px;
+            border-top: 1px solid #e2e8f0;
+            background: #f9fafb;
+            flex-shrink: 0;
+        }
+        body.dark .ai-input-area {
+            background: #2c2c2c;
+            border-top-color: #4ade80;
+        }
+        .ai-input-area input {
+            flex: 1;
+            border-radius: 40px;
+            border: 1px solid #16a34a;
+            padding: 8px 14px;
+            font-size: 14px;
+            background: white;
+            outline: none;
+        }
+        body.dark .ai-input-area input {
+            background: #1e1e1e;
+            color: white;
+            border-color: #4ade80;
+        }
+        .ai-send-btn {
+            background: #16a34a;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 42px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .ai-typing {
+            display: none;
+            padding: 4px 14px;
+            gap: 4px;
+            align-items: center;
+            font-size: 12px;
+            color: #16a34a;
+        }
+        .ai-typing.active {
+            display: flex;
+        }
+        .ai-typing-dots span {
+            width: 5px;
+            height: 5px;
+            background: #16a34a;
+            border-radius: 50%;
+            display: inline-block;
+            animation: aiTypingAnim 1.4s infinite;
+        }
+        @keyframes aiTypingAnim {
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .app-container {
                 max-width: 100%;
             }
             .header {
-                padding: 6px 10px 4px 10px;
+                padding: 4px 8px 4px 8px;
             }
             .brand-center h1 {
-                font-size: 17px;
+                font-size: 16px;
             }
             .stats-row {
-                font-size: 10px;
+                font-size: 9px;
                 padding: 4px 6px;
             }
             .stat-item {
-                font-size: 10px;
+                font-size: 9px;
                 padding: 1px 4px;
             }
             .green-banner {
-                font-size: 11px;
-                padding: 6px 10px;
+                font-size: 10px;
+                padding: 4px 8px;
             }
             .warning-banner {
-                font-size: 11px;
-                padding: 4px 10px;
+                font-size: 10px;
+                padding: 4px 8px;
             }
             .filter-section {
-                padding: 2px 10px 4px 10px;
+                padding: 2px 8px 4px 8px;
             }
             .chip {
-                font-size: 10px;
-                padding: 3px 10px;
+                font-size: 9px;
+                padding: 2px 8px;
             }
             .bottom-sheet {
-                padding: 10px 12px 4px 12px;
+                padding: 6px 10px 4px 10px;
                 max-height: 40%;
             }
             .station-card-compact {
-                padding: 8px 10px;
-                gap: 8px;
+                padding: 6px 8px;
+                gap: 6px;
             }
             .station-card-compact .logo-col {
                 width: 32px;
                 height: 32px;
-                font-size: 10px;
+                font-size: 9px;
             }
             .station-card-compact .info-col .name {
-                font-size: 12px;
+                font-size: 11px;
             }
             .station-card-compact .price-col .price {
-                font-size: 13px;
+                font-size: 12px;
             }
             .bottom-nav .nav-item {
-                font-size: 9px;
-                padding: 0 8px;
+                font-size: 8px;
+                padding: 0 6px;
             }
             .bottom-nav .nav-item i {
-                font-size: 17px;
+                font-size: 16px;
             }
             .page-content {
-                padding: 12px 14px;
+                padding: 10px 12px;
+            }
+            .full-station-card {
+                padding: 10px;
+                gap: 8px;
+            }
+            .full-station-card .logo-col {
+                width: 38px;
+                height: 38px;
+            }
+            .full-station-card .info-col .name {
+                font-size: 12px;
+            }
+            .search-result-item {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+            .search-result-item .logo-col {
+                width: 32px;
+                height: 32px;
             }
         }
 
@@ -1331,7 +1660,7 @@
         body.dark .station-card-compact .info-col .address {
             color: #9ca3af;
         }
-        body.dark .station-card-compact .info.col .tags .tag {
+        body.dark .station-card-compact .info-col .tags .tag {
             background: #064e3b;
             color: #a7f3d0;
         }
@@ -1383,6 +1712,166 @@
         }
         body.dark .floating-card.fun-card {
             border-left-color: #60a5fa;
+        }
+        body.dark .full-station-card {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .full-station-card .info-col .name {
+            color: #e0e0e0;
+        }
+        body.dark .full-station-card .info-col .address {
+            color: #9ca3af;
+        }
+        body.dark .search-result-item {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .search-result-item .info-col .name {
+            color: #e0e0e0;
+        }
+        body.dark .search-result-item .info-col .address {
+            color: #9ca3af;
+        }
+        body.dark .ai-message.ai {
+            background: #2c2c2c;
+            color: #e0e0e0;
+        }
+        body.dark .ai-input-area {
+            background: #2c2c2c;
+            border-top-color: #4ade80;
+        }
+        body.dark .ai-input-area input {
+            background: #1e1e1e;
+            color: white;
+            border-color: #4ade80;
+        }
+        body.dark .ai-send-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .map-float-btn {
+            background: #2c2c2c;
+            color: #4ade80;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        body.dark .best-near-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+            box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
+        }
+        body.dark .expand-sheet-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .page-header-bar {
+            background: #1e1e1e;
+            border-bottom-color: #2c2c2c;
+        }
+        body.dark .close-page-btn {
+            color: #4ade80;
+        }
+        body.dark .pill-input {
+            background: #2c2c2c;
+            border-color: #4ade80;
+            color: white;
+        }
+        body.dark .full-width-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .btn-nav {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .btn-report {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+        body.dark .step-next {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .step-prev {
+            background: #374151;
+            color: #e0e0e0;
+        }
+        body.dark .car-card {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .log-item {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .floating-card {
+            background: #2c2c2c;
+            border-left-color: #4ade80;
+        }
+        body.dark .floating-card.selected-card {
+            border-color: #4ade80;
+            background: #064e3b;
+        }
+        body.dark .floating-card.fun-card {
+            border-left-color: #60a5fa;
+        }
+        body.dark .full-station-card {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .full-station-card .info-col .name {
+            color: #e0e0e0;
+        }
+        body.dark .full-station-card .info-col .address {
+            color: #9ca3af;
+        }
+        body.dark .search-result-item {
+            background: #2c2c2c;
+            border-color: #4ade80;
+        }
+        body.dark .search-result-item .info-col .name {
+            color: #e0e0e0;
+        }
+        body.dark .search-result-item .info-col .address {
+            color: #9ca3af;
+        }
+        body.dark .ai-message.ai {
+            background: #2c2c2c;
+            color: #e0e0e0;
+        }
+        body.dark .ai-input-area {
+            background: #2c2c2c;
+            border-top-color: #4ade80;
+        }
+        body.dark .ai-input-area input {
+            background: #1e1e1e;
+            color: white;
+            border-color: #4ade80;
+        }
+        body.dark .ai-send-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .map-float-btn {
+            background: #2c2c2c;
+            color: #4ade80;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        body.dark .best-near-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+            box-shadow: 0 4px 16px rgba(74, 222, 128, 0.3);
+        }
+        body.dark .expand-sheet-btn {
+            background: #4ade80;
+            color: #1e3a1e;
+        }
+        body.dark .page-header-bar {
+            background: #1e1e1e;
+            border-bottom-color: #2c2c2c;
+        }
+        body.dark .close-page-btn {
+            color: #4ade80;
         }
     </style>
 </head>
@@ -1452,7 +1941,6 @@
                     <div class="slogan-tag"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
                 </div>
                 <div class="header-right">
-                    <div class="bell-icon"><i class="fas fa-bell"></i></div>
                     <img id="userProfilePicHeader" src="driver.png" class="profile-thumb" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
                 </div>
             </div>
@@ -1513,13 +2001,17 @@
         <div class="map-wrapper" id="mapWrapper">
             <div id="map"></div>
 
-            <!-- Map Floating Buttons -->
+            <!-- Map Floating Buttons (TOP RIGHT) -->
             <div class="map-floats">
                 <button class="map-float-btn" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="map-float-btn" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
                 <button class="map-float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
                 <button class="map-float-btn start-trip" id="startTripBtn"><i class="fas fa-play"></i></button>
-                <button class="map-float-btn best-near" id="bestNearBtn">
+            </div>
+
+            <!-- Best Near Me Button (above view all) -->
+            <div class="best-near-wrapper">
+                <button class="best-near-btn" id="bestNearBtn">
                     <i class="fas fa-gas-pump"></i>
                     <span>Best<br />Near me</span>
                 </button>
@@ -1535,7 +2027,7 @@
 
             <!-- ===== BOTTOM SHEET (Station Cards) ===== -->
             <div class="bottom-sheet" id="bottomSheet">
-                <div class="sheet-handle"></div>
+                <div class="sheet-handle" id="sheetHandle"></div>
                 <div class="sheet-header">
                     <span><i class="fas fa-star" style="color:#16a34a;"></i> Top stations near you</span>
                     <span class="view-all" id="viewAllStations">View all</span>
@@ -1544,6 +2036,9 @@
                     <!-- dynamic cards injected here -->
                 </div>
             </div>
+
+            <!-- Expand button (shown when collapsed) -->
+            <button class="expand-sheet-btn" id="expandSheetBtn"><i class="fas fa-chevron-up"></i> Show stations</button>
         </div>
 
         <!-- ===== BOTTOM NAVIGATION ===== -->
@@ -1551,6 +2046,7 @@
             <button class="nav-item active" data-page="map"><i class="fas fa-map"></i> Map</button>
             <button class="nav-item" data-page="stations"><i class="fas fa-gas-pump"></i> Stations</button>
             <button class="nav-item" data-page="report"><i class="fas fa-flag"></i> Report</button>
+            <button class="nav-item" data-page="ai"><i class="fas fa-robot"></i> AI Chat</button>
             <button class="nav-item" data-page="profile"><i class="fas fa-user"></i> Profile</button>
         </div>
     </div>
@@ -1558,9 +2054,9 @@
     <!-- ===== TOAST ===== -->
     <div id="dynamicToast" class="message-toast"></div>
 
-    <!-- ===== SIDEBAR (Overlay) ===== -->
+    <!-- ===== SIDEBAR (opens from LEFT) ===== -->
     <div id="sidebarOverlay" class="sidebar-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:3000; visibility:hidden; opacity:0; transition:0.25s;">
-        <div style="position:fixed; top:0; right:-300px; width:280px; height:100%; background:white; box-shadow:-4px 0 24px rgba(0,0,0,0.15); z-index:3001; transition:right 0.25s; display:flex; flex-direction:column; padding:20px 0;">
+        <div style="position:fixed; top:0; left:-300px; width:280px; height:100%; background:white; box-shadow:4px 0 24px rgba(0,0,0,0.15); z-index:3001; transition:left 0.25s; display:flex; flex-direction:column; padding:20px 0;">
             <div style="text-align:center; padding:10px 0;">
                 <img id="sidebarCarImage" src="car_placeholder.png" style="width:80px; height:80px; object-fit:cover; border-radius:20px; border:2px solid #16a34a;" onerror="this.src='driver.png';" />
                 <div style="margin-top:8px; font-weight:700; color:#16a34a; background:#eef5e8; padding:6px 12px; border-radius:40px; display:inline-block; font-size:13px;" id="sidebarVehicleNameText">My Car</div>
@@ -1706,9 +2202,9 @@
         </div>
     </div>
 
-    <!-- Report Page -->
+    <!-- Report Page (Full Page Stations) -->
     <div id="reportPage" class="page-overlay">
-        <div class="page-header-bar"><h2><i class="fas fa-flag"></i> Report Station</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div>
+        <div class="page-header-bar"><h2><i class="fas fa-flag"></i> Stations &amp; Report</h2><button class="close-page-btn" data-close="reportPage">&times;</button></div>
         <div class="page-content"><div id="reportStationsList"></div></div>
     </div>
 
@@ -1760,9 +2256,27 @@
         </div>
     </div>
 
+    <!-- ===== AI CHAT FULL PAGE ===== -->
+    <div id="aiChatPage" class="page-overlay">
+        <div class="page-header-bar">
+            <h2><i class="fas fa-robot"></i> FuelRadar AI</h2>
+            <button class="close-page-btn" data-close="aiChatPage">&times;</button>
+        </div>
+        <div class="ai-messages-container" id="aiMessagesList">
+            <!-- Welcome message will be injected by JS -->
+        </div>
+        <div class="ai-typing" id="aiTypingIndicator">
+            <div class="ai-typing-dots"><span>.</span><span>.</span><span>.</span></div>
+            <span>AI is thinking...</span>
+        </div>
+        <div class="ai-input-area">
+            <input type="text" id="aiMessageInput" placeholder="Ask FuelRadar AI..." autocomplete="off" />
+            <button class="ai-send-btn" id="aiSendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT – FULL LOGIC (unchanged from original) ===== -->
+    <!-- ===== JAVASCRIPT – FULL LOGIC ===== -->
     <!-- ============================================================ -->
     <script>
         // ==================== FUELRADAR MAIN APP ====================
@@ -1906,6 +2420,77 @@
                 const span = document.getElementById('fuelPriceInfo');
                 if (span) span.innerText = info;
             }
+
+            // ---------- AI CHAT (full page) ----------
+            const AI_WORKER_URL = 'https://zynapse-ai-worker.jubelmobz19.workers.dev/ask-ai';
+            const aiMessagesContainer = document.getElementById('aiMessagesList');
+            const aiInput = document.getElementById('aiMessageInput');
+            const aiSendBtn = document.getElementById('aiSendBtn');
+            const aiTyping = document.getElementById('aiTypingIndicator');
+
+            function formatMessageText(text) {
+                let escaped = (text || '').replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+                escaped = escaped.replace(/\*\*\*(.*?)\*\*\*/g, '<b>$1</b>');
+                escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                return escaped;
+            }
+
+            function addAIMessage(role, text, timestamp) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'ai-message ' + role;
+                const formattedTime = (timestamp || new Date()).toLocaleTimeString([], { hour: '2-digit',
+                    minute: '2-digit' });
+                msgDiv.innerHTML = '<div>' + formatMessageText(text) + '</div><div class="timestamp">' + formattedTime +
+                    '</div>';
+                aiMessagesContainer.appendChild(msgDiv);
+                aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
+            }
+
+            addAIMessage('ai',
+                'I love it! 🚀 I\'m **FuelRadar AI**, your smart driving assistant. Ask me anything about fuel, routes, vehicle tips, or just have a chat.'
+                );
+
+            async function sendToAI(prompt) {
+                aiTyping.classList.add('active');
+                aiSendBtn.disabled = true;
+                try {
+                    const response = await fetch(AI_WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: prompt })
+                    });
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    const data = await response.json();
+                    const aiReply = data.text || "I'm not sure, could you rephrase?";
+                    addAIMessage('ai', aiReply);
+                } catch (err) {
+                    console.error('AI error:', err);
+                    addAIMessage('ai', "Sorry, I'm having trouble connecting. Please try again later.");
+                } finally {
+                    aiTyping.classList.remove('active');
+                    aiSendBtn.disabled = false;
+                }
+            }
+
+            async function handleUserMessage() {
+                const text = aiInput.value.trim();
+                if (!text) return;
+                aiInput.value = '';
+                addAIMessage('user', text);
+                await sendToAI(text);
+                aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
+            }
+
+            aiSendBtn.addEventListener('click', handleUserMessage);
+            aiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') { e.preventDefault();
+                    handleUserMessage(); }
+            });
 
             // ---------- SYSTEM CHECKS ----------
             async function performSystemChecks() {
@@ -2233,15 +2818,25 @@
                         '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' :
                         '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
                     const popupContent =
-                        '<div style="min-width:260px;"><div style="font-weight:800;">' + s.name + ' ' +
-                        verifiedBadge + '</div><div>' + s.address + '</div><div><span class="station-distance">' +
-                        distanceKm + ' km</span> <span class="station-distance">' + eta +
-                        '</span> <span class="station-distance">' + formatPrice(s.pricePetrol) + '/' + formatPrice(s
-                            .priceDiesel) + '</span></div><div>' + amenitiesHtml +
-                        '</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="' + s.id +
-                        '">Navigate</button><button class="btn-sm btn-report" data-report-id="' + s.id +
-                        '">Report</button></div></div>';
-                    let marker = L.marker([s.lat, s.lon], { icon: icon }).bindPopup(popupContent);
+                        '<div style="min-width:240px;"><div style="font-weight:800; margin-bottom:4px;">' + s
+                        .name + ' ' + verifiedBadge + '</div>' +
+                        '<div style="font-size:12px; color:#4b5563; margin-bottom:4px;">' + s.address +
+                        '</div>' +
+                        '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px;">' +
+                        '<span class="station-distance" style="background:#eef5e8; border-radius:20px; padding:2px 8px; font-size:11px;">📍 ' +
+                        distanceKm + ' km</span>' +
+                        '<span class="station-distance" style="background:#eef5e8; border-radius:20px; padding:2px 8px; font-size:11px;">⏱️ ' +
+                        eta + '</span>' +
+                        '<span class="station-distance" style="background:#eef5e8; border-radius:20px; padding:2px 8px; font-size:11px;">💰 ' +
+                        formatPrice(s.pricePetrol) + '/' + formatPrice(s.priceDiesel) + '</span>' +
+                        '</div>' +
+                        '<div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">' +
+                        amenitiesHtml + '</div>' +
+                        '<div class="card-actions" style="display:flex; gap:6px;"><button class="btn-sm btn-nav" data-nav-id="' +
+                        s.id +
+                        '" style="padding:4px 14px; font-size:11px;">Navigate</button><button class="btn-sm btn-report" data-report-id="' +
+                        s.id + '" style="padding:4px 14px; font-size:11px;">Report</button></div></div>';
+                    let marker = L.marker([s.lat, s.lon], { icon: icon }).bindPopup(popupContent, { maxWidth: 260 });
                     clusterGroup.addLayer(marker);
                 });
                 map.off('popupopen');
@@ -2251,7 +2846,8 @@
                         node.querySelectorAll('.btn-nav[data-nav-id]').forEach(function(btn) {
                             btn.onclick = function(ev) {
                                 ev.stopPropagation();
-                                var st = stations.find(function(x) { return x.id == btn.dataset.navId; });
+                                var st = stations.find(function(x) { return x.id == btn.dataset
+                                        .navId; });
                                 if (st) startNavigationWithMessage(st);
                             };
                         });
@@ -2281,7 +2877,7 @@
             // ---------- BOTTOM SHEET CARDS ----------
             function updateBottomSheetCards() {
                 var container = document.getElementById('stationCardsContainer');
-                var filtered = getFilteredStations().slice(0, 10);
+                var filtered = getFilteredStations().slice(0, 8);
                 if (!container) return;
                 if (filtered.length === 0) {
                     container.innerHTML =
@@ -2289,18 +2885,15 @@
                     return;
                 }
                 container.innerHTML = filtered.map(function(s) {
-                    var initials = s.name.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2)
-                    .toUpperCase();
-                    var colorClass = s.isRegistered ? 'best-badge' : '';
                     var bestTag = s.isRegistered ? '<span class="best-badge">⭐ Best match</span>' : '';
                     var tagsHtml = s.amenities.slice(0, 2).map(function(a) { return '<span class="tag"><i class="fas ' +
                             a.icon + '"></i> ' + a.name + '</span>'; }).join('');
                     return '<div class="station-card-compact" data-id="' + s.id + '">' +
-                        '<div class="logo-col">' + initials + '</div>' +
+                        '<div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div>' +
                         '<div class="info-col">' +
                         '<div class="name">' + s.name + ' ' + bestTag + '</div>' +
-                        '<div class="address">' + (s.address || '') + ' · ' + (s.distance ? s.distance.toFixed(1) :
-                            '?') + ' km</div>' +
+                        '<div class="address">' + (s.address || '') + ' · ' + (s.distance ? s.distance
+                            .toFixed(1) : '?') + ' km</div>' +
                         '<div class="tags">' + tagsHtml + '</div>' +
                         '</div>' +
                         '<div class="price-col">' +
@@ -2335,6 +2928,25 @@
                     };
                 });
             }
+
+            // ---------- BOTTOM SHEET COLLAPSE / EXPAND ----------
+            var sheetCollapsed = false;
+            var sheetEl = document.getElementById('bottomSheet');
+            var expandBtn = document.getElementById('expandSheetBtn');
+
+            function toggleSheet() {
+                sheetCollapsed = !sheetCollapsed;
+                if (sheetCollapsed) {
+                    sheetEl.classList.add('collapsed');
+                    expandBtn.style.display = 'flex';
+                } else {
+                    sheetEl.classList.remove('collapsed');
+                    expandBtn.style.display = 'none';
+                }
+            }
+
+            document.getElementById('sheetHandle').addEventListener('click', toggleSheet);
+            expandBtn.addEventListener('click', toggleSheet);
 
             // ---------- NAVIGATION ----------
             function startNavigationWithMessage(station) {
@@ -2385,27 +2997,34 @@
                     var verifiedBadge = s.isRegistered ?
                         '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' :
                         '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
-                    return '<div class="station-card" id="reportStation_' + s.id + '">' +
-                        '<div class="station-name">' + s.name + ' ' + verifiedBadge + '</div>' +
-                        '<div class="station-address">' + s.address + '</div>' +
-                        '<div class="station-distance">📍 ' + (s.distance ? s.distance.toFixed(1) : '?') +
-                        ' km away</div>' +
-                        '<div><span class="fuel-badge">' + formatPrice(s.pricePetrol) + '</span><span class="fuel-badge">' +
-                        formatPrice(s.priceDiesel) + '</span></div>' +
-                        '<div class="amenities-list">' + amenitiesHtml + '</div>' +
-                        '<select id="reportType_' + s.id + '">' +
-                        '<option value="Fuel available">✅ Fuel available</option>' +
-                        '<option value="Out of fuel">⛔ Out of fuel</option>' +
-                        '<option value="Long queue">🚶 Long queue</option>' +
-                        '<option value="Price update">💰 Price update</option>' +
-                        '</select>' +
-                        '<input type="text" id="reportPrice_' + s.id + '" placeholder="New price (optional)" style="margin-top:4px; border-radius:40px; border:1px solid #d1d5db; padding:6px 12px; width:100%;">' +
-                        '<textarea id="reportComment_' + s.id + '" placeholder="Optional comment" rows="1" style="margin-top:4px; border-radius:40px; border:1px solid #d1d5db; padding:6px 12px; width:100%;"></textarea>' +
-                        '<button class="btn-sm btn-nav" data-submit-report="' + s.id +
-                        '" style="margin-top:6px;">📢 Submit report</button>' +
+                    return '<div class="full-station-card" id="reportStation_' + s.id + '">' +
+                        '<div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div>' +
+                        '<div class="info-col">' +
+                        '<div class="name">' + s.name + ' ' + verifiedBadge + '</div>' +
+                        '<div class="address">' + s.address + '</div>' +
+                        '<div class="prices"><span class="petrol">⛽ ' + formatPrice(s.pricePetrol) +
+                        '</span> <span class="diesel">⛽ ' + formatPrice(s.priceDiesel) + '</span></div>' +
+                        '<div class="amenities-list" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:2px;">' +
+                        amenitiesHtml + '</div>' +
+                        '</div>' +
+                        '<div class="actions">' +
+                        '<button class="btn-nav" data-nav-id="' + s.id + '">Navigate</button>' +
+                        '<button class="btn-report" data-report-id="' + s.id + '">Report</button>' +
+                        '</div>' +
                         '</div>';
                 }).join('');
-                document.querySelectorAll('[data-submit-report]').forEach(function(btn) {
+                container.querySelectorAll('[data-nav-id]').forEach(function(btn) {
+                    btn.onclick = function() {
+                        var st = stations.find(function(x) { return x.id == btn.dataset.navId; });
+                        if (st) startNavigationWithMessage(st);
+                    };
+                });
+                container.querySelectorAll('[data-report-id]').forEach(function(btn) {
+                    btn.onclick = function() {
+                        openReportForStation(btn.dataset.reportId);
+                    };
+                });
+                container.querySelectorAll('[data-submit-report]').forEach(function(btn) {
                     btn.onclick = async function() {
                         var sid = btn.dataset.submitReport;
                         var type = document.getElementById('reportType_' + sid).value;
@@ -2451,11 +3070,13 @@
                         var verifiedBadge = s.isRegistered ?
                             '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' :
                             '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
-                        return '<div class="station-card"><div class="station-name">' + s.name + ' ' +
-                            verifiedBadge + '</div><div class="station-distance">📍 ' + (s.distance ? s
-                                .distance.toFixed(1) : '?') + ' km</div><div class="card-actions"><button class="btn-sm btn-nav" data-nav-id="' +
-                            s.id + '">Navigate</button><button class="btn-sm" data-fav-remove="' + s.id +
-                            '">Remove</button></div></div>';
+                        return '<div class="full-station-card"><div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div><div class="info-col"><div class="name">' +
+                            s.name + ' ' + verifiedBadge + '</div><div class="address">' + s.address +
+                            '</div><div class="prices"><span class="petrol">⛽ ' + formatPrice(s
+                                .pricePetrol) + '</span> <span class="diesel">⛽ ' + formatPrice(s
+                                .priceDiesel) + '</span></div></div><div class="actions"><button class="btn-nav" data-nav-id="' +
+                            s.id + '">Navigate</button><button class="btn-sm" data-fav-remove="' + s
+                            .id + '">Remove</button></div></div>';
                     }).join('');
                     container.querySelectorAll('[data-fav-remove]').forEach(function(btn) {
                         btn.onclick = function() { toggleFavorite(btn.dataset.favRemove); };
@@ -2604,7 +3225,7 @@
 
             // ---------- MAP INIT ----------
             function initMap() {
-                map = L.map('map', { zoomControl: true }).setView([0, 0], 2);
+                map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
@@ -2867,9 +3488,13 @@
                     if (pageId === 'historyPage') loadHistory();
                     if (pageId === 'recentPage') loadRecentStations();
                     if (pageId === 'tripPlannerPage') resetTripPlanner();
+                    if (pageId === 'aiChatPage') {
+                        // AI chat already active
+                    }
                 }
                 document.getElementById('sidebarOverlay').style.visibility = 'hidden';
                 document.getElementById('sidebarOverlay').style.opacity = '0';
+                document.querySelector('#sidebarOverlay > div').style.left = '-300px';
             }
 
             function closePage(pageId) {
@@ -3188,23 +3813,23 @@
                     document.querySelector('.warning-banner').style.display = 'none';
                 };
 
-                // Sidebar
+                // Sidebar (opens from left)
                 var sidebar = document.getElementById('sidebarOverlay');
                 document.getElementById('menuBtn').onclick = function() {
                     sidebar.style.visibility = 'visible';
                     sidebar.style.opacity = '1';
-                    document.querySelector(sidebar + ' > div').style.right = '0';
+                    document.querySelector(sidebar + ' > div').style.left = '0';
                 };
                 document.getElementById('closeSidebarBtn').onclick = function() {
                     sidebar.style.visibility = 'hidden';
                     sidebar.style.opacity = '0';
-                    document.querySelector(sidebar + ' > div').style.right = '-300px';
+                    document.querySelector(sidebar + ' > div').style.left = '-300px';
                 };
                 sidebar.addEventListener('click', function(e) {
                     if (e.target === sidebar) {
                         sidebar.style.visibility = 'hidden';
                         sidebar.style.opacity = '0';
-                        document.querySelector(sidebar + ' > div').style.right = '-300px';
+                        document.querySelector(sidebar + ' > div').style.left = '-300px';
                     }
                 });
 
@@ -3215,7 +3840,7 @@
                             document.body.classList.toggle('dark');
                             sidebar.style.visibility = 'hidden';
                             sidebar.style.opacity = '0';
-                            document.querySelector(sidebar + ' > div').style.right = '-300px';
+                            document.querySelector(sidebar + ' > div').style.left = '-300px';
                         };
                     } else if (item.id === 'logoutSidebar') {
                         // handled above
@@ -3228,12 +3853,12 @@
                                         .remove('show'); });
                                 sidebar.style.visibility = 'hidden';
                                 sidebar.style.opacity = '0';
-                                document.querySelector(sidebar + ' > div').style.right = '-300px';
+                                document.querySelector(sidebar + ' > div').style.left = '-300px';
                             } else {
                                 openPage(page + 'Page');
                                 sidebar.style.visibility = 'hidden';
                                 sidebar.style.opacity = '0';
-                                document.querySelector(sidebar + ' > div').style.right = '-300px';
+                                document.querySelector(sidebar + ' > div').style.left = '-300px';
                             }
                         };
                     }
@@ -3253,6 +3878,8 @@
                             openPage('reportPage');
                         } else if (page === 'report') {
                             openPage('reportPage');
+                        } else if (page === 'ai') {
+                            openPage('aiChatPage');
                         } else if (page === 'profile') {
                             openPage('profilePage');
                         }
@@ -3276,9 +3903,10 @@
                             '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' :
                             '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
                         return '<div class="search-result-item" data-station-id="' + s.id +
-                            '" style="background:#f8fafc; border-radius:12px; padding:10px; margin-bottom:6px; border:1px solid #eaf4ea; cursor:pointer;"><strong>' +
-                            s.name + ' ' + verifiedBadge + '</strong><br>' + s.address + '<br>📍 ' + (s
-                                .distance ? s.distance.toFixed(1) : '?') + ' km</div>';
+                            '"><div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2316a34a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div><div class="info-col"><div class="name">' +
+                            s.name + ' ' + verifiedBadge + '</div><div class="address">' + s.address +
+                            '</div><div class="distance">📍 ' + (s.distance ? s.distance.toFixed(1) :
+                            '?') + ' km</div></div></div>';
                     }).join('');
                     container.querySelectorAll('.search-result-item').forEach(function(el) {
                         el.onclick = function() {
