@@ -2643,7 +2643,11 @@
                         let stationLat = el.lat || (el.center?.lat);
                         let stationLon = el.lon || (el.center?.lon);
                         if (!stationLat || !stationLon) continue;
-                        let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || 'local road';
+                        let addr = el.tags?.['addr:street'] || el.tags?.['addr:city'] || el.tags?.['addr:state'] || el
+                            .tags?.['addr:postcode'] || '';
+                        if (!addr) {
+                            addr = el.tags?.['addr:housenumber'] || el.tags?.['addr:place'] || 'local road';
+                        }
                         let fuelPetrol = el.tags?.['fuel:petrol'] === 'yes' ? 'yes' : null;
                         let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : null;
                         let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : 'unknown';
@@ -3024,6 +3028,14 @@
                         openReportForStation(btn.dataset.reportId);
                     };
                 });
+                // Also allow reporting from the card directly via the button
+                container.querySelectorAll('.btn-report[data-report-id]').forEach(function(btn) {
+                    btn.onclick = function(ev) {
+                        ev.stopPropagation();
+                        openReportForStation(btn.dataset.reportId);
+                    };
+                });
+                // For the report form submission inside each card (if any)
                 container.querySelectorAll('[data-submit-report]').forEach(function(btn) {
                     btn.onclick = async function() {
                         var sid = btn.dataset.submitReport;
@@ -3757,7 +3769,7 @@
                         if (station) startNavigationWithMessage(station);
                         map.closePopup();
                     };
-                };
+                });
 
                 document.getElementById('startTripBtn').onclick = function() {
                     var panel = document.getElementById('turnByTurnPanel');
