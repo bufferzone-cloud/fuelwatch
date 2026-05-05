@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FuelRadar • Fleet Management</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        :root {
+            --green: #27AE60;
+            --green-dark: #1E8449;
+            --green-light: #E8F8F0;
+            --red: #E74C3C;
+            --red-dark: #C0392B;
+            --red-light: #FDEDEC;
+            --orange: #F39C12;
+            --white: #FFFFFF;
+            --bg: #F5F7FA;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --border: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --radius: 14px;
+            --radius-sm: 10px;
+            --radius-xs: 8px;
+            --header-h: 50px;
+            --nav-h: 58px;
+            --safe-bottom: env(safe-area-inset-bottom, 8px);
+            --font-xs: 0.68rem;
+            --font-sm: 0.76rem;
+            --font-md: 0.84rem;
+            --transition: 0.2s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+        .header {
+            height: var(--header-h);
+            min-height: var(--header-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+        .header .logo {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--green-dark);
+            white-space: nowrap;
+        }
+        .header .logo i {
+            color: var(--green);
+            font-size: 1.2rem;
+        }
+        .header .search-wrap {
+            flex: 1;
+            position: relative;
+            max-width: 280px;
+        }
+        .header .search-wrap input {
+            width: 100%;
+            padding: 7px 10px 7px 30px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            font-size: var(--font-sm);
+            background: var(--bg);
+            outline: none;
+            font-family: inherit;
+        }
+        .header .search-wrap input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.08);
+        }
+        .header .search-wrap i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .header .notif-btn {
+            background: none;
+            border: none;
+            position: relative;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            padding: 6px 8px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .header .notif-btn .badge {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            background: var(--red);
+            color: #fff;
+            font-size: 0.55rem;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 2px solid #fff;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 10px;
+            padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px);
+            -webkit-overflow-scrolling: touch;
+        }
+        .section {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .section.active {
+            display: flex;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-h);
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: var(--safe-bottom);
+            z-index: 60;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+        }
+        .bottom-nav button {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            min-width: 50px;
+        }
+        .bottom-nav button i {
+            font-size: 1.2rem;
+            transition: all var(--transition);
+        }
+        .bottom-nav button.active {
+            color: var(--green-dark);
+        }
+        .bottom-nav button.active i {
+            color: var(--green);
+        }
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .card:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        .card .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card .card-title {
+            font-weight: 600;
+            font-size: var(--font-md);
+            color: var(--text);
+        }
+        .card .card-sub {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .card .card-info {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+        .card .card-icons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin: 2px 0;
+        }
+        .card .card-icons-row span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .card .card-actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 4px;
+            justify-content: flex-start;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .metric-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 12px 12px;
+            box-shadow: var(--shadow);
+            border-left: 3px solid var(--green);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            cursor: pointer;
+            transition: all var(--transition);
+            min-width: 0;
+        }
+        .metric-card:active {
+            transform: scale(0.97);
+        }
+        .metric-card.red {
+            border-left-color: var(--red);
+        }
+        .metric-card.warn {
+            border-left-color: var(--orange);
+        }
+        .metric-card.blue {
+            border-left-color: #3498DB;
+        }
+        .metric-card.purple {
+            border-left-color: #8E44AD;
+        }
+        .metric-card .m-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .metric-card .m-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .metric-card .m-sub {
+            font-size: 0.62rem;
+            color: var(--green-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+        .badge-green {
+            background: var(--green-light);
+            color: #166534;
+        }
+        .badge-red {
+            background: var(--red-light);
+            color: #991B1B;
+        }
+        .badge-orange {
+            background: #FFF3E0;
+            color: #B45309;
+        }
+        .badge-gray {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .badge-blue {
+            background: #EBF5FB;
+            color: #1A5276;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 7px 13px;
+            border-radius: 18px;
+            font-size: var(--font-xs);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-outline {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .btn-outline.green {
+            border-color: var(--green);
+            color: var(--green-dark);
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.65rem;
+            border-radius: 12px;
+        }
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 0.6rem;
+            border-radius: 10px;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 70;
+            display: none;
+        }
+        .overlay.show {
+            display: block;
+        }
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--white);
+            z-index: 75;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 4px;
+            overflow-y: auto;
+        }
+        .drawer.open {
+            right: 0;
+        }
+        .drawer h4 {
+            font-size: 0.85rem;
+            color: var(--green-dark);
+            padding: 8px 4px 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 6px;
+        }
+        .drawer button {
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: var(--font-md);
+            padding: 10px 12px;
+            border-radius: var(--radius-xs);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all var(--transition);
+            font-weight: 500;
+        }
+        .drawer button i {
+            width: 20px;
+            text-align: center;
+            color: var(--green);
+            font-size: 0.9rem;
+        }
+        .drawer button:active {
+            background: var(--green-light);
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 18px 18px 0 0;
+            padding: 16px 14px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            font-size: var(--font-xs);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+            color: var(--text);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            font-size: var(--font-sm);
+            font-family: inherit;
+            outline: none;
+            background: #fff;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.06);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        #map {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--radius);
+            background: #e8e8e8;
+        }
+        .map-overlay-card {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            padding: 12px;
+            z-index: 500;
+            font-size: var(--font-sm);
+            display: none;
+        }
+        .map-overlay-card.show {
+            display: block;
+        }
+        .toast-container {
+            position: fixed;
+            top: 12px;
+            left: 10px;
+            right: 10px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            pointer-events: none;
+        }
+        .toast {
+            background: #1E293B;
+            color: #fff;
+            padding: 11px 16px;
+            border-radius: 10px;
+            font-size: var(--font-sm);
+            font-weight: 500;
+            animation: fadeInDown 0.3s ease;
+            text-align: center;
+            pointer-events: auto;
+            border-left: 4px solid var(--green);
+        }
+        .toast.error {
+            border-left-color: var(--red);
+        }
+        .toast.warn {
+            border-left-color: var(--orange);
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .alert-item {
+            padding: 10px 12px;
+            border-left: 4px solid var(--orange);
+            background: #FFFDF7;
+            margin-bottom: 6px;
+            border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+            font-size: var(--font-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .alert-item.critical {
+            border-left-color: var(--red);
+            background: #FFFBFB;
+        }
+        .alert-item.info {
+            border-left-color: var(--green);
+            background: #FBFFFC;
+        }
+        .alert-item .alert-detail {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            font-size: var(--font-xs);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .alert-item.expanded .alert-detail {
+            display: block;
+        }
+        .alert-item .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: var(--font-sm);
+        }
+        canvas {
+            max-height: 220px;
+        }
+        .chart-wrap {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+            flex-wrap: wrap;
+        }
+        .section-title i {
+            color: var(--green);
+            font-size: 0.9rem;
+        }
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .detail-section {
+            background: var(--bg);
+            border-radius: var(--radius-xs);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        .detail-section h5 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: var(--font-sm);
+            border-bottom: 1px dotted var(--border);
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        @media (min-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+        @media (max-width: 340px) {
+            .metric-grid {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><i class="fas fa-gas-pump"></i> FuelRadar</div>
+        <div class="search-wrap"><i class="fas fa-search"></i><input type="text" placeholder="Search fleet..." id="globalSearch" oninput="handleSearch()"></div>
+        <button class="notif-btn" onclick="navigate('alerts')"><i class="fas fa-bell"></i><span class="badge" id="notifBadge">3</span></button>
+    </header>
+
+    <div class="content" id="contentArea">
+        <section class="section active" id="sec-dashboard">
+            <div class="metric-grid" id="dashMetrics"></div>
+            <div class="chart-wrap"><canvas id="chartFuel"></canvas></div>
+            <div class="chart-wrap"><canvas id="chartTrips"></canvas></div>
+            <div id="dashAlerts"></div>
+        </section>
+        <section class="section" id="sec-map">
+            <div style="position:relative;border-radius:var(--radius);overflow:hidden;"><div id="map"></div><div class="map-overlay-card" id="mapCard"></div></div>
+            <div class="card-grid" id="mapVehicleCards"></div>
+        </section>
+        <section class="section" id="sec-vehicles">
+            <div class="section-title"><i class="fas fa-truck"></i> Vehicle Fleet <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('vehicle')">+ Add</button></div>
+            <div class="card-grid" id="vehicleCards"></div>
+        </section>
+        <section class="section" id="sec-drivers">
+            <div class="section-title"><i class="fas fa-id-card"></i> Drivers <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('driver')">+ Add</button></div>
+            <div class="card-grid" id="driverCards"></div>
+        </section>
+        <section class="section" id="sec-trips">
+            <div class="section-title"><i class="fas fa-route"></i> Trips <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('trip')">+ Create</button></div>
+            <div id="tripCards"></div>
+        </section>
+        <section class="section" id="sec-fuel">
+            <div class="section-title"><i class="fas fa-gas-pump"></i> Fuel Logs <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('fuel')">+ Log</button></div>
+            <div id="fuelCards"></div>
+        </section>
+        <section class="section" id="sec-maintenance">
+            <div class="section-title"><i class="fas fa-tools"></i> Maintenance <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('maintenance')">+ Schedule</button></div>
+            <div id="maintenanceCards"></div>
+        </section>
+        <section class="section" id="sec-breakdowns">
+            <div class="section-title"><i class="fas fa-exclamation-circle"></i> Breakdowns <button class="btn btn-red btn-sm" style="margin-left:auto;" onclick="openModal('breakdown')">+ Report</button></div>
+            <div id="breakdownCards"></div>
+        </section>
+        <section class="section" id="sec-reports">
+            <div class="metric-grid" id="reportMetrics"></div>
+            <div class="chart-wrap"><canvas id="chartCost"></canvas></div>
+            <div class="chart-wrap"><canvas id="chartUtil"></canvas></div>
+            <div class="flex-wrap">
+                <button class="btn btn-outline green" onclick="exportData('pdf')"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button class="btn btn-outline green" onclick="exportData('excel')"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn btn-outline green" onclick="exportData('csv')"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </section>
+        <section class="section" id="sec-alerts">
+            <div class="section-title"><i class="fas fa-exclamation-triangle"></i> Alerts <button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="clearAllAlerts()">Clear All</button></div>
+            <div id="alertsList"></div>
+        </section>
+        <section class="section" id="sec-users">
+            <div class="section-title"><i class="fas fa-users-cog"></i> Users & Roles <button class="btn btn-green btn-sm" style="margin-left:auto;" onclick="openModal('user')">+ Add</button></div>
+            <div id="userCards"></div>
+        </section>
+        <section class="section" id="sec-audit">
+            <div class="section-title"><i class="fas fa-history"></i> Audit Logs</div>
+            <div id="auditList" style="max-height:400px;overflow-y:auto;"></div>
+        </section>
+        <section class="section" id="sec-settings">
+            <div class="section-title"><i class="fas fa-cog"></i> Settings</div>
+            <div class="card"><div class="card-row"><span>Company Name</span><strong id="setCompany">FuelRadar Ltd</strong></div></div>
+            <div class="card"><div class="card-row"><span>Currency</span><strong>ZMW (K)</strong></div></div>
+            <div class="card"><div class="card-row"><span>Low Fuel Alert</span><strong id="setFuelThresh">15%</strong></div></div>
+            <div class="card"><div class="card-row"><span>Data Storage</span><button class="btn btn-red btn-sm" onclick="resetAllData()"><i class="fas fa-trash"></i> Reset All</button></div></div>
+            <div class="card"><div class="card-row"><span>Version</span><strong>2.1.0</strong></div></div>
+        </section>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="active" data-tab="dashboard"><i class="fas fa-chart-pie"></i>Home</button>
+        <button data-tab="map"><i class="fas fa-map-marker-alt"></i>Map</button>
+        <button data-tab="vehicles"><i class="fas fa-truck"></i>Fleet</button>
+        <button data-tab="alerts"><i class="fas fa-bell"></i>Alerts</button>
+        <button data-tab="menu" id="btnMenu"><i class="fas fa-ellipsis-h"></i>More</button>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <h4><i class="fas fa-bars"></i> More Options</h4>
+        <button onclick="navigate('drivers')"><i class="fas fa-id-card"></i> Drivers</button>
+        <button onclick="navigate('trips')"><i class="fas fa-route"></i> Trips</button>
+        <button onclick="navigate('fuel')"><i class="fas fa-gas-pump"></i> Fuel Logs</button>
+        <button onclick="navigate('maintenance')"><i class="fas fa-tools"></i> Maintenance</button>
+        <button onclick="navigate('breakdowns')"><i class="fas fa-exclamation-circle"></i> Breakdowns</button>
+        <button onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
+        <button onclick="navigate('users')"><i class="fas fa-users-cog"></i> Users & Roles</button>
+        <button onclick="navigate('audit')"><i class="fas fa-history"></i> Audit Logs</button>
+        <button onclick="navigate('settings')"><i class="fas fa-cog"></i> Settings</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        (function() {
+            const CURRENCY = 'ZMW';
+            const STORAGE_KEY = 'fuelradar_fleet_data_v3';
+            let appData = {
+                vehicles: [],
+                drivers: [],
+                trips: [],
+                fuelLogs: [],
+                maintenance: [],
+                breakdowns: [],
+                users: [],
+                auditLogs: [],
+                alerts: [],
+                idCounters: { vehicles: 0, drivers: 0, trips: 0, fuel: 0, maintenance: 0, breakdowns: 0, users: 0,
+                    audit: 0, alerts: 0 },
+                settings: { company: 'FuelRadar Ltd', currency: 'ZMW', lowFuelPct: 15 }
+            };
+            let currentSection = 'dashboard';
+            let mapInstance = null;
+            let mapMarkers = [];
+            let charts = {};
+            let editingId = null;
+
+            function loadData() {
+                const s = localStorage.getItem(STORAGE_KEY);
+                if (s) try { const parsed = JSON.parse(s);
+                    appData = { ...appData, ...parsed }; } catch (e) {}
+                if (!appData.vehicles.length) seedData();
+            }
+
+            function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
+
+            function addAudit(act, det) {
+                appData.idCounters.audit++;
+                appData.auditLogs.unshift({ id: appData.idCounters.audit, timestamp: new Date().toISOString(),
+                    action: act, detail: det, user: 'Admin' });
+                if (appData.auditLogs.length > 200) appData.auditLogs.length = 200;
+                saveData();
+            }
+
+            function addAlert(type, msg, sev = 'warn', relatedVehicleId = null) {
+                appData.idCounters.alerts++;
+                appData.alerts.unshift({ id: appData.idCounters.alerts, type, message: msg, severity: sev,
+                    timestamp: new Date().toISOString(), read: false, relatedVehicleId,
+                    suggestedAction: sev === 'critical' ? 'Immediate attention required' : sev === 'warn' ?
+                    'Check within 24 hours' : 'Review at next service' });
+                if (appData.alerts.length > 80) appData.alerts.length = 80;
+                saveData();
+                updateBadge();
+            }
+
+            function seedData() {
+                appData.vehicles = [
+                    { id: 1, plate: 'ABZ 1234', make: 'Toyota', model: 'Hilux', year: 2022, status: 'active',
+                        driverId: 1, mileage: 45200, fuelType: 'Diesel', tankCapacity: 80, avgSpeed: 65,
+                        lastService: '2026-03-15', parked: false },
+                    { id: 2, plate: 'ABZ 5678', make: 'Ford', model: 'Transit', year: 2021, status: 'active',
+                        driverId: 2, mileage: 67800, fuelType: 'Diesel', tankCapacity: 70, avgSpeed: 55,
+                        lastService: '2026-04-01', parked: true },
+                    { id: 3, plate: 'ABZ 9012', make: 'Mercedes', model: 'Sprinter', year: 2023, status: 'maintenance',
+                        driverId: null, mileage: 23100, fuelType: 'Diesel', tankCapacity: 75, avgSpeed: 0,
+                        lastService: '2026-04-20', parked: true },
+                    { id: 4, plate: 'ABZ 3456', make: 'Isuzu', model: 'D-Max', year: 2020, status: 'idle',
+                        driverId: null, mileage: 89200, fuelType: 'Diesel', tankCapacity: 65, avgSpeed: 0,
+                        lastService: '2026-02-28', parked: true },
+                    { id: 5, plate: 'ABZ 7890', make: 'Toyota', model: 'Land Cruiser', year: 2023, status: 'active',
+                        driverId: 4, mileage: 31200, fuelType: 'Diesel', tankCapacity: 90, avgSpeed: 72,
+                        lastService: '2026-04-10', parked: false },
+                    { id: 6, plate: 'ABZ 2468', make: 'Nissan', model: 'Navara', year: 2021, status: 'broken',
+                        driverId: null, mileage: 54300, fuelType: 'Diesel', tankCapacity: 70, avgSpeed: 0,
+                        lastService: '2026-01-15', parked: true },
+                ];
+                appData.drivers = [
+                    { id: 1, name: 'James Banda', license: 'DL-001-22', phone: '+260 977 123456', status: 'active',
+                        vehicleId: 1, tripsCompleted: 47, score: 82, yearsExperience: 5 },
+                    { id: 2, name: 'Mary Phiri', license: 'DL-002-21', phone: '+260 955 234567', status: 'active',
+                        vehicleId: 2, tripsCompleted: 35, score: 91, yearsExperience: 7 },
+                    { id: 3, name: 'Peter Zulu', license: 'DL-003-23', phone: '+260 966 345678', status: 'inactive',
+                        vehicleId: null, tripsCompleted: 12, score: 68, yearsExperience: 2 },
+                    { id: 4, name: 'Grace Mwansa', license: 'DL-004-24', phone: '+260 977 456789', status: 'active',
+                        vehicleId: 5, tripsCompleted: 28, score: 87, yearsExperience: 4 },
+                    { id: 5, name: 'David Kaunda', license: 'DL-005-22', phone: '+260 955 567890', status: 'active',
+                        vehicleId: null, tripsCompleted: 19, score: 74, yearsExperience: 3 },
+                ];
+                appData.trips = [
+                    { id: 1, vehicleId: 1, driverId: 1, origin: 'Lusaka', destination: 'Kitwe', distance: 360,
+                        status: 'completed', startTime: '2026-05-01T06:00', endTime: '2026-05-01T12:30',
+                        notes: 'On-time delivery' },
+                    { id: 2, vehicleId: 2, driverId: 2, origin: 'Ndola', destination: 'Lusaka', distance: 320,
+                        status: 'active', startTime: '2026-05-05T07:00', endTime: null, notes: 'In transit' },
+                    { id: 3, vehicleId: 1, driverId: 1, origin: 'Livingstone', destination: 'Lusaka', distance: 470,
+                        status: 'completed', startTime: '2026-05-02T05:00', endTime: '2026-05-02T13:00',
+                        notes: 'Slight delay due to traffic' },
+                    { id: 4, vehicleId: 5, driverId: 4, origin: 'Lusaka', destination: 'Chipata', distance: 570,
+                        status: 'active', startTime: '2026-05-04T08:00', endTime: null, notes: 'Overnight stop' },
+                    { id: 5, vehicleId: 2, driverId: 2, origin: 'Kabwe', destination: 'Lusaka', distance: 140,
+                        status: 'completed', startTime: '2026-05-03T09:00', endTime: '2026-05-03T11:45',
+                        notes: 'Quick run' },
+                    { id: 6, vehicleId: 1, driverId: 1, origin: 'Lusaka', destination: 'Mongu', distance: 610,
+                        status: 'completed', startTime: '2026-04-28T04:00', endTime: '2026-04-28T16:00',
+                    notes: 'Long haul' },
+                    { id: 7, vehicleId: 5, driverId: 4, origin: 'Solwezi', destination: 'Lusaka', distance: 520,
+                        status: 'completed', startTime: '2026-04-25T05:30', endTime: '2026-04-25T15:00',
+                        notes: 'Cargo delivered' },
+                ];
+                appData.fuelLogs = [
+                    { id: 1, vehicleId: 1, driverId: 1, date: '2026-05-01', liters: 65, cost: 1625, odometer: 45100,
+                        efficiency: 7.5, station: 'Total Lusaka' },
+                    { id: 2, vehicleId: 2, driverId: 2, date: '2026-05-02', liters: 55, cost: 1375, odometer: 67700,
+                        efficiency: 8.2, station: 'Puma Ndola' },
+                    { id: 3, vehicleId: 1, driverId: 1, date: '2026-05-04', liters: 40, cost: 1000, odometer: 45200,
+                        efficiency: 6.8, station: 'Total Kitwe' },
+                    { id: 4, vehicleId: 5, driverId: 4, date: '2026-05-03', liters: 70, cost: 1750, odometer: 31100,
+                        efficiency: 7.9, station: 'Engen Chipata' },
+                    { id: 5, vehicleId: 2, driverId: 2, date: '2026-04-30', liters: 48, cost: 1200, odometer: 67650,
+                        efficiency: 8.5, station: 'Puma Lusaka' },
+                    { id: 6, vehicleId: 4, driverId: null, date: '2026-04-28', liters: 30, cost: 750, odometer: 89150,
+                        efficiency: 6.2, station: 'Total Kabwe' },
+                ];
+                appData.maintenance = [
+                    { id: 1, vehicleId: 3, type: 'Oil Change', date: '2026-04-20', status: 'completed', cost: 2125,
+                        nextDueKm: 28000, notes: 'Full synthetic' },
+                    { id: 2, vehicleId: 1, type: 'Brake Pads', date: '2026-05-10', status: 'scheduled', cost: 0,
+                        nextDueKm: 50000, notes: 'Front brakes' },
+                    { id: 3, vehicleId: 6, type: 'Engine Overhaul', date: '2026-05-02', status: 'in-progress', cost: 8500,
+                        nextDueKm: 60000, notes: 'Major repair - broken down' },
+                    { id: 4, vehicleId: 2, type: 'Tire Rotation', date: '2026-04-15', status: 'completed', cost: 800,
+                        nextDueKm: 72000, notes: 'All 4 tires' },
+                ];
+                appData.breakdowns = [
+                    { id: 1, vehicleId: 6, date: '2026-05-02', location: 'Great North Rd, Kabwe', cause: 'Engine failure',
+                        status: 'active', severity: 'critical', estimatedCost: 8500, towRequired: true,
+                        resolvedDate: null },
+                    { id: 2, vehicleId: 4, date: '2026-04-20', location: 'Kafue Roundabout', cause: 'Tire blowout',
+                        status: 'resolved', severity: 'moderate', estimatedCost: 1200, towRequired: false,
+                        resolvedDate: '2026-04-21' },
+                ];
+                appData.users = [
+                    { id: 1, username: 'admin', role: 'Administrator', email: 'admin@fuelradar.zm', status: 'active',
+                        lastLogin: new Date().toISOString() },
+                    { id: 2, username: 'manager', role: 'Fleet Manager', email: 'manager@fuelradar.zm', status: 'active',
+                        lastLogin: new Date(Date.now() - 86400000).toISOString() },
+                    { id: 3, username: 'driver_james', role: 'Driver', email: 'james@fuelradar.zm', status: 'active',
+                        lastLogin: new Date(Date.now() - 172800000).toISOString() },
+                ];
+                appData.alerts = [
+                    { id: 1, type: 'breakdown', message: 'ABZ 2468: Engine failure - vehicle broken down',
+                        severity: 'critical', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false,
+                        relatedVehicleId: 6, suggestedAction: 'Tow truck dispatched - ETA 45 min' },
+                    { id: 2, type: 'fuel', message: 'ABZ 1234: Fuel efficiency dropped 15%', severity: 'warn',
+                        timestamp: new Date(Date.now() - 7200000).toISOString(), read: false, relatedVehicleId: 1,
+                        suggestedAction: 'Check air filter and tire pressure' },
+                    { id: 3, type: 'document', message: 'Peter Zulu: License expiring in 30 days', severity: 'info',
+                        timestamp: new Date(Date.now() - 10800000).toISOString(), read: false, relatedVehicleId: null,
+                        suggestedAction: 'Schedule license renewal' },
+                    { id: 4, type: 'maintenance', message: 'ABZ 9012: Oil change overdue by 200 km',
+                        severity: 'critical', timestamp: new Date(Date.now() - 1800000).toISOString(), read: false,
+                        relatedVehicleId: 3, suggestedAction: 'Book service appointment immediately' },
+                ];
+                appData.auditLogs = [
+                    { id: 1, timestamp: new Date(Date.now() - 3600000).toISOString(), action: 'Login',
+                        detail: 'Admin logged in', user: 'Admin' },
+                    { id: 2, timestamp: new Date(Date.now() - 7200000).toISOString(), action: 'Vehicle Added',
+                        detail: 'Added ABZ 2468 Nissan Navara', user: 'Admin' },
+                    { id: 3, timestamp: new Date(Date.now() - 10800000).toISOString(), action: 'Trip Created',
+                        detail: 'Trip Lusaka-Kitwe for ABZ 1234', user: 'Admin' },
+                ];
+                appData.idCounters = { vehicles: 6, drivers: 5, trips: 7, fuel: 6, maintenance: 4, breakdowns: 2, users: 3,
+                    audit: 3, alerts: 4 };
+                saveData();
+            }
+
+            function updateBadge() {
+                const unread = appData.alerts.filter(a => !a.read).length;
+                const b = document.getElementById('notifBadge');
+                if (b) { b.textContent = unread;
+                    b.style.display = unread > 0 ? 'flex' : 'none'; }
+            }
+
+            function showToast(msg, type = '') {
+                const c = document.getElementById('toastContainer');
+                const t = document.createElement('div');
+                t.className = 'toast ' + type;
+                t.textContent = msg;
+                c.appendChild(t);
+                setTimeout(() => { t.style.opacity = '0';
+                    t.style.transition = 'opacity 0.3s';
+                    setTimeout(() => t.remove(), 300); }, 2800);
+            }
+
+            // ─── Global functions exposed to window ───
+            function navigate(section) {
+                if (section === 'menu') { openDrawer(); return; }
+                closeDrawer();
+                currentSection = section;
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                const sec = document.getElementById('sec-' + section);
+                if (sec) sec.classList.add('active');
+                document.querySelectorAll('.bottom-nav button[data-tab]').forEach(b => b.classList.remove(
+                'active'));
+                const navBtn = document.querySelector(`.bottom-nav button[data-tab="${section}"]`);
+                if (navBtn) navBtn.classList.add('active');
+                if (section === 'map') setTimeout(initMap, 200);
+                else { if (mapInstance) { mapInstance.invalidateSize();
+                        mapInstance = null; } const me = document.getElementById('map'); if (me) me.innerHTML =
+                        ''; }
+                refreshSection(section);
+            }
+
+            function openDrawer() { document.getElementById('drawer').classList.add('open');
+                document.getElementById('overlay').classList.add('show'); }
+
+            function closeDrawer() { document.getElementById('drawer').classList.remove('open');
+                document.getElementById('overlay').classList.remove('show'); }
+
+            function refreshSection(s) {
+                switch (s) {
+                    case 'dashboard':
+                        renderDashboard();
+                        break;
+                    case 'map':
+                        renderMapSection();
+                        break;
+                    case 'vehicles':
+                        renderVehicleCards();
+                        break;
+                    case 'drivers':
+                        renderDriverCards();
+                        break;
+                    case 'trips':
+                        renderTripCards();
+                        break;
+                    case 'fuel':
+                        renderFuelCards();
+                        break;
+                    case 'maintenance':
+                        renderMaintenanceCards();
+                        break;
+                    case 'breakdowns':
+                        renderBreakdownCards();
+                        break;
+                    case 'reports':
+                        renderReports();
+                        break;
+                    case 'alerts':
+                        renderAlerts();
+                        break;
+                    case 'users':
+                        renderUserCards();
+                        break;
+                    case 'audit':
+                        renderAudit();
+                        break;
+                    case 'settings':
+                        renderSettings();
+                        break;
+                }
+            }
+
+            function renderDashboard() {
+                const tv = appData.vehicles.length,
+                    av = appData.vehicles.filter(v => v.status === 'active').length,
+                    mv = appData.vehicles.filter(v => v.status === 'maintenance').length,
+                    bv = appData.vehicles.filter(v => v.status === 'broken').length,
+                    ad = appData.drivers.filter(d => d.status === 'active').length,
+                    at = appData.trips.filter(t => t.status === 'active').length,
+                    ct = appData.trips.filter(t => t.status === 'completed').length,
+                    tfc = appData.fuelLogs.reduce((s, f) => s + (f.cost || 0), 0),
+                    ua = appData.alerts.filter(a => !a.read).length,
+                    activeBreakdowns = appData.breakdowns.filter(b => b.status === 'active').length,
+                    maintDue = appData.maintenance.filter(m => m.status === 'scheduled' || m.status ===
+                        'in-progress').length,
+                    avgEff = appData.fuelLogs.length ? (appData.fuelLogs.reduce((s, f) => s + (f.efficiency || 0), 0) /
+                        appData.fuelLogs.length).toFixed(1) : 'N/A',
+                    totalDist = appData.trips.reduce((s, t) => s + (t.distance || 0), 0);
+                document.getElementById('dashMetrics').innerHTML = `
+                <div class="metric-card" onclick="navigate('vehicles')"><div class="m-label">Vehicles</div><div class="m-value">${tv}</div><div class="m-sub">${av} active · ${mv} maint · ${bv} broken</div></div>
+                <div class="metric-card" onclick="navigate('drivers')"><div class="m-label">Drivers</div><div class="m-value">${ad}</div><div class="m-sub">of ${appData.drivers.length} total</div></div>
+                <div class="metric-card warn" onclick="navigate('trips')"><div class="m-label">Active Trips</div><div class="m-value">${at}</div><div class="m-sub">${ct} completed</div></div>
+                <div class="metric-card" onclick="navigate('fuel')"><div class="m-label">Fuel Cost</div><div class="m-value">K${tfc.toLocaleString()}</div><div class="m-sub">${appData.fuelLogs.length} logs</div></div>
+                <div class="metric-card red" onclick="navigate('alerts')"><div class="m-label">Alerts</div><div class="m-value">${ua}</div><div class="m-sub">needs attention</div></div>
+                <div class="metric-card red" onclick="navigate('breakdowns')"><div class="m-label">Breakdowns</div><div class="m-value">${activeBreakdowns}</div><div class="m-sub">active incidents</div></div>
+                <div class="metric-card warn" onclick="navigate('maintenance')"><div class="m-label">Maint. Due</div><div class="m-value">${maintDue}</div><div class="m-sub">scheduled/in-progress</div></div>
+                <div class="metric-card blue"><div class="m-label">Avg Efficiency</div><div class="m-value">${avgEff}</div><div class="m-sub">km/L</div></div>
+                <div class="metric-card purple"><div class="m-label">Total Dist.</div><div class="m-value">${totalDist.toLocaleString()}</div><div class="m-sub">km covered</div></div>`;
+                const fCtx = document.getElementById('chartFuel');
+                if (fCtx) {
+                    if (charts.fuel) charts.fuel.destroy();
+                    const labels = appData.vehicles.map(v => v.plate);
+                    const data = appData.vehicles.map(v => appData.fuelLogs.filter(f => f.vehicleId === v.id).reduce((s,
+                        f) => s + f.liters, 0));
+                    charts.fuel = new Chart(fCtx, { type: 'bar', data: { labels: labels.length ? labels : ['No data'],
+                            datasets: [{ label: 'Fuel (L)',
+                                data: data.length ? data : [0],
+                                backgroundColor: 'rgba(39,174,96,0.5)', borderColor: '#27AE60',
+                                borderWidth: 2, borderRadius: 6 }] }, options: { responsive: true,
+                            plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true,
+                                grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+                }
+                const tCtx = document.getElementById('chartTrips');
+                if (tCtx) {
+                    if (charts.trips) charts.trips.destroy();
+                    charts.trips = new Chart(tCtx, { type: 'line', data: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri',
+                                'Sat', 'Sun'
+                            ], datasets: [{ label: 'Trips', data: [3, 5, 2, 4, 6, 1, 3],
+                                borderColor: '#27AE60', backgroundColor: 'rgba(39,174,96,0.06)', fill: true,
+                                tension: 0.4, pointBackgroundColor: '#27AE60', pointRadius: 4,
+                                borderWidth: 2.5 }] }, options: { responsive: true,
+                            plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true,
+                                grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+                }
+                const da = document.getElementById('dashAlerts');
+                const recent = appData.alerts.slice(0, 3);
+                da.innerHTML = recent.length ?
+                    '<div style="font-weight:600;font-size:0.8rem;margin-bottom:4px;">⚠️ Recent Alerts (tap to expand)</div>' +
+                    recent.map(a => `
+                  <div class="alert-item ${a.severity}" onclick="toggleAlertExpand(event, ${a.id})">
+                    <div class="alert-header"><span><strong>${a.type}:</strong> ${a.message}</span><small>${new Date(a.timestamp).toLocaleDateString()}</small></div>
+                    <div class="alert-detail"><strong>Suggestion:</strong> ${a.suggestedAction||'Review details'}<br><small>ID: #${a.id} · ${new Date(a.timestamp).toLocaleString()}</small></div>
+                  </div>`).join('') : '<div class="empty-state">No alerts 🎉</div>';
+                updateBadge();
+            }
+
+            function initMap() {
+                const me = document.getElementById('map');
+                if (!me || me.dataset.loaded === '1') return;
+                me.innerHTML = '';
+                me.dataset.loaded = '1';
+                mapInstance = L.map('map').setView([-15.3875, 28.3228], 7);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(
+                    mapInstance);
+                renderMapMarkers();
+                mapInstance.on('click', () => { document.getElementById('mapCard').classList.remove('show'); });
+            }
+
+            function renderMapMarkers() {
+                if (!mapInstance) return;
+                mapMarkers.forEach(m => mapInstance.removeLayer(m));
+                mapMarkers = [];
+                const vehiclesToShow = appData.vehicles.filter(v => v.status === 'active' || v.status === 'idle' || v
+                    .status === 'broken');
+                const positions = [
+                    [-15.3875, 28.3228],
+                    [-15.4100, 28.2900],
+                    [-15.3600, 28.3500],
+                    [-15.4000, 28.2700],
+                    [-14.4500, 28.4500],
+                    [-15.4200, 28.3100],
+                    [-14.3800, 28.2000]
+                ];
+                vehiclesToShow.forEach((v, i) => {
+                    const pos = positions[i % positions.length];
+                    const d = appData.drivers.find(dr => dr.id === v.driverId);
+                    const color = v.status === 'active' ? '#27AE60' : v.status === 'broken' ? '#E74C3C' :
+                        '#F39C12';
+                    const icon = L.divIcon({
+                        className: '',
+                        html: `<div style="width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid ${color};display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,0.25);"><i class="fas fa-truck" style="color:${color};font-size:10px;"></i></div>`,
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    });
+                    const marker = L.marker(pos, { icon }).addTo(mapInstance);
+                    marker.vehicleId = v.id;
+                    marker.on('click', () => {
+                        const card = document.getElementById('mapCard');
+                        card.innerHTML = `
+                    <strong>${v.plate}</strong> ${v.make} ${v.model}<br>
+                    Driver: ${d?d.name:'None'} ${d?'· <a href=\'tel:'+d.phone+'\' style=\'color:#27AE60;\'><i class=\'fas fa-phone\'></i> Call</a>':''}<br>
+                    Mileage: ${v.mileage.toLocaleString()} km · Speed: ${v.avgSpeed||0} km/h<br>
+                    Status: <span class="badge ${v.status==='active'?'badge-green':v.status==='broken'?'badge-red':'badge-orange'}">${v.status}</span> ${v.parked?'🅿️ Parked':'🚛 Moving'}<br>
+                    <small>Tank: ${v.tankCapacity||'?'}L · Last Service: ${v.lastService||'N/A'}</small>`;
+                        card.classList.add('show');
+                    });
+                    mapMarkers.push(marker);
+                });
+                if (mapMarkers.length > 1) { const g = L.featureGroup(mapMarkers);
+                    mapInstance.fitBounds(g.getBounds().pad(0.1)); }
+            }
+
+            function renderMapSection() {
+                renderMapMarkers();
+                const vehiclesToShow = appData.vehicles.filter(v => v.status === 'active' || v.status === 'idle' || v
+                    .status === 'broken');
+                document.getElementById('mapVehicleCards').innerHTML = vehiclesToShow.map(v => {
+                    const d = appData.drivers.find(dr => dr.id === v.driverId);
+                    const statusBadge = v.status === 'active' ? 'badge-green' : v.status === 'broken' ?
+                        'badge-red' : 'badge-orange';
+                    const speedInfo = v.status === 'active' ? (v.avgSpeed || 55) + ' km/h' : 'Parked';
+                    const tripsCount = appData.trips.filter(t => t.vehicleId === v.id).length;
+                    const fuelTotal = appData.fuelLogs.filter(f => f.vehicleId === v.id).reduce((s, f) => s + f
+                        .liters, 0);
+                    return `<div class="card" onclick="showMapVehicleActions(${v.id})">
+                <div class="card-row"><span class="card-title">${v.plate}</span><span class="badge ${statusBadge}">${v.status}</span></div>
+                <div class="card-sub">${v.make} ${v.model} · ${v.mileage.toLocaleString()} km</div>
+                <div class="card-icons-row">
+                  <span><i class="fas fa-user"></i> ${d?d.name:'None'}</span>
+                  <span><i class="fas fa-tachometer-alt"></i> ${speedInfo}</span>
+                  <span><i class="fas fa-route"></i> ${tripsCount}</span>
+                  <span><i class="fas fa-gas-pump"></i> ${fuelTotal}L</span>
+                </div>
+                <div class="card-actions-row">
+                  <button class="btn btn-green btn-xs" onclick="event.stopPropagation();trackVehicleOnMap(${v.id})"><i class="fas fa-search-location"></i> Track</button>
+                  ${d?`<button class="btn btn-outline green btn-xs" onclick="event.stopPropagation();callDriver(${d.id})"><i class="fas fa-phone"></i> Call</button>`:''}
+                  <button class="btn btn-outline btn-xs" onclick="event.stopPropagation();showVehiclePerformance(${v.id})"><i class="fas fa-tachometer-alt"></i> Perf</button>
+                  <button class="btn btn-outline btn-xs" onclick="event.stopPropagation();showVehicleDetail(${v.id})"><i class="fas fa-info-circle"></i> Info</button>
+                </div></div>`;
+                }).join('') || '<div class="empty-state">No vehicles on map</div>';
+            }
+
+            function trackVehicleOnMap(id) {
+                if (!mapInstance) { navigate('map');
+                    setTimeout(() => trackVehicleOnMap(id), 400); return; }
+                const v = appData.vehicles.find(ve => ve.id === id);
+                if (!v) return;
+                const marker = mapMarkers.find(m => m.vehicleId === id);
+                if (marker) { mapInstance.setView(marker.getLatLng(), 14);
+                    marker.fire('click');
+                    showToast('Tracking ' + v.plate); } else { showToast('Vehicle not on map', 'warn'); }
+            }
+
+            function callDriver(driverId) {
+                const d = appData.drivers.find(dr => dr.id === driverId);
+                if (d && d.phone) { showToast('Calling ' + d.name + ' at ' + d.phone);
+                    window.open('tel:' + d.phone.replace(/\s/g, '')); } else { showToast('Driver not available',
+                        'error'); }
+            }
+
+            function showVehiclePerformance(id) {
+                const v = appData.vehicles.find(ve => ve.id === id);
+                if (!v) return;
+                const fuelLogs = appData.fuelLogs.filter(f => f.vehicleId === id);
+                const totalFuel = fuelLogs.reduce((s, f) => s + f.liters, 0);
+                const totalCost = fuelLogs.reduce((s, f) => s + (f.cost || 0), 0);
+                const avgEff = fuelLogs.length ? (fuelLogs.reduce((s, f) => s + (f.efficiency || 0), 0) / fuelLogs.length)
+                    .toFixed(1) : 'N/A';
+                const trips = appData.trips.filter(t => t.vehicleId === id);
+                const totalDist = trips.reduce((s, t) => s + (t.distance || 0), 0);
+                const modal = document.getElementById('modalContent');
+                modal.innerHTML = `
+              <div class="modal-header"><span>📊 Performance: ${v.plate}</span><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+              <div class="detail-section"><h5>Overview</h5>
+                <div class="detail-row"><span>Total Distance</span><strong>${totalDist.toLocaleString()} km</strong></div>
+                <div class="detail-row"><span>Total Fuel Used</span><strong>${totalFuel} L</strong></div>
+                <div class="detail-row"><span>Total Fuel Cost</span><strong>K ${totalCost.toLocaleString()}</strong></div>
+                <div class="detail-row"><span>Avg Efficiency</span><strong>${avgEff} km/L</strong></div>
+                <div class="detail-row"><span>Avg Speed</span><strong>${v.avgSpeed||0} km/h</strong></div>
+                <div class="detail-row"><span>Parked</span><strong>${v.parked?'Yes 🅿️':'No 🚛'}</strong></div>
+              </div>
+              <div class="detail-section"><h5>Recent Fuel Logs</h5>${fuelLogs.slice(0,5).map(f=>`<div class="detail-row"><span>${f.date}</span><span>${f.liters}L · K${(f.cost||0).toLocaleString()} · ${f.efficiency?f.efficiency.toFixed(1)+' km/L':'N/A'}</span></div>`).join('')||'<div class="empty-state">No fuel logs</div>'}</div>
+              <button class="btn btn-green" style="width:100%;margin-top:6px;" onclick="closeModal()">Close</button>`;
+                document.getElementById('modalOverlay').style.display = 'flex';
+            }
+
+            function showMapVehicleActions(id) {
+                const v = appData.vehicles.find(ve => ve.id === id);
+                if (!v) return;
+                const d = appData.drivers.find(dr => dr.id === v.driverId);
+                const modal = document.getElementById('modalContent');
+                modal.innerHTML = `
+              <div class="modal-header"><span>🚛 ${v.plate} - ${v.make} ${v.model}</span><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+              <div class="detail-section"><h5>Quick Actions</h5>
+                <div class="flex-wrap">
+                  <button class="btn btn-green btn-sm" onclick="trackVehicleOnMap(${v.id});closeModal();"><i class="fas fa-search-location"></i> Track on Map</button>
+                  ${d?`<button class="btn btn-outline green btn-sm" onclick="callDriver(${d.id})"><i class="fas fa-phone"></i> Call ${d.name}</button>`:''}
+                  <button class="btn btn-outline btn-sm" onclick="showVehiclePerformance(${v.id})"><i class="fas fa-tachometer-alt"></i> Performance</button>
+                  <button class="btn btn-outline btn-sm" onclick="showVehicleDetail(${v.id})"><i class="fas fa-info-circle"></i> Full Details</button>
+                </div>
+              </div>
+              <div class="detail-section"><h5>Current Status</h5>
+                <div class="detail-row"><span>Status</span><span class="badge ${v.status==='active'?'badge-green':v.status==='broken'?'badge-red':'badge-orange'}">${v.status}</span></div>
+                <div class="detail-row"><span>Speed</span><strong>${v.avgSpeed||0} km/h</strong></div>
+                <div class="detail-row"><span>Parked</span><strong>${v.parked?'Yes 🅿️':'No 🚛'}</strong></div>
+                <div class="detail-row"><span>Mileage</span><strong>${v.mileage.toLocaleString()} km</strong></div>
+                <div class="detail-row"><span>Driver</span><strong>${d?d.name:'None'}</strong></div>
+              </div>
+              <button class="btn btn-green" style="width:100%;margin-top:6px;" onclick="closeModal()">Close</button>`;
+                document.getElementById('modalOverlay').style.display = 'flex';
+            }
+
+            function showVehicleDetail(id) {
+                const v = appData.vehicles.find(ve => ve.id === id);
+                if (!v) return;
+                const d = appData.drivers.find(dr => dr.id === v.driverId);
+                const trips = appData.trips.filter(t => t.vehicleId === id);
+                const fuelLogs = appData.fuelLogs.filter(f => f.vehicleId === id);
+                const maintRecords = appData.maintenance.filter(m => m.vehicleId === id);
+                const breakdownRecords = appData.breakdowns.filter(b => b.vehicleId === id);
+                const totalFuel = fuelLogs.reduce((s, f) => s + f.liters, 0);
+                const totalFuelCost = fuelLogs.reduce((s, f) => s + (f.cost || 0), 0);
+                const avgEff = fuelLogs.length ? (fuelLogs.reduce((s, f) => s + (f.efficiency || 0), 0) / fuelLogs.length)
+                    .toFixed(1) : 'N/A';
+                const totalTripDist = trips.reduce((s, t) => s + (t.distance || 0), 0);
+                const statusBadge = v.status === 'active' ? 'badge-green' : v.status === 'idle' ? 'badge-orange' : v
+                    .status === 'maintenance' ? 'badge-red' : v.status === 'broken' ? 'badge-red' : 'badge-gray';
+                const modal = document.getElementById('modalContent');
+                modal.innerHTML = `
+              <div class="modal-header"><span>🚛 ${v.plate} Details</span><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+              <div class="detail-section"><h5>Vehicle Info</h5>
+                <div class="detail-row"><span>Plate</span><strong>${v.plate}</strong></div>
+                <div class="detail-row"><span>Make/Model</span><strong>${v.make} ${v.model} (${v.year})</strong></div>
+                <div class="detail-row"><span>Fuel Type</span><strong>${v.fuelType}</strong></div>
+                <div class="detail-row"><span>Tank Capacity</span><strong>${v.tankCapacity||'N/A'} L</strong></div>
+                <div class="detail-row"><span>Status</span><span class="badge ${statusBadge}">${v.status}</span></div>
+                <div class="detail-row"><span>Mileage</span><strong>${v.mileage.toLocaleString()} km</strong></div>
+                <div class="detail-row"><span>Avg Speed</span><strong>${v.avgSpeed||0} km/h</strong></div>
+                <div class="detail-row"><span>Parked</span><strong>${v.parked?'Yes 🅿️':'No 🚛'}</strong></div>
+                <div class="detail-row"><span>Last Service</span><strong>${v.lastService||'N/A'}</strong></div>
+              </div>
+              <div class="detail-section"><h5>Current Driver</h5>
+                ${d?`<div class="detail-row"><span>Name</span><strong>${d.name}</strong></div>
+                <div class="detail-row"><span>Phone</span><strong>${d.phone}</strong></div>
+                <div class="detail-row"><span>License</span><strong>${d.license}</strong></div>
+                <div class="detail-row"><span>Score</span><strong>${d.score||'N/A'}</strong></div>
+                <button class="btn btn-outline green btn-sm" onclick="callDriver(${d.id})"><i class="fas fa-phone"></i> Call Driver</button>`:'<div class="empty-state">No driver assigned</div>'}
+              </div>
+              <div class="detail-section"><h5>Fuel & Consumption</h5>
+                <div class="detail-row"><span>Total Fuel Used</span><strong>${totalFuel} L</strong></div>
+                <div class="detail-row"><span>Total Fuel Cost</span><strong>K ${totalFuelCost.toLocaleString()}</strong></div>
+                <div class="detail-row"><span>Avg Efficiency</span><strong>${avgEff} km/L</strong></div>
+                <div class="detail-row"><span>Fuel Logs Count</span><strong>${fuelLogs.length}</strong></div>
+              </div>
+              <div class="detail-section"><h5>Trips (${trips.length})</h5>
+                ${trips.slice(0,6).map(t=>`<div class="detail-row"><span>#${t.id} ${t.origin}→${t.destination}</span><span>${t.distance}km · <span class="badge ${t.status==='completed'?'badge-green':'badge-orange'}">${t.status}</span></span></div>`).join('')||'<div class="empty-state">No trips</div>'}
+                <div class="detail-row"><strong>Total Trip Distance</strong><strong>${totalTripDist.toLocaleString()} km</strong></div>
+              </div>
+              <div class="detail-section"><h5>Maintenance (${maintRecords.length})</h5>
+                ${maintRecords.map(m=>`<div class="detail-row"><span>${m.type}</span><span>${m.date} · K${(m.cost||0).toLocaleString()} · <span class="badge ${m.status==='completed'?'badge-green':m.status==='scheduled'?'badge-orange':'badge-red'}">${m.status}</span></span></div>`).join('')||'<div class="empty-state">No records</div>'}
+              </div>
+              ${breakdownRecords.length?`<div class="detail-section"><h5>Breakdowns (${breakdownRecords.length})</h5>${breakdownRecords.map(b=>`<div class="detail-row"><span>${b.date} - ${b.cause}</span><span class="badge ${b.status==='active'?'badge-red':'badge-gray'}">${b.status}</span></div>`).join('')}</div>`:''}
+              <div class="flex-wrap" style="margin-top:8px;">
+                <button class="btn btn-green btn-sm" onclick="closeModal();openModal('vehicle',${v.id})"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-red btn-sm" onclick="if(confirm('Delete ${v.plate}?')){deleteItem('vehicle',${v.id});closeModal();}"><i class="fas fa-trash"></i> Delete</button>
+                <button class="btn btn-outline btn-sm" onclick="closeModal()">Close</button>
+              </div>`;
+                document.getElementById('modalOverlay').style.display = 'flex';
+            }
+
+            function renderVehicleCards() {
+                document.getElementById('vehicleCards').innerHTML = appData.vehicles.map(v => {
+                    const d = appData.drivers.find(dr => dr.id === v.driverId);
+                    const sc = v.status === 'active' ? 'badge-green' : v.status === 'idle' ? 'badge-orange' : v
+                        .status === 'maintenance' ? 'badge-red' : v.status === 'broken' ? 'badge-red' :
+                        'badge-gray';
+                    return `<div class="card" onclick="showVehicleDetail(${v.id})">
+                <div class="card-row"><span class="card-title">${v.plate}</span><span class="badge ${sc}">${v.status}</span></div>
+                <div class="card-sub">${v.make} ${v.model} · ${v.year} · ${v.fuelType}</div>
+                <div class="card-row"><span class="card-info">${v.mileage.toLocaleString()} km</span><span class="card-sub">Driver: ${d?d.name:'None'}</span></div>
+                <div class="card-sub" style="color:var(--green-dark);">👆 Tap for full details</div></div>`;
+                }).join('') || '<div class="empty-state">No vehicles</div>';
+            }
+
+            function renderDriverCards() {
+                document.getElementById('driverCards').innerHTML = appData.drivers.map(d => {
+                    const v = appData.vehicles.find(ve => ve.id === d.vehicleId);
+                    return `<div class="card" onclick="openModal('driver',${d.id})">
+                <div class="card-row"><span class="card-title">${d.name}</span><span class="badge ${d.status==='active'?'badge-green':'badge-gray'}">${d.status}</span></div>
+                <div class="card-sub">License: ${d.license} · ${d.phone}</div>
+                <div class="card-row"><span class="card-info">Vehicle: ${v?v.plate:'None'}</span><span>Trips: ${d.tripsCompleted||0} · Score: ${d.score||'N/A'}</span></div>
+                <div class="flex-wrap"><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openModal('driver',${d.id})"><i class="fas fa-edit"></i></button><button class="btn btn-red btn-sm" onclick="event.stopPropagation();deleteItem('driver',${d.id})"><i class="fas fa-trash"></i></button></div></div>`;
+                }).join('') || '<div class="empty-state">No drivers</div>';
+            }
+
+            function renderTripCards() {
+                document.getElementById('tripCards').innerHTML = appData.trips.map(t => {
+                    const v = appData.vehicles.find(ve => ve.id === t.vehicleId),
+                        d = appData.drivers.find(dr => dr.id === t.driverId);
+                    const sc = t.status === 'active' ? 'badge-green' : t.status === 'completed' ? 'badge-green' :
+                        'badge-gray';
+                    return `<div class="card">
+                <div class="card-row"><span class="card-title">#${t.id} ${t.origin} → ${t.destination}</span><span class="badge ${sc}">${t.status}</span></div>
+                <div class="card-sub">${v?v.plate:'?'} · ${d?d.name:'?'} · ${t.distance} km</div>
+                <div class="card-row"><span class="card-info">${t.startTime?new Date(t.startTime).toLocaleDateString():''}</span>
+                ${t.status==='active'?`<button class="btn btn-green btn-sm" onclick="completeTrip(${t.id})"><i class="fas fa-check"></i> Complete</button>`:''}
+                <button class="btn btn-red btn-sm" onclick="deleteItem('trip',${t.id})"><i class="fas fa-trash"></i></button></div>
+                ${t.notes?`<div class="card-sub">📝 ${t.notes}</div>`:''}</div>`;
+                }).join('') || '<div class="empty-state">No trips</div>';
+            }
+
+            function renderFuelCards() {
+                document.getElementById('fuelCards').innerHTML = appData.fuelLogs.map(f => {
+                    const v = appData.vehicles.find(ve => ve.id === f.vehicleId);
+                    return `<div class="card">
+                <div class="card-row"><span class="card-title">${v?v.plate:'?'}</span><span>${f.date}</span></div>
+                <div class="card-row"><span>${f.liters} L</span><span>K ${(f.cost||0).toLocaleString()}</span><span>${f.efficiency?f.efficiency.toFixed(1)+' km/L':'N/A'}</span></div>
+                <div class="card-sub">Odometer: ${f.odometer} km · Station: ${f.station||'N/A'}</div></div>`;
+                }).join('') || '<div class="empty-state">No fuel logs</div>';
+            }
+
+            function renderMaintenanceCards() {
+                document.getElementById('maintenanceCards').innerHTML = appData.maintenance.map(m => {
+                    const v = appData.vehicles.find(ve => ve.id === m.vehicleId);
+                    const sc = m.status === 'completed' ? 'badge-green' : m.status === 'scheduled' ?
+                        'badge-orange' : m.status === 'in-progress' ? 'badge-red' : 'badge-gray';
+                    return `<div class="card">
+                <div class="card-row"><span class="card-title">${v?v.plate:'?'} - ${m.type}</span><span class="badge ${sc}">${m.status}</span></div>
+                <div class="card-row"><span>${m.date}</span><span>K ${(m.cost||0).toLocaleString()}</span></div>
+                ${m.notes?`<div class="card-sub">📝 ${m.notes}</div>`:''}
+                <div class="flex-wrap">${m.status==='scheduled'?`<button class="btn btn-green btn-sm" onclick="completeMaintenance(${m.id})"><i class="fas fa-check"></i> Done</button>`:''}
+                ${m.status==='in-progress'?`<button class="btn btn-green btn-sm" onclick="completeMaintenance(${m.id})"><i class="fas fa-check"></i> Complete</button>`:''}
+                <button class="btn btn-red btn-sm" onclick="deleteItem('maintenance',${m.id})"><i class="fas fa-trash"></i></button></div></div>`;
+                }).join('') || '<div class="empty-state">No maintenance records</div>';
+            }
+
+            function renderBreakdownCards() {
+                document.getElementById('breakdownCards').innerHTML = appData.breakdowns.length ? appData.breakdowns.map(
+                    b => {
+                        const v = appData.vehicles.find(ve => ve.id === b.vehicleId);
+                        const sc = b.status === 'active' ? 'badge-red' : 'badge-gray';
+                        return `<div class="card">
+                <div class="card-row"><span class="card-title">${v?v.plate:'?'} - ${b.cause}</span><span class="badge ${sc}">${b.status}</span></div>
+                <div class="card-sub">📍 ${b.location} · ${b.date}</div>
+                <div class="card-row"><span>Est. Cost: K ${(b.estimatedCost||0).toLocaleString()}</span><span>Tow: ${b.towRequired?'Yes 🚛':'No'}</span></div>
+                <div class="flex-wrap">${b.status==='active'?`<button class="btn btn-green btn-sm" onclick="resolveBreakdown(${b.id})"><i class="fas fa-check"></i> Resolve</button>`:''}
+                <button class="btn btn-red btn-sm" onclick="deleteItem('breakdown',${b.id})"><i class="fas fa-trash"></i></button></div></div>`;
+                    }).join('') : '<div class="empty-state">No breakdowns 🎉</div>';
+            }
+
+            function resolveBreakdown(id) {
+                const b = appData.breakdowns.find(br => br.id === id);
+                if (b) { b.status = 'resolved';
+                    b.resolvedDate = new Date().toISOString().split('T')[0]; const v = appData.vehicles.find(ve => ve.id ===
+                        b.vehicleId); if (v && v.status === 'broken') v.status = 'idle'; }
+                addAudit('Breakdown Resolved', `Breakdown #${id}`);
+                saveData();
+                renderBreakdownCards();
+                showToast('Breakdown resolved!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function renderUserCards() {
+                document.getElementById('userCards').innerHTML = appData.users.map(u => `
+                <div class="card">
+                  <div class="card-row"><span class="card-title">${u.username}</span><span class="badge ${u.status==='active'?'badge-green':'badge-gray'}">${u.status}</span></div>
+                  <div class="card-sub">${u.role} · ${u.email}</div>
+                  <div class="card-info">Last login: ${new Date(u.lastLogin).toLocaleDateString()}</div>
+                  <div class="flex-wrap"><button class="btn btn-outline btn-sm" onclick="openModal('user',${u.id})"><i class="fas fa-edit"></i></button>
+                  ${u.role!=='Administrator'?`<button class="btn btn-red btn-sm" onclick="deleteItem('user',${u.id})"><i class="fas fa-trash"></i></button>`:''}</div></div>`).join(
+                    '');
+            }
+
+            function renderAlerts() {
+                document.getElementById('alertsList').innerHTML = appData.alerts.length ? appData.alerts.map(a => {
+                    const v = a.relatedVehicleId ? appData.vehicles.find(ve => ve.id === a.relatedVehicleId) :
+                        null;
+                    return `
+                <div class="alert-item ${a.severity}" onclick="toggleAlertExpand(event, ${a.id})">
+                  <div class="alert-header"><span><strong>${a.type}:</strong> ${a.message}<br><small>${new Date(a.timestamp).toLocaleString()}</small></span>
+                  <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();dismissAlert(${a.id})"><i class="fas fa-times"></i></button></div>
+                  <div class="alert-detail">
+                    <strong>Severity:</strong> ${a.severity.toUpperCase()}<br>
+                    <strong>Suggested Action:</strong> ${a.suggestedAction||'Review details'}<br>
+                    ${v?`<strong>Related Vehicle:</strong> ${v.plate} - ${v.make} ${v.model}<br>`:''}
+                    <small>Alert ID: #${a.id} · ${new Date(a.timestamp).toLocaleString()}</small>
+                    ${v?`<br><button class="btn btn-outline green btn-xs" style="margin-top:4px;" onclick="event.stopPropagation();showVehicleDetail(${v.id})">🔍 View Vehicle</button>`:''}
+                  </div></div>`;
+                }).join('') : '<div class="empty-state">All clear! 🎉</div>';
+                appData.alerts.forEach(a => a.read = true);
+                saveData();
+                updateBadge();
+            }
+
+            function toggleAlertExpand(event, alertId) {
+                const alertEl = event.currentTarget;
+                alertEl.classList.toggle('expanded');
+            }
+
+            function renderAudit() {
+                document.getElementById('auditList').innerHTML = appData.auditLogs.length ? appData.auditLogs.map(a => `
+                <div class="card"><div class="card-row"><span class="card-title">${a.action}</span><small>${new Date(a.timestamp).toLocaleString()}</small></div>
+                <div class="card-sub">${a.detail} · by ${a.user}</div></div>`).join('') : '<div class="empty-state">No audit logs</div>';
+            }
+
+            function renderReports() {
+                const tfc = appData.fuelLogs.reduce((s, f) => s + (f.cost || 0), 0);
+                const tmc = appData.maintenance.reduce((s, m) => s + (m.cost || 0), 0);
+                const tbc = appData.breakdowns.reduce((s, b) => s + (b.estimatedCost || 0), 0);
+                document.getElementById('reportMetrics').innerHTML = `
+                <div class="metric-card"><div class="m-label">Fuel Cost</div><div class="m-value">K${tfc.toLocaleString()}</div></div>
+                <div class="metric-card red"><div class="m-label">Maintenance</div><div class="m-value">K${tmc.toLocaleString()}</div></div>
+                <div class="metric-card red"><div class="m-label">Breakdowns</div><div class="m-value">K${tbc.toLocaleString()}</div></div>
+                <div class="metric-card"><div class="m-label">Total Trips</div><div class="m-value">${appData.trips.length}</div></div>
+                <div class="metric-card warn"><div class="m-label">Avg Efficiency</div><div class="m-value">${appData.fuelLogs.length?(appData.fuelLogs.reduce((s,f)=>s+(f.efficiency||0),0)/appData.fuelLogs.length).toFixed(1):'N/A'}</div></div>
+                <div class="metric-card purple"><div class="m-label">Total Distance</div><div class="m-value">${appData.trips.reduce((s,t)=>s+(t.distance||0),0).toLocaleString()}</div></div>`;
+                const cCtx = document.getElementById('chartCost');
+                if (cCtx) {
+                    if (charts.cost) charts.cost.destroy();
+                    charts.cost = new Chart(cCtx, { type: 'doughnut', data: { labels: ['Fuel', 'Maintenance',
+                                'Breakdowns'
+                            ], datasets: [{ data: [tfc, tmc, tbc], backgroundColor: ['#27AE60', '#E74C3C',
+                                    '#F39C12'
+                                ], borderWidth: 0, borderRadius: 4 }] }, options: { responsive: true,
+                            plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } } });
+                }
+                const uCtx = document.getElementById('chartUtil');
+                if (uCtx) {
+                    if (charts.util) charts.util.destroy();
+                    const labels = appData.vehicles.map(v => v.plate);
+                    const data = appData.vehicles.map(v => v.mileage);
+                    charts.util = new Chart(uCtx, { type: 'bar', data: { labels: labels.length ? labels : ['No data'],
+                            datasets: [{ label: 'Mileage (km)',
+                                data: data.length ? data : [0],
+                                backgroundColor: 'rgba(39,174,96,0.4)', borderColor: '#27AE60',
+                                borderWidth: 2, borderRadius: 6 }] }, options: { responsive: true,
+                            indexAxis: 'y', plugins: { legend: { display: false } },
+                            scales: { x: { grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+                }
+            }
+
+            function renderSettings() {
+                document.getElementById('setCompany').textContent = appData.settings.company || 'FuelRadar Ltd';
+                document.getElementById('setFuelThresh').textContent = (appData.settings.lowFuelPct || 15) + '%';
+            }
+
+            function exportData(type) {
+                showToast(`Report exported as ${type.toUpperCase()} (simulated download)`);
+                addAudit('Export', `Exported ${type.toUpperCase()} report`);
+            }
+
+            function dismissAlert(id) { appData.alerts = appData.alerts.filter(a => a.id !== id);
+                saveData();
+                renderAlerts();
+                updateBadge();
+                if (currentSection === 'dashboard') renderDashboard(); }
+
+            function clearAllAlerts() { if (!confirm('Clear all alerts?')) return;
+                appData.alerts = [];
+                saveData();
+                renderAlerts();
+                updateBadge();
+                showToast('All alerts cleared');
+                if (currentSection === 'dashboard') renderDashboard(); }
+
+            function completeTrip(id) {
+                const t = appData.trips.find(tr => tr.id === id);
+                if (!t) return;
+                t.status = 'completed';
+                t.endTime = new Date().toISOString();
+                const v = appData.vehicles.find(ve => ve.id === t.vehicleId);
+                if (v) { v.mileage += t.distance;
+                    v.status = 'idle';
+                    v.parked = true;
+                    v.avgSpeed = 0; }
+                const d = appData.drivers.find(dr => dr.id === t.driverId);
+                if (d) d.tripsCompleted = (d.tripsCompleted || 0) + 1;
+                addAudit('Trip Completed', `Trip #${id}`);
+                saveData();
+                renderTripCards();
+                showToast('Trip completed!');
+                if (currentSection === 'dashboard') renderDashboard();
+                if (currentSection === 'map') renderMapSection();
+            }
+
+            function completeMaintenance(id) {
+                const m = appData.maintenance.find(mm => mm.id === id);
+                if (m) { m.status = 'completed';
+                    m.date = new Date().toISOString().split('T')[0]; const v = appData.vehicles.find(ve => ve.id === m
+                        .vehicleId); if (v && v.status === 'maintenance') v.status = 'idle'; }
+                addAudit('Maintenance Done', `Maintenance #${id}`);
+                saveData();
+                renderMaintenanceCards();
+                showToast('Maintenance completed!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function deleteItem(type, id) {
+                if (!confirm('Delete this ' + type + '?')) return;
+                const map = { vehicle: 'vehicles', driver: 'drivers', trip: 'trips', fuel: 'fuelLogs',
+                    maintenance: 'maintenance', breakdown: 'breakdowns', user: 'users' };
+                const key = map[type];
+                if (key) appData[key] = appData[key].filter(it => it.id !== id);
+                if (type === 'driver') appData.vehicles.forEach(v => { if (v.driverId === id) v.driverId = null; });
+                if (type === 'vehicle') { appData.drivers.forEach(d => { if (d.vehicleId === id) d.vehicleId =
+                        null; });
+                    appData.trips = appData.trips.filter(t => t.vehicleId !== id);
+                    appData.fuelLogs = appData.fuelLogs.filter(f => f.vehicleId !== id);
+                    appData.maintenance = appData.maintenance.filter(m => m.vehicleId !== id);
+                    appData.breakdowns = appData.breakdowns.filter(b => b.vehicleId !== id); }
+                addAudit('Deleted', `${type} #${id}`);
+                saveData();
+                refreshSection(currentSection);
+                showToast(type + ' deleted');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function resetAllData() { if (!confirm('Reset ALL data? This cannot be undone!')) return;
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload(); }
+
+            function openModal(type, id = null) {
+                editingId = id;
+                const map = { vehicle: 'vehicles', driver: 'drivers', trip: 'trips', fuel: 'fuelLogs',
+                    maintenance: 'maintenance', breakdown: 'breakdowns', user: 'users' };
+                const key = map[type];
+                const item = id ? (appData[key] || []).find(it => it.id === id) : null;
+                const modal = document.getElementById('modalContent');
+                let html = '';
+                if (type === 'vehicle') {
+                    html = buildFormHTML('Vehicle', id, [
+                        { label: 'Plate *', id: 'fPlate', value: item ? item.plate : '', type: 'text' },
+                        { label: 'Make *', id: 'fMake', value: item ? item.make : '', type: 'text' },
+                        { label: 'Model', id: 'fModel', value: item ? item.model : '', type: 'text' },
+                        { label: 'Year', id: 'fYear', value: item ? item.year : 2024, type: 'number' },
+                        { label: 'Status', id: 'fStatus', value: item ? item.status : 'active',
+                            type: 'select', options: ['active', 'idle', 'maintenance', 'broken'] },
+                        { label: 'Mileage', id: 'fMileage', value: item ? item.mileage : 0, type: 'number' },
+                        { label: 'Driver', id: 'fDriverId', value: item ? item.driverId || '' : '',
+                            type: 'select_drivers' },
+                        { label: 'Fuel Type', id: 'fFuelType', value: item ? item.fuelType : 'Diesel',
+                            type: 'select', options: ['Diesel', 'Petrol'] },
+                        { label: 'Tank Capacity (L)', id: 'fTankCap', value: item ? item.tankCapacity || 80 :
+                                80, type: 'number' },
+                    ], 'saveVehicle');
+                } else if (type === 'driver') {
+                    html = buildFormHTML('Driver', id, [
+                        { label: 'Name *', id: 'fDName', value: item ? item.name : '', type: 'text' },
+                        { label: 'License *', id: 'fDLicense', value: item ? item.license : '', type: 'text' },
+                        { label: 'Phone', id: 'fDPhone', value: item ? item.phone : '', type: 'text' },
+                        { label: 'Status', id: 'fDStatus', value: item ? item.status : 'active',
+                            type: 'select', options: ['active', 'inactive'] },
+                        { label: 'Assign Vehicle', id: 'fDVehicleId', value: item ? item.vehicleId || '' : '',
+                            type: 'select_vehicles' },
+                    ], 'saveDriver');
+                } else if (type === 'trip') {
+                    html = buildFormHTML('Create Trip', null, [
+                        { label: 'Vehicle *', id: 'fTVehicleId', value: '', type: 'select_vehicles_active' },
+                        { label: 'Driver *', id: 'fTDriverId', value: '', type: 'select_drivers_active' },
+                        { label: 'Origin', id: 'fTOrigin', value: '', type: 'text', placeholder: 'Lusaka' },
+                        { label: 'Destination', id: 'fTDestination', value: '', type: 'text',
+                        placeholder: 'Kitwe' },
+                        { label: 'Distance (km)', id: 'fTDistance', value: '', type: 'number',
+                        placeholder: '350' },
+                    ], 'saveTrip');
+                } else if (type === 'fuel') {
+                    html = buildFormHTML('Log Fuel', null, [
+                        { label: 'Vehicle', id: 'fFVehicleId', value: '', type: 'select_vehicles' },
+                        { label: 'Liters', id: 'fFLiters', value: '', type: 'number', step: '0.1' },
+                        { label: 'Cost (K)', id: 'fFCost', value: '', type: 'number' },
+                        { label: 'Odometer', id: 'fFOdometer', value: '', type: 'number' },
+                        { label: 'Date', id: 'fFDate', value: new Date().toISOString().split('T')[0],
+                            type: 'date' },
+                        { label: 'Station', id: 'fFStation', value: '', type: 'text',
+                        placeholder: 'e.g. Total Lusaka' },
+                    ], 'saveFuel');
+                } else if (type === 'maintenance') {
+                    html = buildFormHTML('Schedule Maintenance', null, [
+                        { label: 'Vehicle', id: 'fMVehicleId', value: '', type: 'select_vehicles' },
+                        { label: 'Type', id: 'fMType', value: '', type: 'text',
+                        placeholder: 'Oil Change' },
+                        { label: 'Date', id: 'fMDate', value: new Date().toISOString().split('T')[0],
+                            type: 'date' },
+                        { label: 'Cost (K)', id: 'fMCost', value: '', type: 'number' },
+                        { label: 'Next Due (km)', id: 'fMNextDue', value: '', type: 'number' },
+                    ], 'saveMaintenance');
+                } else if (type === 'breakdown') {
+                    html = buildFormHTML('Report Breakdown', null, [
+                        { label: 'Vehicle', id: 'fBVehicleId', value: '', type: 'select_vehicles' },
+                        { label: 'Location', id: 'fBLocation', value: '', type: 'text',
+                        placeholder: 'e.g. Great North Rd' },
+                        { label: 'Cause', id: 'fBCause', value: '', type: 'text',
+                        placeholder: 'e.g. Engine failure' },
+                        { label: 'Severity', id: 'fBSeverity', value: 'critical', type: 'select',
+                            options: ['critical', 'moderate', 'minor'] },
+                        { label: 'Est. Cost (K)', id: 'fBCost', value: '', type: 'number' },
+                        { label: 'Tow Required', id: 'fBTow', value: 'false', type: 'select',
+                            options: ['false', 'true'] },
+                    ], 'saveBreakdown');
+                } else if (type === 'user') {
+                    html = buildFormHTML(id ? 'Edit User' : 'Add User', id, [
+                        { label: 'Username', id: 'fUName', value: item ? item.username : '', type: 'text' },
+                        { label: 'Email', id: 'fUEmail', value: item ? item.email : '', type: 'text' },
+                        { label: 'Role', id: 'fURole', value: item ? item.role : 'Driver', type: 'select',
+                            options: ['Administrator', 'Fleet Manager', 'Driver'] },
+                    ], 'saveUser');
+                }
+                modal.innerHTML = html;
+                document.getElementById('modalOverlay').style.display = 'flex';
+            }
+
+            function buildFormHTML(title, id, fields, saveFn) {
+                const rows = [];
+                for (let i = 0; i < fields.length; i += 2) {
+                    const f1 = fields[i];
+                    const f2 = fields[i + 1];
+                    if (f2) {
+                        rows.push(
+                            `<div class="form-row"><div class="form-group">${renderField(f1)}</div><div class="form-group">${renderField(f2)}</div></div>`
+                            );
+                    } else {
+                        rows.push(`<div class="form-group">${renderField(f1)}</div>`);
+                    }
+                }
+                return `<div class="modal-header"><span>${id?'Edit':'Add'} ${title}</span><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+              ${rows.join('')}
+              <button class="btn btn-green" style="width:100%;margin-top:6px;" onclick="${saveFn}()">💾 Save</button>`;
+            }
+
+            function renderField(f) {
+                if (f.type === 'select') {
+                    return `<label>${f.label}</label><select id="${f.id}">${(f.options||[]).map(o=>`<option value="${o}" ${f.value===o?'selected':''}>${o}</option>`).join('')}</select>`;
+                }
+                if (f.type === 'select_drivers') {
+                    return `<label>${f.label}</label><select id="${f.id}"><option value="">None</option>${appData.drivers.filter(d=>d.status==='active').map(d=>`<option value="${d.id}" ${f.value===d.id?'selected':''}>${d.name}</option>`).join('')}</select>`;
+                }
+                if (f.type === 'select_drivers_active') {
+                    return `<label>${f.label}</label><select id="${f.id}">${appData.drivers.filter(d=>d.status==='active').map(d=>`<option value="${d.id}">${d.name}</option>`).join('')}</select>`;
+                }
+                if (f.type === 'select_vehicles') {
+                    return `<label>${f.label}</label><select id="${f.id}">${appData.vehicles.map(v=>`<option value="${v.id}" ${f.value===v.id?'selected':''}>${v.plate} (${v.status})</option>`).join('')}</select>`;
+                }
+                if (f.type === 'select_vehicles_active') {
+                    return `<label>${f.label}</label><select id="${f.id}">${appData.vehicles.filter(v=>v.status==='active').map(v=>`<option value="${v.id}">${v.plate}</option>`).join('')}</select>`;
+                }
+                return `<label>${f.label}</label><input id="${f.id}" type="${f.type}" value="${f.value||''}"${f.placeholder?` placeholder="${f.placeholder}"`:''}${f.step?` step="${f.step}"`:''}>`;
+            }
+
+            function closeModal(e) { if (e && e.target !== document.getElementById('modalOverlay')) return;
+                document.getElementById('modalOverlay').style.display = 'none';
+                editingId = null; }
+
+            function getVal(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+
+            function saveVehicle() {
+                const plate = getVal('fPlate').trim(),
+                    make = getVal('fMake').trim(),
+                    model = getVal('fModel').trim(),
+                    year = parseInt(getVal('fYear')),
+                    status = getVal('fStatus'),
+                    mileage = parseInt(getVal('fMileage')) || 0,
+                    driverId = getVal('fDriverId') ? parseInt(getVal('fDriverId')) : null,
+                    fuelType = getVal('fFuelType'),
+                    tankCapacity = parseInt(getVal('fTankCap')) || 80;
+                if (!plate || !make) { showToast('Plate and Make required!', 'error'); return; }
+                if (editingId) { const v = appData.vehicles.find(ve => ve.id === editingId); if (v) Object.assign(v, {
+                        plate,
+                        make,
+                        model,
+                        year,
+                        status,
+                        mileage,
+                        driverId,
+                        fuelType,
+                        tankCapacity,
+                        parked: status !== 'active' }); } else { appData.idCounters.vehicles++;
+                    appData.vehicles.push({ id: appData.idCounters.vehicles, plate, make, model, year, status,
+                        mileage, driverId, fuelType, tankCapacity, avgSpeed: 0, lastService: new Date()
+                        .toISOString().split('T')[0], parked: true }); }
+                if (driverId) { const d = appData.drivers.find(dr => dr.id === driverId); if (d) d.vehicleId =
+                    editingId || appData.idCounters.vehicles; }
+                addAudit(editingId ? 'Vehicle Updated' : 'Vehicle Added', plate);
+                saveData();
+                closeModal();
+                renderVehicleCards();
+                showToast('Vehicle saved!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function saveDriver() {
+                const name = getVal('fDName').trim(),
+                    license = getVal('fDLicense').trim(),
+                    phone = getVal('fDPhone').trim(),
+                    status = getVal('fDStatus'),
+                    vehicleId = getVal('fDVehicleId') ? parseInt(getVal('fDVehicleId')) : null;
+                if (!name || !license) { showToast('Name and License required!', 'error'); return; }
+                if (editingId) { const d = appData.drivers.find(dr => dr.id === editingId); if (d) Object.assign(d, {
+                        name,
+                        license,
+                        phone,
+                        status,
+                        vehicleId }); } else { appData.idCounters.drivers++;
+                    appData.drivers.push({ id: appData.idCounters.drivers, name, license, phone, status,
+                        vehicleId, tripsCompleted: 0, score: 70, yearsExperience: 1 }); }
+                if (vehicleId) { const v = appData.vehicles.find(ve => ve.id === vehicleId); if (v) v.driverId =
+                    editingId || appData.idCounters.drivers; }
+                addAudit(editingId ? 'Driver Updated' : 'Driver Added', name);
+                saveData();
+                closeModal();
+                renderDriverCards();
+                showToast('Driver saved!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function saveTrip() {
+                const vehicleId = parseInt(getVal('fTVehicleId')),
+                    driverId = parseInt(getVal('fTDriverId')),
+                    origin = getVal('fTOrigin').trim(),
+                    destination = getVal('fTDestination').trim(),
+                    distance = parseInt(getVal('fTDistance'));
+                if (!vehicleId || !driverId || !origin || !destination || !distance) { showToast(
+                        'All fields required!', 'error'); return; }
+                if (appData.trips.find(t => t.vehicleId === vehicleId && t.status === 'active')) { showToast(
+                        'Vehicle already on trip!', 'error'); return; }
+                appData.idCounters.trips++;
+                appData.trips.push({ id: appData.idCounters.trips, vehicleId, driverId, origin, destination,
+                    distance, status: 'active', startTime: new Date().toISOString(), endTime: null,
+                notes: '' });
+                const v = appData.vehicles.find(ve => ve.id === vehicleId); if (v) { v.status = 'active';
+                    v.parked = false;
+                    v.avgSpeed = Math.floor(Math.random() * 30) + 45; }
+                addAudit('Trip Created', `${origin} → ${destination}`);
+                saveData();
+                closeModal();
+                renderTripCards();
+                showToast('Trip started!');
+                if (currentSection === 'dashboard') renderDashboard();
+                if (currentSection === 'map') renderMapSection();
+            }
+
+            function saveFuel() {
+                const vehicleId = parseInt(getVal('fFVehicleId')),
+                    liters = parseFloat(getVal('fFLiters')),
+                    cost = parseInt(getVal('fFCost')),
+                    odometer = parseInt(getVal('fFOdometer')) || 0,
+                    date = getVal('fFDate'),
+                    station = getVal('fFStation').trim();
+                if (!vehicleId || !liters || !cost) { showToast('Fill all fields!', 'error'); return; }
+                const eff = odometer > 0 && liters > 0 ? (odometer / liters) : null;
+                appData.idCounters.fuel++;
+                appData.fuelLogs.push({ id: appData.idCounters.fuel, vehicleId, driverId: null, date, liters, cost,
+                    odometer, efficiency: eff, station: station || 'Unknown' });
+                if (eff && eff < 5) addAlert('fuel', 'Low efficiency: ' + eff.toFixed(1) + ' km/L', 'critical',
+                    vehicleId);
+                addAudit('Fuel Logged', `${liters}L for vehicle #${vehicleId}`);
+                saveData();
+                closeModal();
+                renderFuelCards();
+                showToast('Fuel logged!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function saveMaintenance() {
+                const vehicleId = parseInt(getVal('fMVehicleId')),
+                    type = getVal('fMType').trim(),
+                    date = getVal('fMDate'),
+                    cost = parseInt(getVal('fMCost')) || 0,
+                    nextDueKm = parseInt(getVal('fMNextDue')) || 0;
+                if (!type) { showToast('Type required!', 'error'); return; }
+                appData.idCounters.maintenance++;
+                appData.maintenance.push({ id: appData.idCounters.maintenance, vehicleId, type, date,
+                    status: 'scheduled', cost, nextDueKm, notes: '' });
+                addAudit('Maintenance Scheduled', type);
+                addAlert('maintenance', `Scheduled: ${type}`, 'info', vehicleId);
+                saveData();
+                closeModal();
+                renderMaintenanceCards();
+                showToast('Scheduled!');
+                if (currentSection === 'dashboard') renderDashboard();
+            }
+
+            function saveBreakdown() {
+                const vehicleId = parseInt(getVal('fBVehicleId')),
+                    location = getVal('fBLocation').trim(),
+                    cause = getVal('fBCause').trim(),
+                    severity = getVal('fBSeverity'),
+                    estimatedCost = parseInt(getVal('fBCost')) || 0,
+                    towRequired = getVal('fBTow') === 'true';
+                if (!cause || !location) { showToast('Cause and Location required!', 'error'); return; }
+                appData.idCounters.breakdowns++;
+                appData.breakdowns.push({ id: appData.idCounters.breakdowns, vehicleId, date: new Date().toISOString()
+                        .split('T')[0], location, cause, status: 'active', severity, estimatedCost,
+                    towRequired, resolvedDate: null });
+                const v = appData.vehicles.find(ve => ve.id === vehicleId); if (v) v.status = 'broken';
+                addAlert('breakdown', `Vehicle broken down: ${cause}`, 'critical', vehicleId);
+                addAudit('Breakdown Reported', cause);
+                saveData();
+                closeModal();
+                renderBreakdownCards();
+                showToast('Breakdown reported!');
+                if (currentSection === 'dashboard') renderDashboard();
+                if (currentSection === 'vehicles') renderVehicleCards();
+            }
+
+            function saveUser() {
+                const username = getVal('fUName').trim(),
+                    email = getVal('fUEmail').trim(),
+                    role = getVal('fURole');
+                if (!username) { showToast('Username required!', 'error'); return; }
+                if (editingId) { const u = appData.users.find(us => us.id === editingId); if (u) Object.assign(u, {
+                        username,
+                        email,
+                        role }); } else { appData.idCounters.users++;
+                    appData.users.push({ id: appData.idCounters.users, username, role, email, status: 'active',
+                        lastLogin: new Date().toISOString() }); }
+                addAudit(editingId ? 'User Updated' : 'User Added', username);
+                saveData();
+                closeModal();
+                renderUserCards();
+                showToast('User saved!');
+            }
+
+            function handleSearch() {
+                const q = document.getElementById('globalSearch').value.toLowerCase().trim();
+                if (!q) return;
+                const fv = appData.vehicles.find(v => v.plate.toLowerCase().includes(q) || v.make.toLowerCase()
+                    .includes(q));
+                const fd = appData.drivers.find(d => d.name.toLowerCase().includes(q));
+                if (fv) { navigate('vehicles');
+                    showToast('Found: ' + fv.plate);
+                    setTimeout(() => showVehicleDetail(fv.id), 400); } else if (fd) { navigate('drivers');
+                    showToast('Found: ' + fd.name); }
+            }
+
+            function runChecks() {
+                appData.maintenance.forEach(m => { if ((m.status === 'scheduled' || m.status === 'in-progress') &&
+                        new Date(m.date) < new Date() && !appData.alerts.some(a => a.message.includes(
+                            'Maintenance #' + m.id))) addAlert('maintenance', 'Overdue: ' + m.type, 'critical',
+                        m.vehicleId); });
+                appData.breakdowns.forEach(b => { if (b.status === 'active' && new Date(b.date) < new Date(Date.now() -
+                        86400000) && !appData.alerts.some(a => a.message.includes('Breakdown #' + b.id)))
+                        addAlert('breakdown', 'Unresolved breakdown: ' + b.cause, 'critical', b.vehicleId); });
+                saveData();
+            }
+
+            // Expose all needed functions to global scope
+            Object.assign(window, {
+                navigate,
+                openModal,
+                closeModal,
+                showVehicleDetail,
+                trackVehicleOnMap,
+                callDriver,
+                showVehiclePerformance,
+                showMapVehicleActions,
+                handleSearch,
+                completeTrip,
+                completeMaintenance,
+                deleteItem,
+                clearAllAlerts,
+                exportData,
+                resetAllData,
+                toggleAlertExpand,
+                dismissAlert,
+                resolveBreakdown,
+                saveVehicle,
+                saveDriver,
+                saveTrip,
+                saveFuel,
+                saveMaintenance,
+                saveBreakdown,
+                saveUser,
+                closeDrawer
+            });
+
+            // INIT
+            loadData();
+            updateBadge();
+            renderDashboard();
+            document.querySelectorAll('.bottom-nav button[data-tab]').forEach(btn => {
+                btn.addEventListener('click', () => navigate(btn.dataset.tab));
+            });
+            document.getElementById('overlay').addEventListener('click', closeDrawer);
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal();
+                    closeDrawer(); } });
+            runChecks();
+            setInterval(runChecks, 120000);
+            console.log('⛽ FuelRadar Fleet Management v2.1.0 Ready');
+            console.log('📱 All buttons functional | 🟢 Green & 🔴 Red Theme | 💰 ZMW Currency');
+            console.log('🚛 Vehicle Detail Popups | 📍 Map Tracking | 🔔 Expandable Alerts');
+            console.log('💾 Data: localStorage key:', STORAGE_KEY);
+            console.log('📊 Test data loaded:', appData.vehicles.length, 'vehicles,', appData.drivers.length,
+                'drivers,', appData.trips.length, 'trips');
+        })();
+    </script>
+</body>
+</html>
