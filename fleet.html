@@ -1103,15 +1103,12 @@
         .status-check {
             font-size: 8px;
         }
-
         .status-sent {
             color: rgba(255, 255, 255, 0.6);
         }
-
         .status-delivered {
             color: rgba(255, 255, 255, 0.8);
         }
-
         .status-read {
             color: #5ac8fa;
         }
@@ -1265,9 +1262,7 @@
         .message-voice-waveform {
             flex: 1;
             height: 24px;
-            border-radius: 12px;
             position: relative;
-            overflow: hidden;
             display: flex;
             align-items: center;
             padding: 0 4px;
@@ -2765,7 +2760,7 @@
     <div class="modal-overlay" id="chatOptionsModal">
         <div class="modal-content modal-small">
             <div class="modal-header"><h3>Chat Options</h3><button class="modal-close" onclick="closeModal('chatOptionsModal')"><i class="fas fa-times"></i></button></div>
-            <div class="modal-body"><div><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="viewChatUserProfile()"><i class="fas fa-user"></i> View Profile</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="togglePinChat()"><i class="fas fa-thumbtack"></i> Pin Chat</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="openChatThemeModal()"><i class="fas fa-palette"></i> Chat Theme</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="deleteChat()"><i class="fas fa-trash"></i> Delete Chat</button></div></div>
+            <div class="modal-body"><div><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="viewChatUserProfile()"><i class="fas fa-user"></i> View Profile</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="togglePinChat()"><i class="fas fa-thumbtack"></i> Pin Chat</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;" onclick="openChatThemeModal()"><i class="fas fa-palette"></i> Chat Theme</button><button style="background:none;border:none;padding:10px;text-align:left;cursor:pointer;border-radius:8px;color:#dc2626;" onclick="deleteChat()"><i class="fas fa-trash"></i> Delete Chat</button></div></div>
         </div>
     </div>
 
@@ -2840,6 +2835,9 @@
         let statusFilter = "all";
         let currentUser = null;
         let currentCompanyId = null;
+        let isShutdown = false;
+        let isCompanyBlocked = false;
+        let shutdownListeners = [];
 
         // Chat globals
         let currentChat = null;
@@ -3085,7 +3083,6 @@
 
             let html = `
                 <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-                    <button class="btn btn-green" onclick="openCreateVehicleModal()"><i class="fas fa-plus"></i> Add Vehicle</button>
                     <button class="btn btn-green" onclick="openCreateVehicleModal()"><i class="fas fa-plus"></i> Add Vehicle</button>
                 </div>
             `;
@@ -3974,9 +3971,6 @@
             const messageElement = createMessageElement(message);
             chatMessages.appendChild(messageElement);
             setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 100);
-            if (message.senderId !== currentUser?.userId) {
-                playNotificationSound();
-            }
         }
 
         function createMessageElement(message) {
@@ -4331,7 +4325,10 @@
                 showToast('Open a chat first', 'error');
                 return;
             }
+            const receiverUid = 'admin';
+            const receiverId = 'admin';
             currentCallType = isVideo ? 'video' : 'audio';
+
             try {
                 const constraints = { audio: true, video: isVideo };
                 localStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -4345,8 +4342,8 @@
                     callerId: currentUser.userId,
                     callerName: currentUser.name,
                     callerAvatar: currentUser.profilePicture || '',
-                    receiverUid: 'admin',
-                    receiverId: 'admin',
+                    receiverUid: receiverUid,
+                    receiverId: receiverId,
                     receiverName: 'FUELRADAR TECH TEAM',
                     receiverAvatar: 'https://via.placeholder.com/150',
                     isVideo: isVideo,
@@ -4378,6 +4375,8 @@
                     offer: { type: offer.type, sdp: offer.sdp }
                 });
 
+                window[`callLogSent_${callId}`] = false;
+
                 callDocListener = firestore.collection('calls').doc(callId)
                     .onSnapshot(async (snapshot) => {
                         const data = snapshot.data();
@@ -4386,15 +4385,19 @@
                             const answer = new RTCSessionDescription(data.answer);
                             await peerConnection.setRemoteDescription(answer);
                         }
-                        if (data.status === 'connected' && !data.wasConnected) {
-                            await firestore.collection('calls').doc(callId).update({ wasConnected: true });
+                        const finalStates = ['ended', 'rejected', 'missed'];
+                        if (finalStates.includes(data.status) && data.chatId && !window[
+                                `callLogSent_${callId}`]) {
+                            let outcome = 'missed';
+                            if (data.status === 'ended' && data.wasConnected) outcome = 'answered';
+                            else if (data.status === 'rejected') outcome = 'rejected';
+                            else if (data.status === 'missed') outcome = 'missed';
+                            await sendCallLogMessage(data.chatId, data.callType || (data.isVideo ? 'video' :
+                                'audio'), outcome);
+                            window[`callLogSent_${callId}`] = true;
                         }
                         if (data.status === 'ended' || data.status === 'rejected' || data.status === 'missed') {
-                            if (currentCallId === callId) {
-                                await sendCallLogMessage(data.chatId, data.callType || (data.isVideo ? 'video' :
-                                    'audio'), data.status);
-                                endCall(true);
-                            }
+                            endCall(true);
                         }
                     });
 
@@ -4701,24 +4704,173 @@
         }
 
         // ================================================================
+        // SHUTDOWN DETECTION
+        // ================================================================
+        function setupShutdownListeners() {
+            // Check if fleet app is in maintenance mode
+            const fleetMaintRef = db.ref('maintenance/fleetApp');
+            fleetMaintRef.on('value', (snapshot) => {
+                const isMaint = snapshot.val() === true;
+                if (isMaint) {
+                    isShutdown = true;
+                    showShutdownAlert('Fleet App is currently under maintenance. Please try again later.');
+                } else {
+                    isShutdown = false;
+                }
+            });
+            shutdownListeners.push({ ref: fleetMaintRef });
+
+            // Check if this company is blocked
+            if (currentCompanyId) {
+                const blockedRef = db.ref(`blocked/stations/${currentCompanyId}`);
+                blockedRef.on('value', (snapshot) => {
+                    const isBlocked = snapshot.val() === true;
+                    if (isBlocked) {
+                        isCompanyBlocked = true;
+                        showShutdownAlert('Your company account has been shut down by admin.');
+                    } else {
+                        isCompanyBlocked = false;
+                    }
+                });
+                shutdownListeners.push({ ref: blockedRef });
+
+                // Also check maintenance on station app
+                const stationMaintRef = db.ref('maintenance/stationApp');
+                stationMaintRef.on('value', (snapshot) => {
+                    const isMaint = snapshot.val() === true;
+                    if (isMaint) {
+                        showShutdownAlert('Station App is currently under maintenance. Please try again later.');
+                    }
+                });
+                shutdownListeners.push({ ref: stationMaintRef });
+            }
+        }
+
+        function showShutdownAlert(message) {
+            showToast(message, 'error');
+            // Hide dashboard and show login screen
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('bottomNav').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            if (currentUser) {
+                auth.signOut();
+                currentUser = null;
+                currentCompanyId = null;
+            }
+            // Clean up listeners to prevent loops
+            cleanupShutdownListeners();
+            // Prefill email for convenience
+            const emailInput = document.getElementById('companyEmail');
+            if (emailInput) emailInput.value = '';
+            document.getElementById('loginError').innerText = message;
+        }
+
+        function cleanupShutdownListeners() {
+            shutdownListeners.forEach(({ ref, listener }) => {
+                try {
+                    ref.off('value', listener);
+                } catch (error) {
+                    console.log('Error removing shutdown listener:', error);
+                }
+            });
+            shutdownListeners = [];
+        }
+
+        // ================================================================
         // AUTH — ONLY COMPANIES
         // ================================================================
         document.getElementById("loginBtn").onclick = async () => {
             const email = document.getElementById("companyEmail").value.trim();
             const pwd = document.getElementById("companyPassword").value;
+            document.getElementById('loginError').innerText = '';
+
             try {
+                // 1. Sign in
                 const userCred = await auth.signInWithEmailAndPassword(email, pwd);
                 const user = userCred.user;
-                const snap = await db.ref(`stationOwners/${user.uid}`).once('value');
-                if (!snap.exists()) {
+
+                // 2. Check if company exists
+                const stationSnap = await db.ref(`stationOwners/${user.uid}`).once('value');
+                if (!stationSnap.exists()) {
                     await auth.signOut();
-                    document.getElementById("loginError").innerText =
-                        "This account is not a company. Only companies can log in.";
+                    document.getElementById('loginError').innerText = 'This account is not a company. Only companies can log in.';
                     return;
                 }
-                document.getElementById("loginError").innerText = "";
+
+                // 3. Check if fleet app is in maintenance
+                const fleetMaintSnap = await db.ref('maintenance/fleetApp').once('value');
+                if (fleetMaintSnap.val() === true) {
+                    await auth.signOut();
+                    document.getElementById('loginError').innerText = 'Fleet App is currently under maintenance. Please try again later.';
+                    return;
+                }
+
+                // 4. Check if company is blocked
+                const blockedSnap = await db.ref(`blocked/stations/${user.uid}`).once('value');
+                if (blockedSnap.val() === true) {
+                    await auth.signOut();
+                    document.getElementById('loginError').innerText = 'Your company account has been shut down by admin.';
+                    return;
+                }
+
+                // 5. Check if station app is in maintenance
+                const stationMaintSnap = await db.ref('maintenance/stationApp').once('value');
+                if (stationMaintSnap.val() === true) {
+                    await auth.signOut();
+                    document.getElementById('loginError').innerText = 'Station App is currently under maintenance. Please try again later.';
+                    return;
+                }
+
+                // 6. Success - load user data
+                const companyData = stationSnap.val();
+                currentUser = {
+                    uid: user.uid,
+                    userId: user.uid,
+                    name: companyData.stationName || 'Company',
+                    email: user.email,
+                    profilePicture: 'https://via.placeholder.com/150'
+                };
+                currentCompanyId = user.uid;
+                document.getElementById('loginError').innerText = '';
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                document.getElementById('bottomNav').style.display = 'flex';
+
+                await refreshAll();
+                setupShutdownListeners();
+
+                document.querySelectorAll(".nav-item[data-nav]").forEach(btn => {
+                    btn.onclick = () => {
+                        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+                        btn.classList.add("active");
+                        currentTab = btn.dataset.nav;
+                        searchTerm = "";
+                        statusFilter = "all";
+                        document.getElementById("searchInput").value = "";
+                        document.getElementById("statusFilter").value = "all";
+                        renderCurrentTab();
+                    };
+                });
+
+                document.getElementById("searchInput").oninput = (e) => {
+                    searchTerm = e.target.value.toLowerCase();
+                    renderCurrentTab();
+                };
+                document.getElementById("statusFilter").onchange = (e) => {
+                    statusFilter = e.target.value;
+                    renderCurrentTab();
+                };
+                document.getElementById("refreshBtn").onclick = async () => {
+                    await refreshAll();
+                    showToast("Refreshed", 'info');
+                };
+
+                document.querySelector(".nav-item[data-nav='vehicles']").classList.add("active");
+                showToast('Welcome back, ' + currentUser.name + '!', 'success');
+
             } catch (err) {
-                document.getElementById("loginError").innerText = err.message;
+                console.error('Login error:', err);
+                document.getElementById('loginError').innerText = err.message;
             }
         };
 
@@ -4726,8 +4878,30 @@
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
+                // Already handling in login flow, but if user exists without login flow, run checks
                 const snap = await db.ref(`stationOwners/${user.uid}`).once('value');
-                if (snap.exists()) {
+                if (!snap.exists()) {
+                    await auth.signOut();
+                    return;
+                }
+                // Check if already set (prevents double setup)
+                if (!currentUser) {
+                    const fleetMaintSnap = await db.ref('maintenance/fleetApp').once('value');
+                    if (fleetMaintSnap.val() === true) {
+                        await auth.signOut();
+                        return;
+                    }
+                    const blockedSnap = await db.ref(`blocked/stations/${user.uid}`).once('value');
+                    if (blockedSnap.val() === true) {
+                        await auth.signOut();
+                        return;
+                    }
+                    const stationMaintSnap = await db.ref('maintenance/stationApp').once('value');
+                    if (stationMaintSnap.val() === true) {
+                        await auth.signOut();
+                        return;
+                    }
+                    // Auto-login for session restore
                     const companyData = snap.val();
                     currentUser = {
                         uid: user.uid,
@@ -4737,45 +4911,26 @@
                         profilePicture: 'https://via.placeholder.com/150'
                     };
                     currentCompanyId = user.uid;
-                    document.getElementById("loginScreen").style.display = "none";
-                    document.getElementById("dashboard").style.display = "flex";
-                    document.getElementById("bottomNav").style.display = "flex";
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'flex';
+                    document.getElementById('bottomNav').style.display = 'flex';
                     await refreshAll();
-
-                    document.querySelectorAll(".nav-item[data-nav]").forEach(btn => {
-                        btn.onclick = () => {
-                            document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-                            btn.classList.add("active");
-                            currentTab = btn.dataset.nav;
-                            searchTerm = "";
-                            statusFilter = "all";
-                            document.getElementById("searchInput").value = "";
-                            document.getElementById("statusFilter").value = "all";
-                            renderCurrentTab();
-                        };
-                    });
-
-                    document.getElementById("searchInput").oninput = (e) => {
-                        searchTerm = e.target.value.toLowerCase();
-                        renderCurrentTab();
-                    };
-                    document.getElementById("statusFilter").onchange = (e) => {
-                        statusFilter = e.target.value;
-                        renderCurrentTab();
-                    };
-                    document.getElementById("refreshBtn").onclick = async () => {
-                        await refreshAll();
-                        showToast("Refreshed", 'info');
-                    };
-
+                    setupShutdownListeners();
                     document.querySelector(".nav-item[data-nav='vehicles']").classList.add("active");
-                    return;
                 }
+            } else {
+                // No user - show login
+                if (currentUser) {
+                    // Clean up if user was logged in
+                    cleanupShutdownListeners();
+                    cleanupChatListeners();
+                    currentUser = null;
+                    currentCompanyId = null;
+                }
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('bottomNav').style.display = 'none';
             }
-            if (user) await auth.signOut();
-            document.getElementById("loginScreen").style.display = "flex";
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("bottomNav").style.display = "none";
         });
 
         // ================================================================
@@ -4837,12 +4992,32 @@
             showToast('View Once message (implemented)', 'info');
         }
 
+        function logout() {
+            if (confirm('Logout?')) {
+                cleanupShutdownListeners();
+                cleanupChatListeners();
+                setOnlineStatus(false);
+                auth.signOut();
+                currentUser = null;
+                currentCompanyId = null;
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('bottomNav').style.display = 'none';
+                document.getElementById('companyEmail').value = '';
+                document.getElementById('companyPassword').value = '';
+                showToast('Logged out', 'info');
+            }
+        }
+
         // ================================================================
         // INIT
         // ================================================================
-        console.log('✅ FuelRadar Fleet – Full Company Portal');
+        console.log('✅ FuelRadar Fleet – Full Company Portal with Shutdown Detection');
         console.log('📌 Only companies can log in. Admin messages appear as FUELRADAR TECH TEAM.');
         console.log('🚛 All features: vehicles, drivers, trips, routes, breakdowns, fuel cut, map, real calls.');
+
+        // Initial cleanup
+        document.getElementById('loginError').innerText = '';
     </script>
 </body>
 </html>
