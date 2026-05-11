@@ -24,12 +24,17 @@
     <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0/dist/emoji-picker.min.js">
     </script>
     <style>
-        /* ========== RESET & ROOT ========== */
+        /* ============================================================
+           RESET & ROOT
+        ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
+
         :root {
             --primary: #1A6B3C;
             --primary-dark: #0F4A2A;
@@ -96,8 +101,6 @@
             --z-tooltip: 1070;
             --z-toast: 1080;
             --white: #ffffff;
-            --white-98: #fafafa;
-            --white-95: #f2f2f2;
             --gray-50: #f8f8f8;
             --gray-100: #f0f0f0;
             --gray-150: #e8e8e8;
@@ -119,12 +122,11 @@
             overflow: hidden;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
             height: 100vh;
-            display: flex;
-            flex-direction: column;
+            width: 100vw;
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
@@ -144,7 +146,7 @@
         }
 
         /* ============================================================
-           SPLASH / SIGN-IN
+           SPLASH / LOGIN
         ============================================================ */
         #splash {
             position: fixed;
@@ -209,6 +211,9 @@
             width: 90px;
             height: 90px;
             margin: 4px auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #splash .splash-radar .ring {
             position: absolute;
@@ -222,13 +227,9 @@
         }
         #splash .splash-radar .ring:nth-child(2) {
             animation-delay: 0.6s;
-            border-width: 1.5px;
-            border-color: rgba(52, 199, 89, 0.12);
         }
         #splash .splash-radar .ring:nth-child(3) {
             animation-delay: 1.2s;
-            border-width: 1px;
-            border-color: rgba(52, 199, 89, 0.06);
         }
         #splash .splash-radar .center-dot {
             position: absolute;
@@ -353,7 +354,9 @@
             background: #e8e8e8;
         }
 
-        /* ---- Floating Header ---- */
+        /* ============================================================
+           FLOATING HEADER
+        ============================================================ */
         .floating-header {
             position: fixed;
             top: 12px;
@@ -433,11 +436,10 @@
             border-radius: var(--radius-sm);
             transition: all 0.15s ease;
         }
-        .floating-header .menu-btn:active {
-            background: rgba(118, 118, 128, 0.08);
-        }
 
-        /* ---- Floating Bottom Nav ---- */
+        /* ============================================================
+           FLOATING BOTTOM NAV
+        ============================================================ */
         .floating-bottom-nav {
             position: fixed;
             bottom: 14px;
@@ -512,7 +514,9 @@
             pointer-events: none;
         }
 
-        /* ---- Floating Panels (overlay) ---- */
+        /* ============================================================
+           FLOATING PANEL
+        ============================================================ */
         .panel-overlay {
             position: fixed;
             inset: 0;
@@ -595,7 +599,9 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ---- Cards inside panel ---- */
+        /* ============================================================
+           CARD & METRIC STYLES INSIDE PANEL
+        ============================================================ */
         .p-card {
             background: var(--surface-secondary);
             border-radius: var(--radius-lg);
@@ -673,6 +679,12 @@
         .p-metric.warn::before {
             background: var(--orange);
         }
+        .p-metric.blue::before {
+            background: var(--blue);
+        }
+        .p-metric.purple::before {
+            background: var(--purple);
+        }
         .p-metric .m-val {
             font-size: var(--font-2xl);
             font-weight: 700;
@@ -687,7 +699,185 @@
             letter-spacing: 0.02em;
         }
 
-        /* ---- Chat page (full overlay) ---- */
+        /* ============================================================
+           BADGE & BUTTON
+        ============================================================ */
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            font-size: 0.6rem;
+            font-weight: 600;
+            white-space: nowrap;
+            line-height: 1.5;
+        }
+        .badge-green {
+            background: var(--primary-light);
+            color: #1B5E20;
+        }
+        .badge-red {
+            background: var(--red-light);
+            color: #991B1B;
+        }
+        .badge-orange {
+            background: var(--orange-light);
+            color: #8B5E00;
+        }
+        .badge-gray {
+            background: #F2F2F7;
+            color: #636366;
+        }
+        .badge-blue {
+            background: var(--blue-light);
+            color: #1A3A6B;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-xs);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-green {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(52, 199, 89, 0.25);
+        }
+        .btn-green:active {
+            background: var(--accent-dark);
+        }
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(255, 59, 48, 0.2);
+        }
+        .btn-red:active {
+            background: var(--red-dark);
+        }
+        .btn-outline {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .btn-outline:active {
+            background: var(--surface-secondary);
+        }
+        .btn-outline.green {
+            border-color: var(--accent);
+            color: var(--accent-dark);
+            background: var(--primary-light);
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 0.64rem;
+        }
+        .btn-xs {
+            padding: 2px 8px;
+            font-size: 0.58rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-tertiary);
+            font-size: var(--font-sm);
+        }
+        .empty-state i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-quaternary, #C7C7CC);
+        }
+
+        /* ============================================================
+           FORM STYLES
+        ============================================================ */
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            font-size: var(--font-xs);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+            color: var(--text-secondary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-sm);
+            font-family: inherit;
+            outline: none;
+            background: var(--surface-secondary);
+            transition: all 0.15s ease;
+            color: var(--text);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.08);
+            background: var(--surface);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .detail-section {
+            background: var(--surface-secondary);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border: 0.5px solid var(--border-light);
+        }
+        .detail-section h5 {
+            font-size: 0.66rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: var(--font-sm);
+            border-bottom: 0.5px dotted var(--border-light);
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        /* ============================================================
+           CHAT PAGE
+        ============================================================ */
         .chat-page {
             position: fixed;
             inset: 0;
@@ -1209,7 +1399,9 @@
             display: block;
         }
 
-        /* ---- Voice recording UI ---- */
+        /* ============================================================
+           VOICE RECORDING UI
+        ============================================================ */
         .voice-recording-ui {
             position: fixed;
             bottom: 80px;
@@ -1256,7 +1448,9 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* ---- Call modals ---- */
+        /* ============================================================
+           CALL MODALS
+        ============================================================ */
         .incoming-call-fullscreen {
             background-size: cover !important;
             background-position: center !important;
@@ -1488,7 +1682,9 @@
             color: inherit;
         }
 
-        /* ---- Drawer ---- */
+        /* ============================================================
+           DRAWER
+        ============================================================ */
         .drawer-overlay {
             position: fixed;
             inset: 0;
@@ -1559,8 +1755,15 @@
         .drawer button:active {
             background: rgba(118, 118, 128, 0.06);
         }
+        .drawer .btn {
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center;
+        }
 
-        /* ---- Toast ---- */
+        /* ============================================================
+           TOAST
+        ============================================================ */
         .toast-container {
             position: fixed;
             top: 14px;
@@ -1605,99 +1808,9 @@
             }
         }
 
-        /* ---- Generic ---- */
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: var(--radius-full);
-            font-size: 0.6rem;
-            font-weight: 600;
-            white-space: nowrap;
-            line-height: 1.5;
-        }
-        .badge-green {
-            background: var(--primary-light);
-            color: #1B5E20;
-        }
-        .badge-red {
-            background: var(--red-light);
-            color: #991B1B;
-        }
-        .badge-orange {
-            background: var(--orange-light);
-            color: #8B5E00;
-        }
-        .badge-gray {
-            background: #F2F2F7;
-            color: #636366;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 14px;
-            border-radius: var(--radius-full);
-            font-size: var(--font-xs);
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: inherit;
-            white-space: nowrap;
-        }
-        .btn:active {
-            transform: scale(0.95);
-        }
-        .btn-green {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 2px 6px rgba(52, 199, 89, 0.25);
-        }
-        .btn-green:active {
-            background: var(--accent-dark);
-        }
-        .btn-red {
-            background: var(--red);
-            color: #fff;
-            box-shadow: 0 2px 6px rgba(255, 59, 48, 0.2);
-        }
-        .btn-red:active {
-            background: var(--red-dark);
-        }
-        .btn-outline {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-        }
-        .btn-outline.green {
-            border-color: var(--accent);
-            color: var(--accent-dark);
-            background: var(--primary-light);
-        }
-        .btn-sm {
-            padding: 4px 12px;
-            font-size: 0.64rem;
-        }
-        .btn-xs {
-            padding: 2px 8px;
-            font-size: 0.58rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 32px 16px;
-            color: var(--text-tertiary);
-            font-size: var(--font-sm);
-        }
-        .empty-state i {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-quaternary, #C7C7CC);
-        }
-
-        /* ---- Responsive ---- */
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
         @media (max-width: 480px) {
             .floating-header .logo span {
                 font-size: 0.9rem;
@@ -1743,15 +1856,6 @@
                 right: 30px;
             }
         }
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
 
         .hidden {
             display: none !important;
@@ -1768,79 +1872,6 @@
         }
         .mt-2 {
             margin-top: 8px;
-        }
-
-        /* Form inside panel */
-        .form-group {
-            margin-bottom: 10px;
-        }
-        .form-group label {
-            font-size: var(--font-xs);
-            font-weight: 600;
-            display: block;
-            margin-bottom: 3px;
-            color: var(--text-secondary);
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: var(--font-sm);
-            font-family: inherit;
-            outline: none;
-            background: var(--surface-secondary);
-            transition: all 0.15s ease;
-            color: var(--text);
-        }
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.08);
-            background: var(--surface);
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .modal-actions .btn {
-            flex: 1;
-            justify-content: center;
-        }
-
-        .detail-section {
-            background: var(--surface-secondary);
-            border-radius: var(--radius);
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            border: 0.5px solid var(--border-light);
-        }
-        .detail-section h5 {
-            font-size: 0.66rem;
-            font-weight: 700;
-            color: var(--text-tertiary);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 3px 0;
-            font-size: var(--font-sm);
-            border-bottom: 0.5px dotted var(--border-light);
-        }
-        .detail-row:last-child {
-            border-bottom: none;
         }
     </style>
 </head>
@@ -1888,11 +1919,11 @@
                 <span>FuelRadar</span>
             </div>
             <div class="header-actions">
-                <button class="notif-btn" onclick="togglePanel('alerts')">
+                <button class="notif-btn" onclick="openPanel('alerts')">
                     <i class="fas fa-bell"></i>
                     <span class="badge" id="notifBadge">0</span>
                 </button>
-                <button class="menu-btn" onclick="toggleDrawer()">
+                <button class="menu-btn" onclick="openDrawer()">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -1908,29 +1939,27 @@
             <button data-panel="chat"><i class="fas fa-comments"></i><span>Chat</span></button>
         </nav>
 
-        <!-- Floating Panel Overlay -->
+        <!-- Panel Overlay & Panel -->
         <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
-
-        <!-- Floating Panel -->
         <div class="floating-panel" id="floatingPanel">
             <div class="panel-header">
                 <h3 id="panelTitle">Dashboard</h3>
                 <button class="close-panel" onclick="closePanel()"><i class="fas fa-times"></i></button>
             </div>
             <div class="panel-body" id="panelBody">
-                <!-- Dynamic content here -->
+                <!-- Dynamic content -->
             </div>
         </div>
 
-        <!-- Drawer Overlay -->
+        <!-- Drawer -->
         <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
         <div class="drawer" id="drawer">
             <h4><i class="fas fa-bars"></i> More</h4>
-            <button onclick="togglePanel('maintenance')"><i class="fas fa-tools"></i> Maintenance</button>
-            <button onclick="togglePanel('breakdowns')"><i class="fas fa-exclamation-circle"></i> Breakdowns</button>
-            <button onclick="togglePanel('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
-            <button onclick="togglePanel('settings')"><i class="fas fa-cog"></i> Settings</button>
-            <button onclick="togglePanel('audit')"><i class="fas fa-history"></i> Audit</button>
+            <button onclick="openPanel('maintenance')"><i class="fas fa-tools"></i> Maintenance</button>
+            <button onclick="openPanel('breakdowns')"><i class="fas fa-exclamation-circle"></i> Breakdowns</button>
+            <button onclick="openPanel('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
+            <button onclick="openPanel('settings')"><i class="fas fa-cog"></i> Settings</button>
+            <button onclick="openPanel('audit')"><i class="fas fa-history"></i> Audit</button>
             <button class="btn btn-red" onclick="logout()" style="margin-top:20px;width:100%;justify-content:center;">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -1995,7 +2024,7 @@
             <div class="recording-hint">Release to send</div>
         </div>
 
-        <!-- Incoming Call Modal -->
+        <!-- Incoming Call -->
         <div class="modal-overlay incoming-call-fullscreen" id="incomingCallModal">
             <div class="incoming-call-header">
                 <span class="call-type" id="incomingCallType">Incoming Call</span>
@@ -2009,7 +2038,7 @@
             </div>
         </div>
 
-        <!-- Active Call Modal -->
+        <!-- Active Call -->
         <div class="modal-overlay active-call-modal" id="activeCallModal">
             <div class="modal-content" style="background:#000;color:white;">
                 <div class="modal-header" style="background:rgba(0,0,0,0.8);border-bottom:1px solid #333;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
@@ -2043,7 +2072,7 @@
             </div>
         </div>
 
-        <!-- Chat Options Modal -->
+        <!-- Chat Options -->
         <div class="modal-overlay" id="chatOptionsModal">
             <div class="modal-content modal-small" style="max-width:340px;">
                 <div class="modal-header">
@@ -2314,7 +2343,6 @@
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(
                 mapInstance);
             renderMapMarkers(true);
-            mapInstance.on('click', () => {});
             setTimeout(() => {
                 if (mapMarkers.length > 1) {
                     const g = L.featureGroup(mapMarkers);
@@ -2350,7 +2378,7 @@
                     '#FF9500';
                 const icon = L.divIcon({
                     className: '',
-                    html: `<div style="width:34px;height:34px;border-radius:50%;background:#fff;border:3px solid ${color};display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 3px 14px rgba(0,0,0,0.2);"><i class="fas fa-truck" style="color:${color};font-size:14px;"></i></div>`,
+                    html: `<div style="width:34px;height:34px;border-radius:50%;background:#fff;border:3px solid ${color};display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 3px 14px rgba(0,0,0,0.2);"><img src="car.png" style="width:20px;height:20px;object-fit:contain;"></div>`,
                     iconSize: [34, 34],
                     iconAnchor: [17, 17]
                 });
@@ -2411,7 +2439,7 @@
         // ================================================================
         // PANEL MANAGEMENT
         // ================================================================
-        function togglePanel(panel) {
+        function openPanel(panel) {
             if (panel === 'chat') {
                 openChat();
                 return;
@@ -2426,7 +2454,6 @@
             document.getElementById('floatingPanel').classList.add('open');
             document.getElementById('panelTitle').textContent = panel.charAt(0).toUpperCase() + panel.slice(1);
             renderPanel(panel);
-            // Update bottom nav
             document.querySelectorAll('.floating-bottom-nav button[data-panel]').forEach(b => {
                 b.classList.toggle('active', b.dataset.panel === panel);
             });
@@ -2505,13 +2532,13 @@
 
             body.innerHTML = `
                 <div class="p-grid">
-                    <div class="p-metric" onclick="togglePanel('vehicles')"><div class="m-label">Vehicles</div><div class="m-val">${tv}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${av} active</div></div>
-                    <div class="p-metric" onclick="togglePanel('drivers')"><div class="m-label">Drivers</div><div class="m-val">${ad}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${appData.drivers.length} total</div></div>
-                    <div class="p-metric warn" onclick="togglePanel('trips')"><div class="m-label">Active Trips</div><div class="m-val">${at}</div><div style="font-size:0.6rem;color:var(--orange);">${ct} completed</div></div>
-                    <div class="p-metric" onclick="togglePanel('fuel')"><div class="m-label">Fuel Cost</div><div class="m-val">K${tfc.toLocaleString()}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${appData.fuelLogs.length} logs</div></div>
-                    <div class="p-metric red" onclick="togglePanel('alerts')"><div class="m-label">Alerts</div><div class="m-val">${ua}</div><div style="font-size:0.6rem;color:var(--red);">needs attention</div></div>
-                    <div class="p-metric red" onclick="togglePanel('breakdowns')"><div class="m-label">Breakdowns</div><div class="m-val">${activeBreakdowns}</div><div style="font-size:0.6rem;color:var(--red);">active</div></div>
-                    <div class="p-metric warn" onclick="togglePanel('maintenance')"><div class="m-label">Maint. Due</div><div class="m-val">${maintDue}</div><div style="font-size:0.6rem;color:var(--orange);">scheduled</div></div>
+                    <div class="p-metric" onclick="openPanel('vehicles')"><div class="m-label">Vehicles</div><div class="m-val">${tv}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${av} active</div></div>
+                    <div class="p-metric" onclick="openPanel('drivers')"><div class="m-label">Drivers</div><div class="m-val">${ad}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${appData.drivers.length} total</div></div>
+                    <div class="p-metric warn" onclick="openPanel('trips')"><div class="m-label">Active Trips</div><div class="m-val">${at}</div><div style="font-size:0.6rem;color:var(--orange);">${ct} completed</div></div>
+                    <div class="p-metric" onclick="openPanel('fuel')"><div class="m-label">Fuel Cost</div><div class="m-val">K${tfc.toLocaleString()}</div><div style="font-size:0.6rem;color:var(--accent-dark);">${appData.fuelLogs.length} logs</div></div>
+                    <div class="p-metric red" onclick="openPanel('alerts')"><div class="m-label">Alerts</div><div class="m-val">${ua}</div><div style="font-size:0.6rem;color:var(--red);">needs attention</div></div>
+                    <div class="p-metric red" onclick="openPanel('breakdowns')"><div class="m-label">Breakdowns</div><div class="m-val">${activeBreakdowns}</div><div style="font-size:0.6rem;color:var(--red);">active</div></div>
+                    <div class="p-metric warn" onclick="openPanel('maintenance')"><div class="m-label">Maint. Due</div><div class="m-val">${maintDue}</div><div style="font-size:0.6rem;color:var(--orange);">scheduled</div></div>
                     <div class="p-metric blue"><div class="m-label">Avg Efficiency</div><div class="m-val">${avgEff}</div><div style="font-size:0.6rem;color:var(--blue);">km/L</div></div>
                     <div class="p-metric purple"><div class="m-label">Total Dist.</div><div class="m-val">${totalDist.toLocaleString()}</div><div style="font-size:0.6rem;color:var(--purple);">km</div></div>
                 </div>
@@ -2543,7 +2570,7 @@
                     const d = appData.drivers.find(dr => dr.id === v.driverId);
                     const sc = v.status === 'active' ? 'badge-green' : v.status === 'idle' ? 'badge-orange' : v.status === 'maintenance' ? 'badge-red' : v.status === 'broken' ? 'badge-red' : 'badge-gray';
                     return `<div class="p-card" onclick="showVehicleDetail(${v.id})">
-                        <div class="p-row"><span class="p-title"><i class="fas fa-truck" style="color:var(--accent);"></i> ${v.plate}</span><span class="badge ${sc}">${v.status}</span></div>
+                        <div class="p-row"><span class="p-title"><img src="car.png" style="width:20px;height:20px;object-fit:contain;display:inline-block;vertical-align:middle;"></i> ${v.plate}</span><span class="badge ${sc}">${v.status}</span></div>
                         <div class="p-sub">${v.make} ${v.model} · ${v.year} · ${v.fuelType}</div>
                         <div class="p-icons"><span><i class="fas fa-road"></i> ${v.mileage.toLocaleString()} km</span><span><i class="fas fa-user" style="color:var(--blue);"></i> ${d ? d.name : 'None'}</span></div>
                         <div class="p-actions"><button class="btn btn-outline btn-xs" onclick="event.stopPropagation();editVehicle(${v.id})"><i class="fas fa-edit"></i> Edit</button><button class="btn btn-red btn-xs" onclick="event.stopPropagation();deleteItem('vehicle',${v.id})"><i class="fas fa-trash"></i> Delete</button></div>
@@ -2571,7 +2598,7 @@
             const body = document.getElementById('panelBody');
             body.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                    <h4><i class="fas fa-truck" style="color:var(--accent);"></i> ${v.plate}</h4>
+                    <h4><img src="car.png" style="width:24px;height:24px;object-fit:contain;display:inline-block;vertical-align:middle;"></i> ${v.plate}</h4>
                     <button class="btn btn-outline btn-sm" onclick="closePanel();focusVehicleOnMap(${v.id})"><i class="fas fa-map-pin"></i> Track</button>
                 </div>
                 <div class="detail-section"><h5>Vehicle</h5>
@@ -2602,7 +2629,6 @@
                     <button class="btn btn-outline btn-sm" onclick="switchOff(${v.id})"><i class="fas fa-power-off"></i> Switch Off</button>
                 </div>
             `;
-            // Re-open panel with new content
             document.getElementById('panelTitle').textContent = 'Vehicle Detail';
         }
 
@@ -2676,7 +2702,7 @@
             saveData();
             closePanel();
             showToast('Vehicle saved!', 'success');
-            renderPanel('vehicles');
+            openPanel('vehicles');
         }
 
         function openAssignDriver() {
@@ -2710,7 +2736,7 @@
                 showToast(`${d.name} assigned to ${v.plate}`, 'success');
                 addAudit('Driver Assigned', `${d.name} → ${v.plate}`);
                 closePanel();
-                renderPanel('vehicles');
+                openPanel('vehicles');
             }
         }
 
@@ -2741,7 +2767,7 @@
                 saveData();
                 showToast('⛽ Fuel cut on ' + v.plate, 'warning');
                 closePanel();
-                renderPanel('vehicles');
+                openPanel('vehicles');
                 renderMapMarkers(true);
             }
         }
@@ -2756,7 +2782,7 @@
                 addAudit('Fuel Cut', v.plate);
                 saveData();
                 showToast('⛽ Fuel cut on ' + v.plate, 'warning');
-                renderPanel('vehicles');
+                openPanel('vehicles');
                 renderMapMarkers(true);
             }
         }
@@ -2771,7 +2797,7 @@
                 addAudit('Switch Off', v.plate);
                 saveData();
                 showToast('🔌 Switched off ' + v.plate, 'warning');
-                renderPanel('vehicles');
+                openPanel('vehicles');
                 renderMapMarkers(true);
             }
         }
@@ -2793,7 +2819,7 @@
             addAudit('Deleted', `${type} #${id}`);
             saveData();
             showToast(type + ' deleted', 'info');
-            renderPanel(currentPanel);
+            openPanel(currentPanel);
             renderMapMarkers(true);
         }
 
@@ -2923,7 +2949,7 @@
             saveData();
             closePanel();
             showToast('Driver saved!', 'success');
-            renderPanel('drivers');
+            openPanel('drivers');
         }
 
         // ================================================================
@@ -2993,7 +3019,7 @@
             saveData();
             closePanel();
             showToast('Trip started!', 'success');
-            renderPanel('trips');
+            openPanel('trips');
             renderMapMarkers(true);
         }
 
@@ -3012,7 +3038,7 @@
             addAudit('Trip Completed', `Trip #${id}`);
             saveData();
             showToast('Trip completed!', 'success');
-            renderPanel('trips');
+            openPanel('trips');
             renderMapMarkers(true);
         }
 
@@ -3069,7 +3095,7 @@
             saveData();
             closePanel();
             showToast('Fuel logged!', 'success');
-            renderPanel('fuel');
+            openPanel('fuel');
         }
 
         // ================================================================
@@ -3123,7 +3149,7 @@
             saveData();
             closePanel();
             showToast('Scheduled!', 'success');
-            renderPanel('maintenance');
+            openPanel('maintenance');
         }
 
         // ================================================================
@@ -3185,7 +3211,7 @@
             saveData();
             closePanel();
             showToast('Breakdown reported!', 'success');
-            renderPanel('breakdowns');
+            openPanel('breakdowns');
             renderMapMarkers(true);
         }
 
@@ -3198,7 +3224,7 @@
             addAudit('Breakdown Resolved', `Breakdown #${id}`);
             saveData();
             showToast('Breakdown resolved!', 'success');
-            renderPanel('breakdowns');
+            openPanel('breakdowns');
             renderMapMarkers(true);
         }
 
@@ -3273,23 +3299,16 @@
         function dismissAlert(id) {
             appData.alerts = appData.alerts.filter(a => a.id !== id);
             saveData();
-            renderPanel('alerts');
+            openPanel('alerts');
             updateBadge();
         }
 
         // ================================================================
         // DRAWER
         // ================================================================
-        function toggleDrawer() {
-            const drawer = document.getElementById('drawer');
-            const overlay = document.getElementById('drawerOverlay');
-            if (drawer.classList.contains('open')) {
-                drawer.classList.remove('open');
-                overlay.classList.remove('show');
-            } else {
-                drawer.classList.add('open');
-                overlay.classList.add('show');
-            }
+        function openDrawer() {
+            document.getElementById('drawer').classList.add('open');
+            document.getElementById('drawerOverlay').classList.add('show');
         }
 
         function closeDrawer() {
@@ -3578,7 +3597,6 @@
                 cancelReply();
                 document.getElementById('chatSendBtn').disabled = false;
                 playSentSound();
-                // Send typing false
                 if (currentChat) {
                     await db.ref(`typing/${currentChat.id}/${currentUser.uid}`).set({ isTyping: false });
                 }
@@ -4316,8 +4334,7 @@
                     showToast('Welcome, ' + currentUser.name + '!', 'success');
                     addAudit('Login', 'Company logged in');
                     initMap();
-                    renderPanel('dashboard');
-                    // Set online
+                    openPanel('dashboard');
                     onlineRef.child(uid).set({ isOnline: true, lastSeen: new Date().toISOString(),
                         userId: currentUser.userId });
                 })
@@ -4351,7 +4368,7 @@
         // BOTTOM NAV HANDLERS
         // ================================================================
         document.querySelectorAll('.floating-bottom-nav button[data-panel]').forEach(btn => {
-            btn.addEventListener('click', () => togglePanel(btn.dataset.panel));
+            btn.addEventListener('click', () => openPanel(btn.dataset.panel));
         });
 
         // ================================================================
@@ -4452,7 +4469,7 @@
         // EXPOSE TO WINDOW
         // ================================================================
         Object.assign(window, {
-            togglePanel,
+            openPanel,
             closePanel,
             openVehicleForm,
             editVehicle,
@@ -4508,7 +4525,7 @@
             toggleMute,
             toggleVideo,
             toggleSpeaker,
-            toggleDrawer,
+            openDrawer,
             closeDrawer,
             handleSignIn
         });
