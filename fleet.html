@@ -11,20 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
-    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <style>
-        /* ===== RESET & BASE ===== */
         *,
         *::before,
         *::after {
@@ -75,7 +68,6 @@
             --nav-h: 68px;
             --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
-
         html {
             font-size: 16px;
             height: 100%;
@@ -91,7 +83,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -106,8 +97,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
-
-        /* ===== UTILITY ===== */
         .hidden {
             display: none !important;
         }
@@ -165,8 +154,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        /* ===== ANIMATIONS ===== */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -195,8 +182,25 @@
                 opacity: 1;
             }
         }
-
-        /* ===== TOAST ===== */
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
         #toastContainer {
             position: fixed;
             top: 16px;
@@ -255,7 +259,7 @@
             color: #fff;
         }
 
-        /* ===== LOGIN SCREEN — FULL PAGE ===== */
+        /* ===== LOGIN SCREEN — HUGE CAR IMAGE ===== */
         #loginScreen {
             position: fixed;
             inset: 0;
@@ -268,7 +272,7 @@
             overflow: hidden;
         }
         .login-left {
-            flex: 1.2;
+            flex: 1.5;
             background: url('car.png') center/cover no-repeat;
             position: relative;
             display: flex;
@@ -289,7 +293,7 @@
             color: #fff;
         }
         .login-left .brand-overlay h1 {
-            font-size: 3.2rem;
+            font-size: 3.8rem;
             font-weight: 900;
             letter-spacing: -1px;
             text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -298,15 +302,14 @@
             color: #6EE7B7;
         }
         .login-left .brand-overlay p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.85;
             font-weight: 500;
             margin-top: 4px;
             text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
         }
-
         .login-right {
-            flex: 0.8;
+            flex: 0.7;
             background: var(--white);
             display: flex;
             align-items: center;
@@ -383,12 +386,39 @@
             font-family: var(--font);
             box-shadow: 0 4px 16px var(--primary-glow);
             margin-top: 4px;
+            position: relative;
+            overflow: hidden;
         }
-        .login-form-wrap .login-btn:hover {
+        .login-btn .btn-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .login-btn .btn-loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        .login-btn.loading .btn-text {
+            display: none;
+        }
+        .login-btn.loading .btn-loader {
+            display: block;
+        }
+        .login-btn.loading {
+            background: var(--green);
+            pointer-events: none;
+        }
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 32px rgba(13, 148, 136, 0.35);
         }
-        .login-form-wrap .login-btn:active {
+        .login-btn:active {
             transform: scale(0.97);
         }
         #loginError {
@@ -405,7 +435,6 @@
             color: var(--gray-400);
             font-size: 0.75rem;
         }
-
         @media (max-width: 768px) {
             .login-left {
                 display: none;
@@ -420,6 +449,9 @@
             }
             .login-form-wrap h2 {
                 font-size: 1.3rem;
+            }
+            .login-left .brand-overlay h1 {
+                font-size: 2.5rem;
             }
         }
 
@@ -809,7 +841,6 @@
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
         }
-
         .card {
             background: var(--white);
             border-radius: var(--radius-lg);
@@ -893,7 +924,6 @@
             font-weight: 500;
             color: var(--gray-700);
         }
-
         .card .card-actions {
             display: flex;
             gap: 6px;
@@ -1009,7 +1039,6 @@
             display: inline-block;
         }
 
-        /* ===== EMPTY STATE ===== */
         .empty-state {
             text-align: center;
             padding: 48px 20px;
@@ -1770,64 +1799,6 @@
             margin-top: 8px;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 480px) {
-            .app-header .brand h1 {
-                font-size: 1rem;
-            }
-            .toolbar .stats-pill {
-                font-size: 0.6rem;
-                padding: 2px 10px;
-            }
-            .toolbar .search-box input {
-                font-size: 0.75rem;
-                padding: 6px 12px 6px 32px;
-            }
-            .card {
-                padding: 12px;
-            }
-            .modal {
-                max-width: 100%;
-                border-radius: var(--radius-lg);
-                margin: 8px;
-            }
-            .sidebar {
-                width: 260px;
-            }
-            .bottom-nav .nav-item i {
-                font-size: 1.1rem;
-            }
-            .bottom-nav .nav-item {
-                font-size: 0.5rem;
-            }
-            .map-top-section {
-                height: 60%;
-            }
-            .map-bottom-section {
-                height: 40%;
-            }
-            .map-bottom-section .driver-route-cards .mini-card {
-                flex: 0 0 140px;
-            }
-            .map-top-section .map-back-btn {
-                font-size: 0.7rem;
-                padding: 6px 12px;
-            }
-        }
-        @media (min-width: 600px) {
-            .grid-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 900px) {
-            .grid-cards {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .content-area {
-                padding: 20px 24px calc(var(--nav-h) + 24px + var(--safe-bottom));
-            }
-        }
-
         /* ===== PAGE HEADER ===== */
         .page-header {
             display: flex;
@@ -1874,6 +1845,36 @@
         }
         .page-header .page-actions .btn-secondary:hover {
             background: var(--gray-200);
+        }
+
+        /* ===== TRIP FORM STYLES ===== */
+        .trip-form-step {
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            border: 1px solid var(--gray-200);
+        }
+        .trip-form-step.green {
+            background: var(--green-light);
+            border-color: var(--green);
+        }
+        .trip-form-step.blue {
+            background: var(--blue-light);
+            border-color: var(--blue);
+        }
+        .trip-form-step .step-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+        .trip-form-step .step-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .trip-form-step .step-content .form-group {
+            margin-bottom: 0;
         }
 
         /* ===== TRIP MAP SNIPPET ===== */
@@ -1998,6 +1999,84 @@
             border-radius: var(--radius-sm);
             margin-bottom: 4px;
         }
+
+        /* ===== VEHICLE CARD IMAGE ===== */
+        .vehicle-card-img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .vehicle-card-img-small {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--gray-200);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .app-header .brand h1 {
+                font-size: 1rem;
+            }
+            .toolbar .stats-pill {
+                font-size: 0.6rem;
+                padding: 2px 10px;
+            }
+            .toolbar .search-box input {
+                font-size: 0.75rem;
+                padding: 6px 12px 6px 32px;
+            }
+            .card {
+                padding: 12px;
+            }
+            .modal {
+                max-width: 100%;
+                border-radius: var(--radius-lg);
+                margin: 8px;
+            }
+            .sidebar {
+                width: 260px;
+            }
+            .bottom-nav .nav-item i {
+                font-size: 1.1rem;
+            }
+            .bottom-nav .nav-item {
+                font-size: 0.5rem;
+            }
+            .map-top-section {
+                height: 60%;
+            }
+            .map-bottom-section {
+                height: 40%;
+            }
+            .map-bottom-section .driver-route-cards .mini-card {
+                flex: 0 0 140px;
+            }
+            .map-top-section .map-back-btn {
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+            .login-left .brand-overlay h1 {
+                font-size: 2.5rem;
+            }
+        }
+        @media (min-width: 600px) {
+            .grid-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 900px) {
+            .grid-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .content-area {
+                padding: 20px 24px calc(var(--nav-h) + 24px + var(--safe-bottom));
+            }
+        }
     </style>
 </head>
 <body>
@@ -2005,7 +2084,7 @@
     <!-- ===== TOAST CONTAINER ===== -->
     <div id="toastContainer"></div>
 
-    <!-- ===== LOGIN SCREEN — FULL PAGE ===== -->
+    <!-- ===== LOGIN SCREEN — HUGE CAR IMAGE ===== -->
     <div id="loginScreen">
         <div class="login-left">
             <div class="brand-overlay">
@@ -2028,7 +2107,10 @@
                     <label>Password</label>
                     <input type="password" id="loginPassword" value="123456" placeholder="Password" />
                 </div>
-                <button id="loginBtn" class="login-btn"><i class="fas fa-arrow-right"></i> Sign In</button>
+                <button id="loginBtn" class="login-btn">
+                    <span class="btn-text"><i class="fas fa-arrow-right"></i> Sign In</span>
+                    <span class="btn-loader"></span>
+                </button>
                 <div id="loginError"></div>
                 <div class="login-footer">Secure · Real-time · Powered by Firebase</div>
             </div>
@@ -2221,7 +2303,6 @@
         </div>
     </div>
 
-
     <!-- ================================================================
     JAVASCRIPT
     ================================================================ -->
@@ -2265,14 +2346,10 @@
         let shutdownListeners = [];
         let fuelPrices = { diesel: 28.50, petrol: 32.75, lastUpdated: null };
         let companyDocs = { logo: null, cert: null, zra: null };
-
-        // Chat
         let currentChat = null;
         let chatListeners = [];
         let isTyping = false;
         let typingTimeout = null;
-
-        // Calls
         let localStream = null;
         let remoteStream = null;
         let peerConnection = null;
@@ -2295,8 +2372,6 @@
                     credential: 'XMFx6MoZrP/NB3wb' }
             ]
         };
-
-        // NOMINATIM for geocoding
         const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search?format=json&q=';
 
         // ==============================================================
@@ -2375,6 +2450,8 @@
             const pwd = document.getElementById('loginPassword').value;
             const errEl = document.getElementById('loginError');
             errEl.textContent = '';
+            const btn = document.getElementById('loginBtn');
+            btn.classList.add('loading');
 
             try {
                 const cred = await auth.signInWithEmailAndPassword(email, pwd);
@@ -2383,6 +2460,7 @@
                 const stationSnap = await db.ref(`stationOwners/${user.uid}`).once('value');
                 if (!stationSnap.exists()) {
                     await auth.signOut();
+                    btn.classList.remove('loading');
                     errEl.textContent = 'This account is not a company. Only companies can log in.';
                     return;
                 }
@@ -2390,6 +2468,7 @@
                 const maintSnap = await db.ref('maintenance/fleetApp').once('value');
                 if (maintSnap.val() === true) {
                     await auth.signOut();
+                    btn.classList.remove('loading');
                     errEl.textContent = 'Fleet App is under maintenance. Please try again later.';
                     return;
                 }
@@ -2397,6 +2476,7 @@
                 const blockedSnap = await db.ref(`blocked/stations/${user.uid}`).once('value');
                 if (blockedSnap.val() === true) {
                     await auth.signOut();
+                    btn.classList.remove('loading');
                     errEl.textContent = 'Your company account has been shut down by admin.';
                     return;
                 }
@@ -2412,7 +2492,6 @@
                 currentCompanyId = user.uid;
                 document.getElementById('avatarBtn').textContent = (currentUser.name || 'C').charAt(0).toUpperCase();
 
-                // Load company documents
                 await loadCompanyDocuments();
 
                 document.getElementById('loginScreen').style.display = 'none';
@@ -2425,17 +2504,18 @@
                 listenFuelPrices();
 
                 document.querySelector('.nav-item[data-tab="vehicles"]').classList.add('active');
+                btn.classList.remove('loading');
                 showToast('Welcome back, ' + currentUser.name + '!', 'success');
 
             } catch (err) {
                 console.error('Login error:', err);
+                btn.classList.remove('loading');
                 errEl.textContent = err.message;
             }
         };
 
         auth.onAuthStateChanged(async (user) => {
             if (user && !currentUser) {
-                // Session restore
                 const snap = await db.ref(`stationOwners/${user.uid}`).once('value');
                 if (!snap.exists()) { await auth.signOut(); return; }
                 const maintSnap = await db.ref('maintenance/fleetApp').once('value');
@@ -2554,7 +2634,7 @@
         }
 
         // ==============================================================
-        // FUEL PRICES — ERB ZAMBIA REAL-TIME
+        // FUEL PRICES
         // ==============================================================
         function listenFuelPrices() {
             const fuelRef = db.ref('fuelPrices');
@@ -2746,6 +2826,7 @@
                 html += `<div class="grid-cards">`;
                 filtered.forEach(v => {
                     const statusClass = v.status || 'inactive';
+                    const carImage = 'car.png';
                     html += `
                         <div class="card">
                             <div class="card-header">
@@ -2760,11 +2841,13 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <img src="${carImage}" class="vehicle-card-img" alt="Vehicle" />
                                 <div class="detail-row"><span class="label">Driver</span><span class="value">${escapeHtml(v.driverName || 'Unassigned')}</span></div>
                                 <div class="detail-row"><span class="label">Fuel Cut</span><span class="value">${v.fuelCut ? 'Yes' : 'No'}</span></div>
                             </div>
                             <div class="card-actions">
                                 <button class="btn-icon teal" onclick="toggleFuelCut('${v.id}')"><i class="fas fa-gas-pump"></i> ${v.fuelCut ? 'Restore' : 'Cut'}</button>
+                                <button class="btn-icon red" onclick="shutOffVehicle('${v.id}')"><i class="fas fa-power-off"></i> Shut Off</button>
                                 <button class="btn-icon green" onclick="assignDriver('${v.id}')"><i class="fas fa-user-check"></i> Assign</button>
                                 <button class="btn-icon teal" onclick="editVehicle('${v.id}')"><i class="fas fa-edit"></i> Edit</button>
                                 <button class="btn-icon red" onclick="deleteVehicle('${v.id}')"><i class="fas fa-trash"></i> Delete</button>
@@ -2777,6 +2860,17 @@
             document.getElementById('contentArea').innerHTML = html;
             document.getElementById('statsText').textContent =
                 `🚛 ${filtered.length} / ${allVehicles.length} vehicles`;
+        }
+
+        async function shutOffVehicle(id) {
+            const v = allVehicles.find(x => x.id === id);
+            if (!v) return;
+            if (!confirm('Shut off this vehicle? This will cut fuel and stop engine.')) return;
+            try {
+                await db.ref(`fleet/${currentCompanyId}/vehicles/${id}`).update({ fuelCut: true, status: 'inactive' });
+                showToast('Vehicle shut off', 'warning');
+                refreshAll();
+            } catch (err) { showToast('Error: ' + err.message, 'error'); }
         }
 
         function renderDrivers() {
@@ -2802,6 +2896,15 @@
                 html += `<div class="grid-cards">`;
                 filtered.forEach(d => {
                     const statusClass = d.status || 'inactive';
+                    const assignedVehicle = allVehicles.find(v => v.driverId === d.id);
+                    const vehicleName = assignedVehicle ? assignedVehicle.name : 'Unassigned';
+                    const vehiclePlate = assignedVehicle ? assignedVehicle.plate : '';
+                    const carImage = 'car.png';
+                    const activeTrip = allTrips.find(t => t.driverId === d.id && t.status === 'in-progress');
+                    const startDest = activeTrip ? activeTrip.startLocation : 'N/A';
+                    const endDest = activeTrip ? activeTrip.endLocation : 'N/A';
+                    const fuelUsed = activeTrip ? (activeTrip.distance * 0.12).toFixed(1) : '0.0';
+                    const fuelCut = assignedVehicle ? assignedVehicle.fuelCut : false;
                     html += `
                         <div class="card">
                             <div class="card-header">
@@ -2815,9 +2918,15 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="detail-row"><span class="label">License</span><span class="value">${escapeHtml(d.license || 'N/A')}</span></div>
+                                <img src="${carImage}" class="vehicle-card-img" alt="Car" />
+                                <div class="detail-row"><span class="label">Vehicle</span><span class="value">${escapeHtml(vehicleName)} (${escapeHtml(vehiclePlate)})</span></div>
+                                <div class="detail-row"><span class="label">Start → End</span><span class="value">${escapeHtml(startDest)} → ${escapeHtml(endDest)}</span></div>
+                                <div class="detail-row"><span class="label">Fuel Used</span><span class="value">${fuelUsed} L</span></div>
+                                <div class="detail-row"><span class="label">Fuel Cut</span><span class="value">${fuelCut ? 'Yes' : 'No'}</span></div>
                             </div>
                             <div class="card-actions">
+                                <button class="btn-icon teal" onclick="toggleFuelCut('${assignedVehicle?.id || ''}')"><i class="fas fa-gas-pump"></i> ${fuelCut ? 'Restore' : 'Cut'}</button>
+                                <button class="btn-icon green" onclick="initiateCall(false)"><i class="fas fa-phone-alt"></i> Call</button>
                                 <button class="btn-icon teal" onclick="editDriver('${d.id}')"><i class="fas fa-edit"></i> Edit</button>
                                 <button class="btn-icon red" onclick="deleteDriver('${d.id}')"><i class="fas fa-trash"></i> Delete</button>
                             </div>
@@ -2855,8 +2964,9 @@
                 filtered.forEach(t => {
                     const statusClass = t.status || 'scheduled';
                     const distance = t.distance || 0;
-                    const fuelUsed = distance * 0.12; // 12L per 100km
+                    const fuelUsed = distance * 0.12;
                     const cost = fuelUsed * (fuelPrices.diesel || 28.50);
+                    const carImage = 'car.png';
                     html += `
                         <div class="card">
                             <div class="card-header">
@@ -2870,6 +2980,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <img src="${carImage}" class="vehicle-card-img" alt="Car" />
                                 <div class="detail-row"><span class="label">From → To</span><span class="value">${escapeHtml(t.startLocation || 'N/A')} → ${escapeHtml(t.endLocation || 'N/A')}</span></div>
                                 <div class="detail-row"><span class="label">Distance</span><span class="value">${distance ? distance.toFixed(1) + ' km' : 'N/A'}</span></div>
                                 <div class="detail-row"><span class="label">Fuel Used</span><span class="value">${fuelUsed.toFixed(1)} L</span></div>
@@ -2882,9 +2993,20 @@
                                             if (el) {
                                                 const map = L.map(el).setView([${(t.startCoords.lat + t.endCoords.lat)/2}, ${(t.startCoords.lng + t.endCoords.lng)/2}], 10);
                                                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-                                                L.marker([${t.startCoords.lat}, ${t.startCoords.lng}]).addTo(map).bindPopup('Start');
-                                                L.marker([${t.endCoords.lat}, ${t.endCoords.lng}]).addTo(map).bindPopup('End');
+                                                L.marker([${t.startCoords.lat}, ${t.startCoords.lng}]).addTo(map).bindPopup('Start: ${escapeHtml(t.startLocation)}');
+                                                L.marker([${t.endCoords.lat}, ${t.endCoords.lng}]).addTo(map).bindPopup('End: ${escapeHtml(t.endLocation)}');
                                                 L.polyline([[${t.startCoords.lat}, ${t.startCoords.lng}], [${t.endCoords.lat}, ${t.endCoords.lng}]]).addTo(map);
+                                                // Driver location (simulated)
+                                                const driverLat = ${(t.startCoords.lat + t.endCoords.lat)/2 + (Math.random()-0.5)*0.05};
+                                                const driverLng = ${(t.startCoords.lng + t.endCoords.lng)/2 + (Math.random()-0.5)*0.05};
+                                                L.marker([driverLat, driverLng], {
+                                                    icon: L.divIcon({
+                                                        html: '<div style="background:var(--blue);color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;box-shadow:0 2px 8px rgba(59,130,246,0.6);border:2px solid #fff;"><i class="fas fa-user-md"></i></div>',
+                                                        className: '',
+                                                        iconSize: [30, 30],
+                                                        iconAnchor: [15, 15]
+                                                    })
+                                                }).addTo(map).bindPopup('Driver: ${escapeHtml(t.driverName || 'Unknown')}');
                                                 setTimeout(() => { map.invalidateSize(); }, 200);
                                             }
                                         }, 100);
@@ -3243,7 +3365,7 @@
         }
 
         // ==============================================================
-        // CRUD: DRIVERS (with email enforcement)
+        // CRUD: DRIVERS
         // ==============================================================
         function openCreateDriverModal() {
             const modal = document.getElementById('detailModal');
@@ -3395,18 +3517,28 @@
             ).join('');
 
             document.getElementById('modalBody').innerHTML = `
-                <div class="form-group"><label>Route (optional)</label><select id="tRoute" class="form-control">${routeOpts || '<option value="">No routes</option>'}</select></div>
-                <div class="form-group"><label>Vehicle</label><select id="tVehicle" class="form-control">${vehicleOpts || '<option value="">No vehicles</option>'}</select></div>
-                <div class="form-group"><label>Driver</label><select id="tDriver" class="form-control">${driverOpts || '<option value="">No drivers</option>'}</select></div>
-                <div class="form-group" style="position:relative;">
-                    <label>Start Location</label>
-                    <input id="tStart" class="form-control" placeholder="e.g. Lusaka, Zambia" autocomplete="off">
-                    <div class="geocoding-results" id="startResults"></div>
+                <div class="trip-form-step green">
+                    <div class="step-label">📍 Route & Vehicle</div>
+                    <div class="step-content">
+                        <div class="form-group"><label>Route (optional)</label><select id="tRoute" class="form-control">${routeOpts || '<option value="">No routes</option>'}</select></div>
+                        <div class="form-group"><label>Vehicle</label><select id="tVehicle" class="form-control">${vehicleOpts || '<option value="">No vehicles</option>'}</select></div>
+                        <div class="form-group"><label>Driver</label><select id="tDriver" class="form-control">${driverOpts || '<option value="">No drivers</option>'}</select></div>
+                    </div>
                 </div>
-                <div class="form-group" style="position:relative;">
-                    <label>End Location</label>
-                    <input id="tEnd" class="form-control" placeholder="e.g. Ndola, Zambia" autocomplete="off">
-                    <div class="geocoding-results" id="endResults"></div>
+                <div class="trip-form-step blue">
+                    <div class="step-label">📍 Start & Destination</div>
+                    <div class="step-content">
+                        <div class="form-group" style="position:relative;">
+                            <label>Start Location</label>
+                            <input id="tStart" class="form-control" placeholder="e.g. Lusaka, Zambia" autocomplete="off">
+                            <div class="geocoding-results" id="startResults"></div>
+                        </div>
+                        <div class="form-group" style="position:relative;">
+                            <label>End Location</label>
+                            <input id="tEnd" class="form-control" placeholder="e.g. Ndola, Zambia" autocomplete="off">
+                            <div class="geocoding-results" id="endResults"></div>
+                        </div>
+                    </div>
                 </div>
                 <div style="font-size:0.7rem;color:var(--gray-500);margin-top:4px;"><i class="fas fa-map-pin"></i> Type a city name to see suggestions</div>
             `;
@@ -4090,8 +4222,10 @@
                 activeDrivers.forEach(d => {
                     const assignedVehicle = allVehicles.find(v => v.driverId === d.id);
                     const routeName = assignedVehicle ? (assignedVehicle.name || 'Unknown') : 'Unassigned';
+                    const carImage = 'car.png';
                     html += `
                         <div class="mini-card">
+                            <img src="${carImage}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:4px;" alt="Car" />
                             <div class="driver-name">${escapeHtml(d.name || 'Driver')}</div>
                             <div class="driver-route"><i class="fas fa-truck"></i> ${escapeHtml(routeName)}</div>
                             <div class="driver-status"><span class="dot"></span> Active</div>
@@ -4115,12 +4249,11 @@
                 if (fleetMap) {
                     fleetMap.invalidateSize();
                 } else {
-                    fleetMap = L.map(mapEl).setView([-15.4167, 28.2833], 12);
+                    fleetMap = L.map(mapEl, { center: [-15.4167, 28.2833], zoom: 12 });
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                         attribution: '© OpenStreetMap'
                     }).addTo(fleetMap);
 
-                    // Add vehicle markers
                     activeVehicles.forEach((v, i) => {
                         const lat = -15.4167 + (Math.random() - 0.5) * 0.08;
                         const lng = 28.2833 + (Math.random() - 0.5) * 0.08;
@@ -4138,7 +4271,6 @@
                         mapMarkers.push(marker);
                     });
 
-                    // Add fuel station markers (Zambia cities)
                     const fuelStations = [
                         { lat: -15.4167, lng: 28.2833, name: 'Lusaka' },
                         { lat: -12.9714, lng: 28.6353, name: 'Ndola' },
@@ -4281,7 +4413,6 @@
                 content = escapeHtml(msg.text || 'Message');
             }
 
-            // Mark message as delivered if received from admin
             if (!isSent && !msg.delivered) {
                 setTimeout(() => {
                     db.ref(`messages/${currentChat.id}/${msg.id}`).update({ delivered: true });
