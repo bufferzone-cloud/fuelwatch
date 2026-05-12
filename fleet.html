@@ -11,13 +11,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
+    </script>
     <style>
+        /* ===== RESET & BASE ===== */
         *,
         *::before,
         *::after {
@@ -67,6 +74,7 @@
             --header-h: 64px;
             --nav-h: 68px;
             --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --map-height: 320px;
         }
         html {
             font-size: 16px;
@@ -154,6 +162,8 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        /* ===== ANIMATIONS ===== */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -201,6 +211,17 @@
                 transform: rotate(360deg);
             }
         }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        /* ===== TOAST ===== */
         #toastContainer {
             position: fixed;
             top: 16px;
@@ -869,6 +890,14 @@
             justify-content: center;
             font-size: 1.2rem;
             flex-shrink: 0;
+            padding: 4px;
+        }
+        .card .card-header .icon-wrap img {
+            width: 28px;
+            height: 28px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--gray-200);
         }
         .card .card-header .icon-wrap.green {
             background: var(--green-light);
@@ -1799,60 +1828,13 @@
             margin-top: 8px;
         }
 
-        /* ===== PAGE HEADER ===== */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        .page-header h2 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--gray-800);
-        }
-        .page-header .page-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .page-header .page-actions .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: var(--radius-full);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            font-family: var(--font);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .page-header .page-actions .btn-primary {
-            background: var(--primary);
-            color: #fff;
-        }
-        .page-header .page-actions .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px var(--primary-glow);
-        }
-        .page-header .page-actions .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-600);
-        }
-        .page-header .page-actions .btn-secondary:hover {
-            background: var(--gray-200);
-        }
-
         /* ===== TRIP FORM STYLES ===== */
         .trip-form-step {
-            padding: 12px;
+            padding: 14px;
             border-radius: var(--radius);
-            margin-bottom: 12px;
-            border: 1px solid var(--gray-200);
+            margin-bottom: 14px;
+            border: 1.5px solid var(--gray-200);
+            background: var(--white);
         }
         .trip-form-step.green {
             background: var(--green-light);
@@ -1864,14 +1846,14 @@
         }
         .trip-form-step .step-label {
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--gray-600);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .trip-form-step .step-content {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .trip-form-step .step-content .form-group {
             margin-bottom: 0;
@@ -1880,11 +1862,11 @@
         /* ===== TRIP MAP SNIPPET ===== */
         .trip-map-snippet {
             width: 100%;
-            height: 120px;
+            height: 140px;
             border-radius: var(--radius-sm);
             overflow: hidden;
-            margin: 8px 0;
-            border: 1px solid var(--gray-200);
+            margin: 10px 0;
+            border: 1.5px solid var(--gray-200);
         }
         .trip-map-snippet .leaflet-container {
             width: 100%;
@@ -1896,17 +1878,18 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 16px;
+            padding: 10px 16px;
             background: var(--gray-50);
             border-radius: var(--radius);
-            border: 1px solid var(--gray-200);
-            margin-bottom: 12px;
+            border: 1.5px solid var(--gray-200);
+            margin-bottom: 14px;
+            flex-wrap: wrap;
         }
         .fuel-price-display .price-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
         .fuel-price-display .price-item i {
@@ -1916,7 +1899,7 @@
             color: var(--primary-dark);
         }
         .fuel-price-display .last-updated {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             color: var(--gray-400);
             margin-left: auto;
         }
@@ -1940,7 +1923,7 @@
             display: block;
         }
         .geocoding-results .result-item {
-            padding: 8px 12px;
+            padding: 10px 14px;
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.85rem;
@@ -1960,15 +1943,15 @@
         /* ===== DOCUMENT VIEWER ===== */
         .doc-viewer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
         }
         .doc-viewer-grid .doc-card {
             background: var(--gray-50);
             border-radius: var(--radius);
-            padding: 12px;
-            border: 1px solid var(--gray-200);
+            padding: 14px;
+            border: 1.5px solid var(--gray-200);
             text-align: center;
             transition: var(--transition);
             cursor: pointer;
@@ -1976,45 +1959,81 @@
         .doc-viewer-grid .doc-card:hover {
             border-color: var(--primary);
             box-shadow: var(--shadow);
+            transform: translateY(-2px);
         }
         .doc-viewer-grid .doc-card i {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--primary);
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .doc-viewer-grid .doc-card .doc-name {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--gray-700);
         }
         .doc-viewer-grid .doc-card .doc-size {
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             color: var(--gray-400);
         }
         .doc-viewer-grid .doc-card img {
             width: 100%;
-            height: 80px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            margin-bottom: 4px;
-        }
-
-        /* ===== VEHICLE CARD IMAGE ===== */
-        .vehicle-card-img {
-            width: 100%;
-            height: 60px;
+            height: 90px;
             object-fit: cover;
             border-radius: var(--radius-sm);
             margin-bottom: 6px;
-            display: block;
         }
-        .vehicle-card-img-small {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid var(--gray-200);
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1.5px solid var(--gray-200);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .page-header h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gray-800);
+        }
+        .page-header .page-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .page-header .page-actions .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .page-header .page-actions .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .page-header .page-actions .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .page-header .page-actions .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        .page-header .page-actions .btn-secondary:hover {
+            background: var(--gray-200);
         }
 
         /* ===== RESPONSIVE ===== */
@@ -2063,10 +2082,27 @@
             .login-left .brand-overlay h1 {
                 font-size: 2.5rem;
             }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .page-header .page-actions {
+                width: 100%;
+            }
+            .page-header .page-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            .trip-form-step {
+                padding: 12px;
+            }
         }
         @media (min-width: 600px) {
             .grid-cards {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .doc-viewer-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         @media (min-width: 900px) {
@@ -2075,6 +2111,9 @@
             }
             .content-area {
                 padding: 20px 24px calc(var(--nav-h) + 24px + var(--safe-bottom));
+            }
+            .doc-viewer-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>
@@ -2826,11 +2865,11 @@
                 html += `<div class="grid-cards">`;
                 filtered.forEach(v => {
                     const statusClass = v.status || 'inactive';
-                    const carImage = 'car.png';
+                    const carIcon = 'car.png';
                     html += `
                         <div class="card">
                             <div class="card-header">
-                                <div class="icon-wrap teal"><i class="fas fa-car"></i></div>
+                                <div class="icon-wrap teal"><img src="${carIcon}" alt="Car" /></div>
                                 <div>
                                     <div class="card-title">${escapeHtml(v.name || 'Unnamed')}</div>
                                     <div class="card-subtitle">${escapeHtml(v.plate || 'No plate')} · ${escapeHtml(v.model || 'Unknown')}</div>
@@ -2841,7 +2880,6 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <img src="${carImage}" class="vehicle-card-img" alt="Vehicle" />
                                 <div class="detail-row"><span class="label">Driver</span><span class="value">${escapeHtml(v.driverName || 'Unassigned')}</span></div>
                                 <div class="detail-row"><span class="label">Fuel Cut</span><span class="value">${v.fuelCut ? 'Yes' : 'No'}</span></div>
                             </div>
@@ -2899,7 +2937,7 @@
                     const assignedVehicle = allVehicles.find(v => v.driverId === d.id);
                     const vehicleName = assignedVehicle ? assignedVehicle.name : 'Unassigned';
                     const vehiclePlate = assignedVehicle ? assignedVehicle.plate : '';
-                    const carImage = 'car.png';
+                    const carIcon = 'car.png';
                     const activeTrip = allTrips.find(t => t.driverId === d.id && t.status === 'in-progress');
                     const startDest = activeTrip ? activeTrip.startLocation : 'N/A';
                     const endDest = activeTrip ? activeTrip.endLocation : 'N/A';
@@ -2908,7 +2946,7 @@
                     html += `
                         <div class="card">
                             <div class="card-header">
-                                <div class="icon-wrap purple"><i class="fas fa-user-md"></i></div>
+                                <div class="icon-wrap purple"><img src="${carIcon}" alt="Car" /></div>
                                 <div>
                                     <div class="card-title">${escapeHtml(d.name || 'Unnamed')}</div>
                                     <div class="card-subtitle">${escapeHtml(d.phone || 'N/A')} · ${escapeHtml(d.email || 'N/A')}</div>
@@ -2918,7 +2956,6 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <img src="${carImage}" class="vehicle-card-img" alt="Car" />
                                 <div class="detail-row"><span class="label">Vehicle</span><span class="value">${escapeHtml(vehicleName)} (${escapeHtml(vehiclePlate)})</span></div>
                                 <div class="detail-row"><span class="label">Start → End</span><span class="value">${escapeHtml(startDest)} → ${escapeHtml(endDest)}</span></div>
                                 <div class="detail-row"><span class="label">Fuel Used</span><span class="value">${fuelUsed} L</span></div>
@@ -2966,11 +3003,11 @@
                     const distance = t.distance || 0;
                     const fuelUsed = distance * 0.12;
                     const cost = fuelUsed * (fuelPrices.diesel || 28.50);
-                    const carImage = 'car.png';
+                    const carIcon = 'car.png';
                     html += `
                         <div class="card">
                             <div class="card-header">
-                                <div class="icon-wrap amber"><i class="fas fa-route"></i></div>
+                                <div class="icon-wrap amber"><img src="${carIcon}" alt="Car" /></div>
                                 <div>
                                     <div class="card-title">${escapeHtml(t.routeName || 'Unnamed Route')}</div>
                                     <div class="card-subtitle">${escapeHtml(t.vehicleName || 'Unassigned')} · ${escapeHtml(t.driverName || 'Unassigned')}</div>
@@ -2980,7 +3017,6 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <img src="${carImage}" class="vehicle-card-img" alt="Car" />
                                 <div class="detail-row"><span class="label">From → To</span><span class="value">${escapeHtml(t.startLocation || 'N/A')} → ${escapeHtml(t.endLocation || 'N/A')}</span></div>
                                 <div class="detail-row"><span class="label">Distance</span><span class="value">${distance ? distance.toFixed(1) + ' km' : 'N/A'}</span></div>
                                 <div class="detail-row"><span class="label">Fuel Used</span><span class="value">${fuelUsed.toFixed(1)} L</span></div>
@@ -4222,10 +4258,10 @@
                 activeDrivers.forEach(d => {
                     const assignedVehicle = allVehicles.find(v => v.driverId === d.id);
                     const routeName = assignedVehicle ? (assignedVehicle.name || 'Unknown') : 'Unassigned';
-                    const carImage = 'car.png';
+                    const carIcon = 'car.png';
                     html += `
                         <div class="mini-card">
-                            <img src="${carImage}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:4px;" alt="Car" />
+                            <img src="${carIcon}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:4px;" alt="Car" />
                             <div class="driver-name">${escapeHtml(d.name || 'Driver')}</div>
                             <div class="driver-route"><i class="fas fa-truck"></i> ${escapeHtml(routeName)}</div>
                             <div class="driver-status"><span class="dot"></span> Active</div>
