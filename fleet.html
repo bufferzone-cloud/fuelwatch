@@ -21,6 +21,8 @@
     </script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
     </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
+    </script>
     <style>
         /* ===== RESET & BASE ===== */
         *,
@@ -272,6 +274,7 @@
             display: flex;
             align-items: flex-end;
             padding: 40px;
+            min-height: 100vh;
         }
         .login-left::after {
             content: '';
@@ -1568,6 +1571,49 @@
             background: var(--gray-200);
         }
 
+        /* ===== ATTACHMENT OPTIONS ===== */
+        #attachmentOptions {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1600;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 12px;
+            border: 1px solid var(--gray-200);
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 320px;
+        }
+        #attachmentOptions.active {
+            display: flex;
+        }
+        #attachmentOptions .btn-icon {
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        #attachmentOptions .btn-icon:hover {
+            background: var(--gray-200);
+        }
+        #attachmentOptions .btn-icon i {
+            font-size: 0.9rem;
+        }
+
         /* ===== CALL MODALS ===== */
         .incoming-call-overlay {
             position: fixed;
@@ -1909,6 +1955,49 @@
             font-size: 0.7rem;
             color: var(--gray-400);
         }
+
+        /* ===== DOCUMENT VIEWER ===== */
+        .doc-viewer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .doc-viewer-grid .doc-card {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 12px;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .doc-viewer-grid .doc-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+        .doc-viewer-grid .doc-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .doc-viewer-grid .doc-card .doc-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .doc-viewer-grid .doc-card .doc-size {
+            font-size: 0.6rem;
+            color: var(--gray-400);
+        }
+        .doc-viewer-grid .doc-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -2031,6 +2120,11 @@
         </div>
 
         <div class="sidebar-section">
+            <div class="section-title">Company Documents</div>
+            <button class="sidebar-item" onclick="openCompanyDocuments();toggleSidebar();"><i class="fas fa-file-alt"></i> View Documents</button>
+        </div>
+
+        <div class="sidebar-section">
             <div class="section-title">Support</div>
             <button class="sidebar-item" onclick="openAdminChat();toggleSidebar();"><i class="fas fa-headset"></i> Chat with Support</button>
             <button class="sidebar-item" onclick="openHelpCenter();toggleSidebar();"><i class="fas fa-question-circle"></i> Help Center</button>
@@ -2070,7 +2164,7 @@
     </div>
 
     <!-- ===== ATTACHMENT OPTIONS ===== -->
-    <div id="attachmentOptions" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:1600;background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:12px;border:1px solid var(--gray-200);gap:8px;flex-wrap:wrap;justify-content:center;max-width:320px;">
+    <div id="attachmentOptions">
         <button class="btn-icon" onclick="attachPhoto()"><i class="fas fa-image"></i> Photo</button>
         <button class="btn-icon" onclick="attachVideo()"><i class="fas fa-video"></i> Video</button>
         <button class="btn-icon" onclick="attachDocument()"><i class="fas fa-file"></i> Document</button>
@@ -2148,6 +2242,7 @@
         const auth = firebase.auth();
         const db = firebase.database();
         const firestore = firebase.firestore();
+        const storage = firebase.storage();
 
         // ==============================================================
         // GLOBALS
@@ -2169,6 +2264,7 @@
         let isCompanyBlocked = false;
         let shutdownListeners = [];
         let fuelPrices = { diesel: 28.50, petrol: 32.75, lastUpdated: null };
+        let companyDocs = { logo: null, cert: null, zra: null };
 
         // Chat
         let currentChat = null;
@@ -2316,6 +2412,9 @@
                 currentCompanyId = user.uid;
                 document.getElementById('avatarBtn').textContent = (currentUser.name || 'C').charAt(0).toUpperCase();
 
+                // Load company documents
+                await loadCompanyDocuments();
+
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appShell').classList.add('active');
 
@@ -2353,6 +2452,7 @@
                 };
                 currentCompanyId = user.uid;
                 document.getElementById('avatarBtn').textContent = (currentUser.name || 'C').charAt(0).toUpperCase();
+                await loadCompanyDocuments();
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appShell').classList.add('active');
                 await refreshAll();
@@ -2393,6 +2493,67 @@
         }
 
         // ==============================================================
+        // COMPANY DOCUMENTS LOADER
+        // ==============================================================
+        async function loadCompanyDocuments() {
+            if (!currentCompanyId) return;
+            try {
+                const docSnap = await db.ref(`stationOwners/${currentCompanyId}`).once('value');
+                const data = docSnap.val();
+                if (data) {
+                    companyDocs.logo = data.logo || null;
+                    companyDocs.cert = data.registration || null;
+                    companyDocs.zra = data.zraDocs || null;
+                }
+            } catch (e) {
+                console.error('Error loading company docs:', e);
+            }
+        }
+
+        function openCompanyDocuments() {
+            const container = document.getElementById('contentArea');
+            let html = `
+                <div class="page-header">
+                    <h2><i class="fas fa-file-alt" style="color:var(--primary);"></i> Company Documents</h2>
+                </div>
+                <div class="doc-viewer-grid">
+            `;
+
+            const docs = [
+                { key: 'logo', label: 'Logo', icon: 'fa-image', url: companyDocs.logo },
+                { key: 'cert', label: 'Certificate of Registration', icon: 'fa-file-certificate', url: companyDocs
+                        .cert },
+                { key: 'zra', label: 'ZRA Certificate', icon: 'fa-file-invoice', url: companyDocs.zra }
+            ];
+
+            docs.forEach(doc => {
+                if (doc.url) {
+                    const isImage = doc.url.match(/\.(jpeg|jpg|gif|png|webp|bmp|svg)$/i);
+                    html += `
+                        <div class="doc-card" onclick="window.open('${doc.url}','_blank')">
+                            ${isImage ? `<img src="${doc.url}" alt="${doc.label}" />` : `<i class="fas ${doc.icon}"></i>`}
+                            <div class="doc-name">${doc.label}</div>
+                            <div class="doc-size">Click to view</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="doc-card" style="opacity:0.6;cursor:default;">
+                            <i class="fas ${doc.icon}"></i>
+                            <div class="doc-name">${doc.label}</div>
+                            <div class="doc-size" style="color:var(--gray-400);">Not uploaded</div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+            document.getElementById('statsText').textContent = '📄 Company Documents';
+            toggleSidebar();
+        }
+
+        // ==============================================================
         // FUEL PRICES — ERB ZAMBIA REAL-TIME
         // ==============================================================
         function listenFuelPrices() {
@@ -2403,7 +2564,6 @@
                     fuelPrices = data;
                     updateFuelPriceDisplay();
                 } else {
-                    // Default prices if none in DB
                     fuelPrices = { diesel: 28.50, petrol: 32.75, lastUpdated: new Date().toISOString() };
                     db.ref('fuelPrices').set(fuelPrices);
                     updateFuelPriceDisplay();
@@ -3128,11 +3288,9 @@
             }
 
             try {
-                // Create Firebase Auth account for driver
                 const driverCred = await auth.createUserWithEmailAndPassword(email, password);
                 const driverUser = driverCred.user;
 
-                // Save driver data under company
                 await db.ref(`fleet/${currentCompanyId}/drivers`).push({
                     name,
                     phone,
@@ -3258,7 +3416,6 @@
             openModal('detailModal');
             styleModalInputs();
 
-            // Setup geocoding
             setupGeocoding('tStart', 'startResults');
             setupGeocoding('tEnd', 'endResults');
         }
@@ -3336,10 +3493,9 @@
                 lng: parseFloat(endInput.dataset.lng)
             } : null;
 
-            // Calculate distance using Haversine formula if coordinates are available
             let distance = 0;
             if (startCoords && endCoords) {
-                const R = 6371; // Earth's radius in km
+                const R = 6371;
                 const dLat = (endCoords.lat - startCoords.lat) * Math.PI / 180;
                 const dLng = (endCoords.lng - startCoords.lng) * Math.PI / 180;
                 const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -3542,7 +3698,7 @@
         }
 
         // ==============================================================
-        // SIDEBAR FEATURES — REAL PAGES WITH DATA ENTRY
+        // SIDEBAR FEATURES
         // ==============================================================
         function openFuelManagement() {
             const container = document.getElementById('contentArea');
@@ -3953,7 +4109,6 @@
             container.innerHTML = html;
             document.getElementById('statsText').textContent = `🗺️ ${activeVehicles.length} vehicles · ${activeDrivers.length} drivers`;
 
-            // Initialize map
             setTimeout(() => {
                 const mapEl = document.getElementById('fleetMap');
                 if (!mapEl) return;
@@ -4012,7 +4167,7 @@
         }
 
         // ==============================================================
-        // CHAT
+        // CHAT — Receive all messages from FuelRadar Tech Team (Admin)
         // ==============================================================
         async function openAdminChat() {
             if (!currentCompanyId) { showToast('Company not found', 'error'); return; }
@@ -4126,9 +4281,8 @@
                 content = escapeHtml(msg.text || 'Message');
             }
 
-            // Mark message as delivered/read
+            // Mark message as delivered if received from admin
             if (!isSent && !msg.delivered) {
-                // This message is received - we should mark it as delivered
                 setTimeout(() => {
                     db.ref(`messages/${currentChat.id}/${msg.id}`).update({ delivered: true });
                 }, 100);
@@ -4179,7 +4333,6 @@
                             container.appendChild(el);
                             container.scrollTop = container.scrollHeight;
                         }
-                        // Mark as delivered if it's not from the current user
                         if (msg.senderId !== currentUser?.userId && !msg.delivered) {
                             snap.ref.update({ delivered: true });
                         }
@@ -4559,6 +4712,7 @@
         console.log('✅ FuelFleet · Smart Fleet Control');
         console.log('📌 Company Portal with full Firebase integration');
         console.log('🚛 All features: Vehicles, Drivers, Trips, Routes, Breakdowns, Chat, Calls, Map');
+        console.log('📄 Company Documents: Logo, Cert of Reg, ZRA Certificate');
 
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
@@ -4593,7 +4747,6 @@
             cleanupCall();
         });
 
-        // Auto-open map dashboard on load
         setTimeout(() => {
             if (currentUser) {
                 openMapDashboard();
