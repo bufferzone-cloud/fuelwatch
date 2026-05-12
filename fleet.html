@@ -24,7 +24,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
     </script>
     <style>
-        /* ===== RESET & BASE ===== */
         *,
         *::before,
         *::after {
@@ -74,7 +73,6 @@
             --header-h: 64px;
             --nav-h: 68px;
             --safe-bottom: env(safe-area-inset-bottom, 0px);
-            --map-height: 320px;
         }
         html {
             font-size: 16px;
@@ -162,8 +160,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
-        /* ===== ANIMATIONS ===== */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -221,7 +217,6 @@
             }
         }
 
-        /* ===== TOAST ===== */
         #toastContainer {
             position: fixed;
             top: 16px;
@@ -280,70 +275,38 @@
             color: #fff;
         }
 
-        /* ===== LOGIN SCREEN — HUGE CAR IMAGE ===== */
+        /* ===== LOGIN SCREEN — FULL PAGE ===== */
         #loginScreen {
             position: fixed;
             inset: 0;
             z-index: 1000;
             display: flex;
-            align-items: stretch;
-            justify-content: stretch;
-            background: var(--gray-900);
-            animation: fadeIn 0.5s ease;
-            overflow: hidden;
-        }
-        .login-left {
-            flex: 1.5;
-            background: url('car.png') center/cover no-repeat;
-            position: relative;
-            display: flex;
-            align-items: flex-end;
-            padding: 40px;
-            min-height: 100vh;
-        }
-        .login-left::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 60%);
-            pointer-events: none;
-        }
-        .login-left .brand-overlay {
-            position: relative;
-            z-index: 2;
-            color: #fff;
-        }
-        .login-left .brand-overlay h1 {
-            font-size: 3.8rem;
-            font-weight: 900;
-            letter-spacing: -1px;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-        .login-left .brand-overlay h1 span {
-            color: #6EE7B7;
-        }
-        .login-left .brand-overlay p {
-            font-size: 1.2rem;
-            opacity: 0.85;
-            font-weight: 500;
-            margin-top: 4px;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-        }
-        .login-right {
-            flex: 0.7;
-            background: var(--white);
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 48px 40px;
-            min-width: 340px;
+            background: var(--white);
+            animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .login-banner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .login-banner img {
+            width: 80%;
+            max-width: 350px;
+            height: auto;
+            object-fit: contain;
+            display: block;
         }
         .login-form-wrap {
             max-width: 380px;
             width: 100%;
         }
         .login-form-wrap .logo-mobile {
-            display: none;
             text-align: center;
             margin-bottom: 24px;
         }
@@ -455,25 +418,6 @@
             margin-top: 20px;
             color: var(--gray-400);
             font-size: 0.75rem;
-        }
-        @media (max-width: 768px) {
-            .login-left {
-                display: none;
-            }
-            .login-right {
-                flex: 1;
-                padding: 32px 24px;
-                min-width: unset;
-            }
-            .login-form-wrap .logo-mobile {
-                display: block;
-            }
-            .login-form-wrap h2 {
-                font-size: 1.3rem;
-            }
-            .login-left .brand-overlay h1 {
-                font-size: 2.5rem;
-            }
         }
 
         /* ===== APP SHELL ===== */
@@ -1859,6 +1803,29 @@
             margin-bottom: 0;
         }
 
+        /* ===== ROUTE SEPARATOR ===== */
+        .route-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 4px 0;
+            padding: 4px 0;
+        }
+        .route-separator .line {
+            flex: 1;
+            height: 2px;
+            background: var(--gray-300);
+        }
+        .route-separator .arrow {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--primary);
+            background: var(--gray-100);
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+        }
+
         /* ===== TRIP MAP SNIPPET ===== */
         .trip-map-snippet {
             width: 100%;
@@ -1867,10 +1834,11 @@
             overflow: hidden;
             margin: 10px 0;
             border: 1.5px solid var(--gray-200);
+            position: relative;
         }
         .trip-map-snippet .leaflet-container {
             width: 100%;
-            height: 100%;
+            height: 100% !important;
         }
 
         /* ===== FUEL PRICE DISPLAY ===== */
@@ -2079,9 +2047,6 @@
                 font-size: 0.7rem;
                 padding: 6px 12px;
             }
-            .login-left .brand-overlay h1 {
-                font-size: 2.5rem;
-            }
             .page-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -2095,6 +2060,10 @@
             }
             .trip-form-step {
                 padding: 12px;
+            }
+            .route-separator .arrow {
+                font-size: 0.6rem;
+                padding: 2px 8px;
             }
         }
         @media (min-width: 600px) {
@@ -2123,36 +2092,31 @@
     <!-- ===== TOAST CONTAINER ===== -->
     <div id="toastContainer"></div>
 
-    <!-- ===== LOGIN SCREEN — HUGE CAR IMAGE ===== -->
+    <!-- ===== LOGIN SCREEN — HUGE CAR IMAGE ON WHITE ===== -->
     <div id="loginScreen">
-        <div class="login-left">
-            <div class="brand-overlay">
-                <h1>Fuel<span>Fleet</span></h1>
-                <p>Smart Fleet Management · Company Portal</p>
-            </div>
+        <div class="login-banner">
+            <img src="car.png" alt="Car" />
         </div>
-        <div class="login-right">
-            <div class="login-form-wrap">
-                <div class="logo-mobile">
-                    <h1>Fuel<span>Fleet</span></h1>
-                </div>
-                <h2>Welcome back</h2>
-                <p class="sub">Sign in to manage your fleet</p>
-                <div class="form-group">
-                    <label>Company Email</label>
-                    <input type="email" id="loginEmail" value="company@fuelradar.com" placeholder="company@fuelradar.com" />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" value="123456" placeholder="Password" />
-                </div>
-                <button id="loginBtn" class="login-btn">
-                    <span class="btn-text"><i class="fas fa-arrow-right"></i> Sign In</span>
-                    <span class="btn-loader"></span>
-                </button>
-                <div id="loginError"></div>
-                <div class="login-footer">Secure · Real-time · Powered by Firebase</div>
+        <div class="login-form-wrap">
+            <div class="logo-mobile">
+                <h1>Fuel<span>Fleet</span></h1>
             </div>
+            <h2>Welcome back</h2>
+            <p class="sub">Sign in to manage your fleet</p>
+            <div class="form-group">
+                <label>Company Email</label>
+                <input type="email" id="loginEmail" value="company@fuelradar.com" placeholder="company@fuelradar.com" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" value="123456" placeholder="Password" />
+            </div>
+            <button id="loginBtn" class="login-btn">
+                <span class="btn-text"><i class="fas fa-arrow-right"></i> Sign In</span>
+                <span class="btn-loader"></span>
+            </button>
+            <div id="loginError"></div>
+            <div class="login-footer">Secure · Real-time · Powered by Firebase</div>
         </div>
     </div>
 
