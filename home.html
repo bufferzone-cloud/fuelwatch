@@ -154,9 +154,7 @@
             margin: 0 auto 14px auto;
             width: 100%;
             max-width: 420px;
-            border-radius: var(--radius-lg);
-            /* ✅ NO floating shadow – sits flat on white background */
-            box-shadow: none;
+            /* Removed floating effect: no box-shadow, no border-radius */
         }
         .auth-logo-wrap h2 {
             font-size: 42px;
@@ -190,6 +188,8 @@
             padding: 4px;
             width: 100%;
             max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
         }
         body.dark .auth-tabs {
             background: #1c1c1e;
@@ -223,7 +223,14 @@
             display: none;
         }
 
-        /* ---- LONGER INPUT BOXES (same width as toggle) ---- */
+        /* ---- INPUT FIELDS MATCH TOGGLE BUTTON WIDTH ---- */
+        .auth-form-inner {
+            max-width: 420px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
@@ -236,11 +243,7 @@
             transition: all 0.2s var(--ease);
             font-family: var(--font);
             color: #1c1c1e;
-            max-width: 420px;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
-            /* ✅ same width as toggle (auth-tabs) */
         }
         .pill-input:focus {
             border-color: var(--sf-green);
@@ -263,9 +266,6 @@
             gap: 10px;
             align-items: center;
             margin-bottom: 16px;
-            max-width: 420px;
-            margin-left: auto;
-            margin-right: auto;
             width: 100%;
         }
         .country-code-box {
@@ -300,18 +300,14 @@
             color: var(--sf-green);
             border: 1px solid rgba(26, 138, 74, 0.2);
             font-size: 15px;
-            max-width: 420px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
         }
         .profile-pic-upload {
             display: flex;
             align-items: center;
             gap: 12px;
             margin: 10px 0;
-            max-width: 420px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
         }
         .profile-pic-preview {
             width: 60px;
@@ -646,7 +642,7 @@
             color: var(--sf-gray);
         }
 
-        /* ===== FILTER CHIPS (NO DUPLICATES – only one row) ===== */
+        /* ===== FILTER CHIPS (with counts) ===== */
         .filter-section {
             padding: 4px 14px 6px 14px;
             background: var(--glass-bg);
@@ -760,17 +756,17 @@
             background: var(--sf-gray4);
         }
 
-        /* ===== MAP FLOATING BUTTONS – LOWERED & CENTERED ON RIGHT ===== */
+        /* ===== MAP FLOATING BUTTONS – RIGHT SIDE, VERTICALLY CENTERED, SLIGHTLY LOWER ===== */
         .map-floats {
             position: absolute;
-            /* ✅ lowered from top:14px to 90px */
-            top: 90px;
             right: 14px;
+            top: 50%;
+            transform: translateY(-30%);
+            /* slightly below exact center */
             display: flex;
             flex-direction: column;
             gap: 8px;
             z-index: 1000;
-            /* ✅ centered on right side (right:14px keeps them right-aligned) */
         }
         .map-float-btn {
             width: 40px;
@@ -837,19 +833,28 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(6px);
             z-index: 500;
             display: none;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             font-size: 14px;
             font-weight: 600;
             color: var(--sf-green);
             gap: 8px;
         }
+        .loading-overlay .spinner-big {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(26, 138, 74, 0.15);
+            border-top-color: var(--sf-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
         body.dark .loading-overlay {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
         }
 
         /* ===== BOTTOM SHEET – COVERS 30% OF MAP ===== */
@@ -2726,38 +2731,6 @@
         body.dark .radius-popup .radius-actions .btn-cancel:hover {
             background: #3a3a3c;
         }
-
-        /* ===== COUNTERS ===== */
-        .counter-display {
-            display: flex;
-            gap: 10px;
-            padding: 4px 0;
-            flex-wrap: wrap;
-        }
-        .counter-item {
-            background: var(--sf-gray6);
-            border-radius: var(--radius-full);
-            padding: 2px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            border: 1px solid var(--glass-border);
-        }
-        body.dark .counter-item {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-        }
-        .counter-item i {
-            color: var(--sf-green);
-        }
-        .counter-item .count-num {
-            color: var(--sf-green);
-            font-weight: 800;
-            min-width: 16px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -2785,32 +2758,38 @@
             <div class="auth-tab" data-tab="register">Register</div>
         </div>
 
+        <!-- Login Form -->
         <div id="loginForm" class="auth-form">
-            <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
-            <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
-            <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
-            <a href="#" id="forgotPassword" class="forgot-link">Forgot password?</a>
+            <div class="auth-form-inner">
+                <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
+                <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
+                <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
+                <a href="#" id="forgotPassword" class="forgot-link">Forgot password?</a>
+            </div>
         </div>
 
+        <!-- Register Form -->
         <div id="registerForm" class="auth-form hide">
-            <div id="countryDetectionMessage" style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--sf-gray);">
-                <span class="loading-spinner"></span> Detecting your country...
+            <div class="auth-form-inner">
+                <div id="countryDetectionMessage" style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--sf-gray);">
+                    <span class="loading-spinner"></span> Detecting your country...
+                </div>
+                <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
+                    <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
+                </div>
+                <input type="text" id="regName" class="pill-input" placeholder="Full name" />
+                <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
+                <div class="phone-row">
+                    <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
+                    <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
+                </div>
+                <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
+                <div class="profile-pic-upload">
+                    <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
+                    <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
+                </div>
+                <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
             </div>
-            <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
-                <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
-            </div>
-            <input type="text" id="regName" class="pill-input" placeholder="Full name" />
-            <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
-            <div class="phone-row">
-                <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
-                <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
-            </div>
-            <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
-            <div class="profile-pic-upload">
-                <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
-                <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
-            </div>
-            <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
         </div>
     </div>
 
@@ -2849,7 +2828,7 @@
             </div>
         </div>
 
-        <!-- ===== FILTER CHIPS – NO DUPLICATES (only this row) ===== -->
+        <!-- ===== FILTER CHIPS (with counts) ===== -->
         <div class="filter-section">
             <div class="filter-scroll" id="filterTabs">
                 <button class="chip near-me" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
@@ -2874,7 +2853,7 @@
         <div class="map-wrapper" id="mapWrapper">
             <div id="map"></div>
 
-            <!-- Map Floating Buttons – LOWERED & CENTERED ON RIGHT -->
+            <!-- Map Floating Buttons – Right side, vertically centered, slightly lower -->
             <div class="map-floats">
                 <button class="map-float-btn" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="map-float-btn" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
@@ -2887,7 +2866,10 @@
             </div>
 
             <!-- Loading Overlay -->
-            <div class="loading-overlay" id="loadingOverlay"><i class="fas fa-spinner fa-pulse"></i> Loading stations...</div>
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner-big"></div>
+                <span>Loading stations...</span>
+            </div>
 
             <!-- Route Info Panel -->
             <div class="route-info-panel" id="routeInfoPanel"></div>
@@ -3066,9 +3048,11 @@
                 <div id="step3" class="step-content">
                     <div class="step-header">Step 3: Pick fun stops along your route</div>
                     <div id="funPlacesStep3"></div>
-                    <!-- ✅ LOADING OVERLAY FOR FUN STOPS -->
-                    <div id="loadingFun" class="loading-message" style="display:none; text-align:center; padding:16px; background:var(--glass-bg); border-radius:var(--radius-md); margin:6px 0;">
-                        <i class="fas fa-spinner fa-pulse"></i> Looking for fun stops (malls, restaurants, parks, lakes, museums, monuments...) near your route...
+                    <div id="loadingFun" class="loading-message" style="display:none;">
+                        <div class="loading-overlay" style="display:flex; position:relative; background:rgba(255,255,255,0.7); backdrop-filter:blur(6px); border-radius:var(--radius-md); padding:20px;">
+                            <div class="spinner-big" style="width:36px; height:36px; border-width:3px;"></div>
+                            <span style="margin-left:12px;">Searching for fun stops...</span>
+                        </div>
                     </div>
                     <button id="skipFunStop" class="btn-sm" style="background:var(--sf-gray6); margin-top:6px;">Skip</button>
                 </div>
@@ -3123,7 +3107,7 @@
                    <ul>
                        <li><strong>Step 1:</strong> Enter your destination. The app suggests places based on your location.</li>
                        <li><strong>Step 2:</strong> Choose a fuel station along your route. The app automatically finds stations on the way.</li>
-                       <li><strong>Step 3:</strong> Pick fun stops (restaurants, attractions, parks) to make the journey enjoyable.</li>
+                       <li><strong>Step 3:</strong> Pick fun stops (restaurants, attractions, parks, lakes, monuments, museums, malls) to make the journey enjoyable.</li>
                        <li><strong>Step 4:</strong> Review your trip summary, estimated costs, and safety tips. Click "Draw Route on Map" to visualize the entire journey with color-coded segments.</li>
                    </ul>
                 </p>
@@ -3697,7 +3681,7 @@
                                     fuel: { petrol: fuel.petrol ? 'yes' : null, diesel: fuel.diesel ?
                                             'yes' : null },
                                     status: (fuel.petrol || fuel.diesel) ? 'available' : 'unknown',
-                                    amenities: amenities.length ? amenities : [{ icon: 'fa-check-circle',
+                                    amenities: amenities.length ? amenities : [{ icon: 'fa-gas-pump',
                                             name: 'Fuel' }],
                                     pricePetrol: petrolLocal,
                                     priceDiesel: dieselLocal,
@@ -3761,10 +3745,6 @@
                 const petrolCount = stations.filter(s => s.fuel.petrol === 'yes').length;
                 const dieselCount = stations.filter(s => s.fuel.diesel === 'yes').length;
                 const shopCount = stations.filter(s => s.amenities.some(a => a.name === 'Shop')).length;
-                document.getElementById('stationCountHeader').innerText = all;
-                document.getElementById('petrolCount').innerText = petrolCount;
-                document.getElementById('dieselCount').innerText = dieselCount;
-                document.getElementById('shopCount').innerText = shopCount;
                 document.getElementById('countAll').innerText = all;
                 document.getElementById('countPetrol').innerText = petrolCount;
                 document.getElementById('countDiesel').innerText = dieselCount;
@@ -4437,7 +4417,12 @@
                         'node["tourism"="guest_house"](around:' + radius + ',' + midLat + ',' + midLon +
                         ');',
                         'node["tourism"="chalet"](around:' + radius + ',' + midLat + ',' + midLon + ');',
-                        'node["amenity"="lodging"](around:' + radius + ',' + midLat + ',' + midLon + ');'
+                        'node["amenity"="lodging"](around:' + radius + ',' + midLat + ',' + midLon + ');',
+                        // LAKES!
+                        'node["natural"="water"]["water"="lake"](around:' + radius + ',' + midLat + ',' +
+                            midLon + ');',
+                        'way["natural"="water"]["water"="lake"](around:' + radius + ',' + midLat + ',' +
+                            midLon + ');'
                     ];
                     var query = '[out:json];(' + queries.join('') + ');out body;';
                     var res = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(
@@ -4446,14 +4431,15 @@
                     var places = data.elements.map(function(el) {
                         return {
                             name: el.tags?.name || 'Unknown place',
-                            lat: el.lat,
-                            lon: el.lon,
+                            lat: el.lat || (el.center?.lat),
+                            lon: el.lon || (el.center?.lon),
                             type: el.tags?.amenity || el.tags?.tourism || el.tags?.historic || el
-                                .tags?.shop || 'place',
+                                .tags?.shop || el.tags?.natural || 'place',
                             description: el.tags?.description || ''
                         };
                     });
                     places = places.filter(function(p) {
+                        if (!p.lat || !p.lon) return false;
                         var d1 = haversine(start.lat, start.lng, p.lat, p.lon);
                         var d2 = haversine(p.lat, p.lon, end.lat, end.lon);
                         var crossTrack = Math.abs(d1 + d2 - distTotal);
@@ -4787,7 +4773,6 @@
 
                 document.getElementById('radiusApplyBtn').onclick = function() {
                     radiusKm = parseFloat(radiusRange.value);
-                    document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
                     radiusPopupOverlay.classList.remove('show');
                     if (activeLocation) loadStationsAndRefresh(true);
                 };
