@@ -40,7 +40,7 @@
 
     <style>
         /* ============================================================
-               FUELRADAR – FIXED ALL LOGIC & UI
+               MAC / iOS THEMED DESIGN – Green & Red only
                ============================================================ */
 
         * {
@@ -72,16 +72,14 @@
             --glass-border: rgba(255, 255, 255, 0.4);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
-            --radius-sm: 7px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --radius-xl: 32px;
             --radius-full: 9999px;
 
             --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
             --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-
-            --scale: 0.9;
         }
 
         html,
@@ -92,7 +90,6 @@
             background: var(--sf-gray6);
             font-family: var(--font);
             color: #1c1c1e;
-            font-size: calc(100% * var(--scale));
         }
 
         body.dark {
@@ -121,6 +118,53 @@
             background: #000000;
         }
 
+        /* ===== SYSTEM OVERLAY ===== */
+        #systemOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .system-message {
+            max-width: 380px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border-radius: var(--radius-xl);
+            padding: 36px 28px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            color: #1c1c1e;
+            box-shadow: var(--glass-shadow);
+        }
+        body.dark .system-message {
+            color: #f5f5f7;
+        }
+        .system-message i {
+            font-size: 56px;
+            color: var(--sf-green);
+            margin-bottom: 16px;
+        }
+        .system-message h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .system-message p {
+            color: var(--sf-gray);
+            margin-bottom: 20px;
+        }
+        body.dark .system-message p {
+            color: #aeaeb2;
+        }
+
         /* ===== AUTH OVERLAY ===== */
         #authOverlay {
             position: fixed;
@@ -128,37 +172,38 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #ffffff;
+            background: var(--sf-gray6);
             z-index: 9999;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 40px 20px 20px;
+            justify-content: center;
+            padding: 20px;
             overflow-y: auto;
-            min-height: 100vh;
         }
         body.dark #authOverlay {
             background: #000000;
         }
-
-        .auth-logo-wrap {
-            text-align: center;
-            margin-bottom: 20px;
+        .auth-card {
+            max-width: 400px;
             width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border-radius: var(--radius-xl);
+            padding: 32px 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
-        .auth-logo-wrap img {
-            max-width: 160px;
-            height: auto;
-            display: block;
-            margin: 0 auto 10px auto;
-            width: 160px;
+        body.dark .auth-card {
+            background: rgba(28, 28, 30, 0.88);
         }
-        .auth-logo-wrap h2 {
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .auth-logo h2 {
             font-size: 34px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-top: 0;
         }
         .fuel-green {
             color: var(--sf-green);
@@ -169,23 +214,20 @@
         .auth-slogan {
             background: rgba(26, 138, 74, 0.12);
             border-radius: var(--radius-full);
-            padding: 6px 18px;
+            padding: 4px 16px;
             display: inline-block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--sf-green);
             margin-top: 4px;
         }
-
         .auth-tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 18px;
+            margin-bottom: 24px;
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
             padding: 4px;
-            width: 100%;
-            max-width: 340px;
         }
         body.dark .auth-tabs {
             background: #1c1c1e;
@@ -214,11 +256,9 @@
             color: #f5f5f7;
             box-shadow: 0 2px 8px rgba(255, 255, 255, 0.04);
         }
-
         .auth-form.hide {
             display: none;
         }
-
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
@@ -231,10 +271,6 @@
             transition: all 0.2s var(--ease);
             font-family: var(--font);
             color: #1c1c1e;
-            max-width: 340px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
         .pill-input:focus {
             border-color: var(--sf-green);
@@ -251,16 +287,11 @@
             box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.2);
             background: #2c2c2e;
         }
-
         .phone-row {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             margin-bottom: 14px;
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
         }
         .country-code-box {
             background: var(--sf-gray6);
@@ -283,29 +314,22 @@
             margin-bottom: 0;
             flex: 2;
         }
-
         .welcome-country {
             background: rgba(26, 138, 74, 0.1);
             border-radius: var(--radius-full);
             padding: 8px 16px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             text-align: center;
             font-weight: 600;
             color: var(--sf-green);
             border: 1px solid rgba(26, 138, 74, 0.2);
             font-size: 14px;
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
         }
         .profile-pic-upload {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 10px 0;
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
+            gap: 14px;
+            margin: 12px 0;
         }
         .profile-pic-preview {
             width: 56px;
@@ -336,7 +360,6 @@
             border-color: var(--sf-green);
             color: var(--sf-green);
         }
-
         .auth-btn {
             background: var(--sf-green);
             color: white;
@@ -347,16 +370,13 @@
             font-size: 16px;
             width: 100%;
             cursor: pointer;
-            margin-top: 6px;
+            margin-top: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
         }
         .auth-btn:hover {
             transform: scale(1.01);
@@ -383,69 +403,9 @@
             }
         }
 
-        .forgot-link {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 14px;
-            display: block;
-            color: var(--sf-green);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        /* ===== SYSTEM OVERLAY ===== */
-        #systemOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(20px);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-        .system-message {
-            max-width: 360px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border-radius: var(--radius-xl);
-            padding: 32px 24px;
-            border: 1px solid var(--glass-border);
-            text-align: center;
-            color: #1c1c1e;
-            box-shadow: var(--glass-shadow);
-        }
-        body.dark .system-message {
-            color: #f5f5f7;
-        }
-        .system-message i {
-            font-size: 50px;
-            color: var(--sf-green);
-            margin-bottom: 14px;
-        }
-        .system-message h2 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .system-message p {
-            color: var(--sf-gray);
-            margin-bottom: 18px;
-        }
-        body.dark .system-message p {
-            color: #aeaeb2;
-        }
-
         /* ===== HEADER ===== */
         .header {
-            padding: 10px 14px 8px 14px;
+            padding: 12px 16px 10px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
             border-bottom: 1px solid var(--glass-border);
@@ -461,20 +421,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
+            gap: 8px;
         }
         .header-left {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .menu-btn {
             background: var(--sf-gray6);
             border: none;
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            font-size: 15px;
+            font-size: 17px;
             color: var(--sf-green);
             cursor: pointer;
             display: flex;
@@ -497,20 +457,20 @@
             text-align: center;
         }
         .brand-center h1 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
             margin: 0;
             letter-spacing: -0.5px;
         }
         .slogan-tag {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--sf-green);
             background: rgba(26, 138, 74, 0.1);
-            padding: 1px 12px;
+            padding: 2px 14px;
             border-radius: var(--radius-full);
             display: inline-block;
-            margin-top: 1px;
+            margin-top: 2px;
         }
         body.dark .slogan-tag {
             background: rgba(26, 138, 74, 0.15);
@@ -519,11 +479,11 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .header-right .profile-thumb {
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--sf-green);
@@ -534,39 +494,103 @@
             transform: scale(1.05);
         }
 
-        /* ===== GREETING ===== */
-        .greeting-section {
-            padding: 6px 14px 4px 14px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            flex-shrink: 0;
+        /* ===== STATS ROW ===== */
+        .stats-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 4px;
+            background: var(--sf-gray6);
+            padding: 6px 8px;
+            border-radius: var(--radius-full);
+            margin-top: 8px;
+            border: 1px solid var(--glass-border);
         }
-        body.dark .greeting-section {
-            background: rgba(28, 28, 30, 0.88);
+        body.dark .stats-row {
+            background: #1c1c1e;
+            border-color: #2c2c2e;
         }
-        .greeting-section h2 {
-            font-size: 22px;
-            font-weight: 700;
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
             color: #1c1c1e;
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
         }
-        .greeting-section h2 .user-name {
-            color: var(--sf-green);
-        }
-        .greeting-section p {
-            font-size: 13px;
-            color: var(--sf-gray);
-            margin-top: 1px;
-        }
-        body.dark .greeting-section h2 {
+        body.dark .stat-item {
             color: #f5f5f7;
         }
-        body.dark .greeting-section p {
-            color: #aeaeb2;
+        .stat-item i {
+            color: var(--sf-green);
+            font-size: 14px;
+        }
+        .stat-count {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* ===== GREEN BANNER ===== */
+        .green-banner {
+            background: var(--sf-green);
+            border-radius: var(--radius-full);
+            padding: 8px 16px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(26, 138, 74, 0.25);
+        }
+        .green-banner i {
+            margin-right: 6px;
+        }
+        .green-banner .change-radius-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s var(--ease);
+        }
+        .green-banner .change-radius-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== WARNING BANNER ===== */
+        .warning-banner {
+            background: rgba(220, 38, 38, 0.08);
+            border-radius: var(--radius-full);
+            padding: 6px 16px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--sf-red);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+        }
+        body.dark .warning-banner {
+            background: rgba(220, 38, 38, 0.12);
+            color: var(--sf-red);
+            border-color: rgba(220, 38, 38, 0.2);
         }
 
         /* ===== SEARCH BAR ===== */
         .search-section {
-            padding: 6px 14px 6px 14px;
+            padding: 8px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             flex-shrink: 0;
@@ -579,9 +603,9 @@
             align-items: center;
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
-            padding: 4px 14px;
+            padding: 6px 16px;
             border: 1.5px solid transparent;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
         }
@@ -603,8 +627,8 @@
             flex: 1;
             border: none;
             background: transparent;
-            padding: 5px 4px;
-            font-size: 13px;
+            padding: 6px 4px;
+            font-size: 14px;
             outline: none;
             cursor: pointer;
             color: inherit;
@@ -612,11 +636,11 @@
         }
         .search-box .search-icon {
             color: var(--sf-gray);
-            font-size: 15px;
+            font-size: 16px;
         }
         .search-box .voice-icon {
             color: var(--sf-gray);
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
         }
@@ -625,10 +649,10 @@
         }
         .search-box .filter-icon {
             color: var(--sf-gray);
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             background: var(--sf-gray5);
-            padding: 3px 9px;
+            padding: 4px 10px;
             border-radius: var(--radius-full);
             transition: all 0.2s var(--ease);
         }
@@ -642,7 +666,7 @@
 
         /* ===== FILTER CHIPS ===== */
         .filter-section {
-            padding: 4px 14px 6px 14px;
+            padding: 6px 16px 8px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             flex-shrink: 0;
@@ -652,7 +676,7 @@
         }
         .filter-scroll {
             display: flex;
-            gap: 5px;
+            gap: 6px;
             overflow-x: auto;
             padding: 2px 0;
             scrollbar-width: none;
@@ -663,9 +687,9 @@
         .chip {
             background: var(--sf-gray6);
             color: #1c1c1e;
-            padding: 3px 12px;
+            padding: 4px 14px;
             border-radius: var(--radius-full);
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             border: 1px solid transparent;
             cursor: pointer;
@@ -673,7 +697,7 @@
             transition: all 0.2s var(--ease);
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             font-family: var(--font);
         }
         .chip:hover {
@@ -699,8 +723,8 @@
         .chip .count-badge {
             background: rgba(0, 0, 0, 0.08);
             border-radius: var(--radius-full);
-            padding: 0 5px;
-            font-size: 9px;
+            padding: 0 6px;
+            font-size: 10px;
             font-weight: 700;
         }
         .chip.active .count-badge {
@@ -720,16 +744,16 @@
         }
         .chip.dropdown-chip {
             background: var(--sf-gray6);
-            padding: 3px 10px;
+            padding: 4px 12px;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
         .chip.dropdown-chip select {
             border: none;
             background: transparent;
             font-weight: 600;
-            font-size: 10px;
+            font-size: 11px;
             outline: none;
             cursor: pointer;
             color: inherit;
@@ -757,23 +781,23 @@
         /* ===== MAP FLOATING BUTTONS ===== */
         .map-floats {
             position: absolute;
-            top: 14px;
-            right: 14px;
+            top: 16px;
+            right: 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             z-index: 1000;
         }
         .map-float-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             border-radius: 50%;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--glass-border);
             color: var(--sf-green);
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -799,9 +823,9 @@
         .map-float-btn.best-near-float {
             background: var(--sf-green);
             color: white;
-            font-size: 13px;
-            width: 40px;
-            height: 40px;
+            font-size: 14px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             box-shadow: 0 4px 20px rgba(26, 138, 74, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -812,7 +836,7 @@
             line-height: 1;
         }
         .map-float-btn.best-near-float span {
-            font-size: 6px;
+            font-size: 7px;
             font-weight: 700;
             margin-top: 1px;
             letter-spacing: 0.5px;
@@ -820,28 +844,6 @@
         body.dark .map-float-btn.best-near-float {
             background: var(--sf-green);
             box-shadow: 0 4px 20px rgba(26, 138, 74, 0.25);
-        }
-
-        /* ===== LOADING OVERLAY ===== */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(6px);
-            z-index: 500;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--sf-green);
-            gap: 8px;
-        }
-        body.dark .loading-overlay {
-            background: rgba(0, 0, 0, 0.7);
         }
 
         /* ===== BOTTOM SHEET ===== */
@@ -853,10 +855,10 @@
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-            padding: 8px 14px 6px 14px;
+            padding: 10px 16px 8px 16px;
             box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.06);
             z-index: 900;
-            max-height: 42%;
+            max-height: 30%; /* Updated to 30% as requested */
             display: flex;
             flex-direction: column;
             transition: max-height 0.4s var(--ease), transform 0.4s var(--ease);
@@ -865,7 +867,7 @@
         }
         .bottom-sheet.collapsed {
             max-height: 0 !important;
-            padding: 0 14px !important;
+            padding: 0 16px !important;
             overflow: hidden;
             transform: translateY(100%);
             border-top: none;
@@ -875,11 +877,11 @@
             border-top-color: #2c2c2e;
         }
         .bottom-sheet .sheet-handle {
-            width: 36px;
+            width: 40px;
             height: 4px;
             background: var(--sf-gray4);
             border-radius: var(--radius-full);
-            margin: 0 auto 8px auto;
+            margin: 0 auto 10px auto;
             cursor: pointer;
             flex-shrink: 0;
             transition: all 0.2s var(--ease);
@@ -894,17 +896,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #1c1c1e;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             flex-shrink: 0;
         }
         body.dark .bottom-sheet .sheet-header {
             color: #f5f5f7;
         }
         .bottom-sheet .sheet-header .view-all {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--sf-green);
             cursor: pointer;
@@ -915,12 +917,12 @@
         }
         .bottom-sheet .sheet-scroll {
             overflow-y: auto;
-            padding-right: 2px;
+            padding-right: 4px;
             flex: 1;
             scrollbar-width: thin;
         }
         .bottom-sheet .sheet-scroll::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
         .bottom-sheet .sheet-scroll::-webkit-scrollbar-thumb {
             background: var(--sf-gray4);
@@ -934,11 +936,11 @@
         .station-card-compact {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             background: var(--sf-gray6);
             border-radius: var(--radius-md);
-            padding: 8px 10px;
-            margin-bottom: 5px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
             border: 1px solid transparent;
             transition: all 0.2s var(--ease);
             cursor: pointer;
@@ -958,15 +960,15 @@
         }
         .station-card-compact .logo-col {
             flex-shrink: 0;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(26, 138, 74, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 9px;
+            font-size: 10px;
             color: var(--sf-green);
             border: 2px solid var(--sf-green);
             overflow: hidden;
@@ -986,7 +988,7 @@
         }
         .station-card-compact .info-col .name {
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -998,14 +1000,14 @@
         .station-card-compact .info-col .name .best-badge {
             background: var(--sf-green);
             color: white;
-            font-size: 6px;
-            padding: 1px 6px;
+            font-size: 7px;
+            padding: 1px 8px;
             border-radius: var(--radius-full);
             font-weight: 700;
             letter-spacing: 0.3px;
         }
         .station-card-compact .info-col .address {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--sf-gray);
             white-space: nowrap;
             overflow: hidden;
@@ -1016,14 +1018,14 @@
         }
         .station-card-compact .info-col .tags {
             display: flex;
-            gap: 3px;
-            margin-top: 1px;
-            font-size: 8px;
+            gap: 4px;
+            margin-top: 2px;
+            font-size: 9px;
             font-weight: 600;
         }
         .station-card-compact .info-col .tags .tag {
             background: rgba(26, 138, 74, 0.08);
-            padding: 1px 6px;
+            padding: 1px 8px;
             border-radius: var(--radius-full);
             color: var(--sf-green);
         }
@@ -1037,7 +1039,7 @@
         }
         .station-card-compact .price-col .price {
             font-weight: 800;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--sf-green);
             display: block;
             line-height: 1.2;
@@ -1046,7 +1048,7 @@
             color: var(--sf-green);
         }
         .station-card-compact .price-col .price-label {
-            font-size: 8px;
+            font-size: 9px;
             color: var(--sf-gray);
             font-weight: 600;
         }
@@ -1060,10 +1062,10 @@
             background: var(--sf-green);
             border: none;
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1083,27 +1085,10 @@
             box-shadow: 0 2px 8px rgba(26, 138, 74, 0.15);
         }
 
-        /* ===== OPEN BADGE ===== */
-        .open-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            background: rgba(26, 138, 74, 0.1);
-            color: var(--sf-green);
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 8px;
-            border-radius: var(--radius-full);
-            border: 1px solid rgba(26, 138, 74, 0.15);
-        }
-        .open-badge i {
-            font-size: 8px;
-        }
-
         /* ===== EXPAND BUTTON ===== */
         .expand-sheet-btn {
             position: absolute;
-            bottom: 54px;
+            bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--glass-bg);
@@ -1111,8 +1096,8 @@
             color: var(--sf-green);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-full);
-            padding: 6px 20px;
-            font-size: 12px;
+            padding: 8px 24px;
+            font-size: 13px;
             font-weight: 700;
             z-index: 899;
             cursor: pointer;
@@ -1126,7 +1111,7 @@
             box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
         }
         .expand-sheet-btn i {
-            margin-right: 5px;
+            margin-right: 6px;
         }
         body.dark .expand-sheet-btn {
             background: rgba(28, 28, 30, 0.9);
@@ -1142,7 +1127,7 @@
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
             border-top: 1px solid var(--glass-border);
-            padding: 4px 0 10px 0;
+            padding: 6px 0 12px 0;
             flex-shrink: 0;
             z-index: 100;
         }
@@ -1154,19 +1139,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1px;
-            font-size: 11px;
+            gap: 2px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--sf-gray);
             cursor: pointer;
             transition: all 0.2s var(--ease);
-            padding: 3px 8px;
+            padding: 4px 12px;
             border: none;
             background: none;
             font-family: var(--font);
         }
         .bottom-nav .nav-item i {
-            font-size: 22px;
+            font-size: 24px;
             transition: all 0.2s var(--ease);
         }
         .bottom-nav .nav-item.active {
@@ -1214,7 +1199,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 18px;
+            padding: 14px 20px;
             border-bottom: 1px solid var(--glass-border);
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
@@ -1227,13 +1212,13 @@
             border-bottom-color: #2c2c2e;
         }
         .page-header-bar h2 {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
         }
         .close-page-btn {
             background: none;
             border: none;
-            font-size: 26px;
+            font-size: 28px;
             cursor: pointer;
             color: var(--sf-gray);
             line-height: 1;
@@ -1244,7 +1229,7 @@
             transform: rotate(90deg);
         }
         .page-content {
-            padding: 14px 18px 20px;
+            padding: 16px 20px 24px;
             flex: 1;
         }
 
@@ -1269,10 +1254,10 @@
             background: var(--glass-bg);
             backdrop-filter: blur(40px);
             border-radius: var(--radius-xl);
-            max-width: 380px;
+            max-width: 400px;
             width: 90%;
             max-height: 80vh;
-            padding: 22px 18px 18px;
+            padding: 24px 20px 20px;
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
             overflow-y: auto;
             position: relative;
@@ -1284,24 +1269,24 @@
         }
         .menu-popup-logo {
             text-align: center;
-            padding-bottom: 14px;
+            padding-bottom: 16px;
             border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         body.dark .menu-popup-logo {
             border-bottom-color: #2c2c2e;
         }
         .menu-popup-logo h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
         .menu-popup-logo .slogan {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--sf-green);
             background: rgba(26, 138, 74, 0.1);
-            padding: 2px 10px;
+            padding: 2px 12px;
             border-radius: var(--radius-full);
             display: inline-block;
             margin-top: 2px;
@@ -1313,15 +1298,15 @@
         .menu-popup-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
+            gap: 14px;
+            padding: 10px 14px;
             border-radius: var(--radius-md);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: #1c1c1e;
             cursor: pointer;
             transition: all 0.15s var(--ease);
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
         .menu-popup-item:hover {
             background: var(--sf-gray6);
@@ -1333,17 +1318,17 @@
             background: #2c2c2e;
         }
         .menu-popup-item i {
-            width: 22px;
+            width: 24px;
             color: var(--sf-green);
-            font-size: 16px;
+            font-size: 18px;
         }
         .menu-popup-close {
             position: absolute;
-            top: 10px;
-            right: 14px;
+            top: 12px;
+            right: 16px;
             background: none;
             border: none;
-            font-size: 26px;
+            font-size: 28px;
             cursor: pointer;
             color: var(--sf-gray);
             line-height: 1;
@@ -1357,7 +1342,7 @@
             color: #aeaeb2;
         }
 
-        /* ===== RADIUS POPUP ===== */
+        /* ===== RADIUS POPUP (NEW) ===== */
         #radiusPopupOverlay {
             position: fixed;
             top: 0;
@@ -1378,9 +1363,9 @@
             background: var(--glass-bg);
             backdrop-filter: blur(40px);
             border-radius: var(--radius-xl);
-            max-width: 360px;
+            max-width: 380px;
             width: 90%;
-            padding: 24px 20px 20px;
+            padding: 28px 24px 24px;
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--glass-border);
         }
@@ -1389,66 +1374,69 @@
             border-color: #2c2c2e;
         }
         .radius-popup h3 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--sf-green);
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             text-align: center;
         }
         .radius-popup .radius-input-group {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 14px 0;
+            gap: 12px;
+            margin: 16px 0;
         }
         .radius-popup .radius-input-group input[type="range"] {
             flex: 1;
             -webkit-appearance: none;
             background: var(--sf-gray4);
-            height: 3px;
+            height: 4px;
             border-radius: var(--radius-full);
             outline: none;
             transition: all 0.2s var(--ease);
         }
         .radius-popup .radius-input-group input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--sf-green);
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(26, 138, 74, 0.3);
         }
         .radius-popup .radius-input-group input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--sf-green);
             cursor: pointer;
             border: none;
         }
         .radius-popup .radius-value {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--sf-green);
-            min-width: 54px;
+            min-width: 60px;
             text-align: center;
         }
         .radius-popup .radius-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 18px;
+            gap: 10px;
+            margin-top: 20px;
         }
         .radius-popup .radius-actions button {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius-full);
             border: none;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            font-size: 13px;
+            font-size: 14px;
+        }
+        .radius-popup .radius-actions button:active {
+            transform: scale(0.97);
         }
         .radius-popup .radius-actions .btn-apply {
             background: var(--sf-green);
@@ -1478,9 +1466,9 @@
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
-            padding: 16px 18px;
+            padding: 18px 20px;
             border: 1px solid var(--glass-border);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             box-shadow: var(--glass-shadow);
             transition: all 0.2s var(--ease);
         }
@@ -1490,17 +1478,17 @@
         }
         .trip-planner-card .card-title {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             color: var(--sf-green);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .trip-planner-card .card-subtitle {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--sf-gray);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         body.dark .trip-planner-card .card-subtitle {
             color: #aeaeb2;
@@ -1509,8 +1497,8 @@
             background: var(--sf-green);
             color: white;
             border-radius: var(--radius-full);
-            padding: 2px 12px;
-            font-size: 9px;
+            padding: 2px 14px;
+            font-size: 10px;
             font-weight: 700;
             display: inline-block;
         }
@@ -1526,12 +1514,12 @@
         }
         .trip-planner-card .stat-row {
             display: flex;
-            gap: 14px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         .trip-planner-card .stat-row .stat {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             color: #1c1c1e;
         }
@@ -1540,15 +1528,15 @@
         }
         .trip-planner-card .stat-row .stat i {
             color: var(--sf-green);
-            margin-right: 3px;
+            margin-right: 4px;
         }
         .step-container .step-header {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: var(--sf-green);
             background: rgba(26, 138, 74, 0.06);
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: var(--radius-full);
             display: inline-block;
         }
@@ -1574,12 +1562,12 @@
         .full-station-card {
             background: var(--sf-gray6);
             border-radius: var(--radius-md);
-            padding: 12px;
-            margin-bottom: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
             border: 1px solid transparent;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.2s var(--ease);
         }
         .full-station-card:hover {
@@ -1594,8 +1582,8 @@
             border-color: var(--sf-green);
         }
         .full-station-card .logo-col {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(26, 138, 74, 0.1);
             border: 2px solid var(--sf-green);
@@ -1615,14 +1603,14 @@
         }
         .full-station-card .info-col .name {
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             color: #1c1c1e;
         }
         body.dark .full-station-card .info-col .name {
             color: #f5f5f7;
         }
         .full-station-card .info-col .address {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--sf-gray);
         }
         body.dark .full-station-card .info-col .address {
@@ -1630,10 +1618,10 @@
         }
         .full-station-card .info-col .prices {
             display: flex;
-            gap: 10px;
-            margin-top: 2px;
+            gap: 12px;
+            margin-top: 4px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
         }
         .full-station-card .info-col .prices .petrol {
             color: var(--sf-green);
@@ -1644,14 +1632,14 @@
         .full-station-card .actions {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
         .full-station-card .actions button {
             border: none;
             border-radius: var(--radius-full);
-            padding: 3px 12px;
+            padding: 4px 14px;
             font-weight: 600;
-            font-size: 9px;
+            font-size: 10px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
@@ -1679,10 +1667,10 @@
         .verified-badge {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            font-size: 9px;
+            gap: 4px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 1px 8px;
+            padding: 2px 10px;
             border-radius: var(--radius-full);
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -1698,21 +1686,21 @@
             border: 1px solid rgba(245, 158, 11, 0.2);
         }
         .verified-badge i {
-            font-size: 9px;
+            font-size: 10px;
         }
 
         /* ===== SEARCH RESULTS ===== */
         .search-result-item {
             background: var(--sf-gray6);
             border-radius: var(--radius-md);
-            padding: 8px 12px;
-            margin-bottom: 6px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
             border: 1px solid transparent;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .search-result-item:hover {
             border-color: var(--sf-green);
@@ -1728,8 +1716,8 @@
             background: #2c2c2e;
         }
         .search-result-item .logo-col {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: rgba(26, 138, 74, 0.1);
             border: 2px solid var(--sf-green);
@@ -1749,47 +1737,47 @@
         }
         .search-result-item .info-col .name {
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             color: #1c1c1e;
         }
         body.dark .search-result-item .info-col .name {
             color: #f5f5f7;
         }
         .search-result-item .info-col .address {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--sf-gray);
         }
         body.dark .search-result-item .info-col .address {
             color: #aeaeb2;
         }
         .search-result-item .info-col .distance {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--sf-green);
         }
 
         /* ===== TRIP PLANNER STEPS ===== */
         .step-container {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         .step-content .pill-input {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .step-buttons {
             display: flex;
-            gap: 8px;
-            margin-top: 14px;
+            gap: 10px;
+            margin-top: 16px;
         }
         .step-buttons button {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius-full);
             border: none;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            font-size: 13px;
+            font-size: 14px;
         }
         .step-buttons button:active {
             transform: scale(0.97);
@@ -1827,23 +1815,23 @@
             box-shadow: 0 4px 16px rgba(26, 138, 74, 0.15);
         }
         .place-suggestions {
-            margin-top: 4px;
+            margin-top: 6px;
             border-radius: var(--radius-md);
             overflow: hidden;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            max-height: 216px;
+            max-height: 240px;
             overflow-y: auto;
         }
         .place-suggestion-item {
             background: var(--sf-gray6);
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-bottom: 1px solid var(--glass-border);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: all 0.15s var(--ease);
-            font-size: 12px;
+            font-size: 13px;
         }
         .place-suggestion-item:last-child {
             border-bottom: none;
@@ -1859,10 +1847,10 @@
             background: #2c2c2e;
         }
         .place-suggestion-distance {
-            font-size: 9px;
+            font-size: 10px;
             background: var(--sf-green);
             color: white;
-            padding: 1px 8px;
+            padding: 2px 10px;
             border-radius: var(--radius-full);
             font-weight: 600;
         }
@@ -1872,10 +1860,10 @@
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border-radius: var(--radius-md);
-            padding: 12px 14px;
-            margin-bottom: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            border-left: 3px solid var(--sf-green);
+            border-left: 4px solid var(--sf-green);
             cursor: pointer;
             transition: all 0.2s var(--ease);
             border: 1px solid var(--glass-border);
@@ -1908,18 +1896,18 @@
             background: rgba(26, 138, 74, 0.06);
         }
         .floating-card .verified-badge {
-            font-size: 8px;
-            padding: 1px 6px;
+            font-size: 9px;
+            padding: 1px 8px;
         }
         .add-fun-btn {
             background: var(--sf-green);
             color: white;
             border: none;
             border-radius: var(--radius-full);
-            padding: 3px 12px;
+            padding: 4px 14px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 11px;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
         }
@@ -1937,11 +1925,11 @@
         }
         .safety-tips {
             background: rgba(245, 158, 11, 0.08);
-            border-left: 3px solid var(--sf-orange);
-            padding: 8px 12px;
+            border-left: 4px solid var(--sf-orange);
+            padding: 10px 14px;
             border-radius: var(--radius-md);
-            font-size: 12px;
-            margin-top: 6px;
+            font-size: 13px;
+            margin-top: 8px;
         }
         body.dark .safety-tips {
             background: rgba(245, 158, 11, 0.06);
@@ -1952,12 +1940,12 @@
         .car-card {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             background: var(--sf-gray6);
             border-radius: var(--radius-md);
-            padding: 8px 12px;
+            padding: 10px 14px;
             border: 1px solid transparent;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             transition: all 0.2s var(--ease);
         }
         .car-card:hover {
@@ -1971,8 +1959,8 @@
             border-color: var(--sf-green);
         }
         .car-card img {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             object-fit: cover;
             border-radius: var(--radius-sm);
             border: 2px solid var(--sf-green);
@@ -1981,17 +1969,17 @@
             background: var(--sf-green);
             color: white;
             border-radius: var(--radius-full);
-            padding: 1px 8px;
-            font-size: 8px;
+            padding: 1px 10px;
+            font-size: 9px;
             font-weight: 700;
         }
         .log-item {
             background: var(--sf-gray6);
             border-radius: var(--radius-sm);
-            padding: 6px 10px;
-            margin-bottom: 4px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
             border: 1px solid transparent;
-            font-size: 11px;
+            font-size: 12px;
             transition: all 0.2s var(--ease);
         }
         .log-item:hover {
@@ -2009,14 +1997,14 @@
             color: white;
             border: none;
             border-radius: var(--radius-full);
-            padding: 10px;
+            padding: 12px;
             font-weight: 700;
             width: 100%;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            font-size: 13px;
+            font-size: 14px;
         }
         .full-width-btn:active {
             transform: scale(0.98);
@@ -2028,10 +2016,10 @@
         .btn-sm {
             background: var(--sf-gray6);
             border: none;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: var(--radius-full);
             font-weight: 600;
-            font-size: 10px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
@@ -2067,17 +2055,17 @@
             align-items: center;
         }
         .small-text {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--sf-gray);
         }
         body.dark .small-text {
             color: #aeaeb2;
         }
         .mt-2 {
-            margin-top: 6px;
+            margin-top: 8px;
         }
         .mb-2 {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         /* ===== REPORT MODAL ===== */
@@ -2101,9 +2089,9 @@
             background: var(--glass-bg);
             backdrop-filter: blur(40px);
             border-radius: var(--radius-xl);
-            max-width: 380px;
+            max-width: 400px;
             width: 92%;
-            padding: 24px 20px 20px;
+            padding: 28px 24px 24px;
             box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
             max-height: 80vh;
             overflow-y: auto;
@@ -2114,21 +2102,21 @@
             border-color: #2c2c2e;
         }
         .report-modal h3 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--sf-green);
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             text-align: center;
         }
         .report-modal .report-field {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         .report-modal .report-field label {
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
             color: #1c1c1e;
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         body.dark .report-modal .report-field label {
             color: #f5f5f7;
@@ -2139,8 +2127,8 @@
             width: 100%;
             border-radius: var(--radius-full);
             border: 1.5px solid var(--sf-gray4);
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 10px 16px;
+            font-size: 14px;
             outline: none;
             transition: all 0.2s var(--ease);
             background: var(--sf-gray6);
@@ -2171,23 +2159,23 @@
         .report-modal .report-field textarea {
             border-radius: var(--radius-md);
             resize: vertical;
-            min-height: 54px;
+            min-height: 60px;
         }
         .report-modal .report-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 16px;
+            gap: 10px;
+            margin-top: 18px;
         }
         .report-modal .report-actions button {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius-full);
             border: none;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            font-size: 13px;
+            font-size: 14px;
         }
         .report-modal .report-actions .btn-submit {
             background: var(--sf-green);
@@ -2215,13 +2203,13 @@
         /* ===== TOAST ===== */
         .message-toast {
             position: fixed;
-            bottom: 72px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(28, 28, 30, 0.92);
             backdrop-filter: blur(20px);
             color: white;
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: var(--radius-full);
             font-weight: 600;
             z-index: 4000;
@@ -2229,7 +2217,7 @@
             text-align: center;
             display: none;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-            font-size: 13px;
+            font-size: 14px;
             font-family: var(--font);
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
@@ -2241,46 +2229,46 @@
         #aiChatPage .ai-messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 14px 18px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .ai-message {
             max-width: 85%;
-            padding: 8px 14px;
+            padding: 10px 16px;
             border-radius: var(--radius-lg);
             word-break: break-word;
             line-height: 1.5;
-            font-size: 13px;
+            font-size: 14px;
             animation: fadeInStep 0.3s var(--ease);
         }
         .ai-message.user {
             align-self: flex-end;
             background: var(--sf-green);
             color: white;
-            border-bottom-right-radius: 3px;
+            border-bottom-right-radius: 4px;
         }
         .ai-message.ai {
             align-self: flex-start;
             background: var(--sf-gray6);
             color: #1c1c1e;
-            border-bottom-left-radius: 3px;
+            border-bottom-left-radius: 4px;
         }
         body.dark .ai-message.ai {
             background: #1c1c1e;
             color: #f5f5f7;
         }
         .ai-message .timestamp {
-            font-size: 8px;
+            font-size: 9px;
             opacity: 0.5;
-            margin-top: 3px;
+            margin-top: 4px;
             text-align: right;
         }
         .ai-input-area {
             display: flex;
-            gap: 8px;
-            padding: 10px 18px;
+            gap: 10px;
+            padding: 12px 20px;
             border-top: 1px solid var(--glass-border);
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -2294,8 +2282,8 @@
             flex: 1;
             border-radius: var(--radius-full);
             border: 1.5px solid var(--sf-gray4);
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 10px 16px;
+            font-size: 14px;
             background: var(--sf-gray6);
             outline: none;
             transition: all 0.2s var(--ease);
@@ -2318,11 +2306,11 @@
         .ai-send-btn {
             background: var(--sf-green);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -2344,18 +2332,18 @@
         }
         .ai-typing {
             display: none;
-            padding: 3px 14px;
-            gap: 5px;
+            padding: 4px 16px;
+            gap: 6px;
             align-items: center;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--sf-green);
         }
         .ai-typing.active {
             display: flex;
         }
         .ai-typing-dots span {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
             background: var(--sf-green);
             border-radius: 50%;
             display: inline-block;
@@ -2386,89 +2374,88 @@
                 max-width: 100%;
             }
             .header {
-                padding: 6px 10px 4px 10px;
+                padding: 8px 12px 6px 12px;
             }
             .brand-center h1 {
-                font-size: 16px;
+                font-size: 17px;
             }
-            .greeting-section h2 {
-                font-size: 20px;
+            .stats-row {
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+            .stat-item {
+                font-size: 10px;
+                padding: 1px 6px;
+            }
+            .green-banner {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+            .warning-banner {
+                font-size: 10px;
+                padding: 4px 12px;
             }
             .filter-section {
-                padding: 3px 10px 4px 10px;
+                padding: 4px 12px 6px 12px;
             }
             .chip {
-                font-size: 9px;
-                padding: 2px 8px;
+                font-size: 10px;
+                padding: 3px 10px;
             }
             .bottom-sheet {
-                padding: 6px 10px 4px 10px;
-                max-height: 38%;
+                padding: 8px 12px 6px 12px;
+                max-height: 40%;
             }
             .station-card-compact {
-                padding: 6px 8px;
-                gap: 6px;
+                padding: 8px 10px;
+                gap: 8px;
             }
             .station-card-compact .logo-col {
-                width: 30px;
-                height: 30px;
-                font-size: 8px;
-            }
-            .station-card-compact .info-col .name {
-                font-size: 11px;
-            }
-            .station-card-compact .price-col .price {
-                font-size: 12px;
-            }
-            .bottom-nav .nav-item {
-                font-size: 10px;
-                padding: 2px 6px;
-            }
-            .bottom-nav .nav-item i {
-                font-size: 20px;
-            }
-            .page-content {
-                padding: 10px 14px 16px;
-            }
-            .full-station-card {
-                padding: 8px;
-                gap: 6px;
-            }
-            .full-station-card .logo-col {
                 width: 34px;
                 height: 34px;
+                font-size: 9px;
+            }
+            .station-card-compact .info-col .name {
+                font-size: 12px;
+            }
+            .station-card-compact .price-col .price {
+                font-size: 13px;
+            }
+            .bottom-nav .nav-item {
+                font-size: 11px;
+                padding: 0 8px;
+            }
+            .bottom-nav .nav-item i {
+                font-size: 22px;
+            }
+            .page-content {
+                padding: 12px 16px 20px;
+            }
+            .full-station-card {
+                padding: 10px;
+                gap: 8px;
+            }
+            .full-station-card .logo-col {
+                width: 38px;
+                height: 38px;
             }
             .full-station-card .info-col .name {
-                font-size: 11px;
+                font-size: 12px;
             }
             .search-result-item {
-                padding: 6px 8px;
-                gap: 6px;
+                padding: 8px 10px;
+                gap: 8px;
             }
             .search-result-item .logo-col {
-                width: 28px;
-                height: 28px;
+                width: 32px;
+                height: 32px;
             }
             .radius-popup {
-                padding: 18px 14px 16px;
+                padding: 20px 16px 18px;
             }
             .radius-popup .radius-value {
-                font-size: 14px;
-                min-width: 46px;
-            }
-            #authOverlay {
-                padding: 20px 12px;
-            }
-            .auth-logo-wrap img {
-                width: 120px;
-            }
-            .pill-input {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-            .auth-btn {
-                padding: 12px;
-                font-size: 14px;
+                font-size: 16px;
+                min-width: 50px;
             }
         }
 
@@ -2732,45 +2719,43 @@
         </div>
     </div>
 
-    <!-- ===== AUTH OVERLAY – NO FLOATING FORM (Full Page) ===== -->
+    <!-- ===== AUTH OVERLAY ===== -->
     <div id="authOverlay">
-        <div class="auth-logo-wrap">
-            <img src="logo.png" alt="FuelRadar" onerror="this.style.display='none';" />
-            <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
-            <div class="auth-slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
-        </div>
-
-        <div class="auth-tabs">
-            <div class="auth-tab active" data-tab="login">Login</div>
-            <div class="auth-tab" data-tab="register">Register</div>
-        </div>
-
-        <div id="loginForm" class="auth-form">
-            <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
-            <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
-            <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
-            <a href="#" id="forgotPassword" class="forgot-link">Forgot password?</a>
-        </div>
-
-        <div id="registerForm" class="auth-form hide">
-            <div id="countryDetectionMessage" style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--sf-gray);">
-                <span class="loading-spinner"></span> Detecting your country...
+        <div class="auth-card">
+            <div class="auth-logo">
+                <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
+                <div class="auth-slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
             </div>
-            <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
-                <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="register">Register</div>
             </div>
-            <input type="text" id="regName" class="pill-input" placeholder="Full name" />
-            <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
-            <div class="phone-row">
-                <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
-                <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
+            <div id="loginForm" class="auth-form">
+                <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
+                <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
+                <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
+                <p style="text-align:center; margin-top:12px; font-size:13px;"><a href="#" id="forgotPassword" style="color:var(--sf-green); text-decoration:none;">Forgot password?</a></p>
             </div>
-            <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
-            <div class="profile-pic-upload">
-                <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
-                <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
+            <div id="registerForm" class="auth-form hide">
+                <div id="countryDetectionMessage" style="text-align:center; margin-bottom:12px; font-size:13px; color:var(--sf-gray);">
+                    <span class="loading-spinner"></span> Detecting your country...
+                </div>
+                <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
+                    <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
+                </div>
+                <input type="text" id="regName" class="pill-input" placeholder="Full name" />
+                <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
+                <div class="phone-row">
+                    <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
+                    <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
+                </div>
+                <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
+                <div class="profile-pic-upload">
+                    <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
+                    <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
+                </div>
+                <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
             </div>
-            <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
         </div>
     </div>
 
@@ -2791,21 +2776,35 @@
                     <img id="userProfilePicHeader" src="driver.png" class="profile-thumb" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
                 </div>
             </div>
-        </div>
 
-        <!-- ===== GREETING ===== -->
-        <div class="greeting-section">
-            <h2>Hello, <span class="user-name" id="greetingUserName">Alex</span></h2>
-            <p>Find fuel stations near you</p>
+            <!-- ===== STATS ROW ===== -->
+            <div class="stats-row">
+                <div class="stat-item"><i class="fas fa-map-marker-alt"></i> <span class="stat-count" id="stationCountHeader">0</span> Stations</div>
+                <div class="stat-item"><i class="fas fa-gas-pump"></i> <span class="stat-count" id="petrolCount">0</span> Petrol</div>
+                <div class="stat-item"><i class="fas fa-oil-can"></i> <span class="stat-count" id="dieselCount">0</span> Diesel</div>
+                <div class="stat-item"><i class="fas fa-store"></i> <span class="stat-count" id="shopCount">0</span> Shops</div>
+            </div>
+
+            <!-- ===== GREEN BANNER ===== -->
+            <div class="green-banner">
+                <span><i class="fas fa-crosshairs"></i> Nearby stations within <strong id="radiusDisplay">3 km</strong></span>
+                <button class="change-radius-btn" id="changeRadiusBtn"><i class="fas fa-undo-alt"></i> Change radius</button>
+            </div>
+
+            <!-- ===== WARNING BANNER ===== -->
+            <div class="warning-banner">
+                <span><i class="fas fa-exclamation-circle"></i> Tap a station on the map to navigate or report.</span>
+                <span style="cursor:pointer;" id="closeWarningBtn">&times;</span>
+            </div>
         </div>
 
         <!-- ===== SEARCH BAR ===== -->
         <div class="search-section">
             <div class="search-box" id="searchBoxTrigger">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" placeholder="Search location" id="searchInput" readonly />
+                <input type="text" placeholder="Search station by name or location..." id="searchInput" readonly />
                 <i class="fas fa-microphone voice-icon"></i>
-                <i class="fas fa-sliders-h filter-icon" id="radiusTriggerBtn"></i>
+                <i class="fas fa-sliders-h filter-icon"></i>
             </div>
         </div>
 
@@ -2839,7 +2838,7 @@
                 <button class="map-float-btn" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="map-float-btn" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
                 <button class="map-float-btn best-near-float" id="bestNearBtn">
-                    <i class="fas fa-gas-pump" style="font-size:14px;"></i>
+                    <i class="fas fa-gas-pump" style="font-size:16px;"></i>
                     <span>Best</span>
                 </button>
                 <button class="map-float-btn clear-route" id="clearRouteBtn"><i class="fas fa-times-circle"></i></button>
@@ -2857,8 +2856,7 @@
             <div class="bottom-sheet" id="bottomSheet">
                 <div class="sheet-handle" id="sheetHandle"></div>
                 <div class="sheet-header">
-                    <span><i class="fas fa-gas-pump" style="color:var(--sf-green);"></i> Fuel Stations</span>
-                    <span style="font-size:12px; color:var(--sf-gray); font-weight:400;">Near you</span>
+                    <span><i class="fas fa-star" style="color:var(--sf-green);"></i> Top stations near you</span>
                     <span class="view-all" id="viewAllStations">View all</span>
                 </div>
                 <div class="sheet-scroll" id="stationCardsContainer">
@@ -2874,9 +2872,8 @@
         <div class="bottom-nav">
             <button class="nav-item active" data-page="map"><i class="fas fa-map"></i> Map</button>
             <button class="nav-item" data-page="stations"><i class="fas fa-gas-pump"></i> Stations</button>
-            <button class="nav-item" data-page="report"><i class="fas fa-flag"></i> Reports</button>
+            <button class="nav-item" data-page="report"><i class="fas fa-flag"></i> Report</button>
             <button class="nav-item" data-page="ai"><i class="fas fa-robot"></i> AI Chat</button>
-            <button class="nav-item" data-page="fleet"><i class="fas fa-truck"></i> Fleet</button>
             <button class="nav-item" data-page="profile"><i class="fas fa-user"></i> Profile</button>
         </div>
     </div>
@@ -2901,16 +2898,17 @@
             <div class="menu-popup-item" data-page="recent"><i class="fas fa-clock"></i> Recent Stations</div>
             <div class="menu-popup-item" data-page="help"><i class="fas fa-question-circle"></i> Help &amp; About</div>
             <div class="menu-popup-item" data-page="export"><i class="fas fa-download"></i> Export Data</div>
+            <div class="menu-popup-item" id="fleetManagementBtn"><i class="fas fa-truck"></i> Fleet Management</div>
             <div class="menu-popup-item" id="darkModePopup"><i class="fas fa-moon"></i> Dark Mode</div>
             <div class="menu-popup-item" id="logoutPopup"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
     </div>
 
-    <!-- ===== RADIUS POPUP ===== -->
+    <!-- ===== RADIUS POPUP (NEW) ===== -->
     <div id="radiusPopupOverlay">
         <div class="radius-popup">
             <h3><i class="fas fa-crosshairs"></i> Adjust Search Radius</h3>
-            <p style="text-align:center; color:var(--sf-gray); font-size:13px; margin-bottom:10px;">Drag to set the search radius for fuel stations</p>
+            <p style="text-align:center; color:var(--sf-gray); font-size:14px; margin-bottom:12px;">Drag to set the search radius for fuel stations</p>
             <div class="radius-input-group">
                 <input type="range" id="radiusRange" min="1" max="20" step="0.5" value="3" />
                 <span class="radius-value" id="radiusValueDisplay">3 km</span>
@@ -2928,12 +2926,12 @@
     <div id="profilePage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-user-circle"></i> My Profile</h2><button class="close-page-btn" data-close="profilePage">&times;</button></div>
         <div class="page-content">
-            <div style="text-align:center;"><img id="profilePicLarge" src="driver.png" style="width:72px; height:72px; border-radius:50%; border:3px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
-            <div class="settings-field" style="margin-top:10px;"><label style="font-weight:600; color:var(--sf-green);">Name</label><input id="profileName" class="pill-input" /></div>
+            <div style="text-align:center;"><img id="profilePicLarge" src="driver.png" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
+            <div class="settings-field" style="margin-top:12px;"><label style="font-weight:600; color:var(--sf-green);">Name</label><input id="profileName" class="pill-input" /></div>
             <div class="settings-field"><label style="font-weight:600; color:var(--sf-green);">Email</label><input id="profileEmail" class="pill-input" disabled /></div>
             <div class="settings-field"><label style="font-weight:600; color:var(--sf-green);">Phone</label><input id="profilePhone" class="pill-input" /></div>
             <button id="updateProfileBtn" class="full-width-btn">Update Profile</button>
-            <button id="changePhotoBtn" class="upload-pic-btn" style="margin-top:6px; width:100%;">Change profile picture</button>
+            <button id="changePhotoBtn" class="upload-pic-btn" style="margin-top:8px; width:100%;">Change profile picture</button>
         </div>
     </div>
 
@@ -2942,7 +2940,7 @@
         <div class="page-header-bar"><h2><i class="fas fa-search"></i> Search Stations</h2><button class="close-page-btn" data-close="searchPage">&times;</button></div>
         <div class="page-content">
             <input type="text" id="globalSearchInput" placeholder="Type station name, address, or amenity..." class="pill-input" />
-            <div id="globalSearchResults" style="margin-top:8px;"></div>
+            <div id="globalSearchResults" style="margin-top:10px;"></div>
         </div>
     </div>
 
@@ -2952,24 +2950,23 @@
         <div class="page-content">
             <div id="vehicleList"></div>
             <button id="addVehicleBtn" class="full-width-btn"><i class="fas fa-plus"></i> Add Vehicle</button>
-            <div id="addVehicleForm" style="display:none; margin-top:8px;">
+            <div id="addVehicleForm" style="display:none; margin-top:10px;">
                 <input type="text" id="newVehicleName" placeholder="Vehicle name/model" class="pill-input" />
                 <input type="text" id="newLicensePlate" placeholder="License plate" class="pill-input" />
                 <input type="number" id="newTankCapacity" placeholder="Tank capacity (L)" class="pill-input" />
                 <input type="number" id="newConsumption" placeholder="L/100km" class="pill-input" />
                 <select id="newFuelType" class="pill-input"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select>
-                <!-- Horizontal image upload boxes -->
-                <div style="display:flex; flex-direction:row; gap:8px; margin:6px 0;">
-                    <div class="upload-pic-btn" id="addFrontUpload" style="flex:1; font-size:11px;"><i class="fas fa-car"></i> Front</div>
-                    <div class="upload-pic-btn" id="addBackUpload" style="flex:1; font-size:11px;"><i class="fas fa-car-side"></i> Back</div>
-                    <div class="upload-pic-btn" id="addSideUpload" style="flex:1; font-size:11px;"><i class="fas fa-caravan"></i> Side</div>
+                <div style="display:flex; gap:8px; margin:8px 0;">
+                    <div class="upload-pic-btn" id="addFrontUpload" style="flex:1; font-size:12px;"><i class="fas fa-car"></i> Front</div>
+                    <div class="upload-pic-btn" id="addBackUpload" style="flex:1; font-size:12px;"><i class="fas fa-car-side"></i> Back</div>
+                    <div class="upload-pic-btn" id="addSideUpload" style="flex:1; font-size:12px;"><i class="fas fa-caravan"></i> Side</div>
                 </div>
                 <button id="saveVehicleBtn" class="full-width-btn"><span>Save Vehicle</span> <span class="spinner" style="display:none;"></span></button>
             </div>
-            <hr style="margin:14px 0; border-color:var(--glass-border);" />
+            <hr style="margin:16px 0; border-color:var(--glass-border);" />
             <h4 style="color:var(--sf-green);">Fuel Logs</h4>
             <button id="addLogBtn" class="full-width-btn" style="background:var(--sf-green);">Log Refuel</button>
-            <div id="addLogForm" style="display:none; margin-top:8px;">
+            <div id="addLogForm" style="display:none; margin-top:10px;">
                 <input type="date" id="logDate" class="pill-input" />
                 <input type="number" id="logLiters" placeholder="Liters" class="pill-input" />
                 <input type="number" id="logPricePerLiter" placeholder="Price/L" class="pill-input" />
@@ -2978,7 +2975,7 @@
             </div>
             <div id="logsList"></div>
             <div id="statsSummary" class="small-text mt-2"></div>
-            <canvas id="fuelTrendChart" width="300" height="150" style="margin-top:10px;"></canvas>
+            <canvas id="fuelTrendChart" width="300" height="150" style="margin-top:12px;"></canvas>
         </div>
     </div>
 
@@ -2986,8 +2983,8 @@
     <div id="calculatorPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-calculator"></i> Fuel Calculator</h2><button class="close-page-btn" data-close="calculatorPage">&times;</button></div>
         <div class="page-content">
-            <div style="text-align:center; margin-bottom:10px;"><img src="driver.png" style="width:54px; height:54px; border-radius:50%; border:2px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
-            <div class="car-card" style="margin-bottom:10px;">
+            <div style="text-align:center; margin-bottom:12px;"><img src="driver.png" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
+            <div class="car-card" style="margin-bottom:12px;">
                 <div style="flex:1;">
                     <div class="flex-between"><span>Active vehicle:</span><strong id="activeVehicleNameCalc">—</strong></div>
                     <div class="flex-between"><span>Fuel type:</span><span id="activeFuelTypeCalc">-</span></div>
@@ -2995,8 +2992,8 @@
                     <div class="flex-between"><span>Consumption:</span><span id="consumptionDisplay">— L/100km</span></div>
                 </div>
             </div>
-            <div style="background:var(--sf-gray6); border-radius:var(--radius-md); padding:12px; border:1px solid var(--glass-border);">
-                <div class="flex-between"><span>Trip distance (km):</span><input type="number" id="tripDistanceCalc" placeholder="Enter km" style="width:60%; border-radius:var(--radius-full); border:1px solid var(--sf-gray4); padding:4px 10px; font-size:13px; background:var(--sf-gray6);" /></div>
+            <div style="background:var(--sf-gray6); border-radius:var(--radius-md); padding:14px; border:1px solid var(--glass-border);">
+                <div class="flex-between"><span>Trip distance (km):</span><input type="number" id="tripDistanceCalc" placeholder="Enter km" style="width:60%; border-radius:var(--radius-full); border:1px solid var(--sf-gray4); padding:6px 12px; font-size:14px; background:var(--sf-gray6);" /></div>
                 <div class="flex-between mt-2"><span>Fuel needed:</span><strong id="fuelNeededCalc" style="color:var(--sf-green);">— L</strong></div>
                 <div class="flex-between"><span>Estimated cost:</span><strong id="tripCostCalc" style="color:var(--sf-red);">—</strong></div>
                 <div class="flex-between"><span>ETA (40 km/h avg):</span><strong id="etaCalc" style="color:var(--sf-green);">—</strong></div>
@@ -3010,7 +3007,7 @@
     <div id="tripPlannerPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-map-marked-alt"></i> Trip Planner</h2><button class="close-page-btn" data-close="tripPlannerPage">&times;</button></div>
         <div class="page-content">
-            <div style="text-align:center; margin-bottom:6px;"><img src="driver.png" style="width:44px; height:44px; border-radius:50%; border:2px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
+            <div style="text-align:center; margin-bottom:8px;"><img src="driver.png" style="width:48px; height:48px; border-radius:50%; border:2px solid var(--sf-green);" onerror="this.src='driver.png';" /></div>
             <div class="step-container">
                 <div id="step1" class="step-content active-step">
                     <div class="step-header">Step 1: Where are you going?</div>
@@ -3027,7 +3024,7 @@
                     <div class="step-header">Step 3: Pick fun stops along your route</div>
                     <div id="funPlacesStep3"></div>
                     <div id="loadingFun" class="loading-message" style="display:none;"><i class="fas fa-spinner fa-pulse"></i> Looking for fun stops...</div>
-                    <button id="skipFunStop" class="btn-sm" style="background:var(--sf-gray6); margin-top:6px;">Skip</button>
+                    <button id="skipFunStop" class="btn-sm" style="background:var(--sf-gray6); margin-top:8px;">Skip</button>
                 </div>
                 <div id="step4" class="step-content">
                     <div class="step-header">Step 4: Trip Summary</div>
@@ -3068,33 +3065,21 @@
         <div class="page-content"><div id="recentStationsList"></div><button id="clearRecentBtn" class="full-width-btn">Clear Recent</button></div>
     </div>
 
-    <!-- Help Page – Bulky information -->
+    <!-- Help Page -->
     <div id="helpPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help &amp; About</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div>
         <div class="page-content">
-            <div style="background:var(--sf-gray6); border-radius:var(--radius-md); padding:14px; border:1px solid var(--glass-border);">
-                <h4 style="color:var(--sf-green);">FuelRadar – Complete User Guide</h4>
-                <p><strong>1. Finding Fuel Stations:</strong> Use the interactive map or the search bar. Tap any station icon (green pump) on the map to see distance, price, amenities, and status.</p>
-                <p><strong>2. Navigating to a Station:</strong> Click the "Navigate" button on a station's popup or card. The app will calculate the fuel needed based on your active vehicle's consumption and draw a route on the map.</p>
-                <p><strong>3. Trip Planner:</strong> A powerful tool for road trips. 
-                   <ul>
-                       <li><strong>Step 1:</strong> Enter your destination. The app suggests places based on your location.</li>
-                       <li><strong>Step 2:</strong> Choose a fuel station along your route. The app automatically finds stations on the way.</li>
-                       <li><strong>Step 3:</strong> Pick fun stops (restaurants, attractions, parks) to make the journey enjoyable.</li>
-                       <li><strong>Step 4:</strong> Review your trip summary, estimated costs, and safety tips. Click "Draw Route on Map" to visualize the entire journey with color-coded segments.</li>
-                   </ul>
-                </p>
-                <p><strong>4. My Garage:</strong> Add your vehicles by providing name, license plate, tank capacity, consumption (L/100km), and fuel type. Upload photos of your car (Front, Back, Side) using the horizontal boxes. Track your refueling history and view consumption trends on a chart. Set an active vehicle to get accurate trip calculations.</p>
-                <p><strong>5. Fuel Calculator:</strong> Enter a trip distance, and the app calculates the required fuel, cost, and estimated time of arrival (ETA) based on your active vehicle's consumption and current fuel prices.</p>
-                <p><strong>6. AI Chat:</strong> Ask FuelRadar AI anything about fuel, routes, vehicle maintenance, or road trips. The AI can provide recommendations, troubleshooting tips, and general driving advice.</p>
-                <p><strong>7. Reporting a Station:</strong> If you notice incorrect prices, out-of-stock issues, or closed stations, use the "Report" button on any station card or popup. Your reports help the community.</p>
-                <p><strong>8. Favorites & History:</strong> Save your favorite stations for quick access. View your past trips and recently visited stations.</p>
-                <p><strong>9. Dark Mode:</strong> Toggle Dark Mode in the main menu (☰) for a comfortable night-time driving experience.</p>
-                <p><strong>10. Data Export:</strong> Export your fuel logs, favorites, reports, and trip history as CSV or JSON files for backup or analysis.</p>
-                <hr style="margin:10px 0; border-color:var(--glass-border);" />
+            <div style="background:var(--sf-gray6); border-radius:var(--radius-md); padding:16px; border:1px solid var(--glass-border);">
+                <h4 style="color:var(--sf-green);">Manual</h4>
+                <p><strong>1. Finding fuel stations:</strong> Use the interactive map or search bar. Tap any station icon to see distance, price, and amenities.</p>
+                <p><strong>2. Navigation:</strong> Click "Navigate" on a station card. The app calculates fuel needed and draws a route.</p>
+                <p><strong>3. Trip Planner:</strong> Enter destination -> select fuel station -> pick fun stops -> review -> draw route.</p>
+                <p><strong>4. Garage &amp; Fuel Logs:</strong> Add vehicles, track refueling history, view consumption trends.</p>
+                <p><strong>5. Dark Mode:</strong> Toggle in menu for night driving.</p>
+                <hr style="margin:12px 0; border-color:var(--glass-border);" />
                 <h4 style="color:var(--sf-green);">About FuelRadar</h4>
-                <p>Your ultimate fuel companion – live station data from OpenStreetMap, smart route planning, community-driven reports, and AI assistance. Built with passion for drivers everywhere.</p>
-                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.4.2</strong> | Built with care 🚗</p>
+                <p>Your ultimate fuel companion – live station data, smart route planning, and community reports.</p>
+                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.4</strong> | Built with care</p>
             </div>
         </div>
     </div>
@@ -3114,8 +3099,8 @@
     <div id="aiChatPage" class="page-overlay">
         <div class="page-header-bar">
             <h2><i class="fas fa-robot"></i> FuelRadar AI</h2>
-            <div style="display:flex; gap:6px; align-items:center;">
-                <button id="aiRefreshBtn" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--sf-green);"><i class="fas fa-sync-alt"></i></button>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button id="aiRefreshBtn" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--sf-green);"><i class="fas fa-sync-alt"></i></button>
                 <button class="close-page-btn" data-close="aiChatPage">&times;</button>
             </div>
         </div>
@@ -3168,7 +3153,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT – FULL LOGIC (FIXED) ===== -->
+    <!-- ===== JAVASCRIPT – FULL LOGIC ===== -->
     <!-- ============================================================ -->
     <script>
         // ==================== FUELRADAR MAIN APP ====================
@@ -3449,6 +3434,7 @@
                     adminSettings.defaultPetrolPrice = s.defaultPetrolPrice || 1.50;
                     adminSettings.defaultDieselPrice = s.defaultDieselPrice || 1.40;
                     radiusKm = adminSettings.defaultRadius;
+                    document.getElementById('radiusDisplay').innerText = radiusKm + ' km';
                     currentPrices.petrol = adminSettings.defaultPetrolPrice;
                     currentPrices.diesel = adminSettings.defaultDieselPrice;
                     updatePriceDisplay();
@@ -3527,7 +3513,7 @@
             }
             detectUserCountry();
 
-            // ---------- OSM STATIONS (FIXED WITH FALLBACK) ----------
+            // ---------- OSM STATIONS ----------
             async function fetchOSMStations(lat, lon, rad) {
                 const query = '[out:json];(node["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon +
                     ');way["amenity"="fuel"](around:' + (rad * 1000) + ',' + lat + ',' + lon + '););out body;';
@@ -3559,9 +3545,8 @@
                         let fuelDiesel = el.tags?.['fuel:diesel'] === 'yes' ? 'yes' : null;
                         let status = (fuelPetrol === 'yes' || fuelDiesel === 'yes') ? 'available' : 'unknown';
                         let amenities = extractAllAmenities(el.tags || {});
-                        // Mock external price fetch (ERB)
-                        let petrolUSD = currentPrices.petrol + (Math.random() * 0.3 - 0.15);
-                        let dieselUSD = currentPrices.diesel + (Math.random() * 0.3 - 0.15);
+                        let petrolUSD = currentPrices.petrol + (Math.random() * 0.4 - 0.2);
+                        let dieselUSD = currentPrices.diesel + (Math.random() * 0.4 - 0.2);
                         let petrolLocal = convertFromUSD(petrolUSD);
                         let dieselLocal = convertFromUSD(dieselUSD);
                         osmStations.push({
@@ -3587,43 +3572,8 @@
                     }
                     return osmStations;
                 } catch (err) {
-                    console.warn('OSM fetch failed, using fallback stations', err);
-                    // Fallback stations for demonstration
-                    return [{
-                        id: 'osm_fallback_1',
-                        osmId: 1,
-                        name: 'Shell Station',
-                        address: 'City Center, Main Road',
-                        lat: lat + 0.005,
-                        lon: lon + 0.005,
-                        fuel: { petrol: 'yes', diesel: 'yes' },
-                        status: 'available',
-                        amenities: [{ icon: 'fa-gas-pump', name: 'Petrol' }, { icon: 'fa-oil-can', name: 'Diesel' }, { icon: 'fa-store', name: 'Shop' }],
-                        pricePetrol: convertFromUSD(1.25),
-                        priceDiesel: convertFromUSD(1.35),
-                        pricePetrolRaw: 1.25,
-                        priceDieselRaw: 1.35,
-                        distance: 0.5,
-                        favorite: false,
-                        isRegistered: false
-                    }, {
-                        id: 'osm_fallback_2',
-                        osmId: 2,
-                        name: 'BP Fuel Stop',
-                        address: 'Green Park, Riverside',
-                        lat: lat - 0.004,
-                        lon: lon + 0.003,
-                        fuel: { petrol: 'yes', diesel: 'yes' },
-                        status: 'available',
-                        amenities: [{ icon: 'fa-gas-pump', name: 'Petrol' }, { icon: 'fa-oil-can', name: 'Diesel' }, { icon: 'fa-car-wash', name: 'Car wash' }],
-                        pricePetrol: convertFromUSD(1.30),
-                        priceDiesel: convertFromUSD(1.40),
-                        pricePetrolRaw: 1.30,
-                        priceDieselRaw: 1.40,
-                        distance: 1.2,
-                        favorite: false,
-                        isRegistered: false
-                    }];
+                    console.warn('OSM fetch failed', err);
+                    return [];
                 }
             }
 
@@ -3728,6 +3678,20 @@
                 document.getElementById('countShop').innerText = shopCount;
             }
 
+            function updateGreenSuggestion() {
+                const filtered = getFilteredStations();
+                const nearest = filtered.slice(0, 3);
+                if (nearest.length === 0) {
+                    document.querySelector('.green-banner span').innerHTML =
+                        '<i class="fas fa-crosshairs"></i> No stations found.';
+                    return;
+                }
+                const names = nearest.map(s => s.name + (s.isRegistered ? ' ⭐' : '')).join(', ');
+                document.querySelector('.green-banner span').innerHTML =
+                    '<i class="fas fa-crosshairs"></i> Nearby stations within <strong>' + radiusKm +
+                    ' km</strong> · ' + names;
+            }
+
             // ---------- MAP RENDERING ----------
             function renderMarkers() {
                 if (!clusterGroup) return;
@@ -3756,19 +3720,19 @@
                         '<div style="font-size:12px; color:#8e8e93; margin-bottom:4px;">' + s.address +
                         '</div>' +
                         '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px;">' +
-                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;"><i class="fas fa-map-marker-alt"></i> ' +
+                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;">📍 ' +
                         distanceKm + ' km</span>' +
-                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;"><i class="fas fa-clock"></i> ' +
+                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;">⏱️ ' +
                         eta + '</span>' +
-                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;"><i class="fas fa-tag"></i> ' +
+                        '<span class="station-distance" style="background:rgba(26,138,74,0.08); border-radius:20px; padding:2px 8px; font-size:11px;">💰 ' +
                         formatPrice(s.pricePetrol) + '/' + formatPrice(s.priceDiesel) + '</span>' +
                         '</div>' +
                         '<div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">' +
                         amenitiesHtml + '</div>' +
                         '<div class="card-actions" style="display:flex; gap:6px;"><button class="btn-sm btn-nav" data-nav-id="' +
                         s.id +
-                        '" style="padding:4px 14px; font-size:11px;"><i class="fas fa-arrow-right"></i> Navigate</button><button class="btn-sm btn-report" data-report-id="' +
-                        s.id + '" style="padding:4px 14px; font-size:11px;"><i class="fas fa-flag"></i> Report</button></div></div>';
+                        '" style="padding:4px 14px; font-size:11px;">Navigate</button><button class="btn-sm btn-report" data-report-id="' +
+                        s.id + '" style="padding:4px 14px; font-size:11px;">Report</button></div></div>';
                     let marker = L.marker([s.lat, s.lon], { icon: icon }).bindPopup(popupContent, { maxWidth: 260 });
                     clusterGroup.addLayer(marker);
                 });
@@ -3802,6 +3766,7 @@
                 renderMarkers();
                 updateCounters();
                 renderReportStationsList();
+                updateGreenSuggestion();
                 updateBottomSheetCards();
                 if (showMsg) showToast(newStations.length + ' stations loaded');
             }
@@ -3823,19 +3788,19 @@
                     var verifiedBadge = s.isRegistered ?
                         '<span class="verified-badge verified"><i class="fas fa-check-circle"></i> Verified</span>' :
                         '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
-                    var openHtml = '<span class="open-badge"><i class="fas fa-clock"></i> Open</span> <span class="open-badge" style="background:transparent; border:none; font-weight:400;"><i class="fas fa-clock"></i> 24 hrs</span>';
                     return '<div class="station-card-compact" data-id="' + s.id + '">' +
                         '<div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div>' +
                         '<div class="info-col">' +
                         '<div class="name">' + s.name + ' ' + verifiedBadge + '</div>' +
-                        '<div class="address">' + (s.address || '') + '</div>' +
-                        '<div class="tags">' + openHtml + '</div>' +
+                        '<div class="address">' + (s.address || '') + ' · ' + (s.distance ? s.distance
+                            .toFixed(1) : '?') + ' km</div>' +
+                        '<div class="tags">' + tagsHtml + '</div>' +
                         '</div>' +
                         '<div class="price-col">' +
-                        '<span class="price">' + (s.distance ? s.distance.toFixed(1) : '?') + ' km</span>' +
-                        '<span class="price-label">' + formatPrice(s.pricePetrol) + '</span>' +
+                        '<span class="price">' + formatPrice(s.pricePetrol) + '</span>' +
+                        '<span class="price-label">Petrol</span>' +
                         '</div>' +
-                        '<div class="nav-col"><button data-nav-id="' + s.id + '"><i class="fas fa-chevron-right"></i></button></div>' +
+                        '<div class="nav-col"><button data-nav-id="' + s.id + '"><i class="fas fa-arrow-right"></i></button></div>' +
                         '</div>';
                 }).join('');
                 container.querySelectorAll('[data-nav-id]').forEach(function(btn) {
@@ -3883,7 +3848,7 @@
             document.getElementById('sheetHandle').addEventListener('click', toggleSheet);
             expandBtn.addEventListener('click', toggleSheet);
 
-            // ---------- NAVIGATION (FIXED WITH FALLBACK) ----------
+            // ---------- NAVIGATION ----------
             function startNavigationWithMessage(station) {
                 if (!actualUserLocation) { showToast('Enable location first', true); return; }
                 if (!activeVehicle) { showToast('No active vehicle', true); return; }
@@ -3899,28 +3864,16 @@
                 document.querySelector('.warning-banner span').innerHTML =
                     '<i class="fas fa-exclamation-circle"></i> ' + message;
                 if (routingControl) map.removeControl(routingControl);
-                try {
-                    // Try standard routing first
-                    routingControl = L.Routing.control({
-                        waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat,
-                            station.lon)],
-                        routeWhileDragging: false,
-                        lineOptions: { styles: [{ color: '#1a8a4a', weight: 5 }] }
-                    }).addTo(map);
-                    routingControl.on('routesfound', function(e) {
-                        currentRouteInstructions = e.routes[0].instructions.map(function(inst) { return inst.text; });
-                        document.getElementById('startTripBtn').style.display = 'flex';
-                    });
-                } catch (e) {
-                    // Fallback: draw direct polyline
-                    showToast('Using direct route fallback');
-                    L.polyline([
-                        [actualUserLocation.lat, actualUserLocation.lng],
-                        [station.lat, station.lon]
-                    ], { color: '#1a8a4a', weight: 5, dashArray: '10, 10' }).addTo(map);
+                routingControl = L.Routing.control({
+                    waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat,
+                        station.lon)],
+                    routeWhileDragging: false,
+                    lineOptions: { styles: [{ color: '#1a8a4a', weight: 5 }] }
+                }).addTo(map);
+                routingControl.on('routesfound', function(e) {
+                    currentRouteInstructions = e.routes[0].instructions.map(function(inst) { return inst.text; });
                     document.getElementById('startTripBtn').style.display = 'flex';
-                    document.getElementById('clearRouteBtn').style.display = 'flex';
-                }
+                });
                 document.getElementById('clearRouteBtn').style.display = 'flex';
                 localDB.recentStations.add({ stationId: station.id, name: station.name, lat: station.lat,
                     lon: station.lon, timestamp: Date.now() });
@@ -4008,16 +3961,14 @@
                         '<div class="info-col">' +
                         '<div class="name">' + s.name + ' ' + verifiedBadge + '</div>' +
                         '<div class="address">' + s.address + '</div>' +
-                        '<div class="prices"><span class="petrol"><i class="fas fa-gas-pump"></i> ' + formatPrice(s
-                                .pricePetrol) +
-                        '</span> <span class="diesel"><i class="fas fa-oil-can"></i> ' + formatPrice(s
-                                .priceDiesel) + '</span></div>' +
+                        '<div class="prices"><span class="petrol">⛽ ' + formatPrice(s.pricePetrol) +
+                        '</span> <span class="diesel">⛽ ' + formatPrice(s.priceDiesel) + '</span></div>' +
                         '<div class="amenities-list" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:2px;">' +
                         amenitiesHtml + '</div>' +
                         '</div>' +
                         '<div class="actions">' +
-                        '<button class="btn-nav" data-nav-id="' + s.id + '"><i class="fas fa-arrow-right"></i> Navigate</button>' +
-                        '<button class="btn-report" data-report-id="' + s.id + '"><i class="fas fa-flag"></i> Report</button>' +
+                        '<button class="btn-nav" data-nav-id="' + s.id + '">Navigate</button>' +
+                        '<button class="btn-report" data-report-id="' + s.id + '">Report</button>' +
                         '</div>' +
                         '</div>';
                 }).join('');
@@ -4046,6 +3997,7 @@
                     }
                     localStorage.setItem('fuelFavs', JSON.stringify(favoriteIds));
                     renderMarkers();
+                    updateGreenSuggestion();
                     updateBottomSheetCards();
                 }
             }
@@ -4060,11 +4012,11 @@
                             '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
                         return '<div class="full-station-card"><div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div><div class="info-col"><div class="name">' +
                             s.name + ' ' + verifiedBadge + '</div><div class="address">' + s.address +
-                            '</div><div class="prices"><span class="petrol"><i class="fas fa-gas-pump"></i> ' +
-                            formatPrice(s.pricePetrol) + '</span> <span class="diesel"><i class="fas fa-oil-can"></i> ' +
-                            formatPrice(s.priceDiesel) + '</span></div></div><div class="actions"><button class="btn-nav" data-nav-id="' +
-                            s.id + '"><i class="fas fa-arrow-right"></i> Navigate</button><button class="btn-sm" data-fav-remove="' +
-                            s.id + '"><i class="fas fa-times"></i> Remove</button></div></div>';
+                            '</div><div class="prices"><span class="petrol">⛽ ' + formatPrice(s
+                                .pricePetrol) + '</span> <span class="diesel">⛽ ' + formatPrice(s
+                                .priceDiesel) + '</span></div></div><div class="actions"><button class="btn-nav" data-nav-id="' +
+                            s.id + '">Navigate</button><button class="btn-sm" data-fav-remove="' + s
+                            .id + '">Remove</button></div></div>';
                     }).join('');
                     container.querySelectorAll('[data-fav-remove]').forEach(function(btn) {
                         btn.onclick = function() { toggleFavorite(btn.dataset.favRemove); };
@@ -4104,6 +4056,10 @@
 
             function updateActiveVehicleUI() {
                 if (!activeVehicle) return;
+                document.getElementById('sidebarVehicleNameText').innerText = activeVehicle.name + (activeVehicle
+                    .licensePlate ? ' · ' + activeVehicle.licensePlate : '');
+                var frontImg = activeVehicle.images?.front || 'driver.png';
+                document.getElementById('sidebarCarImage').src = frontImg;
                 document.getElementById('activeVehicleNameCalc').innerText = activeVehicle.name;
                 document.getElementById('activeFuelTypeCalc').innerText = activeVehicle.fuelType;
                 var range = (activeVehicle.tankCapacity / activeVehicle.consumptionLper100km) * 100;
@@ -4196,7 +4152,7 @@
                         return '<div class="recent-station-item"><div class="flex-between"><strong>' + r
                             .name + '</strong><span>' + new Date(r.timestamp).toLocaleString() +
                             '</span></div><button class="btn-sm btn-nav" data-recent-nav="' + r
-                            .stationId + '"><i class="fas fa-arrow-right"></i> Navigate</button></div>';
+                            .stationId + '">Navigate</button></div>';
                     }).join('');
                     container.querySelectorAll('[data-recent-nav]').forEach(function(btn) {
                         btn.onclick = function() {
@@ -4312,14 +4268,13 @@
                                 '<span class="verified-badge unverified"><i class="fas fa-exclamation-triangle"></i> Unverified</span>';
                             return '<div class="floating-card station-select-item" data-station-id="' + s
                                 .id + '"><div class="flex-between"><strong>' + s.name + ' ' +
-                                verifiedBadge + '</strong><span class="station-distance"><i class="fas fa-map-marker-alt"></i> ' +
-                                (s.distance ? s.distance.toFixed(1) : '?') +
+                                verifiedBadge + '</strong><span class="station-distance">' + (s.distance ?
+                                    s.distance.toFixed(1) : '?') +
                                 ' km from start</span></div><div class="small-text">' + s.address +
-                                '</div><div><span class="fuel-badge"><i class="fas fa-tag"></i> ' +
-                                formatPrice(s.pricePetrol) +
-                                '</span><span class="fuel-badge"><i class="fas fa-tag"></i> ' +
-                                formatPrice(s.priceDiesel) + '</span></div><div class="amenities-list">' +
-                                amenitiesHtml + '</div></div>';
+                                '</div><div><span class="fuel-badge">' + formatPrice(s.pricePetrol) +
+                                '</span><span class="fuel-badge">' + formatPrice(s.priceDiesel) +
+                                '</span></div><div class="amenities-list">' + amenitiesHtml +
+                                '</div></div>';
                         }).join('');
                         document.querySelectorAll('.station-select-item').forEach(function(el) {
                             el.onclick = function() {
@@ -4363,7 +4318,9 @@
                         'node["amenity"="museum"](around:' + radius + ',' + midLat + ',' + midLon + ');',
                         'node["leisure"="amusement_park"](around:' + radius + ',' + midLat + ',' + midLon +
                         ');',
-                        'node["shop"="mall"](around:' + radius + ',' + midLat + ',' + midLon + ');'
+                        'node["shop"="mall"](around:' + radius + ',' + midLat + ',' + midLon + ');',
+                        'node["tourism"="hotel"](around:' + radius + ',' + midLat + ',' + midLon + ');',
+                        'node["tourism"="lodging"](around:' + radius + ',' + midLat + ',' + midLon + ');'
                     ];
                     var query = '[out:json];(' + queries.join('') + ');out body;';
                     var res = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(
@@ -4394,9 +4351,9 @@
                                 p.lon + '" data-name="' + p.name + '" data-type="' + p.type +
                                 '"><div class="flex-between"><strong>' + p.name +
                                 '</strong><span class="badge">' + p.type +
-                                '</span></div><div class="small-text"><i class="fas fa-map-marker-alt"></i> ' +
-                                haversine(end.lat, end.lon, p.lat, p.lon).toFixed(1) +
-                                ' km from destination</div><button class="btn-sm add-fun-btn" style="margin-top:6px;"><i class="fas fa-plus"></i> Add to trip</button></div>';
+                                '</span></div><div class="small-text">📍 ' + haversine(end.lat, end
+                                    .lon, p.lat, p.lon).toFixed(1) +
+                                ' km from destination</div><button class="btn-sm add-fun-btn" style="margin-top:6px;">Add to trip</button></div>';
                         }).join('');
                         document.querySelectorAll('.fun-card').forEach(function(card) {
                             var btn = card.querySelector('.add-fun-btn');
@@ -4435,20 +4392,19 @@
                 var eta = calculateETA(distTotal);
                 var container = document.getElementById('summaryCards');
                 var funStopsHtml = selectedFunPlaces.length ?
-                    selectedFunPlaces.map(function(f) { return '<div class="small-text"><i class="fas fa-star"></i> ' +
-                            f.name + ' (' + f.type + ')</div>'; }).join('') :
+                    selectedFunPlaces.map(function(f) { return '<div class="small-text">• ' + f.name + ' (' + f
+                            .type + ')</div>'; }).join('') :
                     '<div class="small-text">No fun stops selected</div>';
                 container.innerHTML =
-                    '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-map-pin"></i> Trip Details</div><div class="flex-between"><span><i class="fas fa-map-marker-alt"></i> Destination:</span><strong>' +
+                    '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-map-pin"></i> Trip Details</div><div class="flex-between"><span>📍 Destination:</span><strong>' +
                     destName.substring(0, 40) +
-                    '</strong></div><div class="flex-between"><span><i class="fas fa-route"></i> Total Distance:</span><strong>' +
-                    distTotal.toFixed(1) +
-                    ' km</strong></div><div class="flex-between"><span><i class="fas fa-gas-pump"></i> Fuel needed:</span><strong>' +
-                    fuelNeeded.toFixed(1) +
-                    ' L</strong></div><div class="flex-between"><span><i class="fas fa-tag"></i> Est. cost:</span><strong>' +
-                    formatPrice(cost) +
-                    '</strong></div><div class="flex-between"><span><i class="fas fa-clock"></i> ETA:</span><strong>' +
-                    eta +
+                    '</strong></div><div class="flex-between"><span>📏 Total Distance:</span><strong>' + distTotal
+                    .toFixed(1) +
+                    ' km</strong></div><div class="flex-between"><span>⛽ Fuel needed:</span><strong>' + fuelNeeded
+                    .toFixed(1) +
+                    ' L</strong></div><div class="flex-between"><span>💰 Est. cost:</span><strong>' + formatPrice(
+                        cost) +
+                    '</strong></div><div class="flex-between"><span>⏱️ ETA:</span><strong>' + eta +
                     '</strong></div></div>' +
                     '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-gas-pump"></i> Fuel Station</div><div class="flex-between"><strong>' +
                     selectedStation.name + '</strong><span class="badge-pill">' + (selectedStation.isRegistered ?
@@ -4459,7 +4415,7 @@
                     '<div class="trip-planner-card"><div class="card-title"><i class="fas fa-star"></i> Fun Stops (' +
                     selectedFunPlaces.length + ')</div>' + funStopsHtml + '</div>';
                 document.getElementById('safetyTips').innerHTML =
-                    '<strong><i class="fas fa-shield-alt"></i> Pre-trip checklist:</strong><br>• Check tyre pressure and tread depth<br>• Engine oil level & coolant<br>• Windshield washer fluid<br>• Lights and signals<br>• Keep emergency numbers handy';
+                    '<strong>🛡️ Pre-trip checklist:</strong><br>• Check tyre pressure and tread depth<br>• Engine oil level & coolant<br>• Windshield washer fluid<br>• Lights and signals<br>• Keep emergency numbers handy';
             }
 
             // ---------- PAGE NAVIGATION ----------
@@ -4495,7 +4451,6 @@
                     document.getElementById('profileName').value = userProfile.name || '';
                     document.getElementById('profileEmail').value = user.email || '';
                     document.getElementById('profilePhone').value = userProfile.phone || '';
-                    document.getElementById('greetingUserName').innerText = userProfile.name || 'Alex';
                     await performSystemChecks();
                     if (mainApp.style.display === 'none') return;
                     authOverlay.style.display = 'none';
@@ -4697,7 +4652,7 @@
                 var radiusRange = document.getElementById('radiusRange');
                 var radiusValueDisplay = document.getElementById('radiusValueDisplay');
 
-                document.getElementById('radiusTriggerBtn').onclick = function() {
+                document.getElementById('changeRadiusBtn').onclick = function() {
                     radiusRange.value = radiusKm;
                     radiusValueDisplay.innerText = radiusKm + ' km';
                     radiusPopupOverlay.classList.add('show');
@@ -4731,6 +4686,7 @@
                         currentFilter = chip.dataset.filter;
                         renderMarkers();
                         updateCounters();
+                        updateGreenSuggestion();
                         updateBottomSheetCards();
                     };
                 });
@@ -4743,14 +4699,14 @@
                         a, b) { return a.distance - b.distance; }).slice(0, 5);
                     showLoading(false);
                     if (nearby.length === 0) { showToast('No stations found nearby.'); return; }
-                    var popupContent = '<div class="nearme-popup"><strong><i class="fas fa-map-marker-alt"></i> 5 Closest Stations</strong><br>';
+                    var popupContent = '<div class="nearme-popup"><strong>📍 5 Closest Stations</strong><br>';
                     nearby.forEach(function(s) {
                         popupContent += '<div style="margin-top:8px;"><b>' + s.name + '</b><br>' + s
-                            .address + '<br><i class="fas fa-map-marker-alt"></i> ' + s.distance.toFixed(1) +
-                            ' km | <i class="fas fa-tag"></i> ' + formatPrice(s.pricePetrol) + '/' +
-                            formatPrice(s.priceDiesel) +
+                            .address + '<br>📏 ' + s.distance.toFixed(1) +
+                            ' km | 💰 ' + formatPrice(s.pricePetrol) + '/' + formatPrice(s
+                                .priceDiesel) +
                             '<br><button class="btn-sm btn-nav" onclick="window.navigateToStation(\'' + s
-                            .id + '\')"><i class="fas fa-arrow-right"></i> Navigate</button></div>';
+                            .id + '\')">Navigate</button></div>';
                     });
                     popupContent += '</div>';
                     L.popup().setLatLng([actualUserLocation.lat, actualUserLocation.lng]).setContent(popupContent)
@@ -4760,12 +4716,12 @@
                         if (station) startNavigationWithMessage(station);
                         map.closePopup();
                     };
-                };
+                });
 
                 document.getElementById('startTripBtn').onclick = function() {
                     var panel = document.getElementById('turnByTurnPanel');
                     if (currentRouteInstructions.length) {
-                        panel.innerHTML = '<strong><i class="fas fa-road"></i> Turn-by-Turn Directions:</strong><br>' + currentRouteInstructions
+                        panel.innerHTML = '<strong>🔄 Turn-by-Turn Directions:</strong><br>' + currentRouteInstructions
                             .map(function(inst, idx) { return (idx + 1) + '. ' + inst; }).join('<br>');
                         panel.style.display = 'block';
                         if (currentRouteInstructions[0]) showToast('🚦 First step: ' + currentRouteInstructions[0]);
@@ -4809,6 +4765,11 @@
                         });
                     }, 300);
                     showToast('🏆 Best match: ' + best.name + ' (' + best.distance.toFixed(1) + ' km)');
+                });
+
+                // Close warning banner
+                document.getElementById('closeWarningBtn').onclick = function() {
+                    document.querySelector('.warning-banner').style.display = 'none';
                 };
 
                 // Popup menu
@@ -4832,6 +4793,11 @@
                         };
                     } else if (item.id === 'logoutPopup') {
                         // handled above
+                    } else if (item.id === 'fleetManagementBtn') {
+                        item.onclick = function() {
+                            window.location.href = 'fleet.html';
+                            menuPopup.classList.remove('show');
+                        };
                     } else if (item.dataset.page) {
                         item.onclick = function(e) {
                             e.preventDefault();
@@ -4864,8 +4830,6 @@
                             openPage('reportPage');
                         } else if (page === 'ai') {
                             openPage('aiChatPage');
-                        } else if (page === 'fleet') {
-                            window.location.href = 'fleet.html';
                         } else if (page === 'profile') {
                             openPage('profilePage');
                         }
@@ -4891,8 +4855,8 @@
                         return '<div class="search-result-item" data-station-id="' + s.id +
                             '"><div class="logo-col"><img src="logo.png" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E\';" /></div><div class="info-col"><div class="name">' +
                             s.name + ' ' + verifiedBadge + '</div><div class="address">' + s.address +
-                            '</div><div class="distance"><i class="fas fa-map-marker-alt"></i> ' + (s
-                                .distance ? s.distance.toFixed(1) : '?') + ' km</div></div></div>';
+                            '</div><div class="distance">📍 ' + (s.distance ? s.distance.toFixed(1) :
+                            '?') + ' km</div></div></div>';
                     }).join('');
                     container.querySelectorAll('.search-result-item').forEach(function(el) {
                         el.onclick = function() {
@@ -4907,6 +4871,7 @@
                 // Sort select
                 document.getElementById('sortSelect').onchange = function() {
                     renderMarkers();
+                    updateGreenSuggestion();
                     updateBottomSheetCards();
                 };
 
@@ -5018,7 +4983,7 @@
                                     parseFloat(place.lat), parseFloat(place.lon)).toFixed(1) :
                                 '?';
                             div.innerHTML = '<span><i class="fas fa-location-dot"></i> ' + place
-                                .display_name + '</span><span class="place-suggestion-distance"><i class="fas fa-map-marker-alt"></i> ' +
+                                .display_name + '</span><span class="place-suggestion-distance">' +
                                 distance + ' km</span>';
                             div.onclick = function() {
                                 destCoordinates = { lat: parseFloat(place.lat), lon: parseFloat(
@@ -5098,8 +5063,8 @@
                     document.getElementById('etaCalc').innerText = eta;
                 };
 
-                // ---- Fleet Mode Button ----
-                document.querySelector('[data-page="fleet"]').addEventListener('click', function() {
+                // ---- Fleet Management Button ----
+                document.getElementById('fleetManagementBtn').addEventListener('click', function() {
                     window.location.href = 'fleet.html';
                 });
 
