@@ -40,7 +40,7 @@
 
     <style>
         /* ============================================================
-               MAC / iOS THEMED DESIGN – Green & Red only
+               FUELRADAR UI – MATCHING THE DESIGN REFERENCE
                ============================================================ */
 
         * {
@@ -68,7 +68,7 @@
             --sf-gray5: #e5e5ea;
             --sf-gray6: #f2f2f7;
 
-            --glass-bg: rgba(255, 255, 255, 0.78);
+            --glass-bg: rgba(255, 255, 255, 0.82);
             --glass-border: rgba(255, 255, 255, 0.4);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
@@ -87,7 +87,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            background: var(--sf-gray6);
+            background: #f5f7f6;
             font-family: var(--font);
             color: #1c1c1e;
         }
@@ -97,7 +97,7 @@
             color: #f5f5f7;
         }
         body.dark :root {
-            --glass-bg: rgba(28, 28, 30, 0.85);
+            --glass-bg: rgba(28, 28, 30, 0.88);
             --glass-border: rgba(255, 255, 255, 0.06);
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
@@ -105,7 +105,7 @@
         .app-container {
             width: 100%;
             max-width: 480px;
-            background: var(--sf-gray6);
+            background: #f5f7f6;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -165,45 +165,58 @@
             color: #aeaeb2;
         }
 
-        /* ===== AUTH OVERLAY ===== */
-        #authOverlay {
+        /* ===== AUTH PAGE (full page, not floating) ===== */
+        #authPage {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--sf-gray6);
+            background: #f5f7f6;
             z-index: 9999;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
             overflow-y: auto;
         }
-        body.dark #authOverlay {
+        body.dark #authPage {
             background: #000000;
         }
-        .auth-card {
-            max-width: 400px;
+
+        .auth-container {
+            max-width: 440px;
             width: 100%;
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
             border-radius: var(--radius-xl);
-            padding: 32px 28px;
+            padding: 40px 32px 32px;
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
+            text-align: center;
         }
-        body.dark .auth-card {
+        body.dark .auth-container {
             background: rgba(28, 28, 30, 0.88);
         }
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 24px;
+
+        .auth-logo-big {
+            margin-bottom: 20px;
         }
-        .auth-logo h2 {
-            font-size: 34px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+        .auth-logo-big img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 4px solid var(--sf-green);
+            background: white;
+            padding: 8px;
+        }
+        .auth-logo-big h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-top: 8px;
         }
         .fuel-green {
             color: var(--sf-green);
@@ -211,16 +224,17 @@
         .radar-red {
             color: var(--sf-red);
         }
-        .auth-slogan {
-            background: rgba(26, 138, 74, 0.12);
+        .auth-slogan-big {
+            background: rgba(26, 138, 74, 0.10);
             border-radius: var(--radius-full);
-            padding: 4px 16px;
+            padding: 4px 18px;
             display: inline-block;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--sf-green);
-            margin-top: 4px;
+            margin-top: 2px;
         }
+
         .auth-tabs {
             display: flex;
             gap: 8px;
@@ -259,6 +273,7 @@
         .auth-form.hide {
             display: none;
         }
+
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
@@ -287,6 +302,7 @@
             box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.2);
             background: #2c2c2e;
         }
+
         .phone-row {
             display: flex;
             gap: 10px;
@@ -314,6 +330,7 @@
             margin-bottom: 0;
             flex: 2;
         }
+
         .welcome-country {
             background: rgba(26, 138, 74, 0.1);
             border-radius: var(--radius-full);
@@ -325,6 +342,7 @@
             border: 1px solid rgba(26, 138, 74, 0.2);
             font-size: 14px;
         }
+
         .profile-pic-upload {
             display: flex;
             align-items: center;
@@ -360,6 +378,7 @@
             border-color: var(--sf-green);
             color: var(--sf-green);
         }
+
         .auth-btn {
             background: var(--sf-green);
             color: white;
@@ -403,9 +422,9 @@
             }
         }
 
-        /* ===== HEADER ===== */
+        /* ===== MAIN APP – HEADER ===== */
         .header {
-            padding: 12px 16px 10px 16px;
+            padding: 12px 16px 6px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
             border-bottom: 1px solid var(--glass-border);
@@ -417,6 +436,7 @@
         body.dark .header {
             background: rgba(28, 28, 30, 0.88);
         }
+
         .header-top {
             display: flex;
             align-items: center;
@@ -431,19 +451,21 @@
         .menu-btn {
             background: var(--sf-gray6);
             border: none;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            font-size: 17px;
+            font-size: 18px;
             color: var(--sf-green);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s var(--ease);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
         .menu-btn:hover {
             background: var(--sf-gray5);
+            transform: scale(1.05);
         }
         body.dark .menu-btn {
             background: #1c1c1e;
@@ -452,6 +474,7 @@
         body.dark .menu-btn:hover {
             background: #2c2c2e;
         }
+
         .brand-center {
             flex: 1;
             text-align: center;
@@ -461,136 +484,85 @@
             font-weight: 800;
             margin: 0;
             letter-spacing: -0.5px;
+            line-height: 1.2;
         }
         .slogan-tag {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--sf-green);
-            background: rgba(26, 138, 74, 0.1);
-            padding: 2px 14px;
+            background: rgba(26, 138, 74, 0.08);
+            padding: 1px 12px;
             border-radius: var(--radius-full);
             display: inline-block;
-            margin-top: 2px;
+            margin-top: 0px;
+            letter-spacing: 0.3px;
         }
         body.dark .slogan-tag {
             background: rgba(26, 138, 74, 0.15);
             color: var(--sf-green);
         }
+
         .header-right {
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .header-right .profile-thumb {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--sf-green);
             cursor: pointer;
             transition: all 0.2s var(--ease);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
         .header-right .profile-thumb:hover {
             transform: scale(1.05);
         }
 
-        /* ===== STATS ROW ===== */
-        .stats-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            gap: 4px;
-            background: var(--sf-gray6);
-            padding: 6px 8px;
-            border-radius: var(--radius-full);
-            margin-top: 8px;
-            border: 1px solid var(--glass-border);
+        /* ===== GREETING SECTION ===== */
+        .greeting-section {
+            padding: 8px 16px 4px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
         }
-        body.dark .stats-row {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
+        body.dark .greeting-section {
+            background: rgba(28, 28, 30, 0.88);
         }
-        .stat-item {
+        .greeting-row {
             display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            font-weight: 600;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .greeting-row .hello {
+            font-size: 28px;
+            font-weight: 700;
             color: #1c1c1e;
-            padding: 2px 10px;
-            border-radius: var(--radius-full);
         }
-        body.dark .stat-item {
+        body.dark .greeting-row .hello {
             color: #f5f5f7;
         }
-        .stat-item i {
+        .greeting-row .username {
+            font-size: 28px;
+            font-weight: 800;
             color: var(--sf-green);
+        }
+        .greeting-sub {
             font-size: 14px;
+            color: var(--sf-gray);
+            margin-top: 0px;
+            font-weight: 500;
         }
-        .stat-count {
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        /* ===== GREEN BANNER ===== */
-        .green-banner {
-            background: var(--sf-green);
-            border-radius: var(--radius-full);
-            padding: 8px 16px;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 2px 12px rgba(26, 138, 74, 0.25);
-        }
-        .green-banner i {
-            margin-right: 6px;
-        }
-        .green-banner .change-radius-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 4px 14px;
-            border-radius: var(--radius-full);
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(4px);
-            transition: all 0.2s var(--ease);
-        }
-        .green-banner .change-radius-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* ===== WARNING BANNER ===== */
-        .warning-banner {
-            background: rgba(220, 38, 38, 0.08);
-            border-radius: var(--radius-full);
-            padding: 6px 16px;
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--sf-red);
-            border: 1px solid rgba(220, 38, 38, 0.15);
-        }
-        body.dark .warning-banner {
-            background: rgba(220, 38, 38, 0.12);
-            color: var(--sf-red);
-            border-color: rgba(220, 38, 38, 0.2);
+        body.dark .greeting-sub {
+            color: #aeaeb2;
         }
 
         /* ===== SEARCH BAR ===== */
         .search-section {
-            padding: 8px 16px;
+            padding: 6px 16px 8px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             flex-shrink: 0;
@@ -603,14 +575,16 @@
             align-items: center;
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
-            padding: 6px 16px;
+            padding: 4px 6px 4px 18px;
             border: 1.5px solid transparent;
             gap: 8px;
             cursor: pointer;
             transition: all 0.2s var(--ease);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
         .search-box:hover {
             border-color: var(--sf-green);
+            box-shadow: 0 2px 12px rgba(26, 138, 74, 0.06);
         }
         .search-box:focus-within {
             border-color: var(--sf-green);
@@ -627,12 +601,13 @@
             flex: 1;
             border: none;
             background: transparent;
-            padding: 6px 4px;
+            padding: 10px 4px;
             font-size: 14px;
             outline: none;
             cursor: pointer;
             color: inherit;
             font-family: var(--font);
+            font-weight: 500;
         }
         .search-box .search-icon {
             color: var(--sf-gray);
@@ -652,21 +627,29 @@
             font-size: 16px;
             cursor: pointer;
             background: var(--sf-gray5);
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: var(--radius-full);
             transition: all 0.2s var(--ease);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         .search-box .filter-icon:hover {
             background: var(--sf-gray4);
+            color: var(--sf-green);
         }
         body.dark .search-box .filter-icon {
             background: #2c2c2e;
             color: var(--sf-gray);
         }
+        body.dark .search-box .filter-icon:hover {
+            color: var(--sf-green);
+        }
 
         /* ===== FILTER CHIPS ===== */
         .filter-section {
-            padding: 6px 16px 8px 16px;
+            padding: 4px 16px 8px 16px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             flex-shrink: 0;
@@ -687,9 +670,9 @@
         .chip {
             background: var(--sf-gray6);
             color: #1c1c1e;
-            padding: 4px 14px;
+            padding: 5px 14px;
             border-radius: var(--radius-full);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             border: 1px solid transparent;
             cursor: pointer;
@@ -697,11 +680,13 @@
             transition: all 0.2s var(--ease);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             font-family: var(--font);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
         }
         .chip:hover {
             background: var(--sf-gray5);
+            transform: translateY(-1px);
         }
         body.dark .chip {
             background: #1c1c1e;
@@ -741,26 +726,6 @@
         }
         .chip.near-me i {
             color: white;
-        }
-        .chip.dropdown-chip {
-            background: var(--sf-gray6);
-            padding: 4px 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .chip.dropdown-chip select {
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            font-size: 11px;
-            outline: none;
-            cursor: pointer;
-            color: inherit;
-            font-family: var(--font);
-        }
-        body.dark .chip.dropdown-chip {
-            background: #1c1c1e;
         }
 
         /* ===== MAP WRAPPER ===== */
@@ -858,7 +823,7 @@
             padding: 10px 16px 8px 16px;
             box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.06);
             z-index: 900;
-            max-height: 45%;
+            max-height: 48%;
             display: flex;
             flex-direction: column;
             transition: max-height 0.4s var(--ease), transform 0.4s var(--ease);
@@ -932,23 +897,24 @@
             background: #3a3a3c;
         }
 
-        /* ===== STATION CARD ===== */
+        /* ===== STATION CARD – MATCHING DESIGN ===== */
         .station-card-compact {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: var(--sf-gray6);
+            background: #ffffff;
             border-radius: var(--radius-md);
             padding: 10px 12px;
             margin-bottom: 6px;
-            border: 1px solid transparent;
+            border: 1px solid var(--sf-gray5);
             transition: all 0.2s var(--ease);
             cursor: pointer;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.02);
         }
         .station-card-compact:hover {
             border-color: var(--sf-green);
-            background: #ffffff;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-1px);
         }
         body.dark .station-card-compact {
             background: #1c1c1e;
@@ -960,10 +926,10 @@
         }
         .station-card-compact .logo-col {
             flex-shrink: 0;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: rgba(26, 138, 74, 0.1);
+            background: var(--sf-gray6);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1036,6 +1002,7 @@
         .station-card-compact .price-col {
             text-align: right;
             flex-shrink: 0;
+            min-width: 60px;
         }
         .station-card-compact .price-col .price {
             font-weight: 800;
@@ -1130,6 +1097,8 @@
             padding: 6px 0 12px 0;
             flex-shrink: 0;
             z-index: 100;
+            position: sticky;
+            bottom: 0;
         }
         body.dark .bottom-nav {
             background: rgba(28, 28, 30, 0.92);
@@ -1140,18 +1109,18 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--sf-gray);
             cursor: pointer;
             transition: all 0.2s var(--ease);
-            padding: 4px 12px;
+            padding: 4px 10px;
             border: none;
             background: none;
             font-family: var(--font);
         }
         .bottom-nav .nav-item i {
-            font-size: 24px;
+            font-size: 22px;
             transition: all 0.2s var(--ease);
         }
         .bottom-nav .nav-item.active {
@@ -1342,7 +1311,7 @@
             color: #aeaeb2;
         }
 
-        /* ===== RADIUS POPUP (NEW) ===== */
+        /* ===== RADIUS POPUP ===== */
         #radiusPopupOverlay {
             position: fixed;
             top: 0;
@@ -1435,9 +1404,6 @@
             font-family: var(--font);
             font-size: 14px;
         }
-        .radius-popup .radius-actions button:active {
-            transform: scale(0.97);
-        }
         .radius-popup .radius-actions .btn-apply {
             background: var(--sf-green);
             color: white;
@@ -1475,9 +1441,6 @@
         body.dark .trip-planner-card {
             background: rgba(28, 28, 30, 0.85);
             border-color: #2c2c2e;
-        }
-        .trip-planner-card:hover {
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
         }
         .trip-planner-card .card-title {
             font-weight: 700;
@@ -1759,475 +1722,6 @@
             color: var(--sf-green);
         }
 
-        /* ===== TRIP PLANNER STEPS ===== */
-        .step-container {
-            margin-bottom: 14px;
-        }
-        .step-content .pill-input {
-            margin-bottom: 6px;
-        }
-        .step-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .step-buttons button {
-            flex: 1;
-            padding: 12px;
-            border-radius: var(--radius-full);
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s var(--ease);
-            font-family: var(--font);
-            font-size: 14px;
-        }
-        .step-buttons button:active {
-            transform: scale(0.97);
-        }
-        .step-prev {
-            background: var(--sf-gray6);
-            color: #1c1c1e;
-        }
-        .step-prev:hover {
-            background: var(--sf-gray5);
-        }
-        body.dark .step-prev {
-            background: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .step-prev:hover {
-            background: #3a3a3c;
-        }
-        .step-next {
-            background: var(--sf-green);
-            color: white;
-            box-shadow: 0 4px 16px rgba(26, 138, 74, 0.2);
-        }
-        .step-next:hover {
-            background: var(--sf-green-dark);
-            box-shadow: 0 6px 24px rgba(26, 138, 74, 0.25);
-        }
-        .step-next:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        body.dark .step-next {
-            background: var(--sf-green);
-            box-shadow: 0 4px 16px rgba(26, 138, 74, 0.15);
-        }
-        .place-suggestions {
-            margin-top: 6px;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            max-height: 240px;
-            overflow-y: auto;
-        }
-        .place-suggestion-item {
-            background: var(--sf-gray6);
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--glass-border);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.15s var(--ease);
-            font-size: 13px;
-        }
-        .place-suggestion-item:last-child {
-            border-bottom: none;
-        }
-        .place-suggestion-item:hover {
-            background: #ffffff;
-        }
-        body.dark .place-suggestion-item {
-            background: #1c1c1e;
-            border-bottom-color: #2c2c2e;
-        }
-        body.dark .place-suggestion-item:hover {
-            background: #2c2c2e;
-        }
-        .place-suggestion-distance {
-            font-size: 10px;
-            background: var(--sf-green);
-            color: white;
-            padding: 2px 10px;
-            border-radius: var(--radius-full);
-            font-weight: 600;
-        }
-
-        /* ===== FLOATING CARDS (Trip Planner) ===== */
-        .floating-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            border-left: 4px solid var(--sf-green);
-            cursor: pointer;
-            transition: all 0.2s var(--ease);
-            border: 1px solid var(--glass-border);
-        }
-        body.dark .floating-card {
-            background: rgba(28, 28, 30, 0.85);
-            border-left-color: var(--sf-green);
-        }
-        .floating-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-        }
-        .floating-card.selected-card {
-            border: 2px solid var(--sf-green);
-            background: rgba(26, 138, 74, 0.04);
-            box-shadow: 0 4px 20px rgba(26, 138, 74, 0.08);
-        }
-        body.dark .floating-card.selected-card {
-            background: rgba(26, 138, 74, 0.06);
-        }
-        .floating-card.fun-card {
-            border-left-color: var(--sf-green);
-        }
-        .floating-card.fun-card.selected-card {
-            border-color: var(--sf-green);
-            background: rgba(26, 138, 74, 0.04);
-            box-shadow: 0 4px 20px rgba(26, 138, 74, 0.08);
-        }
-        body.dark .floating-card.fun-card.selected-card {
-            background: rgba(26, 138, 74, 0.06);
-        }
-        .floating-card .verified-badge {
-            font-size: 9px;
-            padding: 1px 8px;
-        }
-        .add-fun-btn {
-            background: var(--sf-green);
-            color: white;
-            border: none;
-            border-radius: var(--radius-full);
-            padding: 4px 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.2s var(--ease);
-            font-family: var(--font);
-        }
-        .add-fun-btn:hover {
-            background: var(--sf-green-dark);
-            transform: scale(1.02);
-        }
-        .add-fun-btn:disabled {
-            background: var(--sf-gray4);
-            cursor: default;
-            transform: none;
-        }
-        body.dark .add-fun-btn:disabled {
-            background: #3a3a3c;
-        }
-        .safety-tips {
-            background: rgba(245, 158, 11, 0.08);
-            border-left: 4px solid var(--sf-orange);
-            padding: 10px 14px;
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            margin-top: 8px;
-        }
-        body.dark .safety-tips {
-            background: rgba(245, 158, 11, 0.06);
-            color: #f5f5f7;
-        }
-
-        /* ===== GARAGE ===== */
-        .car-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--sf-gray6);
-            border-radius: var(--radius-md);
-            padding: 10px 14px;
-            border: 1px solid transparent;
-            margin-bottom: 8px;
-            transition: all 0.2s var(--ease);
-        }
-        .car-card:hover {
-            border-color: var(--sf-green);
-        }
-        body.dark .car-card {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-        }
-        body.dark .car-card:hover {
-            border-color: var(--sf-green);
-        }
-        .car-card img {
-            width: 48px;
-            height: 48px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--sf-green);
-        }
-        .vehicle-badge {
-            background: var(--sf-green);
-            color: white;
-            border-radius: var(--radius-full);
-            padding: 1px 10px;
-            font-size: 9px;
-            font-weight: 700;
-        }
-        .log-item {
-            background: var(--sf-gray6);
-            border-radius: var(--radius-sm);
-            padding: 8px 12px;
-            margin-bottom: 6px;
-            border: 1px solid transparent;
-            font-size: 12px;
-            transition: all 0.2s var(--ease);
-        }
-        .log-item:hover {
-            border-color: var(--sf-gray4);
-        }
-        body.dark .log-item {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-        }
-        body.dark .log-item:hover {
-            border-color: #3a3a3c;
-        }
-        .full-width-btn {
-            background: var(--sf-green);
-            color: white;
-            border: none;
-            border-radius: var(--radius-full);
-            padding: 12px;
-            font-weight: 700;
-            width: 100%;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s var(--ease);
-            font-family: var(--font);
-            font-size: 14px;
-        }
-        .full-width-btn:active {
-            transform: scale(0.98);
-        }
-        .full-width-btn:hover {
-            background: var(--sf-green-dark);
-            box-shadow: 0 4px 16px rgba(26, 138, 74, 0.2);
-        }
-        .btn-sm {
-            background: var(--sf-gray6);
-            border: none;
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s var(--ease);
-            font-family: var(--font);
-        }
-        .btn-sm:hover {
-            background: var(--sf-gray5);
-        }
-        body.dark .btn-sm {
-            background: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .btn-sm:hover {
-            background: #3a3a3c;
-        }
-        .btn-nav {
-            background: var(--sf-green);
-            color: white;
-        }
-        .btn-nav:hover {
-            background: var(--sf-green-dark);
-            color: white;
-        }
-        .btn-report {
-            background: rgba(220, 38, 38, 0.08);
-            color: var(--sf-red);
-        }
-        .btn-report:hover {
-            background: rgba(220, 38, 38, 0.15);
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .small-text {
-            font-size: 12px;
-            color: var(--sf-gray);
-        }
-        body.dark .small-text {
-            color: #aeaeb2;
-        }
-        .mt-2 {
-            margin-top: 8px;
-        }
-        .mb-2 {
-            margin-bottom: 8px;
-        }
-
-        /* ===== REPORT MODAL ===== */
-        .report-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            z-index: 4000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .report-modal-overlay.show {
-            display: flex;
-        }
-        .report-modal {
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px);
-            border-radius: var(--radius-xl);
-            max-width: 400px;
-            width: 92%;
-            padding: 28px 24px 24px;
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--glass-border);
-        }
-        body.dark .report-modal {
-            background: rgba(28, 28, 30, 0.92);
-            border-color: #2c2c2e;
-        }
-        .report-modal h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--sf-green);
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .report-modal .report-field {
-            margin-bottom: 14px;
-        }
-        .report-modal .report-field label {
-            font-weight: 600;
-            font-size: 13px;
-            color: #1c1c1e;
-            display: block;
-            margin-bottom: 4px;
-        }
-        body.dark .report-modal .report-field label {
-            color: #f5f5f7;
-        }
-        .report-modal .report-field select,
-        .report-modal .report-field input,
-        .report-modal .report-field textarea {
-            width: 100%;
-            border-radius: var(--radius-full);
-            border: 1.5px solid var(--sf-gray4);
-            padding: 10px 16px;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.2s var(--ease);
-            background: var(--sf-gray6);
-            font-family: var(--font);
-            color: #1c1c1e;
-        }
-        .report-modal .report-field select:focus,
-        .report-modal .report-field input:focus,
-        .report-modal .report-field textarea:focus {
-            border-color: var(--sf-green);
-            box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.08);
-            background: #ffffff;
-        }
-        body.dark .report-modal .report-field select,
-        body.dark .report-modal .report-field input,
-        body.dark .report-modal .report-field textarea {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .report-modal .report-field select:focus,
-        body.dark .report-modal .report-field input:focus,
-        body.dark .report-modal .report-field textarea:focus {
-            border-color: var(--sf-green);
-            box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.12);
-            background: #2c2c2e;
-        }
-        .report-modal .report-field textarea {
-            border-radius: var(--radius-md);
-            resize: vertical;
-            min-height: 60px;
-        }
-        .report-modal .report-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 18px;
-        }
-        .report-modal .report-actions button {
-            flex: 1;
-            padding: 12px;
-            border-radius: var(--radius-full);
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s var(--ease);
-            font-family: var(--font);
-            font-size: 14px;
-        }
-        .report-modal .report-actions .btn-submit {
-            background: var(--sf-green);
-            color: white;
-            box-shadow: 0 4px 16px rgba(26, 138, 74, 0.2);
-        }
-        .report-modal .report-actions .btn-submit:hover {
-            background: var(--sf-green-dark);
-        }
-        .report-modal .report-actions .btn-cancel {
-            background: var(--sf-gray6);
-            color: #1c1c1e;
-        }
-        .report-modal .report-actions .btn-cancel:hover {
-            background: var(--sf-gray5);
-        }
-        body.dark .report-modal .report-actions .btn-cancel {
-            background: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .report-modal .report-actions .btn-cancel:hover {
-            background: #3a3a3c;
-        }
-
-        /* ===== TOAST ===== */
-        .message-toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(28, 28, 30, 0.92);
-            backdrop-filter: blur(20px);
-            color: white;
-            padding: 10px 24px;
-            border-radius: var(--radius-full);
-            font-weight: 600;
-            z-index: 4000;
-            max-width: 90%;
-            text-align: center;
-            display: none;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-            font-size: 14px;
-            font-family: var(--font);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        body.dark .message-toast {
-            background: rgba(28, 28, 30, 0.95);
-        }
-
         /* ===== AI CHAT ===== */
         #aiChatPage .ai-messages-container {
             flex: 1;
@@ -2377,36 +1871,37 @@
                 max-width: 100%;
             }
             .header {
-                padding: 8px 12px 6px 12px;
+                padding: 8px 12px 4px 12px;
             }
             .brand-center h1 {
                 font-size: 17px;
             }
-            .stats-row {
-                font-size: 10px;
-                padding: 4px 6px;
+            .greeting-row .hello,
+            .greeting-row .username {
+                font-size: 22px;
             }
-            .stat-item {
-                font-size: 10px;
-                padding: 1px 6px;
+            .greeting-sub {
+                font-size: 12px;
             }
-            .green-banner {
-                font-size: 11px;
-                padding: 6px 12px;
+            .search-section {
+                padding: 4px 12px 6px 12px;
             }
-            .warning-banner {
-                font-size: 10px;
-                padding: 4px 12px;
+            .search-box {
+                padding: 2px 4px 2px 14px;
+            }
+            .search-box input {
+                font-size: 13px;
+                padding: 8px 4px;
             }
             .filter-section {
-                padding: 4px 12px 6px 12px;
+                padding: 2px 12px 6px 12px;
             }
             .chip {
                 font-size: 10px;
                 padding: 3px 10px;
             }
             .bottom-sheet {
-                padding: 8px 12px 6px 12px;
+                padding: 6px 12px 4px 12px;
                 max-height: 40%;
             }
             .station-card-compact {
@@ -2414,22 +1909,22 @@
                 gap: 8px;
             }
             .station-card-compact .logo-col {
-                width: 34px;
-                height: 34px;
+                width: 36px;
+                height: 36px;
                 font-size: 9px;
             }
             .station-card-compact .info-col .name {
                 font-size: 12px;
             }
             .station-card-compact .price-col .price {
-                font-size: 13px;
+                font-size: 12px;
             }
             .bottom-nav .nav-item {
-                font-size: 11px;
-                padding: 0 8px;
+                font-size: 10px;
+                padding: 0 6px;
             }
             .bottom-nav .nav-item i {
-                font-size: 22px;
+                font-size: 20px;
             }
             .page-content {
                 padding: 12px 16px 20px;
@@ -2460,48 +1955,22 @@
                 font-size: 16px;
                 min-width: 50px;
             }
+            .auth-container {
+                padding: 28px 20px 24px;
+            }
+            .auth-logo-big img {
+                width: 80px;
+                height: 80px;
+            }
+            .auth-logo-big h1 {
+                font-size: 32px;
+            }
         }
 
         /* ===== DARK MODE OVERRIDES ===== */
-        body.dark .stats-row {
-            background: #1c1c1e;
-        }
-        body.dark .stat-item i {
-            color: var(--sf-green);
-        }
-        body.dark .green-banner {
-            background: var(--sf-green);
-            box-shadow: 0 2px 12px rgba(26, 138, 74, 0.15);
-        }
-        body.dark .green-banner .change-radius-btn {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        body.dark .map-float-btn {
-            background: rgba(28, 28, 30, 0.88);
-            border-color: #2c2c2e;
-            color: var(--sf-green);
-        }
-        body.dark .map-float-btn.best-near-float {
-            background: var(--sf-green);
-            color: white;
-        }
-        body.dark .chip.active {
-            background: var(--sf-green);
-            color: white;
-        }
-        body.dark .chip.near-me {
-            background: var(--sf-green);
-            color: white;
-        }
-        body.dark .search-box {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-        }
-        body.dark .search-box:hover {
-            border-color: var(--sf-green);
-        }
         body.dark .station-card-compact {
             background: #1c1c1e;
+            border-color: #2c2c2e;
         }
         body.dark .station-card-compact:hover {
             border-color: var(--sf-green);
@@ -2522,63 +1991,6 @@
         }
         body.dark .station-card-compact .nav-col button {
             background: var(--sf-green);
-        }
-        body.dark .full-width-btn {
-            background: var(--sf-green);
-        }
-        body.dark .full-width-btn:hover {
-            background: var(--sf-green-dark);
-        }
-        body.dark .btn-nav {
-            background: var(--sf-green);
-        }
-        body.dark .btn-nav:hover {
-            background: var(--sf-green-dark);
-        }
-        body.dark .btn-report {
-            background: rgba(220, 38, 38, 0.12);
-            color: var(--sf-red);
-        }
-        body.dark .step-next {
-            background: var(--sf-green);
-            color: white;
-        }
-        body.dark .step-next:hover {
-            background: var(--sf-green-dark);
-        }
-        body.dark .step-prev {
-            background: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .step-prev:hover {
-            background: #3a3a3c;
-        }
-        body.dark .car-card {
-            background: #1c1c1e;
-        }
-        body.dark .car-card:hover {
-            border-color: var(--sf-green);
-        }
-        body.dark .log-item {
-            background: #1c1c1e;
-        }
-        body.dark .log-item:hover {
-            border-color: #3a3a3c;
-        }
-        body.dark .floating-card {
-            background: rgba(28, 28, 30, 0.85);
-            border-left-color: var(--sf-green);
-        }
-        body.dark .floating-card.selected-card {
-            border-color: var(--sf-green);
-            background: rgba(26, 138, 74, 0.06);
-        }
-        body.dark .floating-card.fun-card {
-            border-left-color: var(--sf-green);
-        }
-        body.dark .floating-card.fun-card.selected-card {
-            border-color: var(--sf-green);
-            background: rgba(26, 138, 74, 0.06);
         }
         body.dark .full-station-card {
             background: #1c1c1e;
@@ -2624,21 +2036,6 @@
         body.dark .ai-send-btn {
             background: var(--sf-green);
         }
-        body.dark .expand-sheet-btn {
-            background: rgba(28, 28, 30, 0.9);
-            color: var(--sf-green);
-            border-color: #2c2c2e;
-        }
-        body.dark .page-header-bar {
-            background: rgba(28, 28, 30, 0.92);
-            border-bottom-color: #2c2c2e;
-        }
-        body.dark .close-page-btn {
-            color: #aeaeb2;
-        }
-        body.dark .close-page-btn:hover {
-            color: var(--sf-red);
-        }
         body.dark .menu-popup {
             background: rgba(28, 28, 30, 0.92);
             border-color: #2c2c2e;
@@ -2655,18 +2052,105 @@
         body.dark .menu-popup-close {
             color: #aeaeb2;
         }
-        body.dark .menu-popup-close:hover {
-            color: var(--sf-red);
+
+        /* ===== TOAST ===== */
+        .message-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 28, 30, 0.92);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 10px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            z-index: 4000;
+            max-width: 90%;
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            font-size: 14px;
+            font-family: var(--font);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        body.dark .message-toast {
+            background: rgba(28, 28, 30, 0.95);
+        }
+
+        /* ===== REPORT MODAL ===== */
+        .report-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            z-index: 4000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .report-modal-overlay.show {
+            display: flex;
+        }
+        .report-modal {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            border-radius: var(--radius-xl);
+            max-width: 400px;
+            width: 92%;
+            padding: 28px 24px 24px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
         }
         body.dark .report-modal {
             background: rgba(28, 28, 30, 0.92);
             border-color: #2c2c2e;
         }
-        body.dark .report-modal h3 {
+        .report-modal h3 {
+            font-size: 20px;
+            font-weight: 700;
             color: var(--sf-green);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .report-modal .report-field {
+            margin-bottom: 14px;
+        }
+        .report-modal .report-field label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1c1c1e;
+            display: block;
+            margin-bottom: 4px;
         }
         body.dark .report-modal .report-field label {
             color: #f5f5f7;
+        }
+        .report-modal .report-field select,
+        .report-modal .report-field input,
+        .report-modal .report-field textarea {
+            width: 100%;
+            border-radius: var(--radius-full);
+            border: 1.5px solid var(--sf-gray4);
+            padding: 10px 16px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s var(--ease);
+            background: var(--sf-gray6);
+            font-family: var(--font);
+            color: #1c1c1e;
+        }
+        .report-modal .report-field select:focus,
+        .report-modal .report-field input:focus,
+        .report-modal .report-field textarea:focus {
+            border-color: var(--sf-green);
+            box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.08);
+            background: #ffffff;
         }
         body.dark .report-modal .report-field select,
         body.dark .report-modal .report-field input,
@@ -2680,6 +2164,43 @@
         body.dark .report-modal .report-field textarea:focus {
             border-color: var(--sf-green);
             box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.12);
+            background: #2c2c2e;
+        }
+        .report-modal .report-field textarea {
+            border-radius: var(--radius-md);
+            resize: vertical;
+            min-height: 60px;
+        }
+        .report-modal .report-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+        .report-modal .report-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s var(--ease);
+            font-family: var(--font);
+            font-size: 14px;
+        }
+        .report-modal .report-actions .btn-submit {
+            background: var(--sf-green);
+            color: white;
+            box-shadow: 0 4px 16px rgba(26, 138, 74, 0.2);
+        }
+        .report-modal .report-actions .btn-submit:hover {
+            background: var(--sf-green-dark);
+        }
+        .report-modal .report-actions .btn-cancel {
+            background: var(--sf-gray6);
+            color: #1c1c1e;
+        }
+        .report-modal .report-actions .btn-cancel:hover {
+            background: var(--sf-gray5);
         }
         body.dark .report-modal .report-actions .btn-cancel {
             background: #2c2c2e;
@@ -2688,25 +2209,16 @@
         body.dark .report-modal .report-actions .btn-cancel:hover {
             background: #3a3a3c;
         }
-        body.dark .message-toast {
-            background: rgba(28, 28, 30, 0.95);
-        }
-        body.dark .radius-popup {
-            background: rgba(28, 28, 30, 0.92);
-            border-color: #2c2c2e;
-        }
-        body.dark .radius-popup .radius-input-group input[type="range"] {
-            background: #3a3a3c;
-        }
-        body.dark .radius-popup .radius-input-group input[type="range"]::-webkit-slider-thumb {
-            background: var(--sf-green);
-        }
-        body.dark .radius-popup .radius-actions .btn-cancel {
-            background: #2c2c2e;
-            color: #f5f5f7;
-        }
-        body.dark .radius-popup .radius-actions .btn-cancel:hover {
-            background: #3a3a3c;
+
+        /* ===== FLEET MODE BUTTON ===== */
+        .nav-item .fleet-badge {
+            background: var(--sf-red);
+            color: white;
+            font-size: 7px;
+            padding: 1px 6px;
+            border-radius: var(--radius-full);
+            margin-left: 2px;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -2722,12 +2234,13 @@
         </div>
     </div>
 
-    <!-- ===== AUTH OVERLAY ===== -->
-    <div id="authOverlay">
-        <div class="auth-card">
-            <div class="auth-logo">
-                <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
-                <div class="auth-slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
+    <!-- ===== AUTH PAGE (full page) ===== -->
+    <div id="authPage">
+        <div class="auth-container">
+            <div class="auth-logo-big">
+                <img src="logo.png" alt="FuelRadar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
+                <h1><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h1>
+                <div class="auth-slogan-big"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
             </div>
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login">Login</div>
@@ -2780,55 +2293,36 @@
                 </div>
             </div>
 
-            <!-- ===== STATS ROW ===== -->
-            <div class="stats-row">
-                <div class="stat-item"><i class="fas fa-map-marker-alt"></i> <span class="stat-count" id="stationCountHeader">0</span> Stations</div>
-                <div class="stat-item"><i class="fas fa-gas-pump"></i> <span class="stat-count" id="petrolCount">0</span> Petrol</div>
-                <div class="stat-item"><i class="fas fa-oil-can"></i> <span class="stat-count" id="dieselCount">0</span> Diesel</div>
-                <div class="stat-item"><i class="fas fa-store"></i> <span class="stat-count" id="shopCount">0</span> Shops</div>
+            <!-- ===== GREETING ===== -->
+            <div class="greeting-section">
+                <div class="greeting-row">
+                    <span class="hello">Hello,</span>
+                    <span class="username" id="greetingUserName">Alex</span>
+                </div>
+                <div class="greeting-sub">Find fuel stations near you</div>
             </div>
 
-            <!-- ===== GREEN BANNER ===== -->
-            <div class="green-banner">
-                <span><i class="fas fa-crosshairs"></i> Nearby stations within <strong id="radiusDisplay">3 km</strong></span>
-                <button class="change-radius-btn" id="changeRadiusBtn"><i class="fas fa-undo-alt"></i> Change radius</button>
+            <!-- ===== SEARCH BAR ===== -->
+            <div class="search-section">
+                <div class="search-box" id="searchBoxTrigger">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search station by name or location..." id="searchInput" readonly />
+                    <i class="fas fa-microphone voice-icon"></i>
+                    <div class="filter-icon" id="radiusFilterBtn"><i class="fas fa-sliders-h"></i> <span id="radiusDisplay">3 km</span></div>
+                </div>
             </div>
 
-            <!-- ===== WARNING BANNER ===== -->
-            <div class="warning-banner">
-                <span><i class="fas fa-exclamation-circle"></i> Tap a station on the map to navigate or report.</span>
-                <span style="cursor:pointer;" id="closeWarningBtn">&times;</span>
-            </div>
-        </div>
-
-        <!-- ===== SEARCH BAR ===== -->
-        <div class="search-section">
-            <div class="search-box" id="searchBoxTrigger">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" placeholder="Search station by name or location..." id="searchInput" readonly />
-                <i class="fas fa-microphone voice-icon"></i>
-                <i class="fas fa-sliders-h filter-icon"></i>
-            </div>
-        </div>
-
-        <!-- ===== FILTER CHIPS ===== -->
-        <div class="filter-section">
-            <div class="filter-scroll" id="filterTabs">
-                <button class="chip near-me" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
-                <button class="chip dropdown-chip">
-                    <select id="sortSelect">
-                        <option value="distance">Sort by distance</option>
-                        <option value="price_petrol">Sort by petrol price</option>
-                        <option value="price_diesel">Sort by diesel price</option>
-                        <option value="name">Sort by name</option>
-                    </select>
-                </button>
-                <button class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></button>
-                <button class="chip" data-filter="petrol"><i class="fas fa-gas-pump"></i> Petrol <span class="count-badge" id="countPetrol">0</span></button>
-                <button class="chip" data-filter="diesel"><i class="fas fa-oil-can"></i> Diesel <span class="count-badge" id="countDiesel">0</span></button>
-                <button class="chip" data-filter="amenity_shop"><i class="fas fa-store"></i> Shops <span class="count-badge" id="countShop">0</span></button>
-                <button class="chip" data-filter="amenity_atm"><i class="fas fa-money-bill-wave"></i> ATM</button>
-                <button class="chip" data-filter="amenity_carwash"><i class="fas fa-car-wash"></i> Car wash</button>
+            <!-- ===== FILTER CHIPS ===== -->
+            <div class="filter-section">
+                <div class="filter-scroll" id="filterTabs">
+                    <button class="chip near-me" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
+                    <button class="chip active" data-filter="all">All <span class="count-badge" id="countAll">0</span></button>
+                    <button class="chip" data-filter="petrol"><i class="fas fa-gas-pump"></i> Petrol <span class="count-badge" id="countPetrol">0</span></button>
+                    <button class="chip" data-filter="diesel"><i class="fas fa-oil-can"></i> Diesel <span class="count-badge" id="countDiesel">0</span></button>
+                    <button class="chip" data-filter="amenity_shop"><i class="fas fa-store"></i> Shops <span class="count-badge" id="countShop">0</span></button>
+                    <button class="chip" data-filter="amenity_atm"><i class="fas fa-money-bill-wave"></i> ATM</button>
+                    <button class="chip" data-filter="amenity_carwash"><i class="fas fa-car-wash"></i> Car wash</button>
+                </div>
             </div>
         </div>
 
@@ -2860,7 +2354,15 @@
                 <div class="sheet-handle" id="sheetHandle"></div>
                 <div class="sheet-header">
                     <span><i class="fas fa-star" style="color:var(--sf-green);"></i> Top stations near you</span>
-                    <span class="view-all" id="viewAllStations">View all</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <select id="sortSelect" style="background:var(--sf-gray6); border:none; border-radius:var(--radius-full); padding:4px 12px; font-size:12px; font-weight:600; font-family:var(--font); color:#1c1c1e; outline:none; cursor:pointer;">
+                            <option value="distance">Sort by Distance</option>
+                            <option value="price_petrol">Sort by Petrol Price</option>
+                            <option value="price_diesel">Sort by Diesel Price</option>
+                            <option value="name">Sort by Name</option>
+                        </select>
+                        <span class="view-all" id="viewAllStations">View all</span>
+                    </div>
                 </div>
                 <div class="sheet-scroll" id="stationCardsContainer">
                     <!-- dynamic cards injected here -->
@@ -2877,6 +2379,7 @@
             <button class="nav-item" data-page="stations"><i class="fas fa-gas-pump"></i> Stations</button>
             <button class="nav-item" data-page="report"><i class="fas fa-flag"></i> Report</button>
             <button class="nav-item" data-page="ai"><i class="fas fa-robot"></i> AI Chat</button>
+            <button class="nav-item" data-page="fleet"><i class="fas fa-truck"></i> Fleet <span class="fleet-badge">BETA</span></button>
             <button class="nav-item" data-page="profile"><i class="fas fa-user"></i> Profile</button>
         </div>
     </div>
@@ -2901,13 +2404,12 @@
             <div class="menu-popup-item" data-page="recent"><i class="fas fa-clock"></i> Recent Stations</div>
             <div class="menu-popup-item" data-page="help"><i class="fas fa-question-circle"></i> Help &amp; About</div>
             <div class="menu-popup-item" data-page="export"><i class="fas fa-download"></i> Export Data</div>
-            <div class="menu-popup-item" id="fleetManagementBtn"><i class="fas fa-truck"></i> Fleet Management</div>
             <div class="menu-popup-item" id="darkModePopup"><i class="fas fa-moon"></i> Dark Mode</div>
             <div class="menu-popup-item" id="logoutPopup"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
     </div>
 
-    <!-- ===== RADIUS POPUP (NEW) ===== -->
+    <!-- ===== RADIUS POPUP ===== -->
     <div id="radiusPopupOverlay">
         <div class="radius-popup">
             <h3><i class="fas fa-crosshairs"></i> Adjust Search Radius</h3>
@@ -3228,7 +2730,7 @@
             let reportModalStationId = null;
 
             // ---------- DOM ELEMENTS ----------
-            const authOverlay = document.getElementById('authOverlay');
+            const authPage = document.getElementById('authPage');
             const mainApp = document.getElementById('mainAppContainer');
             const systemOverlay = document.getElementById('systemOverlay');
             const toast = document.getElementById('dynamicToast');
@@ -4447,6 +3949,8 @@
                     currentUser = user;
                     var snap = await rtdb.ref('users/' + user.uid).once('value');
                     userProfile = snap.val() || {};
+                    var displayName = userProfile.name || user.displayName || user.email || 'Alex';
+                    document.getElementById('greetingUserName').innerText = displayName;
                     document.getElementById('userProfilePicHeader').src = userProfile.photoURL || 'driver.png';
                     document.getElementById('profilePicLarge').src = userProfile.photoURL || 'driver.png';
                     document.getElementById('profileName').value = userProfile.name || '';
@@ -4454,7 +3958,7 @@
                     document.getElementById('profilePhone').value = userProfile.phone || '';
                     await performSystemChecks();
                     if (mainApp.style.display === 'none') return;
-                    authOverlay.style.display = 'none';
+                    authPage.style.display = 'none';
                     mainApp.style.display = 'flex';
                     await loadAdminSettings();
                     await loadBlockedStations();
@@ -4462,7 +3966,7 @@
                     initMap();
                     locateAndFetch();
                 } else {
-                    authOverlay.style.display = 'flex';
+                    authPage.style.display = 'flex';
                     mainApp.style.display = 'none';
                     systemOverlay.style.display = 'none';
                 }
@@ -4525,7 +4029,7 @@
                             currency: userCurrency,
                             createdAt: Date.now()
                         }).then(function() {
-                            authOverlay.style.display = 'none';
+                            authPage.style.display = 'none';
                             setButtonLoading(btn, false);
                         });
                     }).catch(function(e) {
@@ -4653,7 +4157,7 @@
                 var radiusRange = document.getElementById('radiusRange');
                 var radiusValueDisplay = document.getElementById('radiusValueDisplay');
 
-                document.getElementById('changeRadiusBtn').onclick = function() {
+                document.getElementById('radiusFilterBtn').onclick = function() {
                     radiusRange.value = radiusKm;
                     radiusValueDisplay.innerText = radiusKm + ' km';
                     radiusPopupOverlay.classList.add('show');
@@ -4794,11 +4298,6 @@
                         };
                     } else if (item.id === 'logoutPopup') {
                         // handled above
-                    } else if (item.id === 'fleetManagementBtn') {
-                        item.onclick = function() {
-                            window.location.href = 'fleet.html';
-                            menuPopup.classList.remove('show');
-                        };
                     } else if (item.dataset.page) {
                         item.onclick = function(e) {
                             e.preventDefault();
@@ -4831,6 +4330,8 @@
                             openPage('reportPage');
                         } else if (page === 'ai') {
                             openPage('aiChatPage');
+                        } else if (page === 'fleet') {
+                            window.location.href = 'fleet.html';
                         } else if (page === 'profile') {
                             openPage('profilePage');
                         }
@@ -5063,11 +4564,6 @@
                     document.getElementById('tripCostCalc').innerText = formatPrice(cost);
                     document.getElementById('etaCalc').innerText = eta;
                 };
-
-                // ---- Fleet Management Button ----
-                document.getElementById('fleetManagementBtn').addEventListener('click', function() {
-                    window.location.href = 'fleet.html';
-                });
 
                 // ---- Close button for warning ----
                 document.getElementById('closeWarningBtn').addEventListener('click', function() {
