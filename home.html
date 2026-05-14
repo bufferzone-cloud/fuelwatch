@@ -40,7 +40,7 @@
 
     <style>
         /* ============================================================
-               MAC / iOS THEMED DESIGN – Green & Red only
+               FUELRADAR – COMPLETE FIXED VERSION
                ============================================================ */
 
         * {
@@ -80,6 +80,8 @@
 
             --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
             --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+            --scale: 0.9;
         }
 
         html,
@@ -90,6 +92,7 @@
             background: var(--sf-gray6);
             font-family: var(--font);
             color: #1c1c1e;
+            font-size: calc(100% * var(--scale));
         }
 
         body.dark {
@@ -118,7 +121,7 @@
             background: #000000;
         }
 
-        /* ===== AUTH OVERLAY – FULL PAGE LOGO BIG ===== */
+        /* ===== AUTH OVERLAY – FULL PAGE (NO FLOATING) ===== */
         #authOverlay {
             position: fixed;
             top: 0;
@@ -130,8 +133,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 40px 20px 20px;
+            justify-content: center;
+            padding: 30px 20px 20px;
             overflow-y: auto;
             min-height: 100vh;
         }
@@ -141,19 +144,22 @@
 
         .auth-logo-wrap {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             width: 100%;
         }
         .auth-logo-wrap img {
-            max-width: 320px;
-            /* 5x bigger */
+            max-width: 420px;
+            /* 5x bigger than original 160px */
             height: auto;
             display: block;
-            margin: 0 auto 15px auto;
-            width: 320px;
+            margin: 0 auto 14px auto;
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(26, 138, 74, 0.15);
         }
         .auth-logo-wrap h2 {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-top: 0;
@@ -167,23 +173,23 @@
         .auth-slogan {
             background: rgba(26, 138, 74, 0.12);
             border-radius: var(--radius-full);
-            padding: 6px 18px;
+            padding: 8px 26px;
             display: inline-block;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--sf-green);
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .auth-tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
             padding: 4px;
             width: 100%;
-            max-width: 340px;
+            max-width: 420px;
         }
         body.dark .auth-tabs {
             background: #1c1c1e;
@@ -191,7 +197,7 @@
         .auth-tab {
             flex: 1;
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius-full);
             font-weight: 600;
             background: transparent;
@@ -199,7 +205,7 @@
             cursor: pointer;
             border: none;
             transition: all 0.25s var(--ease);
-            font-size: 14px;
+            font-size: 15px;
             font-family: var(--font);
         }
         .auth-tab.active {
@@ -217,19 +223,20 @@
             display: none;
         }
 
+        /* ---- LONGER INPUT BOXES (wider) ---- */
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
             border-radius: var(--radius-full);
-            padding: 14px 20px;
-            font-size: 15px;
+            padding: 16px 22px;
+            font-size: 16px;
             width: 100%;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             outline: none;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
             color: #1c1c1e;
-            max-width: 340px;
+            max-width: 420px;
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -252,10 +259,10 @@
 
         .phone-row {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
-            margin-bottom: 14px;
-            max-width: 340px;
+            margin-bottom: 16px;
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
@@ -263,9 +270,9 @@
         .country-code-box {
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
-            padding: 14px 16px;
-            font-size: 15px;
-            min-width: 100px;
+            padding: 16px 18px;
+            font-size: 16px;
+            min-width: 110px;
             text-align: center;
             font-weight: 600;
             color: #1c1c1e;
@@ -285,14 +292,14 @@
         .welcome-country {
             background: rgba(26, 138, 74, 0.1);
             border-radius: var(--radius-full);
-            padding: 8px 16px;
-            margin-bottom: 12px;
+            padding: 10px 20px;
+            margin-bottom: 14px;
             text-align: center;
             font-weight: 600;
             color: var(--sf-green);
             border: 1px solid rgba(26, 138, 74, 0.2);
-            font-size: 14px;
-            max-width: 340px;
+            font-size: 15px;
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -301,13 +308,13 @@
             align-items: center;
             gap: 12px;
             margin: 10px 0;
-            max-width: 340px;
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
         }
         .profile-pic-preview {
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: 2px solid var(--sf-green);
             object-fit: cover;
@@ -317,8 +324,8 @@
             background: var(--sf-gray6);
             border: 1.5px dashed var(--sf-green);
             border-radius: var(--radius-full);
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 10px 16px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--sf-green);
             cursor: pointer;
@@ -340,9 +347,9 @@
             color: white;
             border: none;
             border-radius: var(--radius-full);
-            padding: 14px;
+            padding: 16px;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 17px;
             width: 100%;
             cursor: pointer;
             margin-top: 6px;
@@ -352,7 +359,7 @@
             gap: 8px;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
-            max-width: 340px;
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -365,8 +372,8 @@
         }
         .auth-btn .spinner {
             display: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border: 2.5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -383,7 +390,7 @@
 
         .forgot-link {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 14px;
             font-size: 14px;
             display: block;
             color: var(--sf-green);
@@ -842,7 +849,7 @@
             background: rgba(0, 0, 0, 0.7);
         }
 
-        /* ===== BOTTOM SHEET ===== */
+        /* ===== BOTTOM SHEET – COVERS 30% OF MAP ===== */
         .bottom-sheet {
             position: absolute;
             bottom: 0;
@@ -855,6 +862,7 @@
             box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.06);
             z-index: 900;
             max-height: 30%;
+            /* Fixed at 30% of map */
             display: flex;
             flex-direction: column;
             transition: max-height 0.4s var(--ease), transform 0.4s var(--ease);
@@ -1355,7 +1363,7 @@
             color: #aeaeb2;
         }
 
-        /* ===== RADIUS POPUP ===== */
+        /* ===== RADIUS POPUP (FIXED) ===== */
         #radiusPopupOverlay {
             position: fixed;
             top: 0;
@@ -1946,7 +1954,7 @@
             color: #f5f5f7;
         }
 
-        /* ===== GARAGE – Horizontal uploads ===== */
+        /* ===== GARAGE ===== */
         .car-card {
             display: flex;
             align-items: center;
@@ -2401,7 +2409,7 @@
             }
             .bottom-sheet {
                 padding: 6px 10px 4px 10px;
-                max-height: 38%;
+                max-height: 30%;
             }
             .station-card-compact {
                 padding: 6px 8px;
@@ -2458,15 +2466,15 @@
                 padding: 20px 12px;
             }
             .auth-logo-wrap img {
-                width: 200px;
+                max-width: 280px;
             }
             .pill-input {
-                padding: 12px 16px;
-                font-size: 14px;
+                padding: 14px 18px;
+                font-size: 15px;
             }
             .auth-btn {
-                padding: 12px;
-                font-size: 14px;
+                padding: 14px;
+                font-size: 15px;
             }
         }
 
@@ -2716,6 +2724,38 @@
         body.dark .radius-popup .radius-actions .btn-cancel:hover {
             background: #3a3a3c;
         }
+
+        /* ===== COUNTERS ===== */
+        .counter-display {
+            display: flex;
+            gap: 10px;
+            padding: 4px 0;
+            flex-wrap: wrap;
+        }
+        .counter-item {
+            background: var(--sf-gray6);
+            border-radius: var(--radius-full);
+            padding: 2px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid var(--glass-border);
+        }
+        body.dark .counter-item {
+            background: #1c1c1e;
+            border-color: #2c2c2e;
+        }
+        .counter-item i {
+            color: var(--sf-green);
+        }
+        .counter-item .count-num {
+            color: var(--sf-green);
+            font-weight: 800;
+            min-width: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -2730,7 +2770,7 @@
         </div>
     </div>
 
-    <!-- ===== AUTH OVERLAY – FULL PAGE LOGO BIG ===== -->
+    <!-- ===== AUTH OVERLAY – FULL PAGE (NO FLOATING) ===== -->
     <div id="authOverlay">
         <div class="auth-logo-wrap">
             <img src="logo.png" alt="FuelRadar" onerror="this.style.display='none';" />
@@ -2807,6 +2847,16 @@
             </div>
         </div>
 
+        <!-- ===== COUNTERS ===== -->
+        <div class="filter-section" style="padding-top:2px;">
+            <div class="counter-display">
+                <span class="counter-item"><i class="fas fa-gas-pump"></i> Petrol: <span class="count-num" id="petrolCount">0</span></span>
+                <span class="counter-item"><i class="fas fa-oil-can"></i> Diesel: <span class="count-num" id="dieselCount">0</span></span>
+                <span class="counter-item"><i class="fas fa-store"></i> Shops: <span class="count-num" id="shopCount">0</span></span>
+                <span class="counter-item"><i class="fas fa-map-marker-alt"></i> Total: <span class="count-num" id="stationCountHeader">0</span></span>
+            </div>
+        </div>
+
         <!-- ===== FILTER CHIPS ===== -->
         <div class="filter-section">
             <div class="filter-scroll" id="filterTabs">
@@ -2851,7 +2901,7 @@
             <div class="route-info-panel" id="routeInfoPanel"></div>
             <div class="turn-by-turn-panel" id="turnByTurnPanel"></div>
 
-            <!-- ===== BOTTOM SHEET ===== -->
+            <!-- ===== BOTTOM SHEET – 30% OF MAP ===== -->
             <div class="bottom-sheet" id="bottomSheet">
                 <div class="sheet-handle" id="sheetHandle"></div>
                 <div class="sheet-header">
@@ -2868,7 +2918,7 @@
             <button class="expand-sheet-btn" id="expandSheetBtn"><i class="fas fa-chevron-up"></i> Show stations</button>
         </div>
 
-        <!-- ===== BOTTOM NAVIGATION – 6 BUTTONS ===== -->
+        <!-- ===== BOTTOM NAVIGATION ===== -->
         <div class="bottom-nav">
             <button class="nav-item active" data-page="map"><i class="fas fa-map"></i> Map</button>
             <button class="nav-item" data-page="stations"><i class="fas fa-gas-pump"></i> Stations</button>
@@ -2904,7 +2954,7 @@
         </div>
     </div>
 
-    <!-- ===== RADIUS POPUP ===== -->
+    <!-- ===== RADIUS POPUP (FIXED) ===== -->
     <div id="radiusPopupOverlay">
         <div class="radius-popup">
             <h3><i class="fas fa-crosshairs"></i> Adjust Search Radius</h3>
@@ -3166,7 +3216,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT – FULL LOGIC (FIXED) ===== -->
+    <!-- ===== JAVASCRIPT – COMPLETE FIXED LOGIC ===== -->
     <!-- ============================================================ -->
     <script>
         // ==================== FUELRADAR MAIN APP ====================
@@ -3881,7 +3931,7 @@
             document.getElementById('sheetHandle').addEventListener('click', toggleSheet);
             expandBtn.addEventListener('click', toggleSheet);
 
-            // ---------- NAVIGATION (FIXED WITH ROUTING) ----------
+            // ---------- NAVIGATION (FIXED WITH ROUTE DRAWING) ----------
             function startNavigationWithMessage(station) {
                 if (!actualUserLocation) { showToast('Enable location first', true); return; }
                 if (!activeVehicle) { showToast('No active vehicle', true); return; }
@@ -3894,32 +3944,57 @@
                 var message = '🚗 ' + activeVehicle.name + ' needs ' + neededLitres.toFixed(1) + 'L of ' +
                     fuelTypeNeeded.toUpperCase() + ' to reach ' + station.name + ' in ' + etaText + '.' + warning;
                 showToast(message);
-                document.querySelector('.warning-banner span').innerHTML =
-                    '<i class="fas fa-exclamation-circle"></i> ' + message;
+                // Draw route using Leaflet Routing Machine
                 if (routingControl) map.removeControl(routingControl);
                 try {
-                    // Try standard routing first
+                    // Standard routing with OSRM
                     routingControl = L.Routing.control({
                         waypoints: [L.latLng(actualUserLocation.lat, actualUserLocation.lng), L.latLng(station.lat,
                             station.lon)],
                         routeWhileDragging: false,
-                        lineOptions: { styles: [{ color: '#1a8a4a', weight: 5 }] }
+                        lineOptions: { styles: [{ color: '#1a8a4a', weight: 5 }] },
+                        showAlternatives: false,
+                        fitSelectedRoutes: false
                     }).addTo(map);
                     routingControl.on('routesfound', function(e) {
-                        currentRouteInstructions = e.routes[0].instructions.map(function(inst) { return inst.text; });
+                        var route = e.routes[0];
+                        if (route) {
+                            currentRouteInstructions = route.instructions.map(function(inst) { return inst.text; });
+                            document.getElementById('startTripBtn').style.display = 'flex';
+                            document.getElementById('clearRouteBtn').style.display = 'flex';
+                            // Fit map to route
+                            var bounds = L.latLngBounds([
+                                [actualUserLocation.lat, actualUserLocation.lng],
+                                [station.lat, station.lon]
+                            ]);
+                            map.fitBounds(bounds, { padding: [50, 50] });
+                            showToast('✅ Route drawn from your location to ' + station.name);
+                        }
+                    });
+                    routingControl.on('routingerror', function(e) {
+                        // Fallback: direct polyline
+                        console.warn('Routing error, using fallback polyline');
+                        L.polyline([
+                            [actualUserLocation.lat, actualUserLocation.lng],
+                            [station.lat, station.lon]
+                        ], { color: '#1a8a4a', weight: 5, dashArray: '10, 10' }).addTo(map);
                         document.getElementById('startTripBtn').style.display = 'flex';
+                        document.getElementById('clearRouteBtn').style.display = 'flex';
+                        showToast('⚠️ Using direct route (fallback)');
                     });
                 } catch (e) {
-                    // Fallback: draw direct polyline
-                    showToast('Using direct route fallback');
+                    // Fallback: direct polyline
+                    console.warn('Routing exception, using fallback polyline');
                     L.polyline([
                         [actualUserLocation.lat, actualUserLocation.lng],
                         [station.lat, station.lon]
                     ], { color: '#1a8a4a', weight: 5, dashArray: '10, 10' }).addTo(map);
                     document.getElementById('startTripBtn').style.display = 'flex';
                     document.getElementById('clearRouteBtn').style.display = 'flex';
+                    showToast('⚠️ Using direct route (fallback)');
                 }
                 document.getElementById('clearRouteBtn').style.display = 'flex';
+                // Save to recent
                 localDB.recentStations.add({ stationId: station.id, name: station.name, lat: station.lat,
                     lon: station.lon, timestamp: Date.now() });
             }
@@ -4363,7 +4438,11 @@
                         ');',
                         'node["shop"="mall"](around:' + radius + ',' + midLat + ',' + midLon + ');',
                         'node["tourism"="hotel"](around:' + radius + ',' + midLat + ',' + midLon + ');',
-                        'node["tourism"="lodging"](around:' + radius + ',' + midLat + ',' + midLon + ');'
+                        'node["tourism"="motel"](around:' + radius + ',' + midLat + ',' + midLon + ');',
+                        'node["tourism"="guest_house"](around:' + radius + ',' + midLat + ',' + midLon +
+                        ');',
+                        'node["tourism"="chalet"](around:' + radius + ',' + midLat + ',' + midLon + ');',
+                        'node["amenity"="lodging"](around:' + radius + ',' + midLat + ',' + midLon + ');'
                     ];
                     var query = '[out:json];(' + queries.join('') + ');out body;';
                     var res = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(
@@ -4692,7 +4771,7 @@
                     document.getElementById('addLogForm').style.display = 'none';
                 };
 
-                // Radius popup
+                // Radius popup (FIXED)
                 var radiusPopupOverlay = document.getElementById('radiusPopupOverlay');
                 var radiusRange = document.getElementById('radiusRange');
                 var radiusValueDisplay = document.getElementById('radiusValueDisplay');
@@ -4760,7 +4839,7 @@
                         if (station) startNavigationWithMessage(station);
                         map.closePopup();
                     };
-                });
+                };
 
                 document.getElementById('startTripBtn').onclick = function() {
                     var panel = document.getElementById('turnByTurnPanel');
@@ -4809,7 +4888,7 @@
                         });
                     }, 300);
                     showToast('🏆 Best match: ' + best.name + ' (' + best.distance.toFixed(1) + ' km)');
-                });
+                };
 
                 // Popup menu
                 var menuPopup = document.getElementById('menuPopupOverlay');
