@@ -40,7 +40,7 @@
 
     <style>
         /* ============================================================
-               FUELRADAR – MATCH UI DESIGN (10% size reduction)
+               FUELRADAR – ALL STYLES (Including Updated Login & Others)
                ============================================================ */
 
         * {
@@ -81,7 +81,6 @@
             --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
             --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 
-            /* 10% reduction baseline */
             --scale: 0.9;
         }
 
@@ -122,53 +121,45 @@
             background: #000000;
         }
 
-        /* ===== AUTH OVERLAY – FULL PAGE ===== */
+        /* ===== AUTH OVERLAY – NEW FLOATING CLEAN DESIGN ===== */
         #authOverlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--sf-gray6);
+            background: #ffffff;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 16px;
+            justify-content: flex-start;
+            padding: 40px 20px 20px;
             overflow-y: auto;
+            min-height: 100vh;
         }
         body.dark #authOverlay {
             background: #000000;
         }
-        .auth-container {
-            max-width: 420px;
-            width: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border-radius: var(--radius-xl);
-            padding: 28px 24px 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-        }
-        body.dark .auth-container {
-            background: rgba(28, 28, 30, 0.88);
-        }
+
+        /* auth-logo and title */
         .auth-logo-wrap {
             text-align: center;
-            margin-bottom: 14px;
+            margin-bottom: 20px;
+            width: 100%;
         }
         .auth-logo-wrap img {
             max-width: 160px;
             height: auto;
             display: block;
-            margin: 0 auto;
+            margin: 0 auto 10px auto;
+            width: 160px;
         }
         .auth-logo-wrap h2 {
-            font-size: 30px;
+            font-size: 34px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-top: 4px;
+            margin-top: 0;
         }
         .fuel-green {
             color: var(--sf-green);
@@ -179,20 +170,24 @@
         .auth-slogan {
             background: rgba(26, 138, 74, 0.12);
             border-radius: var(--radius-full);
-            padding: 4px 14px;
+            padding: 6px 18px;
             display: inline-block;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--sf-green);
-            margin-top: 2px;
+            margin-top: 4px;
         }
+
+        /* auth tabs */
         .auth-tabs {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 18px;
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
             padding: 4px;
+            width: 100%;
+            max-width: 340px;
         }
         body.dark .auth-tabs {
             background: #1c1c1e;
@@ -200,7 +195,7 @@
         .auth-tab {
             flex: 1;
             text-align: center;
-            padding: 9px;
+            padding: 10px;
             border-radius: var(--radius-full);
             font-weight: 600;
             background: transparent;
@@ -208,7 +203,7 @@
             cursor: pointer;
             border: none;
             transition: all 0.25s var(--ease);
-            font-size: 13px;
+            font-size: 14px;
             font-family: var(--font);
         }
         .auth-tab.active {
@@ -221,21 +216,28 @@
             color: #f5f5f7;
             box-shadow: 0 2px 8px rgba(255, 255, 255, 0.04);
         }
+
         .auth-form.hide {
             display: none;
         }
+
+        /* Pill inputs (floating) */
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
             border-radius: var(--radius-full);
-            padding: 12px 18px;
-            font-size: 14px;
+            padding: 14px 20px;
+            font-size: 15px;
             width: 100%;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             outline: none;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
             color: #1c1c1e;
+            max-width: 340px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .pill-input:focus {
             border-color: var(--sf-green);
@@ -252,18 +254,23 @@
             box-shadow: 0 0 0 3px rgba(26, 138, 74, 0.2);
             background: #2c2c2e;
         }
+
         .phone-row {
             display: flex;
             gap: 8px;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
         }
         .country-code-box {
             background: var(--sf-gray6);
             border-radius: var(--radius-full);
-            padding: 12px 14px;
-            font-size: 14px;
-            min-width: 90px;
+            padding: 14px 16px;
+            font-size: 15px;
+            min-width: 100px;
             text-align: center;
             font-weight: 600;
             color: #1c1c1e;
@@ -279,26 +286,33 @@
             margin-bottom: 0;
             flex: 2;
         }
+
         .welcome-country {
             background: rgba(26, 138, 74, 0.1);
             border-radius: var(--radius-full);
-            padding: 6px 14px;
+            padding: 8px 16px;
             margin-bottom: 12px;
             text-align: center;
             font-weight: 600;
             color: var(--sf-green);
             border: 1px solid rgba(26, 138, 74, 0.2);
-            font-size: 13px;
+            font-size: 14px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .profile-pic-upload {
             display: flex;
             align-items: center;
             gap: 12px;
             margin: 10px 0;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .profile-pic-preview {
-            width: 50px;
-            height: 50px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             border: 2px solid var(--sf-green);
             object-fit: cover;
@@ -308,8 +322,8 @@
             background: var(--sf-gray6);
             border: 1.5px dashed var(--sf-green);
             border-radius: var(--radius-full);
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: 8px 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--sf-green);
             cursor: pointer;
@@ -325,14 +339,16 @@
             border-color: var(--sf-green);
             color: var(--sf-green);
         }
+
+        /* Auth button (floating) */
         .auth-btn {
             background: var(--sf-green);
             color: white;
             border: none;
             border-radius: var(--radius-full);
-            padding: 12px;
+            padding: 14px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 16px;
             width: 100%;
             cursor: pointer;
             margin-top: 6px;
@@ -342,6 +358,9 @@
             gap: 8px;
             transition: all 0.2s var(--ease);
             font-family: var(--font);
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .auth-btn:hover {
             transform: scale(1.01);
@@ -352,8 +371,8 @@
         }
         .auth-btn .spinner {
             display: none;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border: 2.5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -366,6 +385,19 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+            display: block;
+            color: var(--sf-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .forgot-link:hover {
+            text-decoration: underline;
         }
 
         /* ===== SYSTEM OVERLAY ===== */
@@ -1923,7 +1955,7 @@
             color: #f5f5f7;
         }
 
-        /* ===== GARAGE ===== */
+        /* ===== GARAGE – Horizontal uploads ===== */
         .car-card {
             display: flex;
             align-items: center;
@@ -2431,6 +2463,20 @@
                 font-size: 14px;
                 min-width: 46px;
             }
+            #authOverlay {
+                padding: 20px 12px;
+            }
+            .auth-logo-wrap img {
+                width: 120px;
+            }
+            .pill-input {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            .auth-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
         }
 
         /* ===== DARK MODE OVERRIDES ===== */
@@ -2693,44 +2739,45 @@
         </div>
     </div>
 
-    <!-- ===== AUTH OVERLAY – FULL PAGE ===== -->
+    <!-- ===== AUTH OVERLAY – NEW FLOATING CLEAN DESIGN ===== -->
     <div id="authOverlay">
-        <div class="auth-container">
-            <div class="auth-logo-wrap">
-                <img src="logo.png" alt="FuelRadar" onerror="this.style.display='none';" />
-                <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
-                <div class="auth-slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
+        <div class="auth-logo-wrap">
+            <img src="logo.png" alt="FuelRadar" onerror="this.style.display='none';" />
+            <h2><span class="fuel-green">Fuel</span><span class="radar-red">Radar</span></h2>
+            <div class="auth-slogan"><i class="fas fa-gas-pump"></i> before your tank runs dry</div>
+        </div>
+
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">Login</div>
+            <div class="auth-tab" data-tab="register">Register</div>
+        </div>
+
+        <div id="loginForm" class="auth-form">
+            <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
+            <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
+            <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
+            <a href="#" id="forgotPassword" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <div id="registerForm" class="auth-form hide">
+            <div id="countryDetectionMessage" style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--sf-gray);">
+                <span class="loading-spinner"></span> Detecting your country...
             </div>
-            <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">Login</div>
-                <div class="auth-tab" data-tab="register">Register</div>
+            <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
+                <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
             </div>
-            <div id="loginForm" class="auth-form">
-                <input type="email" id="loginEmail" class="pill-input" placeholder="Email" />
-                <input type="password" id="loginPassword" class="pill-input" placeholder="Password" />
-                <button class="auth-btn" id="loginBtn"><span>Sign In</span> <span class="spinner"></span></button>
-                <p style="text-align:center; margin-top:10px; font-size:12px;"><a href="#" id="forgotPassword" style="color:var(--sf-green); text-decoration:none;">Forgot password?</a></p>
+            <input type="text" id="regName" class="pill-input" placeholder="Full name" />
+            <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
+            <div class="phone-row">
+                <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
+                <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
             </div>
-            <div id="registerForm" class="auth-form hide">
-                <div id="countryDetectionMessage" style="text-align:center; margin-bottom:10px; font-size:12px; color:var(--sf-gray);">
-                    <span class="loading-spinner"></span> Detecting your country...
-                </div>
-                <div id="welcomeCountryBox" class="welcome-country" style="display:none;">
-                    <span id="welcomeFlag"></span> Welcome to FuelRadar, <span id="detectedCountryName">your country</span>!
-                </div>
-                <input type="text" id="regName" class="pill-input" placeholder="Full name" />
-                <input type="email" id="regEmail" class="pill-input" placeholder="Email" />
-                <div class="phone-row">
-                    <span class="country-code-box" id="detectedCountryCodeBox">+1</span>
-                    <input type="tel" id="regPhone" class="pill-input" placeholder="Phone number" style="flex:2; margin-bottom:0;" />
-                </div>
-                <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
-                <div class="profile-pic-upload">
-                    <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
-                    <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
-                </div>
-                <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
+            <input type="password" id="regPassword" class="pill-input" placeholder="Password (min 6 chars)" />
+            <div class="profile-pic-upload">
+                <img id="regProfilePicPreview" src="driver.png" class="profile-pic-preview" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%231a8a4a\'%3E%3Cpath d=\'M5,20h14v2H5V20z M19,18h-1.5l-0.5-2h-3l-0.5,2H9.5L9,16H6l-1,4H3l4-13h2l4,13h-2l-0.8-2h3.6l-0.8,2h2l4-13h2L19,18z M10.3,12l1.7-5l1.7,5H10.3z\'/%3E%3C/svg%3E';" />
+                <div class="upload-pic-btn" id="regProfilePicBtn"><i class="fas fa-camera"></i> Add profile picture</div>
             </div>
+            <button class="auth-btn" id="registerBtn"><span>Create Account</span> <span class="spinner"></span></button>
         </div>
     </div>
 
@@ -2830,7 +2877,7 @@
             <button class="expand-sheet-btn" id="expandSheetBtn"><i class="fas fa-chevron-up"></i> Show stations</button>
         </div>
 
-        <!-- ===== BOTTOM NAVIGATION – 6 buttons ===== -->
+        <!-- ===== BOTTOM NAVIGATION – 6 BUTTONS ===== -->
         <div class="bottom-nav">
             <button class="nav-item active" data-page="map"><i class="fas fa-map"></i> Map</button>
             <button class="nav-item" data-page="stations"><i class="fas fa-gas-pump"></i> Stations</button>
@@ -2918,7 +2965,8 @@
                 <input type="number" id="newTankCapacity" placeholder="Tank capacity (L)" class="pill-input" />
                 <input type="number" id="newConsumption" placeholder="L/100km" class="pill-input" />
                 <select id="newFuelType" class="pill-input"><option value="petrol">Petrol</option><option value="diesel">Diesel</option></select>
-                <div style="display:flex; gap:6px; margin:6px 0;">
+                <!-- Horizontal image upload boxes -->
+                <div style="display:flex; flex-direction:row; gap:8px; margin:6px 0;">
                     <div class="upload-pic-btn" id="addFrontUpload" style="flex:1; font-size:11px;"><i class="fas fa-car"></i> Front</div>
                     <div class="upload-pic-btn" id="addBackUpload" style="flex:1; font-size:11px;"><i class="fas fa-car-side"></i> Back</div>
                     <div class="upload-pic-btn" id="addSideUpload" style="flex:1; font-size:11px;"><i class="fas fa-caravan"></i> Side</div>
@@ -3027,21 +3075,33 @@
         <div class="page-content"><div id="recentStationsList"></div><button id="clearRecentBtn" class="full-width-btn">Clear Recent</button></div>
     </div>
 
-    <!-- Help Page -->
+    <!-- Help Page – Bulky information -->
     <div id="helpPage" class="page-overlay">
         <div class="page-header-bar"><h2><i class="fas fa-question-circle"></i> Help &amp; About</h2><button class="close-page-btn" data-close="helpPage">&times;</button></div>
         <div class="page-content">
             <div style="background:var(--sf-gray6); border-radius:var(--radius-md); padding:14px; border:1px solid var(--glass-border);">
-                <h4 style="color:var(--sf-green);">Manual</h4>
-                <p><strong>1. Finding fuel stations:</strong> Use the interactive map or search bar. Tap any station icon to see distance, price, and amenities.</p>
-                <p><strong>2. Navigation:</strong> Click "Navigate" on a station card. The app calculates fuel needed and draws a route.</p>
-                <p><strong>3. Trip Planner:</strong> Enter destination -> select fuel station -> pick fun stops -> review -> draw route.</p>
-                <p><strong>4. Garage &amp; Fuel Logs:</strong> Add vehicles, track refueling history, view consumption trends.</p>
-                <p><strong>5. Dark Mode:</strong> Toggle in menu for night driving.</p>
+                <h4 style="color:var(--sf-green);">FuelRadar – Complete User Guide</h4>
+                <p><strong>1. Finding Fuel Stations:</strong> Use the interactive map or the search bar. Tap any station icon (green pump) on the map to see distance, price, amenities, and status.</p>
+                <p><strong>2. Navigating to a Station:</strong> Click the "Navigate" button on a station's popup or card. The app will calculate the fuel needed based on your active vehicle's consumption and draw a route on the map.</p>
+                <p><strong>3. Trip Planner:</strong> A powerful tool for road trips. 
+                   <ul>
+                       <li><strong>Step 1:</strong> Enter your destination. The app suggests places based on your location.</li>
+                       <li><strong>Step 2:</strong> Choose a fuel station along your route. The app automatically finds stations on the way.</li>
+                       <li><strong>Step 3:</strong> Pick fun stops (restaurants, attractions, parks) to make the journey enjoyable.</li>
+                       <li><strong>Step 4:</strong> Review your trip summary, estimated costs, and safety tips. Click "Draw Route on Map" to visualize the entire journey with color-coded segments.</li>
+                   </ul>
+                </p>
+                <p><strong>4. My Garage:</strong> Add your vehicles by providing name, license plate, tank capacity, consumption (L/100km), and fuel type. Upload photos of your car (Front, Back, Side) using the horizontal boxes. Track your refueling history and view consumption trends on a chart. Set an active vehicle to get accurate trip calculations.</p>
+                <p><strong>5. Fuel Calculator:</strong> Enter a trip distance, and the app calculates the required fuel, cost, and estimated time of arrival (ETA) based on your active vehicle's consumption and current fuel prices.</p>
+                <p><strong>6. AI Chat:</strong> Ask FuelRadar AI anything about fuel, routes, vehicle maintenance, or road trips. The AI can provide recommendations, troubleshooting tips, and general driving advice.</p>
+                <p><strong>7. Reporting a Station:</strong> If you notice incorrect prices, out-of-stock issues, or closed stations, use the "Report" button on any station card or popup. Your reports help the community.</p>
+                <p><strong>8. Favorites & History:</strong> Save your favorite stations for quick access. View your past trips and recently visited stations.</p>
+                <p><strong>9. Dark Mode:</strong> Toggle Dark Mode in the main menu (☰) for a comfortable night-time driving experience.</p>
+                <p><strong>10. Data Export:</strong> Export your fuel logs, favorites, reports, and trip history as CSV or JSON files for backup or analysis.</p>
                 <hr style="margin:10px 0; border-color:var(--glass-border);" />
                 <h4 style="color:var(--sf-green);">About FuelRadar</h4>
-                <p>Your ultimate fuel companion – live station data, smart route planning, and community reports.</p>
-                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.4</strong> | Built with care</p>
+                <p>Your ultimate fuel companion – live station data from OpenStreetMap, smart route planning, community-driven reports, and AI assistance. Built with passion for drivers everywhere.</p>
+                <p><i class="fas fa-gas-pump"></i> <strong>Version 3.4.2</strong> | Built with care 🚗</p>
             </div>
         </div>
     </div>
