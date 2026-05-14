@@ -149,14 +149,12 @@
         }
         .auth-logo-wrap img {
             max-width: 420px;
-            /* 5x bigger than original 160px */
             height: auto;
             display: block;
             margin: 0 auto 14px auto;
             width: 100%;
             max-width: 420px;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 8px 40px rgba(26, 138, 74, 0.15);
+            /* NO floating effect – flat on background */
         }
         .auth-logo-wrap h2 {
             font-size: 42px;
@@ -223,7 +221,7 @@
             display: none;
         }
 
-        /* ---- LONGER INPUT BOXES (wider) ---- */
+        /* ---- LONGER INPUT BOXES (wider) – same width as auth-tabs ---- */
         .pill-input {
             background: var(--sf-gray6);
             border: 1.5px solid transparent;
@@ -645,7 +643,7 @@
             color: var(--sf-gray);
         }
 
-        /* ===== FILTER CHIPS ===== */
+        /* ===== FILTER CHIPS – ONLY ONE SET (duplicates removed) ===== */
         .filter-section {
             padding: 4px 14px 6px 14px;
             background: var(--glass-bg);
@@ -759,10 +757,11 @@
             background: var(--sf-gray4);
         }
 
-        /* ===== MAP FLOATING BUTTONS ===== */
+        /* ===== MAP FLOATING BUTTONS – lowered & centred on right ===== */
         .map-floats {
             position: absolute;
-            top: 14px;
+            top: 50%;
+            transform: translateY(-50%);
             right: 14px;
             display: flex;
             flex-direction: column;
@@ -862,7 +861,6 @@
             box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.06);
             z-index: 900;
             max-height: 30%;
-            /* Fixed at 30% of map */
             display: flex;
             flex-direction: column;
             transition: max-height 0.4s var(--ease), transform 0.4s var(--ease);
@@ -2724,38 +2722,6 @@
         body.dark .radius-popup .radius-actions .btn-cancel:hover {
             background: #3a3a3c;
         }
-
-        /* ===== COUNTERS ===== */
-        .counter-display {
-            display: flex;
-            gap: 10px;
-            padding: 4px 0;
-            flex-wrap: wrap;
-        }
-        .counter-item {
-            background: var(--sf-gray6);
-            border-radius: var(--radius-full);
-            padding: 2px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            border: 1px solid var(--glass-border);
-        }
-        body.dark .counter-item {
-            background: #1c1c1e;
-            border-color: #2c2c2e;
-        }
-        .counter-item i {
-            color: var(--sf-green);
-        }
-        .counter-item .count-num {
-            color: var(--sf-green);
-            font-weight: 800;
-            min-width: 16px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -2847,17 +2813,7 @@
             </div>
         </div>
 
-        <!-- ===== COUNTERS ===== -->
-        <div class="filter-section" style="padding-top:2px;">
-            <div class="counter-display">
-                <span class="counter-item"><i class="fas fa-gas-pump"></i> Petrol: <span class="count-num" id="petrolCount">0</span></span>
-                <span class="counter-item"><i class="fas fa-oil-can"></i> Diesel: <span class="count-num" id="dieselCount">0</span></span>
-                <span class="counter-item"><i class="fas fa-store"></i> Shops: <span class="count-num" id="shopCount">0</span></span>
-                <span class="counter-item"><i class="fas fa-map-marker-alt"></i> Total: <span class="count-num" id="stationCountHeader">0</span></span>
-            </div>
-        </div>
-
-        <!-- ===== FILTER CHIPS ===== -->
+        <!-- ===== FILTER CHIPS – ONLY ONE SET ===== -->
         <div class="filter-section">
             <div class="filter-scroll" id="filterTabs">
                 <button class="chip near-me" id="nearMeBtn"><i class="fas fa-location-arrow"></i> Near me</button>
@@ -2882,7 +2838,7 @@
         <div class="map-wrapper" id="mapWrapper">
             <div id="map"></div>
 
-            <!-- Map Floating Buttons -->
+            <!-- Map Floating Buttons – lowered & centred on right -->
             <div class="map-floats">
                 <button class="map-float-btn" id="floatLocateBtn"><i class="fas fa-crosshairs"></i></button>
                 <button class="map-float-btn" id="floatRefreshBtn"><i class="fas fa-sync-alt"></i></button>
@@ -4839,7 +4795,7 @@
                         if (station) startNavigationWithMessage(station);
                         map.closePopup();
                     };
-                };
+                });
 
                 document.getElementById('startTripBtn').onclick = function() {
                     var panel = document.getElementById('turnByTurnPanel');
